@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey">
+
+    <RelativeLayout
+        android:id="@+id/subscriberView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true" >
+
+        <ProgressBar
+            android:id="@+id/loadingSpinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/audioOnlyView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" >
+
+            <ImageView
+                android:id="@+id/noVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/avatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="28dp"
+                android:src="@drawable/no_video" />
+
+            <ImageView
+                android:id="@+id/speakerActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/noVideo"
+                android:layout_below="@+id/noVideo"
+                android:layout_marginTop="21dp"
+                android:src="@drawable/speaker_active" />
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/avatar" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/publisherView"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="68dp"
+        android:layout_marginLeft="20dp" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fragment_sub_container"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fragment_pub_container"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/trans_dark_grey"
+        android:visibility="gone" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fragment_pub_status_container"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_above="@+id/fragment_pub_container"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" >
+    </RelativeLayout>
+
+</RelativeLayout>
