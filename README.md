@@ -1,254 +1,571 @@
-OpenTok Android SDK Beta
-============================
+opentok-androd-sdk-demo
+=======================
 
-The OpenTok Android SDK 2.2 Beta lets you use OpenTok on WebRTC video sessions in apps you build for Android devices.
+This sample app is a basic sample app that shows the most basic features of the OpenTok 2.2
+Android Beta SDK.
 
-Apps written with the OpenTok Android SDK can interact with OpenTok apps written with the following OpenTok SDKs:
+*Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
-* OpenTok.js 2.0
-* OpenTok.js 2.2
-* OpenTok iOS SDK 2.2 Beta
+Also, be sure to read the README file for [the OpenTok 2.0 Android Beta SDK](../README.md).
 
-This is a beta version. See "Changes to the API" and "New API" below for more information on changes
-in this version. The API may change in upcoming releases.
+Notes
+-----
 
-Installation
-------------
+* The OpenTok Android 2.0 SDK is supported on the Samsung Galaxy S3.
+* See the [API reference documentation](http://opentok.github.com/opentok-android-sdk) at the [OpenTok Android SDK project](https://github.com/opentok/opentok-android-sdk) on github.
+* You cannot test using OpenTok videos in the ADT emulator.
 
-The library binaries are included in the OpenTok/libs subdirectory of the SDK.
+Testing the sample app
+----------------------
 
-Developer and client requirements
----------------------------------
+1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
+   Workspace. Choose the samples/OpenTokHelloWorld directory. Then click Finish.)
 
-* While in beta, the OpenTok Android SDK is expected to work with Android 4.0+ and devices from
-Samsung, Google Nexus, Motorola Moto, and LG Optimus families. If you are targeting a different OS
-version or device family, then please contact us at support@tokbox.com.
+   This project links to the opentok-android-sdk-2.2.jar file and the armeabi/libopentok.so file.
+   Both of these libraries are required to develop apps that use the OpenTok 2.0 Android SDK.
+   If these do not appear in the libs directory of your project, find them in the OpenTok/libs
+   directory of the SDK and add them to the project.
 
-* You need an [OpenTok developer account](https://dashboard.tokbox.com/).
+   (From the desktop, drag the opentok-android-sdk-2.2.jar file and armeabi directory into the
+   libs directory of the project in the ADT package explorer.)
 
-Using the sample apps
----------------------
+2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
+   API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
+   Then to generate the session ID and token, use the Project Tools on the
+   [Project Details](https://dashboard.tokbox.com/projects) page.
 
-The samples directory contains the OpenTokSamples app. This app shows the most basic
-functionality of the OpenTok Android SDK: connecting to sessions, publishing streams, and subscribing to streams. It also shows how to add UI controls to publisher and subscriber views
-and how to use custom video capturer and renderers.
+   Open the OpenTokConfig.java file and set the `SESSION_ID`, `TOKEN`, and `API_KEY` strings
+   to your own session ID, token, and API key respectively.
 
-For more information, see the README file in the samples directory.
+3.  Connect your Android device to a USB port on your computer. Set up
+    [USB debugging](http://developer.android.com/tools/device.html) on your device.
 
-Creating your own app using the OpenTok Android SDK
----------------------------------------------------
+4.  Run the app on your device, selecting the default activity as the launch action.
 
-Add the following libraries to your project's build path:
+    The app should start on your connected device. The initial view of the app shows different
+    processes you can run:
 
-* opentok-android-sdk-2.2.jar
-* armeabi/libopentok.so
+    * Hello World -- A simple example of publishing and subscribing to streams in a session
+    * Hello World UI -- Adds custom UI controls to the Hello World app
+    * Hello World Capturer -- Shows how to use a custom video capturer
+    * Hello World Renderer -- Shows how to use a custom video renderer
+    * Hello World Multiparty -- Shows how to created subclasses of the Session and Subscriber
+      classes. It also shows how to use the signaling API.
 
-These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the
-opentok-android-sdk-2.2.jar file and armeabi directory into the libs directory of your project
-in the ADT package explorer.)
+5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
+    in a new view.
 
-Also, you need to add the following permissions and features to your app manifest:
+    Once the app connects to the OpenTok session, it publishes an audio-video stream, which is
+    displayed onscreen. Then, the same audio-video stream shows up as a subscribed stream
+    (along with any other streams currently in the session).
 
-* android.permission.CAMERA
-* android.permission.INTERNET
-* android.permission.RECORD_AUDIO
-* android.permission.WAKE_LOCK
-* android.permission.MODIFY_AUDIO_SETTINGS
-* android.hardware.camera
-* android.hardware.camera.autofocus
+6.  Close the app. Now set up the app to subscribe to audio-video streams other than your own:
 
-Your app needs to use a session ID and token generated with your OpenTok API key, which you can get
-at [the OpenTok developer dashboard](https://dashboard.tokbox.com).
+    -   In the OpenTokConfig class (in the com.opentok.android.demo.config package), change the
+        `SUBSCRIBE_TO_SELF` property to be set to `false`.
+    -   Edit browser_demo.html located in the root directory of this project, and modify the variables `apiKey`, `sessionId`,
+        and `token` with your OpenTok API Key, and with the matching session ID and token. (Note that you would normally use
+        the OpenTok server-side libraries to issue unique tokens to each client in a session. But for testing purposes,
+        you can use the same token on both clients. Also, depending on your app, you may use the OpenTok server-side
+        libraries to generate new sessions.)
+    -   Add the browser_demo.html file to a web server. (You cannot run WebRTC video in web pages loaded from the desktop.)
+    -   In a browser on your development computer, load the browser_demo.html file (from the web server) Click the
+        Connect and Publish buttons.
+    -   Run the app on your Android device again.
 
-For test purposes, you can generate a session ID and token at
-[the projects page](https://dashboard.tokbox.com/projects) of the OpenTok developer dashboard.
-For a production app, generate unique tokens (and session IDs, if you need to support multiple
-sessions) using the [OpenTok server-side libraries](http://tokbox.com/opentok/libraries/server/).
+In addition to the Hello World activity, try running the other activities from the main menu of
+the app:
 
-Changes to the API
-------------------
+* Hello World UI -- Adds custom UI controls to the Hello World app.
+* Hello World Capturer -- Shows how to use a custom video capturer.
+* Hello World Renderer -- Shows how to use a custom video renderer.
+* Hello World Subclassing -- Shows how to created subclasses of the Session and Subscriber
+  classes. It also shows how to use the signaling API.
 
-Changes in the OpenTok Andriod SDK 2.2 Beta:
+For information on how these activities use the OpenTok Android SDK, see the next section,
+"Understanding the code."
 
-* The Session() constructor now includes an apiKey parameter:
+Understanding the code
+----------------------
 
-      Session(Context context, String apiKey, String sessionId)
+The OpenTokHelloWorld class defines the Hello World activity.
 
-* The Session.connect() method no longer has an apiKey parameter:
+The MainActivity.xml defines a LinearLayout object used by the app.
 
-      void connect(final String token)
+The AndroidManifest.xml app includes required permissions and features used by an OpenTok app:
 
-* The listener classes and method names have changed:
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
-        Session.Listener.addPublisher --> Session.PublisherListener.onPublisherAdded
-        Session.Listener.connected --> Session.SessionListener.onConnected
-        Session.Listener.connectionCreated --> Session.ConnectionListener.onConnectionCreated
-        Session.Listener.connectionDestroyed --> Session.ConnectionListener.onConnectionDestroyed
-        Session.Listener.disconnected --> Session.SessionListener.onDisconnected
-        Session.Listener.droppedStream --> Session.SessionListener.onStreamDropped
-        Session.Listener.error --> Session.SessionListener.onError
-        Session.Listener.onSignal --> Session.SignalListener.onSignalReceived
-        Session.Listener.receivedStream --> Session.SessionListener.onStreamReceived
-        Session.Listener.removePublisher --> Session.PublisherListener.onPublisherRemoved
-        Session.Listener.streamChangeHasAudio --> Session.StreamPropertiesListener.onStreamHasAudioChanged
-        Session.Listener.streamChangeHasVideo --> Session.StreamPropertiesListener.onStreamHasVideoChanged
-        Session.Listener.streamChangeVideoDimensions --> Session.StreamPropertiesListener.onStreamVideoDimensionsChanged
+### Adding views for videos
 
-        PublisherKit.Listener.changedCamera --> Publisher.CameraListener.onCameraChanged
-        PublisherKit.Listener.streamCreated --> PublisherKit.PublisherListener.onStreamCreated
-        PublisherKit.Listener.streamDestroyed --> PublisherKit.PublisherListener.onStreamDestroyed
-        PublisherKit.Listener.error --> PublisherKit.PublisherListener.onError
+When the OpenTokHelloWorld activity is started, the onCreate() method sets the content view for
+the activity
 
-        Subscriber.Listener.connected --> SubscriberKit.SubscriberListener.onConnected
-        Subscriber.Listener.disconnected --> SubscriberKit.SubscriberListener.onDisconnected
-        Subscriber.Listener.videoDisabled --> SubscriberKit.VideoListener.onVideoDisabled
-        Subscriber.Listener.error --> SubscriberKit.SubscriberListener.onError
-        Subscriber.Listener.videoDataReceived --> SubscriberKit.VideoListener.onVideoDataReceived
+    setContentView(R.layout.main_layout);
 
-* Listeners have been removed as parameters of the constructors for the Session, Publisher and
-  Subscriber classes. To add an event listener, call one of the following methods:
+The app uses other view contains to displaying the publisher and subscriber videos:
 
-        Session.setArchiveListener(Session.ArchiveListener listener)
-        Session.setConnectionListener(Session.ConnectionListener listener)
-        Session.setPublisherListener(Session.PublisherListener listener)
-        Session.setSessionListener(Session.SessionListener listener)
-        Session.setSignalListener(Session.SignalListener listener)
-        Session.setStreamPropertiesListener(Session.StreamPropertiesListener listener)
-        Publisher.setCameraListener(Publisher.CameraListener listener)
-        PublisherKit.setPublisherListener(PublisherKit.PublisherListener listener)
-        SubscriberKit.setSubscriberListener(SubscriberKit.SubscriberListener listener)
-        SubscriberKit.setVideoListener(SubscriberKit.VideoListener listener)
+    publisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
+    subscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
 
-  You now only need to add listeners for events that you are interested in. For example,
-  if your app does not use the signaling or archiving features, then you need not add
-  Session.ArchiveListener or Session.SignalListener listeners.
+A *Publisher* is an object represents an audio-video stream sent from the Android device to
+the OpenTok session. A *Subscriber* is an object that subscribes to an audio-video stream from
+the OpenTok session that you display on your device. The subscriber stream can be one published
+by your device or (more commonly) a stream another client publishes to the OpenTok session.
 
-* The hasAudio parameter of the Session.StreamPropertiesListener.onStreamHasAudioChanged() method
-  is now a Boolean value.
+The `onCreate()` method also instantiates an ArrayList for keeping references to OpenTok Stream objects:
 
-* The hasVideo parameter of the Session.StreamPropertiesListener.onStreamHasVideoChanged() method is
-  now a Boolean value.
+    mStreams = new ArrayList<Stream>();
 
-Changes in the OpenTok Android SDK 2.0 Beta 2:
+A *Stream* object represents an audio-video stream in the OpenTok session. This app subscribes to only one stream at a time,
+and it uses this ArrayList to subscribe to a new stream if the a subscribed stream drops from the session.
 
-* The Publisher.getStreamId() method has been replaced with the Publisher.getStream() method.
+### Initializing a Session object and connecting to an OpenTok session
 
-* The Subscriber.newInstance() method has been replaced by the Subscriber() constructor (which the
-  Subscriber class inherits from the SubscriberKit class).
+The code then calls a method to instantiate an a Session object and connection to the OpenTok session:
 
-* Session.Listener.receivedStream() and droppedStream() methods are now only called for streams
-  published by other clients. For streams published by your client, the
-  PublisherKit.Listener.streamCreated() and PublisherKit.Listener.streamDestroyed() are called.
+    private void sessionConnect() {
+        if (mSession == null) {
+            mSession = new Session(OpenTokHelloWorld.this,
+                    OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+            mSession.setSessionListener(this);
+            mSession.connect(OpenTokConfig.TOKEN);
+        }
+    }
 
-* The Publisher.Listener onPublisherStreamingStarted() and onPublisherStreamingStopped() methods
-  are replaced with streamCreated() and streamDestroyed().
+The Session constructor instantiates a new Session object.
 
-* Methods of the Listener classes (Session.Listener, PublisherKit.Listener, SubscriberKit.Listener)
-  have new names. For example, Session.Listener.onSessionConnected() is now
-  Session.Listener.connected() ("onSession" has been removed from the beginning of the name).
-  Also, the first parameter of each method of each Listener classes is the object that the event
-  pertains to (Session, PublisherKit, or SubscriberKit). For details, see the reference
-  documentation in the docs subdirectory.
+- The first parameter of the method is the Android application context associated with this process.
+- The second parameter is your OpenTok API key see the [Developer Dashboard](https://dashboard.tokbox.com/projects).
+- The third parameter is the session ID for the OpenTok session your app connects to. You can generate a session ID from the [Developer Dashboard](https://dashboard.tokbox.com/projects) or from a
+[server-side library](http://www.tokbox.com/opentok/docs/concepts/server_side_libraries.html).
 
-* The getListener() method has been removed from the Publisher, Session, and Subscriber classes.
+The `setSessionListener()` method of the Session object sets up a listener for basic session-related
+events:
 
-New API
--------
+    mSession.setSessionListener(this);
 
-### New API in the OpenTok Android SDK 2.2 Beta:
+Note that the main HelloWorldActivity class implements the Session.SessionListener interface.
 
-The new Session.ArchiveListener class defines a listener for archive-related events in
-the session. These include events when an archive recording starts and when an archive
-recording stops. In response to these callbacks, you may want to add a user interface
-notification (such as an icon in the Publisher view) that the session is (or is not) being
-recorded.
+The `connect()` method of the Session object connects your app to the OpenTok session:
 
-Add an event listener for archive-related events by calling:
+    mSession.connect(OpenTokConfig.TOKEN);
 
-    Session.setArchiveListener(Session.ArchiveListener listener)
+The `OpenTokConfig.TOKEN` constant is the token string for the client connecting to the session. See 
+[Token Creation Overview](http://tokbox.com/opentok/tutorials/create-token/) for details.
+You can generate a token from the [Developer Dashboard](https://dashboard.tokbox.com/projects) or from an
+[OpenTok server-side SDK](http://tokbox.com/opentok/libraries/server/). (In completed applications,
+use the OpenTok server-side library to generate unique tokens for each user.)
 
-OpenTok 2.0 archiving is currently in beta. For more information, see
-<http://tokbox.com/platform#archiving>.
+When the app connects to the OpenTok session, the `onConnected()` method of the SessionListener
+listener is called. An app must create a Session object and connect to the session it before the app
+can publish or subscribe to streams in the session.
+
+
+### Publishing an audio-video stream to a session
+
+The `onSessionConnected()` method is defined by the Session.Listener class. In the overridden
+version of this method, the app instantiates a Publisher object by calling the Publisher constructor:
+
+    mPublisher = new Publisher(OpenTokHelloWorld.this,
+                            OpenTokHelloWorld.this, "publisher");
+
+- The first parameter is the Android application context associated with this process.
+
+- The second parameter is the name of the stream. This a string that appears at the bottom of the 
+  stream's view when the user taps the stream (or clicks it in a browser).
+
+Next the code adds a Publisher.PublisherListener object to respond to publisher-related events:
+
+    mPublisher.setPublisherListener(this);
+  
+Note that the OpenTokHelloWorld class implements the Publisher.PublisherListener interface.
+
+(The Publisher class extends the PublisherKit class. The PublisherKit class is a base class for
+for streaming video to an OpenTok session. The Publisher class extends it, adding a default user
+interface and video renderer, and capturing video from the Android device's camera. For more
+information on the PublisherKit class, see "Using a custom video capturer" and "Using a custom
+video renderer" below.)
+
+The `getView()` method of the Publisher object returns the view in which the Publisher will
+display video, and this view is added to the publisherViewContainer:
+
+    publisherViewContainer.addView(mPublisher.getView(), layoutParams);
+
+Next, we call the `publish()` method of the Session object, passing in the Publisher object as a parameter:
+
+    mSession.publish(mPublisher);
+
+This publishes a stream to the OpenTok session.
+
+### Subscribing to streams
+
+The `onStreamCreated()` method, defined by the PublisherKit.PublisherListener interface, is called
+when the Publisher starts streaming:
+
+    public void onStreamCreated(PublisherKit publisher, Stream stream) {
+        if (OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            mStreams.add(stream);
+            if (mSubscriber == null) {
+                subscribeToStream(stream);
+            }
+        }
+    }
+
+When another client's stream is added to a session, the `onStreamReceived()` method of the 
+Session.SessionListener object is called:
+
+    public void onStreamReceived(Session session, Stream stream) {
+        if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            mStreams.add(stream);
+            if (mSubscriber == null) {
+                subscribeToStream(stream);
+            }
+        }
+    }
+
+This app subscribes to one stream, at most. It either subscribes to the stream you publish,
+or it subscribes to one of the other streams in the session (if there is one), based on the
+`SUBSCRIBE_TO_SELF` property, which is set in the OpenTokConfig class.
+
+Normally, an app would not subscribe to a stream it publishes. (See the last step of "Testing the
+sample app" above.) However, for this test app, it is convenient for the client to subscribe to its
+own stream.)
+
+The subscribeToStream() method initializes a Subscriber object for the stream:
+
+    mSubscriber = new Subscriber(OpenTokHelloWorld.this, stream);
+
+- The first parameter is the Android application context associated with this process.
+
+- The second parameter is the stream to subscribe to.
+
+Next the code adds a Subscriber.VideoListener object to respond to publisher-related events:
+
+    mSubscriber.setVideoListener(this);
+  
+Note that the OpenTokHelloWorld class implements the Subscriber.VideoListener interface.
+
+Then the code calls the `subscribe()` method of the Session object to subscribe to the stream
+
+   mSession.subscribe(mSubscriber);
+
+When the subscriber's video stream is received, the `onVideoDataReceived()` method of the
+Subscriber.VideoListener object is called:
+
+    public void onVideoDataReceived(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "First frame received");
+
+        // stop loading spinning
+        mLoadingSub.setVisibility(View.GONE);
+        attachSubscriberView(mSubscriber);
+    }
+
+This method in turn calls the `attachSubscriberView()` method, which adds the subscriber's view
+(which contains the video) to the app:
+
+    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+            getResources().getDisplayMetrics().widthPixels, getResources()
+                    .getDisplayMetrics().heightPixels);
+    subscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
+
+The method also sets the video-scaling style for the subscriber so that the video scales to fill
+the entire area of the renderer, with cropping as needed.:
+
+    subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
+            BaseVideoRenderer.STYLE_VIDEO_FILL);
+
+The app can also subscribe to streams published by other clients (rather than your own),
+based on the `SUBSCRIBE_TO_SELF` setting. The `onStreamReceived()` method of the Session.Listener
+interface is called when a new stream from another client enters the session:
+
+    public void onStreamReceived(Session session, Stream stream) {
+        if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            mStreams.add(stream);
+            if (mSubscriber == null) {
+                subscribeToStream(stream);
+            }
+        }
+    }
+
+### Removing dropped streams
+
+As streams published by other clients leave the session (when clients disconnect or stop
+publishing), the `onStreamDropped()` method of the Session.SessionListener interface is called.
+The app unsubscribes and removes a view for any Subscriber associated with the stream. The app also
+subscribes to any other streams in the session:
+
+    @Override
+    public void onStreamDropped(Session session, Stream stream) {
+        if (mSubscriber != null) {
+            unsubscribeFromStream(stream);
+        }
+    }
+    
+    private void unsubscribeFromStream(Stream stream) {
+        mStreams.remove(stream);
+        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+            mSubscriberViewContainer.removeView(mSubscriber.getView());
+            mSubscriber = null;
+            if (!mStreams.isEmpty()) {
+                subscribeToStream(mStreams.get(0));
+            }
+        }
+    }
+
+### Knowing when you have disconnected from the session
+
+When the app disconnects from the session, the `onDisconnected()` method of the
+Session.SessionListener interface is called. In this method, the app removes views for any Publisher
+or Subscriber:
+
+    @Override
+    public void onDisconnected(Session session) {
+        Log.i(LOGTAG, "Disconnected from the session.");
+        if (mPublisher != null) {
+            mPublisherViewContainer.removeView(mPublisher.getView());
+        }
+
+        if (mSubscriber != null) {
+            mSubscriberViewContainer.removeView(mSubscriber.getView());
+        }
+
+        mPublisher = null;
+        mSubscriber = null;
+        mStreams.clear();
+        mSession = null;
+    }
+
+If an app cannot connect to the session (perhaps because of no network connection), the `onError()`
+method of the Session.Listener interface is called:
+
+   @Override
+   public void onError(Session session, OpentokError exception) {
+       Log.i(LOGTAG, "Session exception: " + exception.getMessage());
+   }
+
+### Adding user interface controls
+
+The UIActivity class shows how you can add user interface controls for the following:
+
+* Muting and resuming a subscriber's audio
+* Turning a publisher's audio stream on and off
+* Swapping the publisher's camera
+
+The user interface is defined in the com.opentok.android.demo.ui package. The UIActivity class
+implements the following interfaces defined in that package:
+
+* SubscriberControlFragment.SubscriberCallbacks
+* PublisherControlFragment.PublisherCallbacks
+
+When the user taps the mute button for a subscriber, the following method of the OpenTokUI class
+is invoked:
+
+    @Override
+    public void onMuteSubscriber() {
+        if (mSubscriber != null) {
+            mSubscriber.setSubscribeToAudio(!mSubscriber.getSubscribeToAudio());
+        }
+    }
+
+The `setSubscribeToAudio()` method of a Subscriber object toggles its audio on or off, based on a
+Boolean parameter. The `getSubscribeToAudio()` method of the Subscriber returns true if the the
+Subscriber is subscribed to the audio track, and it returns false if it is not.
+
+When the user taps the mute button for the Publisher, the following method of the OpenTokUI class
+is invoked:
+
+    @Override
+    public void onMutePublisher() {
+        if (mPublisher != null) {
+            mPublisher.setPublishAudio(!mPublisher.getPublishAudio());
+        }
+    }
+
+The `setPublishAudio()` method of a Publisher object toggles its audio on or off, based on a
+Boolean parameter. The getPublishAudio() method of the Subscriber Publisher true if the the
+Publisher is publishing an audio track, and it returns false if it is not.
+
+When the user taps the swapCamera button, the following method of the OpenTokUI class
+is invoked:
+
+    @Override
+    public void onSwapCamera() {
+        if (mPublisher != null) {
+            mPublisher.swapCamera();
+        }
+    }
+
+The `swapCamera()` method of a Publisher object changes the camera used to the next available camera
+on the device (if there is one).
+
+### Using a custom video capturer
+
+The VideoCapturerActivity class shows how you can use a custom video capturer for a publisher. After
+instantiating a Publisher object, the code sets a custom video capturer by calling the
+`setCapturer()` method of the Publisher:
+
+    mPublisher = new Publisher(VideoCapturerActivity.this,
+            "publisher");
+    mPublisher.setPublisherListener(this);
+    // use an external customer video capturer
+    mPublisher.setCapturer(new CustomVideoCapturer(
+            VideoCapturerActivity.this));
+
+The CustomVideoCapturer class is defined in the com.opentok.android.demo.video package.
+This class extends the BaseVideoCapturer class, defined in the OpenTok Android SDK.
+The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
+rate, width, height, video delay, and video format for the capturer:
+
+    @Override
+    public CaptureSettings getCaptureSettings() {
+        // Set the preferred capturing size
+        configureCaptureSize(640, 480);
+
+        CaptureSettings settings = new CaptureSettings();
+        settings.fps = mCaptureFPS;
+        settings.width = mCaptureWidth;
+        settings.height = mCaptureHeight;
+        settings.format = NV21;
+        settings.expectedDelay = 0;
+        return settings;
+    }
+
+The app calls `startCapture()` to start capturing video from the custom video capturer.
+
+The class also implements the android.hardware.Camera.PreviewCallback interface. The
+onPreviewFrame() method of this interface is called as preview frames of the camera become
+available. In this method, the app calls the provideByteArrayFrame() method of the
+CustomVideoCapturer class (inherited from the BaseVideoCapturer class). This method
+provides a video frame, defined as a byte array, to the video capturer:
+
+    provideByteArrayFrame(data, NV21, mCaptureWidth,
+            mCaptureHeight, currentRotation, isFrontCamera());
+
+The publisher adds this video frame to the published stream.
+
+### Using a custom video renderer
+
+The VideoRendererActivity class shows how you can use a custom video renderer for publisher and
+subscriber videos.
+
+After instantiating a Publisher object, the code sets a custom video capturer by calling the setCapturer() method of the Publisher:
+
+   mPublisher = new Publisher(OpenTokVideoRenderer.this, "publisher");
+   mPublisher.setPublisherListener(this);
+   // use an external custom video renderer
+   mPublisher.setRenderer(new CustomVideoRenderer(this));
+   
+The CustomVideoRenderer class is defined in the com.opentok.android.demo.video package.
+This class extends the BaseVideoRenderer class, defined in the OpenTok Android SDK.
+The CustomVideoRenderer class includes a MyRenderer subclass that implements GLSurfaceView.Renderer.
+This class includes a `displayFrame()` method that renders a frame of video to an Android view.
+
+The CustomVideoRenderer constructor sets a property to an instance of the MyRenderer class.
+
+    mRenderer = new MyRenderer();
+
+The `onFrame()` method of the CustomVideo renderer is inherited from the BaseVideoRenderer class.
+This method is called at the specified frame rate. It then calls the `displayFrame()` method of
+the MyVideoRenderer instance:
+
+    public void onFrame(Frame frame) {
+        mRenderer.displayFrame(frame);
+        mView.requestRender();
+    }
+
+### Adding subclasses of the OpenTok Android SDK classes
+
+The MultipartyActive class instantiates MySession and MySubscriber classes, which are both defined
+in the com.opentok.android.demo.multiparty package. The MySession class is a subclass of the Session
+class, defined in the OpenTok Android SDK in the com.opentok.android package. The MySubscriber class
+is a subclass of the Subscriber class, defined in the com.opentok.android package.
 
 The PublisherKit, Publisher, Session, and SubscriberKit classes include protected callback
 methods for events. To process events, you can extend these classes and override these
-methods instead of overriding methods of the Listener interfaces.
+methods instead of overriding methods of the Listener interfaces. For example, in the MySession
+class extends the com.opentok.android.Session class. And it overrides the
+`onConnected()` method, using it as a callback for when the client connects to the
+OpenTok session:
 
-### New API in the OpenTok Android SDK 2.0 Beta 2:
+    @Override
+    protected void onConnected() {
+        Publisher p = new Publisher(mContext, "MyPublisher");
+        publish(p);
 
-The new classes and methods in this version support new capabilities. For details on
-the new API, see the reference documentation in the docs directory.
+        // Add video preview
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mPreview.addView(p.getView(), lp);
+        p.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
-#### Custom video capturers and renderers
+        presentText("Welcome to OpenTok Chat.");
+    }
 
-The following new classes support custom video capturers and renderers:
 
-* PublisherKit -- Use this class to use a custom video capturer and video renderer for
-  an audio-video stream to publish to an OpenTok session. Note that the Publisher class,
-  which uses the iOS camera as a direct video feed, is a subclass of PublisherKit.
+### Sending and receiving messages in the session
 
-* SubscriberKit -- Use this class to use a custom video renderer for an audio-video stream.
-  Note that the Subscriber class, which displays the video stream unaltered, is a subclass
-  of SubscriberKit.
+The MultipartyActive class instantiates MySession class, which is a subclass of the Session
+class, defined in the OpenTok Android SDK. It includes method that use the signaling API.
 
-* BaseVideoCapturer -- Use this interface is to provide video data to an PublisherKit object.
-  You can extend this class to create your own custom video capturer.
+The `sendChatMessage()` method is called when the user enters a text message in the app (and taps
+the Enter button):
 
-* BaseVideoRenderer -- Use this interface is to render video data in an PublisherKit
-  object or SubscriberKit object. Use the BaseVideoCapturer.CaptureSettings class to define
-  settings for the video renderer.
+    public void sendChatMessage(String message) {
+        sendSignal("chat", message);
+        presentMessage("Me", message);
+    }
+    
+The `sendSignal()` method is defined in the Session class. It sends a signal (defined by a type
+string and a data string) to all clients connected in the session.
 
-#### Signaling API
+(The presentMessage() method simply displays the message on the onscreen view.)
 
-The following methods support the new signaling API:
+The MySession class also implements the Session.SignalListener interface. This interface includes an
+`onSignalReceived()` method, which is called when the client receives a signal in the session. This
+includes signals sent by the local Android client. The `onSignal()` method only displays signals
+sent from other clients (since the `sendChatMessage()` method has already displayed messages send by
+the local client.) The `getConnection()` method of the `onSignalReceived()` method indicates the
+client that sent the signal. Compare this to the value returned by the `getConnection()` method
+(inherited from the Session class) to determine if the signal was sent by the local client:
 
-    Session.sendSignal(type, data)
-    Session.sendSignal(type, data, connections)
-    Session.Listener.onSignal(session, type, data, connection)
+    @Override
+    protected void onSignalReceived(String type, String data,
+            Connection connection) {
 
-#### Pause and resume notifications
+        String mycid = this.getConnection().getConnectionId();
+        String cid = connection.getConnectionId();
+        if (!cid.equals(mycid)) {
+            if ("chat".equals(type)) {
+                Player p = mPlayerConnection.get(cid);
+                if (p != null) {
+                    presentMessage(p.getName(), data);
+                }
+            }
+        }
+    }
 
-The Session includes onPause() and onResume() methods, which are called when the main activity
-pauses and resumes. Create a subclass of the Session class to override these methods, to define
-behavior when the activity pauses or resumes. (For example, in the onPause() method, you may want
-to disable video but not audio of streams in the session.)
+To see the signaling API in action:
 
-#### New runtime errors
+1. Open the app on an Android device. Then tap Hello World Subclassing.
 
-See the documentation for the OpentokError.ErrorCode enum.
+2. Open the browser_demo.html file (in the samples directory) in a text editor, and make sure it
+   uses the same API key and session ID as the Android app. Also, make sure that it uses a valid
+   OpenTok token for the session.
 
-#### New SubscriberKit.Listener.disconnected() method
+3. Open the browser_demo.html file on a web server.
 
-The SubscriberKit.Listener.disconnected() method is called when the subscriber's stream leaves
-the session.
+4. Click the Connect button on the web page. Then click the Publish button. Then click the
+   Signal button. Signals sent from the browser page are sent to the Android app (and to any other
+   clients connected to the session).
 
-#### New Session.Listener addPublisher() and removePublisher() methods
 
-The Session.Listener addPublisher() method is called when the client starts publishing a steam to
-the session. The removePublisher() method is called when the client stops publishing a steam to
-the session.
+Next steps
+----------
 
-Known issues
-------------
-
-* You cannot publish streams in the ADT Simulator. Build and deploy to a supported device.
-
-Bug Fixes
----------
-
-* If an Android device rotates while publishing a stream to a session being archived, the video
-  orientation in the archive recording adjusts accordingly. (For information on archiving, see
-  <http://tokbox.com/platform#archiving>.)
-
-Connect with TokBox and with other OpenTok developers
------------------------------------------------------
-
-Your comments and questions are welcome. Come join the conversation at the
-[OpenTok Android SDK forum](http://www.tokbox.com/forums/android).
-
-More information
-----------------
-
-See the reference documentation in the docs directory.
-
-For more information on OpenTok, go to <http://www.tokbox.com/>.
+For details on the full OpenTok Android API, see the [reference documentation](../docs/index.html).
