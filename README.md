@@ -1,4 +1,4 @@
-opentok-androd-sdk-demo
+opentok-androd-sdk-samples
 =======================
 
 This sample app is a basic sample app that shows the most basic features of the OpenTok 2.2
