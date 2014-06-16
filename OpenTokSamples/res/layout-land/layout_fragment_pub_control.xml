@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutPubFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    tools:context=".UIActivity" >
+
+    <RelativeLayout
+        android:id="@+id/publisherWidget"
+        android:layout_width="48dp"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true">
+
+        <ImageButton
+            android:id="@+id/mutePublisher"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_background"
+            android:src="@drawable/mute_pub" />
+
+        <ImageButton
+            android:id="@+id/swapCamera"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_background"
+            android:onClick="onCameraSwap"
+            android:src="@drawable/camera" />
+
+        <Button
+            android:id="@+id/endCall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/swapCamera"
+            android:layout_below="@+id/mutePublisher"
+            android:background="@drawable/button_background"
+            android:lines="1"
+            android:onClick="onEndCall"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:text="@string/endCall2"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:typeface="normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/mutePublisher"
+            android:background="@color/trans_white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/swapCamera"
+            android:background="@color/trans_white" />
+    </RelativeLayout>
+    
+</RelativeLayout>
