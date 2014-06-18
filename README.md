@@ -44,7 +44,6 @@ Testing the sample app
 
     The app should start on your connected device. The initial view of the app shows different
     processes you can run:
-
     * Hello World -- A simple example of publishing and subscribing to streams in a session
     * UI Controls-- Adds custom UI controls to the Hello World app
     * Custom Capturer -- Shows how to use a custom video capturer
