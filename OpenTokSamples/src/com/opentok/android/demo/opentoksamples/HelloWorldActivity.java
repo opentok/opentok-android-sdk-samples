@@ -165,7 +165,17 @@ public class HelloWorldActivity extends Activity implements
         }
         super.onBackPressed();
     }
-
+    
+    @Override
+    public void onDestroy() {
+        mNotificationManager.cancel(notificationId);
+        if (mSession != null) {
+            mSession.disconnect();
+        }
+        super.onDestroy();
+        finish();
+    }
+    
     public void reloadInterface() {
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -224,7 +234,7 @@ public class HelloWorldActivity extends Activity implements
 
     private void unsubscribeFromStream(Stream stream) {
         mStreams.remove(stream);
-        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+        if (mSubscriber.getStream().equals(stream)) {
             mSubscriberViewContainer.removeView(mSubscriber.getView());
             mSubscriber = null;
             if (!mStreams.isEmpty()) {
@@ -304,12 +314,6 @@ public class HelloWorldActivity extends Activity implements
     }
 
     @Override
-    public void onVideoDisabled(SubscriberKit subscriber) {
-        Log.i(LOGTAG,
-                "Video quality changed. It is disabled for the subscriber.");
-    }
-
-    @Override
     public void onVideoDataReceived(SubscriberKit subscriber) {
         Log.i(LOGTAG, "First frame received");
 
@@ -329,5 +333,17 @@ public class HelloWorldActivity extends Activity implements
         double screenDensity = this.getResources().getDisplayMetrics().density;
         return (int) (screenDensity * (double) dp);
     }
+
+	@Override
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
+	}
 
 }
