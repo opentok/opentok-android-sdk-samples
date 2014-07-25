@@ -22,17 +22,6 @@
             android:layout_alignParentBottom="true"
             android:background="@color/trans_white" />
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="48dp"
-            android:layout_height="fill_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
-            android:scaleType="center"
-            android:alpha="128"
-            android:src="@drawable/logo" />
-
         <ImageButton
             android:id="@+id/muteSubscriber"
             android:layout_width="48dp"
@@ -47,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@+id/muteSubscriber"
-            android:layout_toRightOf="@id/logo"
+            android:layout_alignParentLeft="true"
             android:gravity="center_vertical|right"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

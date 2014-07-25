@@ -304,12 +304,6 @@ public class HelloWorldActivity extends Activity implements
     }
 
     @Override
-    public void onVideoDisabled(SubscriberKit subscriber) {
-        Log.i(LOGTAG,
-                "Video quality changed. It is disabled for the subscriber.");
-    }
-
-    @Override
     public void onVideoDataReceived(SubscriberKit subscriber) {
         Log.i(LOGTAG, "First frame received");
 
@@ -329,5 +323,17 @@ public class HelloWorldActivity extends Activity implements
         double screenDensity = this.getResources().getDisplayMetrics().density;
         return (int) (screenDensity * (double) dp);
     }
+
+	@Override
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
+	}
 
 }

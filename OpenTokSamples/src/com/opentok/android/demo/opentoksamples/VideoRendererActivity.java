@@ -314,9 +314,15 @@ public class VideoRendererActivity extends Activity implements
 	}
 
 	@Override
-	public void onVideoDisabled(SubscriberKit subscriber) {
-		Log.i(LOGTAG,
-				"Video quality changed. It is disabled for the subscriber. ");
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
 	}
 
 	@Override

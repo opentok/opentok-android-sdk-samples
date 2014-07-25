@@ -312,11 +312,17 @@ public class VideoCapturerActivity extends Activity implements
         Log.i(LOGTAG, "Session exception: " + exception.getMessage());
     }
 
-    @Override
-    public void onVideoDisabled(SubscriberKit subscriber) {
+	@Override
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
         Log.i(LOGTAG,
-                "Video quality changed. It is disabled for the subscriber. ");
-    }
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
+	}
 
     @Override
     public void onVideoDataReceived(SubscriberKit subscriber) {
