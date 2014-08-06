@@ -194,7 +194,7 @@ public class VideoCapturerActivity extends Activity implements
 
     private void unsubscribeFromStream(Stream stream) {
         mStreams.remove(stream);
-        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+        if (mSubscriber.getStream().equals(stream)) {
             mSubscriberViewContainer.removeView(mSubscriber.getView());
             mSubscriber = null;
             if (!mStreams.isEmpty()) {
