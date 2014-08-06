@@ -392,7 +392,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     private void unsubscriberFromStream(Stream stream) {
         mStreams.remove(stream);
-        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+        if (mSubscriber.getStream().equals(stream)) {
             mSubscriberViewContainer.removeView(mSubscriber.getView());
             mSubscriber = null;
             if (!mStreams.isEmpty()) {
