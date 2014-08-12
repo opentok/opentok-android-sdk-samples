@@ -154,11 +154,6 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	}
 
 	@Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-	}
-	
-	@Override
 	public void onPause() {
 		super.onPause();
 
