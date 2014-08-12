@@ -121,7 +121,6 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i(LOGTAG, "ONCREATE");
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.voice_only_layout);
