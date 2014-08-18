@@ -1,7 +1,7 @@
 OpenTok Android SDK Samples
 ===========================
 
-This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.2.0](http://tokbox.com/opentok/libraries/client/android/).
+This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.3](http://tokbox.com/opentok/libraries/client/android/).
 
 *Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
@@ -506,6 +506,33 @@ OpenTok session:
         presentText("Welcome to OpenTok Chat.");
     }
 
+### Displaying an audio-level meter
+
+The VoiceOnlyActivity class adds an AudioLevelListener instance for the
+Subscriber:
+
+    subscriber
+        .setAudioLevelListener(new SubscriberKit.AudioLevelListener() {
+            @Override
+            public void onAudioLevelUpdated(
+                    SubscriberKit subscriber, float audioLevel) {
+                meterView.setMeterValue(audioLevel);
+            }
+        });
+
+This method is called periodically with updates to the Subscriber's audio level.
+The method updates the `meterView` element based on the audio level.
+
+Similarly, the VoiceOnlyActivity class adds an AudioLevelListener instance for
+the Publisher, which works similarly:
+
+    mPublisher.setAudioLevelListener(new PublisherKit.AudioLevelListener() {
+        @Override
+        public void onAudioLevelUpdated(PublisherKit publisher,
+                float audioLevel) {
+            meterView.setMeterValue(audioLevel);
+        }
+    });
 
 ### Sending and receiving messages in the session
 
