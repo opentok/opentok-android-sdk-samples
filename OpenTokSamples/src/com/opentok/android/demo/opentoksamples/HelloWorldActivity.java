@@ -165,7 +165,17 @@ public class HelloWorldActivity extends Activity implements
         }
         super.onBackPressed();
     }
-
+    
+    @Override
+    public void onDestroy() {
+        mNotificationManager.cancel(notificationId);
+        if (mSession != null) {
+            mSession.disconnect();
+        }
+        super.onDestroy();
+        finish();
+    }
+    
     public void reloadInterface() {
         mHandler.postDelayed(new Runnable() {
             @Override

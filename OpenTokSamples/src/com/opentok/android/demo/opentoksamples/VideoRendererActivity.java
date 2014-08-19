@@ -156,6 +156,16 @@ public class VideoRendererActivity extends Activity implements
 	}
 
 	@Override
+    public void onDestroy() {
+        mNotificationManager.cancel(notificationId);
+        if (mSession != null) {
+            mSession.disconnect();
+        }
+        super.onDestroy();
+        finish();
+    }
+	
+	@Override
 	public void onBackPressed() {
 		if (mSession != null) {
 			mSession.disconnect();
