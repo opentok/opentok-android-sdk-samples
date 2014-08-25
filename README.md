@@ -21,7 +21,7 @@ Testing the sample app
 1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
    Workspace. Choose the OpenTokSamples directory. Then click Finish.)
 
-   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so file.
+   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so or x86/libopentok.so file.
    Both of these libraries are required to develop apps that use the OpenTok 2.3 Android SDK.
    These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the 
    opentok-android-sdk-2.3.0.jar file and armeabi or x86 directory into the libs directory of your project
