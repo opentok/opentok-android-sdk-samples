@@ -296,6 +296,16 @@ public class UIActivity extends Activity implements Session.SessionListener,
             }
         }
     }
+    
+    @Override
+    public void onDestroy() {
+    	mNotificationManager.cancel(notificationId);
+    	if (mSession != null)  {
+    		mSession.disconnect();
+    	}
+    	super.onDestroy();
+    	finish();
+    }
 
     @Override
     public void onBackPressed() {
