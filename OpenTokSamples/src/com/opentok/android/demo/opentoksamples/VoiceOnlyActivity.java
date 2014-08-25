@@ -3,6 +3,7 @@ package com.opentok.android.demo.opentoksamples;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -133,6 +134,11 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 				R.drawable.unmute_pub), BitmapFactory.decodeResource(
 				getResources(), R.drawable.mute_pub));
 
+		ActionBar actionBar = getActionBar();
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+
+		
 		sessionConnect();
 	}
 
@@ -175,6 +181,23 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 				mSession.disconnect();
 			}
 		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (mSession != null) {
+			mSession.disconnect();
+		}
+		super.onDestroy();
+		finish();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (mSession != null) {
+			mSession.disconnect();
+		}
+		super.onBackPressed();
 	}
 
 	private void sessionConnect() {
