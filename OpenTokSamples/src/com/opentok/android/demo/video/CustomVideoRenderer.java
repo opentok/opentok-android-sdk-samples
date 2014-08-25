@@ -210,6 +210,10 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
             if (bb.remaining() == y_size + uv_size * 2) {
                 bb.position(0);
+
+                GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+                GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT , 1);
+
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
                 GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,

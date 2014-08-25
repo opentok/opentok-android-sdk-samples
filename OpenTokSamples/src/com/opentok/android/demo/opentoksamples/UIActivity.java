@@ -402,7 +402,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     private void unsubscriberFromStream(Stream stream) {
         mStreams.remove(stream);
-        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+        if (mSubscriber.getStream().equals(stream)) {
             mSubscriberViewContainer.removeView(mSubscriber.getView());
             mSubscriber = null;
             if (!mStreams.isEmpty()) {
@@ -638,11 +638,18 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     @Override
-    public void onVideoDisabled(SubscriberKit subscriber) {
-        Log.i(LOGTAG,
-                "Video quality changed. It is disabled for the subscriber.");
+    public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG, "Video disabled:" + reason);
         if (mSubscriber == subscriber) {
             setAudioOnlyView(true);
+        }
+    }
+
+    @Override
+    public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG, "Video enabled:" + reason);
+        if (mSubscriber == subscriber) {
+            setAudioOnlyView(false);
         }
     }
 
@@ -656,16 +663,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
     public void onStreamHasVideoChanged(Session session, Stream stream,
             boolean videoEnabled) {
         Log.i(LOGTAG, "Stream video changed");
-
-        if (mSubscriber != null
-                && (mSubscriber.getStream().getStreamId() == stream
-                        .getStreamId())) {
-            if (videoEnabled) {
-                setAudioOnlyView(true);
-            } else {
-                setAudioOnlyView(false);
-            }
-        }
     }
 
     @Override

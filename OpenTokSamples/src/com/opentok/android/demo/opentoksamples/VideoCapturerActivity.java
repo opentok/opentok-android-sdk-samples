@@ -204,7 +204,7 @@ public class VideoCapturerActivity extends Activity implements
 
     private void unsubscribeFromStream(Stream stream) {
         mStreams.remove(stream);
-        if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+        if (mSubscriber.getStream().equals(stream)) {
             mSubscriberViewContainer.removeView(mSubscriber.getView());
             mSubscriber = null;
             if (!mStreams.isEmpty()) {
@@ -322,11 +322,17 @@ public class VideoCapturerActivity extends Activity implements
         Log.i(LOGTAG, "Session exception: " + exception.getMessage());
     }
 
-    @Override
-    public void onVideoDisabled(SubscriberKit subscriber) {
+	@Override
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
         Log.i(LOGTAG,
-                "Video quality changed. It is disabled for the subscriber. ");
-    }
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
+	}
 
     @Override
     public void onVideoDataReceived(SubscriberKit subscriber) {

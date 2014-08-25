@@ -204,7 +204,7 @@ public class VideoRendererActivity extends Activity implements
 
 	private void unsubscribeFromStream(Stream stream) {
 		mStreams.remove(stream);
-		if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+		if (mSubscriber.getStream().equals(stream)) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
 			mSubscriber = null;
 			if (!mStreams.isEmpty()) {
@@ -324,9 +324,15 @@ public class VideoRendererActivity extends Activity implements
 	}
 
 	@Override
-	public void onVideoDisabled(SubscriberKit subscriber) {
-		Log.i(LOGTAG,
-				"Video quality changed. It is disabled for the subscriber. ");
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
 	}
 
 	@Override
