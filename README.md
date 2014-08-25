@@ -1,7 +1,7 @@
 OpenTok Android SDK Samples
 ===========================
 
-This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.2.0](http://tokbox.com/opentok/libraries/client/android/).
+This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.3](http://tokbox.com/opentok/libraries/client/android/).
 
 *Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
@@ -21,11 +21,11 @@ Testing the sample app
 1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
    Workspace. Choose the OpenTokSamples directory. Then click Finish.)
 
-   This project links to the opentok-android-sdk-2.2.jar file and the armeabi/libopentok.so file.
-   Both of these libraries are required to develop apps that use the OpenTok 2.2 Android SDK.
+   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so file.
+   Both of these libraries are required to develop apps that use the OpenTok 2.3 Android SDK.
    These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the 
-   opentok-android-sdk-2.2.jar file and armeabi directory into the libs directory of your project
-   in the ADT package explorer.) The opentok-android-sdk-2.2.jar file is available at
+   opentok-android-sdk-2.3.0.jar file and armeabi or x86 directory into the libs directory of your project
+   in the ADT package explorer.) The opentok-android-sdk-2.3.0.jar file is available at
    <http://tokbox.com/opentok/libraries/client/android/>.
    
 
@@ -506,6 +506,33 @@ OpenTok session:
         presentText("Welcome to OpenTok Chat.");
     }
 
+### Displaying an audio-level meter
+
+The VoiceOnlyActivity class adds an AudioLevelListener instance for the
+Subscriber:
+
+    subscriber
+        .setAudioLevelListener(new SubscriberKit.AudioLevelListener() {
+            @Override
+            public void onAudioLevelUpdated(
+                    SubscriberKit subscriber, float audioLevel) {
+                meterView.setMeterValue(audioLevel);
+            }
+        });
+
+This method is called periodically with updates to the Subscriber's audio level.
+The method updates the `meterView` element based on the audio level.
+
+Similarly, the VoiceOnlyActivity class adds an AudioLevelListener instance for
+the Publisher, which works similarly:
+
+    mPublisher.setAudioLevelListener(new PublisherKit.AudioLevelListener() {
+        @Override
+        public void onAudioLevelUpdated(PublisherKit publisher,
+                float audioLevel) {
+            meterView.setMeterValue(audioLevel);
+        }
+    });
 
 ### Sending and receiving messages in the session
 
