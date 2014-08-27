@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -161,6 +162,8 @@ public class VideoRendererActivity extends Activity implements
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onDestroy();
 		finish();
 	}
@@ -170,6 +173,8 @@ public class VideoRendererActivity extends Activity implements
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onBackPressed();
 	}
 
@@ -183,7 +188,13 @@ public class VideoRendererActivity extends Activity implements
 			}
 		}, 500);
 	}
-
+	
+	public void restartAudioMode() {
+    	AudioManager Audio =  (AudioManager) getSystemService(Context.AUDIO_SERVICE); 
+    	Audio.setMode(AudioManager.MODE_NORMAL);
+    	this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
+	
 	private void sessionConnect() {
 		if (mSession == null) {
 			mSession = new Session(this, OpenTokConfig.API_KEY,

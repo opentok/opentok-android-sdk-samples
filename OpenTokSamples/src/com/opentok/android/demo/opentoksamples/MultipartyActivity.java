@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
@@ -127,6 +128,8 @@ public class MultipartyActivity extends Activity {
     	if (mSession != null)  {
     		mSession.disconnect();
     	}
+    	restartAudioMode();
+    	
     	super.onDestroy();
     	finish();
     }
@@ -136,6 +139,8 @@ public class MultipartyActivity extends Activity {
         if (mSession != null) {
         	mSession.disconnect();
         }
+        restartAudioMode();
+        
         super.onBackPressed();
    	}
     
@@ -144,4 +149,11 @@ public class MultipartyActivity extends Activity {
     	mSession.sendChatMessage(mMessageEditText.getText().toString());
         mMessageEditText.setText("");
     }
+    
+    public void restartAudioMode() {
+    	AudioManager Audio =  (AudioManager) getSystemService(Context.AUDIO_SERVICE); 
+    	Audio.setMode(AudioManager.MODE_NORMAL);
+    	this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
+    
 }
