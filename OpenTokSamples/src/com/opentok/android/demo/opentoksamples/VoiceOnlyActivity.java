@@ -5,10 +5,15 @@ import java.util.HashMap;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -44,6 +49,10 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	HashMap<Stream, Subscriber> mSubscriberStream = new HashMap<Stream, Subscriber>();
 	MyAdapter mSubscriberAdapter = new MyAdapter(this, R.layout.voice_row);
 	Handler mHandler = new Handler();
+	
+	private NotificationCompat.Builder mNotifyBuilder;
+	NotificationManager mNotificationManager;
+	private int notificationId;
 
 	public class MyAdapter extends BaseAdapter {
 		private final Context mContext;
@@ -138,6 +147,7 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		sessionConnect();
 	}
@@ -161,6 +171,20 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 			mSession.onPause();
 		}
 
+		mNotifyBuilder = new NotificationCompat.Builder(this)
+				.setContentTitle(this.getTitle())
+				.setContentText(getResources().getString(R.string.notification))
+				.setSmallIcon(R.drawable.ic_launcher).setOngoing(true);
+
+		Intent notificationIntent = new Intent(this, VoiceOnlyActivity.class);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent intent = PendingIntent.getActivity(this, 0,
+				notificationIntent, 0);
+
+		mNotifyBuilder.setContentIntent(intent);
+		notificationId = (int) System.currentTimeMillis();
+		mNotificationManager.notify(notificationId, mNotifyBuilder.build());
 	}
 
 	@Override
@@ -170,6 +194,8 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 		if (mSession != null) {
 			mSession.onResume();
 		}
+		
+		mNotificationManager.cancel(notificationId);
 	}
 
 	@Override
@@ -177,6 +203,7 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 		super.onStop();
 
 		if (isFinishing()) {
+			mNotificationManager.cancel(notificationId);
 			if (mSession != null) {
 				mSession.disconnect();
 			}
@@ -185,9 +212,13 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	
 	@Override
 	public void onDestroy() {
+		
+		mNotificationManager.cancel(notificationId);
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onDestroy();
 		finish();
 	}
@@ -197,8 +228,16 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onBackPressed();
 	}
+	
+	public void restartAudioMode() {
+    	AudioManager Audio =  (AudioManager) getSystemService(Context.AUDIO_SERVICE); 
+    	Audio.setMode(AudioManager.MODE_NORMAL);
+    	this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
 
 	private void sessionConnect() {
 		if (mSession == null) {
