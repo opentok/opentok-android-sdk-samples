@@ -366,4 +366,13 @@ public class VideoRendererActivity extends Activity implements
 		return (int) (screenDensity * (double) dp);
 	}
 
+	@Override
+	public void onVideoDisableWarning(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
+	}
+
+	@Override
+	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
+	}
 }

@@ -53,6 +53,7 @@
                 android:layout_alignParentBottom="true"
                 android:src="@drawable/avatar" />
         </RelativeLayout>
+            
     </RelativeLayout>
 
     <RelativeLayout
@@ -85,6 +86,15 @@
 
     <RelativeLayout
         android:id="@+id/fragment_pub_status_container"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:layout_above="@+id/fragment_pub_container"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" >
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/fragment_sub_quality_container"
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:layout_above="@+id/fragment_pub_container"

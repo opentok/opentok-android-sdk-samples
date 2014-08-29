@@ -355,8 +355,17 @@ public class HelloWorldActivity extends Activity implements
 
 	@Override
 	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
-        Log.i(LOGTAG,
-                "Video enabled:" + reason);		
+        Log.i(LOGTAG,"Video enabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoDisableWarning(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
+	}
+
+	@Override
+	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
 	}
 
 }

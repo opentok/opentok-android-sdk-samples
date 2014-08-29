@@ -39,6 +39,8 @@ import com.opentok.android.demo.opentokhelloworld.R;
 import com.opentok.android.demo.ui.fragments.PublisherControlFragment;
 import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;
 import com.opentok.android.demo.ui.fragments.SubscriberControlFragment;
+import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment;
+import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment.CongestionLevel;
 
 public class UIActivity extends Activity implements Session.SessionListener,
         Session.PublisherListener, Session.ArchiveListener,
@@ -69,6 +71,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private SubscriberControlFragment mSubscriberFragment;
     private PublisherControlFragment mPublisherFragment;
     private PublisherStatusFragment mPublisherStatusFragment;
+    private SubscriberQualityFragment mSubscriberQualityFragment;
     private FragmentTransaction mFragmentTransaction;
 
     // Spinning wheel for loading subscriber view
@@ -77,7 +80,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private NotificationCompat.Builder mNotifyBuilder;
     NotificationManager mNotificationManager;
     private int notificationId;
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
             initSubscriberFragment();
             initPublisherFragment();
             initPublisherStatusFragment();
+            initSubscriberQualityFragment();
             mFragmentTransaction.commitAllowingStateLoss();
         }
 
@@ -198,6 +202,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 if (mSubscriber != null) {
                     mSubscriberFragment.showSubscriberWidget(true);
                     mSubscriberFragment.initSubscriberUI();
+                    setSubQualityMargins();
                 }
             }
         }, 0);
@@ -237,6 +242,14 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 .beginTransaction()
                 .add(R.id.fragment_pub_status_container,
                         mPublisherStatusFragment).commit();
+    }
+    
+    public void initSubscriberQualityFragment() {
+    	 mSubscriberQualityFragment = new SubscriberQualityFragment();
+         getFragmentManager()
+                 .beginTransaction()
+                 .add(R.id.fragment_sub_quality_container,
+                		 mSubscriberQualityFragment).commit();
     }
 
     @Override
@@ -614,9 +627,40 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 subLayoutParams.bottomMargin = subBottomMargin;
                 mSubscriberAudioOnlyView.setLayoutParams(subLayoutParams);
             }
+            
+            setSubQualityMargins();
         }
     }
 
+    public void setSubQualityMargins(){
+		 RelativeLayout.LayoutParams subQualityLayoutParams = (LayoutParams) mSubscriberQualityFragment.getSubQualityContainer().getLayoutParams();
+		 boolean pubControlBarVisible = mPublisherFragment.isMPublisherWidgetVisible();
+	     boolean pubStatusBarVisible = mPublisherStatusFragment
+	                .isMPubStatusWidgetVisible();
+	     RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) mPublisherFragment
+	                .getMPublisherContainer().getLayoutParams();
+	     RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
+	                .getMPubStatusContainer().getLayoutParams();
+
+		 
+	     int bottomMargin = 0;
+	      //control pub fragment
+		 if ( pubControlBarVisible ) {
+			 bottomMargin = pubControlLayoutParams.height;
+		 }
+		 if ( pubStatusBarVisible ) {
+			 bottomMargin = pubStatusLayoutParams.height;
+		 }
+		 
+		 if (bottomMargin == 0 ){
+			 subQualityLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		 }
+		 
+		 subQualityLayoutParams.bottomMargin = bottomMargin;
+		 mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(subQualityLayoutParams);
+	
+    }
+    
     @Override
     public void onPublisherRemoved(Session session, PublisherKit publisher) {
         Log.i(LOGTAG, "The publisher stops streaming");
@@ -658,6 +702,12 @@ public class UIActivity extends Activity implements Session.SessionListener,
         if (mSubscriber == subscriber) {
             setAudioOnlyView(true);
         }
+        
+        if (reason.equals("quality")){
+        	mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
+        	setSubQualityMargins();
+        	mSubscriberQualityFragment.showSubscriberWidget(true);
+        }
     }
 
     @Override
@@ -666,6 +716,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
         if (mSubscriber == subscriber) {
             setAudioOnlyView(false);
         }
+        mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
+        mSubscriberQualityFragment.showSubscriberWidget(false);
     }
 
     @Override
@@ -709,6 +761,10 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
         mPublisherStatusFragment.updateArchivingUI(false);
         setPubViewMargins();
+        
+        if (mSubscriber != null) {
+            setSubQualityMargins();
+        }
     }
 
     /**
@@ -722,5 +778,20 @@ public class UIActivity extends Activity implements Session.SessionListener,
         double screenDensity = getResources().getDisplayMetrics().density;
         return (int) (screenDensity * (double) dp);
     }
+
+    @Override
+	public void onVideoDisableWarning(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
+		mSubscriberQualityFragment.setCongestion(CongestionLevel.Mid);
+		setSubQualityMargins();
+		mSubscriberQualityFragment.showSubscriberWidget(true);
+	}
+
+	@Override
+	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
+		mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
+		mSubscriberQualityFragment.showSubscriberWidget(false);
+	}
 
 }
