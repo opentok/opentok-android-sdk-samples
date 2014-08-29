@@ -139,6 +139,12 @@ public class UIActivity extends Activity implements Session.SessionListener,
                         .remove(mSubscriberFragment).commit();
 
                 initSubscriberFragment();
+                
+                if (mSubscriberQualityFragment.getCongestion() != null ){
+                	getFragmentManager().beginTransaction()
+                    .remove(mSubscriberQualityFragment).commit();
+                	initSubscriberQualityFragment();
+                }
             }
         }
         if (mPublisher != null) {
@@ -202,7 +208,11 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 if (mSubscriber != null) {
                     mSubscriberFragment.showSubscriberWidget(true);
                     mSubscriberFragment.initSubscriberUI();
-                    setSubQualityMargins();
+                    
+                    if (mSubscriberQualityFragment.getCongestion() != CongestionLevel.Low) {
+                    	setSubQualityMargins();
+                    	mSubscriberQualityFragment.showSubscriberWidget(true);
+                    }
                 }
             }
         }, 0);
@@ -644,6 +654,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
 		 
 	     int bottomMargin = 0;
+	  
 	      //control pub fragment
 		 if ( pubControlBarVisible ) {
 			 bottomMargin = pubControlLayoutParams.height;
@@ -655,6 +666,12 @@ public class UIActivity extends Activity implements Session.SessionListener,
 		 if (bottomMargin == 0 ){
 			 subQualityLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		 }
+		 
+		 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+	            if (!pubStatusBarVisible) {
+	            	subQualityLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+	            }
+	     }
 		 
 		 subQualityLayoutParams.bottomMargin = bottomMargin;
 		 mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(subQualityLayoutParams);
@@ -675,6 +692,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     public void onConnected(SubscriberKit subscriber) {
         mSubscriberFragment.showSubscriberWidget(true);
         mSubscriberFragment.initSubscriberUI();
+   
     }
 
     @Override

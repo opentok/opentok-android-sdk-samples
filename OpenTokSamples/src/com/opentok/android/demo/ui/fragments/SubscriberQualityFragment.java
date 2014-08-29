@@ -29,7 +29,7 @@ public class SubscriberQualityFragment extends Fragment  {
 	private RelativeLayout mSubQualityContainer;
 	private UIActivity openTokActivity;
 
-    private CongestionLevel congestion;
+    private CongestionLevel congestion = CongestionLevel.Low;
     
     public enum CongestionLevel {
     	 High(2), Mid(1), Low(0);
