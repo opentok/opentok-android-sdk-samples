@@ -185,9 +185,14 @@ public class MultipartyActivity extends Activity {
    	}
     
     public void onClickSend(View v) {
-    	Log.i(LOGTAG, "Sending a chat message");
-    	mSession.sendChatMessage(mMessageEditText.getText().toString());
-        mMessageEditText.setText("");
+    	if(mMessageEditText.getText().toString().compareTo("") == 0){
+    		Log.i(LOGTAG, "Cannot Send - Empty String Message");
+    	}
+    	else{
+    		Log.i(LOGTAG, "Sending a chat message");
+    		mSession.sendChatMessage(mMessageEditText.getText().toString());
+    		mMessageEditText.setText("");
+    	}
     }
     
     public void restartAudioMode() {
