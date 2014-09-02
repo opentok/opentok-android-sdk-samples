@@ -18,5 +18,6 @@
     <string name="archivingOn">Archiving on</string>
     <string name="archivingOff">Archiving off</string>
     <string name="notification">Ongoing call</string>
+    <string name="clearNotificationService">Clear Notification</string>
 
 </resources>

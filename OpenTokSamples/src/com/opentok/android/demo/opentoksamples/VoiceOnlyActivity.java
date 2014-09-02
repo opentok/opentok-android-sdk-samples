@@ -7,12 +7,15 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,7 +37,9 @@ import com.opentok.android.Session.SessionListener;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+import com.opentok.android.demo.config.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.config.ClearNotificationService.ClearBinder;
 import com.opentok.android.demo.opentokhelloworld.R;
 import com.opentok.android.demo.ui.MeterView;
 import com.opentok.android.demo.ui.MeterView.OnClickListener;
@@ -50,9 +55,10 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	MyAdapter mSubscriberAdapter = new MyAdapter(this, R.layout.voice_row);
 	Handler mHandler = new Handler();
 	
+	private boolean mIsBound = false;
 	private NotificationCompat.Builder mNotifyBuilder;
 	NotificationManager mNotificationManager;
-	private int notificationId;
+	ServiceConnection mConnection;
 
 	public class MyAdapter extends BaseAdapter {
 		private final Context mContext;
@@ -183,27 +189,56 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 				notificationIntent, 0);
 
 		mNotifyBuilder.setContentIntent(intent);
-		notificationId = (int) System.currentTimeMillis();
-		mNotificationManager.notify(notificationId, mNotifyBuilder.build());
+		if(mConnection == null){	    
+			mConnection = new ServiceConnection() {
+				@Override
+				public void onServiceConnected(ComponentName className,IBinder binder){
+					((ClearBinder) binder).service.startService(new Intent(VoiceOnlyActivity.this, ClearNotificationService.class));
+					NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);					
+					mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
+				}
+
+				@Override
+				public void onServiceDisconnected(ComponentName className) {
+					mConnection = null;
+				}
+
+			};
+		}
+
+		if(!mIsBound){
+			bindService(new Intent(VoiceOnlyActivity.this,
+					ClearNotificationService.class), mConnection,
+					Context.BIND_AUTO_CREATE);
+			mIsBound = true;
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-
+		
+		if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
 		if (mSession != null) {
 			mSession.onResume();
 		}
 		
-		mNotificationManager.cancel(notificationId);
+		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-
+		
+		if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
 		if (isFinishing()) {
-			mNotificationManager.cancel(notificationId);
+			mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 			if (mSession != null) {
 				mSession.disconnect();
 			}
@@ -212,8 +247,12 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	
 	@Override
 	public void onDestroy() {
+		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+		if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
 		
-		mNotificationManager.cancel(notificationId);
 		if (mSession != null) {
 			mSession.disconnect();
 		}
