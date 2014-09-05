@@ -28,30 +28,22 @@
             android:visibility="gone" >
 
             <ImageView
-                android:id="@+id/noVideo"
+                android:id="@+id/avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/avatar"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="28dp"
-                android:src="@drawable/no_video" />
+                android:src="@drawable/avatar" />
 
             <ImageView
                 android:id="@+id/speakerActive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/noVideo"
-                android:layout_below="@+id/noVideo"
-                android:layout_marginTop="21dp"
+                android:layout_alignTop="@+id/avatar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="92dp"
                 android:src="@drawable/speaker_active" />
 
-            <ImageView
-                android:id="@+id/avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:src="@drawable/avatar" />
         </RelativeLayout>
             
     </RelativeLayout>

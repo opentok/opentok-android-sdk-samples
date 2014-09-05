@@ -31,22 +31,6 @@
             android:visibility="gone" >
 
             <ImageView
-                android:id="@+id/noVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/speakerActive"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="18dp"
-                android:src="@drawable/no_video" />
-
-            <ImageView
-                android:id="@+id/speakerActive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/speaker_active" />
-
-            <ImageView
                 android:id="@+id/avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,6 +38,16 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/avatar" />
+
+            <ImageView
+                android:id="@+id/speakerActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="83dp"
+                android:src="@drawable/speaker_active" />
+
         </RelativeLayout>
     </RelativeLayout>
 

@@ -433,9 +433,11 @@ public class UIActivity extends Activity implements Session.SessionListener,
         mSubscriber.setSubscriberListener(this);
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
-        // start loading spinning
-        mLoadingSub.setVisibility(View.VISIBLE);
-
+        
+        if ( mSubscriber.getSubscribeToVideo() ) {
+        	// start loading spinning
+        	mLoadingSub.setVisibility(View.VISIBLE);
+        }
     }
 
     private void unsubscriberFromStream(Stream stream) {
@@ -539,7 +541,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 mSubscriber = null;
                 findViewById(R.id.avatar).setVisibility(View.GONE);
                 findViewById(R.id.speakerActive).setVisibility(View.GONE);
-                findViewById(R.id.noVideo).setVisibility(View.GONE);
                 mSubscriberVideoOnly = false;
                 if (!mStreams.isEmpty()) {
                     subscribeToStream(mStreams.get(0));
@@ -692,7 +693,11 @@ public class UIActivity extends Activity implements Session.SessionListener,
     public void onConnected(SubscriberKit subscriber) {
         mSubscriberFragment.showSubscriberWidget(true);
         mSubscriberFragment.initSubscriberUI();
-   
+        
+        //marinas
+        mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
+    	setSubQualityMargins();
+    	mSubscriberQualityFragment.showSubscriberWidget(true);
     }
 
     @Override
