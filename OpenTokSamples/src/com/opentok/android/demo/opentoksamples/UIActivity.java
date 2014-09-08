@@ -691,6 +691,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     @Override
     public void onConnected(SubscriberKit subscriber) {
+    	subscriber.setSubscribeToVideo(false);
+    	mLoadingSub.setVisibility(View.GONE);
         mSubscriberFragment.showSubscriberWidget(true);
         mSubscriberFragment.initSubscriberUI();
         
@@ -726,7 +728,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
             setAudioOnlyView(true);
         }
         
-        if (reason.equals("quality")){
+        if (reason.equals("quality")) {
         	mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
         	setSubQualityMargins();
         	mSubscriberQualityFragment.showSubscriberWidget(true);
@@ -739,8 +741,10 @@ public class UIActivity extends Activity implements Session.SessionListener,
         if (mSubscriber == subscriber) {
             setAudioOnlyView(false);
         }
-        mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
-        mSubscriberQualityFragment.showSubscriberWidget(false);
+        if (reason.equals("quality")) {
+        	mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
+            mSubscriberQualityFragment.showSubscriberWidget(false);
+        } 
     }
 
     @Override
