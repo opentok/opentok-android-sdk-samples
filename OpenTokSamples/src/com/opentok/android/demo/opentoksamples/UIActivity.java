@@ -6,12 +6,16 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -34,8 +38,11 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+import com.opentok.android.demo.config.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.config.ClearNotificationService.ClearBinder;
 import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.ui.AudioLevelView;
 import com.opentok.android.demo.ui.fragments.PublisherControlFragment;
 import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;
 import com.opentok.android.demo.ui.fragments.SubscriberControlFragment;
@@ -76,11 +83,14 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     // Spinning wheel for loading subscriber view
     private ProgressBar mLoadingSub;
+    
+    private AudioLevelView audioLevelView;
 
-    private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    private int notificationId;
-  
+	private boolean mIsBound = false;
+	private NotificationCompat.Builder mNotifyBuilder;
+	NotificationManager mNotificationManager;
+	ServiceConnection mConnection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,6 +187,10 @@ public class UIActivity extends Activity implements Session.SessionListener,
         mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberView);
         mSubscriberAudioOnlyView = (RelativeLayout) findViewById(R.id.audioOnlyView);
 
+        //Initialize 
+        audioLevelView = (AudioLevelView)findViewById(R.id.subscribermeter);
+        	audioLevelView.setIcons(BitmapFactory.decodeResource(getResources(),
+     					R.drawable.headset));
         // Attach running video views
         if (mPublisher != null) {
             attachPublisherView(mPublisher);
@@ -286,15 +300,42 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(intent);
-        notificationId = (int) System.currentTimeMillis();
-        mNotificationManager.notify(notificationId, mNotifyBuilder.build());
+        if(mConnection == null){	    
+	    	mConnection = new ServiceConnection() {
+	    		@Override
+	    		public void onServiceConnected(ComponentName className,IBinder binder){
+	    			((ClearBinder) binder).service.startService(new Intent(UIActivity.this, ClearNotificationService.class));
+	    			NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);					
+	    			mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
+	    		}
+
+	    		@Override
+	    		public void onServiceDisconnected(ComponentName className) {
+	    			mConnection = null;
+	    		}
+
+	    	};
+	    }
+
+		if(!mIsBound){
+			Log.d(LOGTAG, "mISBOUND GOT CALLED");
+			bindService(new Intent(UIActivity.this,
+					ClearNotificationService.class), mConnection,
+					Context.BIND_AUTO_CREATE);
+			mIsBound = true;
+		}
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        
+        if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
+        
         if (!resumeHasRun) {
             resumeHasRun = true;
             return;
@@ -304,7 +345,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
             }
         }
 
-        mNotificationManager.cancel(notificationId);
+        mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 
         reloadInterface();
     }
@@ -312,9 +353,13 @@ public class UIActivity extends Activity implements Session.SessionListener,
     @Override
     public void onStop() {
         super.onStop();
-
+        
+        if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
         if (isFinishing()) {
-            mNotificationManager.cancel(notificationId);
+            mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
             if (mSession != null) {
                 mSession.disconnect();
             }
@@ -323,7 +368,12 @@ public class UIActivity extends Activity implements Session.SessionListener,
     
     @Override
     public void onDestroy() {
-    	mNotificationManager.cancel(notificationId);
+    	mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+    	if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
+    	
     	if (mSession != null)  {
     		mSession.disconnect();
     	}
@@ -465,10 +515,22 @@ public class UIActivity extends Activity implements Session.SessionListener,
             AlphaAnimation aa = new AlphaAnimation(1.0f, 0.0f);
             aa.setDuration(ANIMATION_DURATION);
             subStatusText.startAnimation(aa);
+            
+            
+            mSubscriber
+			.setAudioLevelListener(new SubscriberKit.AudioLevelListener() {
+				@Override
+				public void onAudioLevelUpdated(
+						SubscriberKit subscriber, float audioLevel) {
+					audioLevelView.setMeterValue(audioLevel);
+				}
+			});
         } else {
             if (!mSubscriberVideoOnly) {
                 mSubscriber.getView().setVisibility(View.VISIBLE);
                 mSubscriberAudioOnlyView.setVisibility(View.GONE);
+
+    			mSubscriber.setAudioLevelListener(null);
             }
         }
     }
@@ -540,7 +602,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 mSubscriberViewContainer.removeView(mSubscriber.getView());
                 mSubscriber = null;
                 findViewById(R.id.avatar).setVisibility(View.GONE);
-                findViewById(R.id.speakerActive).setVisibility(View.GONE);
                 mSubscriberVideoOnly = false;
                 if (!mStreams.isEmpty()) {
                     subscribeToStream(mStreams.get(0));
@@ -691,7 +752,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     @Override
     public void onConnected(SubscriberKit subscriber) {
-    	subscriber.setSubscribeToVideo(false);
     	mLoadingSub.setVisibility(View.GONE);
         mSubscriberFragment.showSubscriberWidget(true);
         mSubscriberFragment.initSubscriberUI();
@@ -700,6 +760,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
     	setSubQualityMargins();
     	mSubscriberQualityFragment.showSubscriberWidget(true);
+    	setAudioOnlyView(true);
     }
 
     @Override

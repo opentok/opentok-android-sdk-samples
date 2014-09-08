@@ -29,7 +29,14 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:visibility="gone" >
-
+            
+			<com.opentok.android.demo.ui.AudioLevelView
+		 	    android:id="@+id/subscribermeter"
+		 	    android:layout_width="fill_parent"
+		 	    android:layout_height="fill_parent"
+		 	    android:layout_alignParentRight="true"
+		 	    android:layout_alignParentTop="true" />
+			
             <ImageView
                 android:id="@+id/avatar"
                 android:layout_width="wrap_content"
@@ -38,15 +45,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/avatar" />
-
-            <ImageView
-                android:id="@+id/speakerActive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="83dp"
-                android:src="@drawable/speaker_active" />
 
         </RelativeLayout>
     </RelativeLayout>

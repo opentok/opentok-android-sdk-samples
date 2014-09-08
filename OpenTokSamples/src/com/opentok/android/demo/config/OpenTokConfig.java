@@ -14,6 +14,6 @@ public class OpenTokConfig {
 	// Subscribe to a stream published by this client. Set to false to subscribe
     // to other clients' streams only.
     public static final boolean SUBSCRIBE_TO_SELF = true;
-  
-	
+    
+   
 }
