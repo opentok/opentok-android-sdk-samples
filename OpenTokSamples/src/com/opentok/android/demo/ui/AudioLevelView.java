@@ -1,6 +1,6 @@
 package com.opentok.android.demo.ui;
 
-import com.opentok.android.demo.ui.MeterView.OnClickListener;
+import com.opentok.android.demo.opentokhelloworld.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -37,9 +37,9 @@ public class AudioLevelView extends View {
 
 	private void init() {
 		mPaint.setStyle(Style.FILL);
-		mPaint.setColor(0xff1f1f1f);
+		mPaint.setColor(getResources().getColor(R.color.black_grey));
 		mPaintGradient.setStyle(Style.FILL);
-		mPaintGradient.setColor(0xff98CE00);
+		mPaintGradient.setColor(getResources().getColor(R.color.init_gradient));
 	}
 
 	public interface OnClickListener {
@@ -48,9 +48,10 @@ public class AudioLevelView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		float radius = 500 * 0.5f;
 		canvas.drawCircle(getWidth(), 0,
-				500 * 0.5f, mPaint);
-
+				radius, mPaint);
+		
 		if (!mMute) {
 			if (mHeadset != null) {
 				canvas.drawBitmap(mHeadset,
@@ -58,8 +59,7 @@ public class AudioLevelView extends View {
 						mHeadset.getHeight() * 0.5f, mPaint);
 			}
 			canvas.drawCircle(getWidth(), 0,
-					500 * mValue, mPaintGradient);
-
+					radius*mValue, mPaintGradient);
 		} 
 
 	}
@@ -78,6 +78,7 @@ public class AudioLevelView extends View {
 			level /= -floor;
 		}
 		mValue = level;
+
 		// force redraw
 		invalidate();
 	}
@@ -91,7 +92,7 @@ public class AudioLevelView extends View {
 		mBounds.bottom = (int) (h * 0.90);
 		// Update gradient
 		mPaintGradient.setShader(new RadialGradient(w / 2, h / 2, h / 2,
-				0xff98CE00, 0x8098CE00, TileMode.CLAMP));
+				getResources().getColor(R.color.color0_gradient), getResources().getColor(R.color.color1_gradient), TileMode.CLAMP));
 
 	}
 

@@ -39,7 +39,8 @@
                 android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/avatar" />
+                android:background="@drawable/avatar"
+                />
         </RelativeLayout>
             
     </RelativeLayout>
@@ -86,6 +87,7 @@
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:layout_above="@+id/fragment_pub_container"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone" >
     </RelativeLayout>

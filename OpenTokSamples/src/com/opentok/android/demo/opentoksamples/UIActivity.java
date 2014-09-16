@@ -50,7 +50,7 @@ import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment;
 import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment.CongestionLevel;
 
 public class UIActivity extends Activity implements Session.SessionListener,
-        Session.PublisherListener, Session.ArchiveListener,
+       	Session.ArchiveListener,
         Session.StreamPropertiesListener, Publisher.PublisherListener,
         Subscriber.VideoListener, Subscriber.SubscriberListener,
         SubscriberControlFragment.SubscriberCallbacks,
@@ -85,7 +85,9 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private ProgressBar mLoadingSub;
     
     private AudioLevelView audioLevelView;
-
+    
+    private CongestionLevel congestion = CongestionLevel.Low;
+    
 	private boolean mIsBound = false;
 	private NotificationCompat.Builder mNotifyBuilder;
 	NotificationManager mNotificationManager;
@@ -149,8 +151,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                         .remove(mSubscriberFragment).commit();
 
                 initSubscriberFragment();
-                
-                if (mSubscriberQualityFragment.getCongestion() != null ){
+                if (mSubscriberQualityFragment != null ){
                 	getFragmentManager().beginTransaction()
                     .remove(mSubscriberQualityFragment).commit();
                 	initSubscriberQualityFragment();
@@ -189,13 +190,13 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
         //Initialize 
         audioLevelView = (AudioLevelView)findViewById(R.id.subscribermeter);
-        	audioLevelView.setIcons(BitmapFactory.decodeResource(getResources(),
+        audioLevelView.setIcons(BitmapFactory.decodeResource(getResources(),
      					R.drawable.headset));
         // Attach running video views
         if (mPublisher != null) {
             attachPublisherView(mPublisher);
         }
-
+         
         // show subscriber status
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -206,6 +207,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                     if (mSubscriberVideoOnly) {
                         mSubscriber.getView().setVisibility(View.GONE);
                         setAudioOnlyView(true);
+                        congestion = CongestionLevel.High;
                     }
                 }
             }
@@ -222,9 +224,11 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 if (mSubscriber != null) {
                     mSubscriberFragment.showSubscriberWidget(true);
                     mSubscriberFragment.initSubscriberUI();
+                    Log.i("MARINAS", "marinas congestion"+ congestion);
                     
-                    if (mSubscriberQualityFragment.getCongestion() != CongestionLevel.Low) {
+                    if (congestion != CongestionLevel.Low) {
                     	setSubQualityMargins();
+                    	mSubscriberQualityFragment.setCongestion(congestion);
                     	mSubscriberQualityFragment.showSubscriberWidget(true);
                     }
                 }
@@ -421,7 +425,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
             mSession.setSessionListener(this);
             mSession.setArchiveListener(this);
             mSession.setStreamPropertiesListener(this);
-            mSession.setPublisherListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         }
     }
@@ -538,18 +541,23 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private OnClickListener onViewClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            if (mPublisher != null) {
-                // check visibility of bars
-                mPublisherFragment.publisherClick();
-                if (archiving) {
-                    mPublisherStatusFragment.publisherClick();
-                }
+        	boolean visible = false;
+ 
+        	if (mPublisher != null) {
+        		 // check visibility of bars
+            	if (!mPublisherFragment.isMPublisherWidgetVisible()) {
+            		visible = true;
+            	}
+				mPublisherFragment.publisherClick();
+				if (archiving) {
+					mPublisherStatusFragment.publisherClick();
+				}
                 setPubViewMargins();
-            }
-            if (mSubscriber != null) {
-                mSubscriberFragment.subscriberClick();
-            }
+            	if (mSubscriber != null) {
+            		mSubscriberFragment.showSubscriberWidget(visible);
+            		mSubscriberFragment.initSubscriberUI();
+                }
+        	}
         }
     };
 
@@ -619,6 +627,10 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 subscribeToStream(stream);
             }
         }
+        mPublisherFragment.showPublisherWidget(true);
+        mPublisherFragment.initPublisherUI();
+        mPublisherStatusFragment.showPubStatusWidget(true);
+        mPublisherStatusFragment.initPubStatusUI();
     }
 
     @Override
@@ -632,17 +644,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
     @Override
     public void onError(Session session, OpentokError exception) {
         Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onPublisherAdded(Session session, PublisherKit publisher) {
-        Log.i(LOGTAG, "The publisher starts streaming");
-
-        // initializing publisher fragments UI
-        mPublisherFragment.showPublisherWidget(true);
-        mPublisherFragment.initPublisherUI();
-        mPublisherStatusFragment.showPubStatusWidget(true);
-        mPublisherStatusFragment.initPubStatusUI();
     }
 
     public void setPubViewMargins() {
@@ -705,45 +706,54 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     public void setSubQualityMargins(){
-		 RelativeLayout.LayoutParams subQualityLayoutParams = (LayoutParams) mSubscriberQualityFragment.getSubQualityContainer().getLayoutParams();
-		 boolean pubControlBarVisible = mPublisherFragment.isMPublisherWidgetVisible();
-	     boolean pubStatusBarVisible = mPublisherStatusFragment
-	                .isMPubStatusWidgetVisible();
-	     RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) mPublisherFragment
-	                .getMPublisherContainer().getLayoutParams();
-	     RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
-	                .getMPubStatusContainer().getLayoutParams();
+		RelativeLayout.LayoutParams subQualityLayoutParams = (LayoutParams) mSubscriberQualityFragment
+				.getSubQualityContainer().getLayoutParams();
+		boolean pubControlBarVisible = mPublisherFragment
+				.isMPublisherWidgetVisible();
+		boolean pubStatusBarVisible = mPublisherStatusFragment
+				.isMPubStatusWidgetVisible();
+		RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) mPublisherFragment
+				.getMPublisherContainer().getLayoutParams();
+		RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
+				.getMPubStatusContainer().getLayoutParams();
 
-		 
-	     int bottomMargin = 0;
-	  
-	      //control pub fragment
-		 if ( pubControlBarVisible ) {
-			 bottomMargin = pubControlLayoutParams.height;
-		 }
-		 if ( pubStatusBarVisible ) {
-			 bottomMargin = pubStatusLayoutParams.height;
-		 }
-		 
-		 if (bottomMargin == 0 ){
-			 subQualityLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		 }
-		 
-		 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-	            if (!pubStatusBarVisible) {
-	            	subQualityLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-	            }
-	     }
-		 
-		 subQualityLayoutParams.bottomMargin = bottomMargin;
-		 mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(subQualityLayoutParams);
-	
+		int bottomMargin = 0;
+
+		// control pub fragment
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			if (pubControlBarVisible) {
+				bottomMargin = pubControlLayoutParams.height;
+			}
+			if (pubStatusBarVisible && archiving) {
+				bottomMargin = pubStatusLayoutParams.height;
+			}
+			if (bottomMargin == 0) {
+				subQualityLayoutParams
+						.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			}
+		}
+
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			if (!pubControlBarVisible) {
+				subQualityLayoutParams
+						.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				bottomMargin = dpToPx(20);
+			}else {
+				subQualityLayoutParams.rightMargin = pubControlLayoutParams.width;
+				bottomMargin = dpToPx(20);
+			}
+			if (pubStatusBarVisible && archiving) {
+				bottomMargin = pubStatusLayoutParams.height + dpToPx(20);
+			}
+		}
+
+		subQualityLayoutParams.bottomMargin = bottomMargin;
+
+		mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(
+				subQualityLayoutParams);
+
     }
-    
-    @Override
-    public void onPublisherRemoved(Session session, PublisherKit publisher) {
-        Log.i(LOGTAG, "The publisher stops streaming");
-    }
+
 
     @Override
     public void onError(PublisherKit publisher, OpentokError exception) {
@@ -791,6 +801,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         
         if (reason.equals("quality")) {
         	mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
+        	congestion = CongestionLevel.High;
         	setSubQualityMargins();
         	mSubscriberQualityFragment.showSubscriberWidget(true);
         }
@@ -804,6 +815,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         }
         if (reason.equals("quality")) {
         	mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
+        	congestion = CongestionLevel.Low;
             mSubscriberQualityFragment.showSubscriberWidget(false);
         } 
     }
@@ -871,6 +883,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 	public void onVideoDisableWarning(SubscriberKit subscriber) {
 		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
 		mSubscriberQualityFragment.setCongestion(CongestionLevel.Mid);
+		congestion = CongestionLevel.Mid;
 		setSubQualityMargins();
 		mSubscriberQualityFragment.showSubscriberWidget(true);
 	}
@@ -879,7 +892,19 @@ public class UIActivity extends Activity implements Session.SessionListener,
 	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
 		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
 		mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
+		congestion = CongestionLevel.Low;
 		mSubscriberQualityFragment.showSubscriberWidget(false);
+	}
+
+	@Override
+	public void onStartStreaming(PublisherKit publisher) {
+		Log.i(LOGTAG,"Publisher starts streaming");
+	}
+
+	@Override
+	public void onStopStreaming(PublisherKit publisher) {
+		Log.i(LOGTAG,"Publisher stops streaming");
+		
 	}
 
 }
