@@ -55,8 +55,8 @@ public class AudioLevelView extends View {
 		if (!mMute) {
 			if (mHeadset != null) {
 				canvas.drawBitmap(mHeadset,
-						(getWidth() - mHeadset.getWidth() - 10),
-						mHeadset.getHeight() * 0.5f, mPaint);
+						(getWidth() - mHeadset.getWidth() - 30),
+						mHeadset.getHeight() * 0.3f, mPaint);
 			}
 			canvas.drawCircle(getWidth(), 0,
 					radius*mValue, mPaintGradient);

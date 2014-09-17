@@ -88,6 +88,7 @@
         android:layout_height="48dp"
         android:layout_above="@+id/fragment_pub_container"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone" >
     </RelativeLayout>

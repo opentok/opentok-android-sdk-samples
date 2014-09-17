@@ -224,10 +224,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 if (mSubscriber != null) {
                     mSubscriberFragment.showSubscriberWidget(true);
                     mSubscriberFragment.initSubscriberUI();
-                    Log.i("MARINAS", "marinas congestion"+ congestion);
                     
                     if (congestion != CongestionLevel.Low) {
-                    	setSubQualityMargins();
                     	mSubscriberQualityFragment.setCongestion(congestion);
                     	mSubscriberQualityFragment.showSubscriberWidget(true);
                     }
@@ -250,6 +248,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 }
             }
         }, 0);
+     
     }
 
     public void initSubscriberFragment() {
@@ -664,7 +663,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
             if (statusBarVisible && archiving) {
                 // height of publisher control bar + height of publisher status
                 // bar + 20 px
-
                 bottomMargin = pubControlLayoutParams.height
                         + pubStatusLayoutParams.height + dpToPx(20);
             } else {
@@ -722,33 +720,32 @@ public class UIActivity extends Activity implements Session.SessionListener,
 		// control pub fragment
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			if (pubControlBarVisible) {
-				bottomMargin = pubControlLayoutParams.height;
+				bottomMargin = pubControlLayoutParams.height + dpToPx(10);
 			}
 			if (pubStatusBarVisible && archiving) {
-				bottomMargin = pubStatusLayoutParams.height;
+				bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
 			}
 			if (bottomMargin == 0) {
-				subQualityLayoutParams
-						.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				bottomMargin = dpToPx(10);
 			}
+			subQualityLayoutParams.rightMargin = dpToPx(10);
 		}
 
 		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			if (!pubControlBarVisible) {
-				subQualityLayoutParams
-						.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-				bottomMargin = dpToPx(20);
+				subQualityLayoutParams.rightMargin = dpToPx(10);
+				bottomMargin = dpToPx(10);
 			}else {
 				subQualityLayoutParams.rightMargin = pubControlLayoutParams.width;
-				bottomMargin = dpToPx(20);
+				bottomMargin = dpToPx(10);
 			}
 			if (pubStatusBarVisible && archiving) {
-				bottomMargin = pubStatusLayoutParams.height + dpToPx(20);
+				bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
 			}
 		}
 
 		subQualityLayoutParams.bottomMargin = bottomMargin;
-
+		
 		mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(
 				subQualityLayoutParams);
 
@@ -765,12 +762,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
     	mLoadingSub.setVisibility(View.GONE);
         mSubscriberFragment.showSubscriberWidget(true);
         mSubscriberFragment.initSubscriberUI();
-        
-        //marinas
-        mSubscriberQualityFragment.setCongestion(CongestionLevel.High);
-    	setSubQualityMargins();
-    	mSubscriberQualityFragment.showSubscriberWidget(true);
-    	setAudioOnlyView(true);
     }
 
     @Override
