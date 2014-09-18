@@ -65,7 +65,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private ArrayList<Stream> mStreams = new ArrayList<Stream>();
     protected Handler mHandler = new Handler();
 
-    private boolean mSubscriberVideoOnly = false;
+    private boolean mSubscriberAudioOnly = false;
     private boolean archiving = false;
     private boolean resumeHasRun = false;
 
@@ -84,7 +84,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     // Spinning wheel for loading subscriber view
     private ProgressBar mLoadingSub;
     
-    private AudioLevelView audioLevelView;
+    private AudioLevelView mAudioLevelView;
     
     private CongestionLevel congestion = CongestionLevel.Low;
     
@@ -189,8 +189,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
         mSubscriberAudioOnlyView = (RelativeLayout) findViewById(R.id.audioOnlyView);
 
         //Initialize 
-        audioLevelView = (AudioLevelView)findViewById(R.id.subscribermeter);
-        audioLevelView.setIcons(BitmapFactory.decodeResource(getResources(),
+        mAudioLevelView = (AudioLevelView)findViewById(R.id.subscribermeter);
+        mAudioLevelView.setIcons(BitmapFactory.decodeResource(getResources(),
      					R.drawable.headset));
         // Attach running video views
         if (mPublisher != null) {
@@ -204,7 +204,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 if (mSubscriber != null) {
                     attachSubscriberView(mSubscriber);
 
-                    if (mSubscriberVideoOnly) {
+                    if (mSubscriberAudioOnly) {
                         mSubscriber.getView().setVisibility(View.GONE);
                         setAudioOnlyView(true);
                         congestion = CongestionLevel.High;
@@ -399,11 +399,16 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     public void reloadInterface() {
-        mHandler.postDelayed(new Runnable() {
+     	mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mSubscriber != null) {
+                if (mSubscriber != null) {	
                     attachSubscriberView(mSubscriber);
+                    if (mSubscriberAudioOnly) {
+                        mSubscriber.getView().setVisibility(View.GONE);
+                        setAudioOnlyView(true);
+                        congestion = CongestionLevel.High;
+                    }
                 }
             }
         }, 500);
@@ -474,6 +479,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
+        
         mSubscriberViewContainer.addView(subscriber.getView(), layoutParams);
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
@@ -504,7 +510,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     private void setAudioOnlyView(boolean audioOnlyEnabled) {
-        mSubscriberVideoOnly = audioOnlyEnabled;
+    	mSubscriberAudioOnly = audioOnlyEnabled;
 
         if (audioOnlyEnabled) {
             mSubscriber.getView().setVisibility(View.GONE);
@@ -524,11 +530,11 @@ public class UIActivity extends Activity implements Session.SessionListener,
 				@Override
 				public void onAudioLevelUpdated(
 						SubscriberKit subscriber, float audioLevel) {
-					audioLevelView.setMeterValue(audioLevel);
+					mAudioLevelView.setMeterValue(audioLevel);
 				}
 			});
         } else {
-            if (!mSubscriberVideoOnly) {
+            if (!mSubscriberAudioOnly) {
                 mSubscriber.getView().setVisibility(View.VISIBLE);
                 mSubscriberAudioOnlyView.setVisibility(View.GONE);
 
@@ -609,7 +615,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 mSubscriberViewContainer.removeView(mSubscriber.getView());
                 mSubscriber = null;
                 findViewById(R.id.avatar).setVisibility(View.GONE);
-                mSubscriberVideoOnly = false;
+                mSubscriberAudioOnly = false;
                 if (!mStreams.isEmpty()) {
                     subscribeToStream(mStreams.get(0));
                 }
@@ -690,7 +696,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         mPublisherViewContainer.setLayoutParams(pubLayoutParams);
 
         if (mSubscriber != null) {
-            if (mSubscriberVideoOnly) {
+            if (mSubscriberAudioOnly) {
                 RelativeLayout.LayoutParams subLayoutParams = (LayoutParams) mSubscriberAudioOnlyView
                         .getLayoutParams();
                 int subBottomMargin = 0;
@@ -714,7 +720,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
 				.getMPublisherContainer().getLayoutParams();
 		RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
 				.getMPubStatusContainer().getLayoutParams();
-
+		RelativeLayout.LayoutParams audioMeterLayoutParams = (LayoutParams) mAudioLevelView.getLayoutParams();
+				
 		int bottomMargin = 0;
 
 		// control pub fragment
@@ -735,13 +742,18 @@ public class UIActivity extends Activity implements Session.SessionListener,
 			if (!pubControlBarVisible) {
 				subQualityLayoutParams.rightMargin = dpToPx(10);
 				bottomMargin = dpToPx(10);
+				audioMeterLayoutParams.rightMargin = 0;
+				mAudioLevelView.setLayoutParams(audioMeterLayoutParams);
+			
 			}else {
 				subQualityLayoutParams.rightMargin = pubControlLayoutParams.width;
 				bottomMargin = dpToPx(10);
+				audioMeterLayoutParams.rightMargin = pubControlLayoutParams.width;
 			}
 			if (pubStatusBarVisible && archiving) {
 				bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
 			}
+			mAudioLevelView.setLayoutParams(audioMeterLayoutParams);
 		}
 
 		subQualityLayoutParams.bottomMargin = bottomMargin;

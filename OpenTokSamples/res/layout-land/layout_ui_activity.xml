@@ -34,7 +34,7 @@
 		 	    android:id="@+id/subscribermeter"
 		 	    android:layout_width="fill_parent"
 		 	    android:layout_height="fill_parent"
-		 	    android:layout_alignParentRight="true"
+		 	    android:layout_marginRight="48dp"
 		 	    android:layout_alignParentTop="true" />
 			
             <ImageView
