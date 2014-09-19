@@ -9,6 +9,7 @@
     <string name="helloworldrenderer">Custom Renderer</string>
     <string name="helloworldsubclassing">Multiparty</string>
     <string name="voinceonly">Voice Only</string>
+    <string name="audiodevice">Audio device</string>
     
     <string name="swapStr">Swap camera</string>
     <string name="endCall1">End call</string>

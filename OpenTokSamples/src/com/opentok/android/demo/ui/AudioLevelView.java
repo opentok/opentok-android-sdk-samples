@@ -1,6 +1,6 @@
 package com.opentok.android.demo.ui;
 
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.opentoksamples.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;

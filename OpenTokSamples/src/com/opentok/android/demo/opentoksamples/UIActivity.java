@@ -41,7 +41,7 @@ import com.opentok.android.SubscriberKit;
 import com.opentok.android.demo.config.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
 import com.opentok.android.demo.config.ClearNotificationService.ClearBinder;
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.opentoksamples.R;
 import com.opentok.android.demo.ui.AudioLevelView;
 import com.opentok.android.demo.ui.fragments.PublisherControlFragment;
 import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;

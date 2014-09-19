@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.opentok.android.demo.config.ClearNotificationService;
 import com.opentok.android.demo.config.ClearNotificationService.ClearBinder;
 import com.opentok.android.demo.multiparty.MySession;
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.opentoksamples.R;
 
 public class MultipartyActivity extends Activity {
 

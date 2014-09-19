@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.opentok.android.AudioDeviceManager;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -30,6 +31,7 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+import com.opentok.android.demo.audio.CustomAudioDevice;
 import com.opentok.android.demo.config.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
 import com.opentok.android.demo.config.ClearNotificationService.ClearBinder;
@@ -40,11 +42,12 @@ import com.opentok.android.demo.opentoksamples.R;
  * OpenTok 2.0 Android SDK. For more information, see the README.md file in the
  * samples directory.
  */
-public class HelloWorldActivity extends Activity implements
+public class AudioDeviceActivity extends Activity implements
         Session.SessionListener, Publisher.PublisherListener,
         Subscriber.VideoListener {
 
-    private static final String LOGTAG = "demo-hello-world";
+
+	private static final String LOGTAG = "demo-hello-world";
     private Session mSession;
     private Publisher mPublisher;
     private Subscriber mSubscriber;
@@ -64,27 +67,26 @@ public class HelloWorldActivity extends Activity implements
 	NotificationManager mNotificationManager;
 	ServiceConnection mConnection;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.i(LOGTAG, "ONCREATE");
-        super.onCreate(savedInstanceState);
+   
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main_layout);
-
-        ActionBar actionBar = getActionBar();
+		setContentView(R.layout.main_layout);
+		
+		ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
+		
         mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
-        mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
-        mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
+		mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
+		mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
 
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        mStreams = new ArrayList<Stream>();
-        sessionConnect();
-    }
-
+		mStreams = new ArrayList<Stream>();
+		sessionConnect();
+	}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -135,7 +137,7 @@ public class HelloWorldActivity extends Activity implements
         	mConnection = new ServiceConnection() {
         		@Override
         		public void onServiceConnected(ComponentName className,IBinder binder){
-        			((ClearBinder) binder).service.startService(new Intent(HelloWorldActivity.this, ClearNotificationService.class));
+        			((ClearBinder) binder).service.startService(new Intent(AudioDeviceActivity.this, ClearNotificationService.class));
         			NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);					
         			mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
         		}
@@ -149,7 +151,7 @@ public class HelloWorldActivity extends Activity implements
         }
 
         if(!mIsBound){
-        	bindService(new Intent(HelloWorldActivity.this,
+        	bindService(new Intent(AudioDeviceActivity.this,
         			ClearNotificationService.class), mConnection,
         			Context.BIND_AUTO_CREATE);
         	mIsBound = true;
@@ -248,10 +250,17 @@ public class HelloWorldActivity extends Activity implements
     
     private void sessionConnect() {
         if (mSession == null) {
-            mSession = new Session(HelloWorldActivity.this,
-                    OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
-            mSession.setSessionListener(this);
-            mSession.connect(OpenTokConfig.TOKEN);
+			// Add a custom audio device before session initialization
+			CustomAudioDevice customAudioDevice = new CustomAudioDevice(
+					AudioDeviceActivity.this);
+			AudioDeviceManager.setAudioDevice(customAudioDevice);
+			AudioDeviceManager.getAudioDevice().setCommunicationMode(
+					CustomAudioDevice.VOICE_COMMUNICATION);
+			
+			mSession = new Session(AudioDeviceActivity.this,
+					OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+			mSession.setSessionListener(this);
+			mSession.connect(OpenTokConfig.TOKEN);
         }
     }
 
@@ -259,7 +268,7 @@ public class HelloWorldActivity extends Activity implements
     public void onConnected(Session session) {
         Log.i(LOGTAG, "Connected to the session.");
         if (mPublisher == null) {
-            mPublisher = new Publisher(HelloWorldActivity.this, "publisher");
+            mPublisher = new Publisher(AudioDeviceActivity.this, "publisher");
             mPublisher.setPublisherListener(this);
             attachPublisherView(mPublisher);
             mSession.publish(mPublisher);
@@ -284,7 +293,7 @@ public class HelloWorldActivity extends Activity implements
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber(HelloWorldActivity.this, stream);
+        mSubscriber = new Subscriber(AudioDeviceActivity.this, stream);
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
         // start loading spinning
