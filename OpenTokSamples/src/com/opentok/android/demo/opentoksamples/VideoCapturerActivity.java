@@ -410,4 +410,23 @@ public class VideoCapturerActivity extends Activity implements
         return (int) (screenDensity * (double) dp);
     }
 
+    @Override
+	public void onVideoDisableWarning(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
+	}
+
+	@Override
+	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
+	}
+
+	@Override
+	public void onStartStreaming(PublisherKit publisher) {
+		Log.i(LOGTAG,"Publisher starts streaming");
+	}
+
+	@Override
+	public void onStopStreaming(PublisherKit publisher) {
+		Log.i(LOGTAG,"Publisher stops streaming");
+	}
 }
