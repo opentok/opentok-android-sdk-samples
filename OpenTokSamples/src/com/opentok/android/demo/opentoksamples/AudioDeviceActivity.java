@@ -254,8 +254,6 @@ public class AudioDeviceActivity extends Activity implements
 			CustomAudioDevice customAudioDevice = new CustomAudioDevice(
 					AudioDeviceActivity.this);
 			AudioDeviceManager.setAudioDevice(customAudioDevice);
-			AudioDeviceManager.getAudioDevice().setCommunicationMode(
-					CustomAudioDevice.VOICE_COMMUNICATION);
 			
 			mSession = new Session(AudioDeviceActivity.this,
 					OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);

@@ -5,6 +5,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.opentok.android.BaseAudioDevice;
+import com.opentok.android.DefaultAudioDevice;
+import com.opentok.android.BaseAudioDevice.AudioSettings;
+import com.opentok.android.BaseAudioDevice.OutputMode;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,6 +29,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 	private final static int NUM_CHANNELS_RENDERING = 1;
 
 	private final static int MAX_SAMPLES = 2 * 480 * 2; // Max 10 ms @ 48 kHz
+														// Stereo
 
 	private Context m_context;
 
@@ -286,7 +290,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 		m_bufferedPlaySamples = 0;
 
 		m_audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-		setCommunicationMode(m_audioMode);
+		setOutputMode(m_outputMode);
 
 		m_shutdownRenderThread = false;
 		new Thread(m_renderThread).start();
@@ -305,7 +309,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 		m_rendererLock.unlock();
 
 		unregisterHeadsetReceiver();
-		setSpeakerphoneOn(false);
+		m_audioManager.setSpeakerphoneOn(false);
 		m_audioManager.setMode(AudioManager.MODE_NORMAL);
 
 		return true;
@@ -438,13 +442,6 @@ public class CustomAudioDevice extends BaseAudioDevice {
 		}
 	};
 
-	public boolean setSpeakerphoneOn(boolean speakerphoneOn) {
-
-		m_audioManager.setSpeakerphoneOn(speakerphoneOn);
-
-		return true;
-	}
-
 	@Override
 	public AudioSettings getCaptureSettings() {
 		return this.m_captureSettings;
@@ -459,13 +456,13 @@ public class CustomAudioDevice extends BaseAudioDevice {
 	 * Communication modes handling
 	 */
 
-	public boolean setCommunicationMode(int mode) {
-		m_audioMode = mode;
-		if (mode == VOICE_COMMUNICATION) {
+	public boolean setOutputMode(OutputMode mode) {
+		m_outputMode = mode;
+		if (mode == OutputMode.Handset) {
 			unregisterHeadsetReceiver();
-			setSpeakerphoneOn(false);
+			m_audioManager.setSpeakerphoneOn(false);
 		} else {
-			setSpeakerphoneOn(true);
+			m_audioManager.setSpeakerphoneOn(true);
 			registerHeadsetReceiver();
 		}
 		return true;
@@ -477,9 +474,9 @@ public class CustomAudioDevice extends BaseAudioDevice {
 			if (intent.getAction().compareTo(Intent.ACTION_HEADSET_PLUG) == 0) {
 				int state = intent.getIntExtra("state", 0);
 				if (state == 0) {
-					setSpeakerphoneOn(true);
+					m_audioManager.setSpeakerphoneOn(true);
 				} else {
-					setSpeakerphoneOn(false);
+					m_audioManager.setSpeakerphoneOn(false);
 				}
 			}
 		}
@@ -510,16 +507,15 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
 	@Override
 	public void onPause() {
-		if (m_audioMode == VIDEO_COMMUNICATION) {
+		if (m_outputMode == OutputMode.SpeakerPhone) {
 			unregisterHeadsetReceiver();
 		}
 	}
 
 	@Override
 	public void onResume() {
-		if (m_audioMode == VIDEO_COMMUNICATION) {
+		if (m_outputMode == OutputMode.SpeakerPhone) {
 			registerHeadsetReceiver();
 		}
 	}
-
 }
