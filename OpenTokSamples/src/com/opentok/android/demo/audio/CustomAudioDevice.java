@@ -29,7 +29,6 @@ public class CustomAudioDevice extends BaseAudioDevice {
 	private final static int NUM_CHANNELS_RENDERING = 1;
 
 	private final static int MAX_SAMPLES = 2 * 480 * 2; // Max 10 ms @ 48 kHz
-														// Stereo
 
 	private Context m_context;
 
