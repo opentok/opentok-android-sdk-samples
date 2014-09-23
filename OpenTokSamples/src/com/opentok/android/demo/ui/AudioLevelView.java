@@ -42,10 +42,6 @@ public class AudioLevelView extends View {
 		mPaintGradient.setColor(getResources().getColor(R.color.init_gradient));
 	}
 
-	public interface OnClickListener {
-		public void onClick(MeterView view);
-	}
-
 	@Override
 	protected void onDraw(Canvas canvas) {
 		float radius = 500 * 0.5f;
@@ -61,7 +57,6 @@ public class AudioLevelView extends View {
 			canvas.drawCircle(getWidth(), 0,
 					radius*mValue, mPaintGradient);
 		} 
-
 	}
 	
 	public void setIcons(Bitmap headset) {
