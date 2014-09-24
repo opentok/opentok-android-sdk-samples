@@ -5,9 +5,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.opentok.android.BaseAudioDevice;
-import com.opentok.android.DefaultAudioDevice;
-import com.opentok.android.BaseAudioDevice.AudioSettings;
-import com.opentok.android.BaseAudioDevice.OutputMode;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -289,8 +286,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 		m_bufferedPlaySamples = 0;
 
 		m_audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-		setOutputMode(m_outputMode);
-
+		
 		m_shutdownRenderThread = false;
 		new Thread(m_renderThread).start();
 
@@ -456,7 +452,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 	 */
 
 	public boolean setOutputMode(OutputMode mode) {
-		m_outputMode = mode;
+		super.setOutputMode(mode);
 		if (mode == OutputMode.Handset) {
 			unregisterHeadsetReceiver();
 			m_audioManager.setSpeakerphoneOn(false);
@@ -506,14 +502,14 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
 	@Override
 	public void onPause() {
-		if (m_outputMode == OutputMode.SpeakerPhone) {
+		if (getOutputMode() == OutputMode.SpeakerPhone) {
 			unregisterHeadsetReceiver();
 		}
 	}
 
 	@Override
 	public void onResume() {
-		if (m_outputMode == OutputMode.SpeakerPhone) {
+		if (getOutputMode() == OutputMode.SpeakerPhone) {
 			registerHeadsetReceiver();
 		}
 	}

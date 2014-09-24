@@ -899,15 +899,4 @@ public class UIActivity extends Activity implements Session.SessionListener,
 		mSubscriberQualityFragment.showSubscriberWidget(false);
 	}
 
-	@Override
-	public void onStartStreaming(PublisherKit publisher) {
-		Log.i(LOGTAG,"Publisher starts streaming");
-	}
-
-	@Override
-	public void onStopStreaming(PublisherKit publisher) {
-		Log.i(LOGTAG,"Publisher stops streaming");
-		
-	}
-
 }
