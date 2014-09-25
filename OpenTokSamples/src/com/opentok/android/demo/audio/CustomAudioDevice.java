@@ -237,7 +237,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 					m_captureLock.unlock();
 				}
 
-				m_audioBus.writeCaptureData(m_recBuffer, samplesRead);
+				getAudioBus().writeCaptureData(m_recBuffer, samplesRead);
 				m_estimatedCaptureDelay = samplesRead * 1000 / SAMPLING_RATE;
 			}
 		}
@@ -387,7 +387,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
 						// Don't lock on audioBus calls
 						m_playBuffer.clear();
-						int samplesRead = m_audioBus.readRenderData(
+						int samplesRead = getAudioBus().readRenderData(
 								m_playBuffer, samplesToPlay);
 
 						// Log.d(LOG_TAG, "Samples read: " + samplesRead);

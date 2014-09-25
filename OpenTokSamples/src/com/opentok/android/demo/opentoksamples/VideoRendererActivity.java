@@ -419,13 +419,4 @@ public class VideoRendererActivity extends Activity implements
 		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
 	}
 
-	@Override
-	public void onStartStreaming(PublisherKit publisher) {
-		Log.i(LOGTAG,"Publisher starts streaming");
-	}
-
-	@Override
-	public void onStopStreaming(PublisherKit publisher) {
-		Log.i(LOGTAG,"Publisher stops streaming");
-	}
 }
