@@ -1,6 +1,6 @@
 package com.opentok.android.demo.ui.fragments;
 
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.opentoksamples.R;
 import com.opentok.android.demo.opentoksamples.UIActivity;
 
 import android.app.Activity;

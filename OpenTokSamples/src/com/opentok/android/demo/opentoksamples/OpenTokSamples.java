@@ -1,6 +1,6 @@
 package com.opentok.android.demo.opentoksamples;
 
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.opentoksamples.R;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -35,7 +35,9 @@ public class OpenTokSamples extends Activity {
 				getString(R.string.helloworldui),
 				getString(R.string.helloworldcapturer),
 				getString(R.string.helloworldrenderer),
-				getString(R.string.helloworldsubclassing) };
+				getString(R.string.helloworldsubclassing),
+				getString(R.string.voinceonly),
+				getString(R.string.audiodevice)};
 
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, activityNames);
@@ -58,6 +60,10 @@ public class OpenTokSamples extends Activity {
                     startHelloWorldVideoRenderer();
                 } else if (4 == position) {
                     startHelloWorldSubclassing();
+                } else if (5 == position) {
+                    startVoiceOnly();
+                } else if (6 == position) {
+                	startAudioDevice();
                 } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
@@ -112,7 +118,7 @@ public class OpenTokSamples extends Activity {
 
     /**
      * Starts the Hello-World app using a custom video capturer. See
-     * OpenTokVideoCapturer.java
+     * VideoCapturerActivity.java
      */
     public void startHelloWorldVideoCapturer() {
 
@@ -129,7 +135,7 @@ public class OpenTokSamples extends Activity {
 
     /**
      * Starts the Hello-World app using a custom video renderer. See
-     * OpenTokVideoRenderer.java
+     * VideoRendererActivity.java
      */
     public void startHelloWorldVideoRenderer() {
 
@@ -146,7 +152,7 @@ public class OpenTokSamples extends Activity {
 
     /**
      * Starts the Hello-World app using subclassing. See
-     * OpenTokVideoSubclassing.java
+     * MultipartyActivity.java
      */
     public void startHelloWorldSubclassing() {
 
@@ -154,6 +160,38 @@ public class OpenTokSamples extends Activity {
 
         Intent intent = new Intent(OpenTokSamples.this,
                 MultipartyActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Starts the voice only Hello-World app. See
+     * VoiceOnlyActivity.java
+     */
+    public void startVoiceOnly() {
+
+        Log.i(LOGTAG, "starting hello-world app using voice only");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                VoiceOnlyActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Starts the Hello-World app using a custom audio device. See
+     * AudioDeviceActivity.java
+     */
+    public void startAudioDevice() {
+
+        Log.i(LOGTAG, "starting hello-world app using a custom audio device");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                AudioDeviceActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

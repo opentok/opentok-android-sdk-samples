@@ -2,6 +2,7 @@ package com.opentok.android.demo.ui.fragments;
 
 import com.opentok.android.demo.opentoksamples.R;
 import com.opentok.android.demo.opentoksamples.UIActivity;
+import com.opentok.android.demo.ui.fragments.SubscriberControlFragment.SubscriberCallbacks;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -15,39 +16,36 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
-public class SubscriberControlFragment extends Fragment implements
-		View.OnClickListener {
-
-	private static final String LOGTAG = "demo-UI-sub-control-fragment";
-
-	private boolean mSubscriberWidgetVisible = false;
-	private ImageButton mSubscriberMute;
-	private TextView mSubscriberName;
-	private RelativeLayout mSubContainer;
-
-	// Animation constants
+public class SubscriberQualityFragment extends Fragment  {
+	
+	private static final String LOGTAG = "demo-UI-sub-quality-fragment";
+	
 	private static final int ANIMATION_DURATION = 500;
-	private static final int SUBSCRIBER_CONTROLS_DURATION = 7000;
-
-	private SubscriberCallbacks mCallbacks = sOpenTokCallbacks;
+	
+	private boolean mSubscriberWidgetVisible = false;
+	private ImageButton congestionIndicator;
+	private RelativeLayout mSubQualityContainer;
 	private UIActivity openTokActivity;
 
-	public interface SubscriberCallbacks {
-		public void onMuteSubscriber();
-	}
-
-	private static SubscriberCallbacks sOpenTokCallbacks = new SubscriberCallbacks() {
-
+    private CongestionLevel congestion = CongestionLevel.Low;
+    
+    public enum CongestionLevel {
+    	 High(2), Mid(1), Low(0);
+    	 
+    	 private int congestionLevel;
+    	 
+    	 private CongestionLevel(int congestionLevel) {
+    		 this.congestionLevel = congestionLevel;
+    	 }
+    	 
+    	 public int getCongestionLevel() {
+    	   return congestionLevel;
+    	 }
+    }
+  
 		@Override
-		public void onMuteSubscriber() {
-			return;
-		}
-
-	};
-
-	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		Log.i(LOGTAG, "On attach Subscriber control fragment");
@@ -56,8 +54,6 @@ public class SubscriberControlFragment extends Fragment implements
 			throw new IllegalStateException(
 					"Activity must implement fragment's callback");
 		}
-
-		mCallbacks = (SubscriberCallbacks) activity;
 
 	}
 
@@ -70,20 +66,15 @@ public class SubscriberControlFragment extends Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.layout_fragment_sub_control,
+		View rootView = inflater.inflate(R.layout.layout_fragment_sub_quality,
 				container, false);
 
-		mSubContainer = (RelativeLayout) openTokActivity
-				.findViewById(R.id.fragment_sub_container);
+		mSubQualityContainer = (RelativeLayout) openTokActivity
+				.findViewById(R.id.fragment_sub_quality_container);
 
-		showSubscriberWidget(mSubscriberWidgetVisible, false);
-
-		mSubscriberMute = (ImageButton) rootView
-				.findViewById(R.id.muteSubscriber);
-		mSubscriberMute.setOnClickListener(this);
-
-		mSubscriberName = (TextView) rootView.findViewById(R.id.subscriberName);
-
+		congestionIndicator = (ImageButton) rootView
+				.findViewById(R.id.congestionIndicator);
+		
 		if (openTokActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) container
 					.getLayoutParams();
@@ -98,7 +89,6 @@ public class SubscriberControlFragment extends Fragment implements
 
 		return rootView;
 	}
-
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -134,74 +124,61 @@ public class SubscriberControlFragment extends Fragment implements
 		super.onDetach();
 
 		Log.i(LOGTAG, "On detach Subscriber control fragment");
-		mCallbacks = sOpenTokCallbacks;
 	}
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.muteSubscriber:
-			muteSubscriber();
-			break;
-		}
-	}
-
-	private Runnable mSubscriberWidgetTimerTask = new Runnable() {
-		@Override
-		public void run() {
-			showSubscriberWidget(false);
-		}
-	};
-
+	
 	public void showSubscriberWidget(boolean show) {
+		if (show) {
+			switch (congestion) {
+				case High:
+					this.congestionIndicator.setImageResource(R.drawable.high_congestion);
+					break;
+				case Mid:
+					this.congestionIndicator.setImageResource(R.drawable.mid_congestion);
+					break;
+				case Low:
+					break;
+				
+				default:
+						break;
+			}
+		}
+		else {
+			Log.i(LOGTAG, "Hidding subscriber quality");
+		}
+		
 		showSubscriberWidget(show, true);
+		
 	}
-
+	
 	private void showSubscriberWidget(boolean show, boolean animate) {
-		mSubContainer.clearAnimation();
+		mSubQualityContainer.clearAnimation();
 		mSubscriberWidgetVisible = show;
 		float dest = show ? 1.0f : 0.0f;
 		AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
 		aa.setDuration(animate ? ANIMATION_DURATION : 1);
 		aa.setFillAfter(true);
-		mSubContainer.startAnimation(aa);
+		mSubQualityContainer.startAnimation(aa);
 
 		if (show) {
-			mSubContainer.setVisibility(View.VISIBLE);
+			mSubQualityContainer.setVisibility(View.VISIBLE);
 		} else {
-			mSubContainer.setVisibility(View.GONE);
+			mSubQualityContainer.setVisibility(View.GONE);
 		}
-
+	}
+	
+	public CongestionLevel getCongestion() {
+		return congestion;
 	}
 
-	public void subscriberClick() {
-		if (!mSubscriberWidgetVisible) {
-			showSubscriberWidget(true);
-		} else {
-			showSubscriberWidget(false);
-		}
-
-		initSubscriberUI();
+	public void setCongestion(CongestionLevel high) {
+		this.congestion = high;
 	}
 
-	public void muteSubscriber() {
-		mCallbacks.onMuteSubscriber();
-
-		mSubscriberMute.setImageResource(openTokActivity.getmSubscriber()
-				.getSubscribeToAudio() ? R.drawable.unmute_sub
-				: R.drawable.mute_sub);
+	public boolean isSubscriberWidgetVisible() {
+		return mSubscriberWidgetVisible;
 	}
 
-	public void initSubscriberUI() {
-		openTokActivity.getmHandler().removeCallbacks(
-				mSubscriberWidgetTimerTask);
-		openTokActivity.getmHandler().postDelayed(mSubscriberWidgetTimerTask,
-				SUBSCRIBER_CONTROLS_DURATION);
-		mSubscriberName.setText(openTokActivity.getmSubscriber().getStream()
-				.getName());
-		mSubscriberMute.setImageResource(openTokActivity.getmSubscriber()
-				.getSubscribeToAudio() ? R.drawable.unmute_sub
-				: R.drawable.mute_sub);
+	public RelativeLayout getSubQualityContainer() {
+		return mSubQualityContainer;
 	}
-
 }
