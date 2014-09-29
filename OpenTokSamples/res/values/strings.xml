@@ -8,6 +8,8 @@
     <string name="helloworldcapturer">Custom Capturer</string>
     <string name="helloworldrenderer">Custom Renderer</string>
     <string name="helloworldsubclassing">Multiparty</string>
+    <string name="voinceonly">Voice Only</string>
+    <string name="audiodevice">Audio device</string>
     
     <string name="swapStr">Swap camera</string>
     <string name="endCall1">End call</string>
@@ -17,5 +19,6 @@
     <string name="archivingOn">Archiving on</string>
     <string name="archivingOff">Archiving off</string>
     <string name="notification">Ongoing call</string>
+    <string name="clearNotificationService">Clear Notification</string>
 
 </resources>
