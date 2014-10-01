@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey" >
+
+    <Button
+        android:id="@+id/endCall"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grey"
+        android:onClick="onEndCall"
+        android:text="@string/endCall1"
+        android:textColor="@color/white" />
+
+    <RelativeLayout
+        android:id="@+id/bottomcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:layout_above="@id/endCall"
+        android:background="@color/dark_grey" >
+
+        <ImageView
+            android:id="@+id/publisherpicture"
+            android:layout_width="78dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:alpha="128"
+            android:scaleType="center"
+            android:src="@drawable/silhouette2" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/publisherpicture"
+            android:background="@color/grey" />
+
+        <TextView
+            android:id="@+id/publishername"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/publishermeter"
+            android:layout_toRightOf="@id/divider2"
+            android:gravity="center_vertical|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
+            android:text="Publisher name"
+            android:textColor="@color/white" />
+
+        <com.opentok.android.demo.ui.MeterView
+            android:id="@+id/publishermeter"
+            android:layout_width="78dp"
+            android:layout_height="78dp"
+            android:layout_alignParentRight="true" />
+
+        <RelativeLayout
+            android:id="@+id/archivingbar"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/trans_dark_grey"
+            android:visibility="gone" >
+
+            <ImageButton
+                android:id="@+id/archivingimg"
+                android:layout_width="48dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@null"
+                android:src="@drawable/archiving_on" />
+
+            <TextView
+                android:id="@+id/archivingstatus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/archiving"
+                android:gravity="center_vertical|right"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/archivingOn"
+                android:textColor="@color/white" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/archiving"
+                android:background="@color/trans_white" />
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/trans_white" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/connectionStatus"
+                android:background="@color/trans_white" />
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentTop="true"
+                android:background="@color/trans_white" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_above="@id/bottomcontainer"
+        android:background="@color/grey" />
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/divider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </ListView>
+
+</RelativeLayout>

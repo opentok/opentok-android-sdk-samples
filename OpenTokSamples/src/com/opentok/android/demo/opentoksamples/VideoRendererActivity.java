@@ -6,11 +6,15 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,8 +30,10 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
-import com.opentok.android.demo.opentokhelloworld.R;
+import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
+import com.opentok.android.demo.opentoksamples.R;
 import com.opentok.android.demo.video.CustomVideoRenderer;
 
 public class VideoRendererActivity extends Activity implements
@@ -49,9 +55,10 @@ public class VideoRendererActivity extends Activity implements
 
 	private boolean resumeHasRun = false;
 
+	private boolean mIsBound = false;
 	private NotificationCompat.Builder mNotifyBuilder;
 	NotificationManager mNotificationManager;
-	private int notificationId;
+	ServiceConnection mConnection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,15 +129,42 @@ public class VideoRendererActivity extends Activity implements
 				notificationIntent, 0);
 
 		mNotifyBuilder.setContentIntent(intent);
-		notificationId = (int) System.currentTimeMillis();
-		mNotificationManager.notify(notificationId, mNotifyBuilder.build());
+		if(mConnection == null){	    
+			mConnection = new ServiceConnection() {
+				@Override
+				public void onServiceConnected(ComponentName className,IBinder binder){
+					((ClearBinder) binder).service.startService(new Intent(VideoRendererActivity.this, ClearNotificationService.class));
+					NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);					
+					mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
+				}
+
+				@Override
+				public void onServiceDisconnected(ComponentName className) {
+					mConnection = null;
+				}
+
+			};
+		}
+
+		if(!mIsBound){
+			bindService(new Intent(VideoRendererActivity.this,
+					ClearNotificationService.class), mConnection,
+					Context.BIND_AUTO_CREATE);
+			mIsBound = true;
+		}
+
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		if (!resumeHasRun) {
+        if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
+		
+        if (!resumeHasRun) {
 			resumeHasRun = true;
 			return;
 		} else {
@@ -138,7 +172,7 @@ public class VideoRendererActivity extends Activity implements
 				mSession.onResume();
 			}
 		}
-		mNotificationManager.cancel(notificationId);
+		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 
 		reloadInterface();
 	}
@@ -146,9 +180,13 @@ public class VideoRendererActivity extends Activity implements
 	@Override
 	public void onStop() {
 		super.onStop();
-
+        
+		if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
 		if (isFinishing()) {
-			mNotificationManager.cancel(notificationId);
+			mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 			if (mSession != null) {
 				mSession.disconnect();
 			}
@@ -157,10 +195,18 @@ public class VideoRendererActivity extends Activity implements
 	
 	@Override
 	public void onDestroy() {
-		mNotificationManager.cancel(notificationId);
+		
+		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+        if(mIsBound){
+			unbindService(mConnection);
+			mIsBound = false;
+		}
+
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onDestroy();
 		finish();
 	}
@@ -170,6 +216,8 @@ public class VideoRendererActivity extends Activity implements
 		if (mSession != null) {
 			mSession.disconnect();
 		}
+		restartAudioMode();
+		
 		super.onBackPressed();
 	}
 
@@ -183,7 +231,13 @@ public class VideoRendererActivity extends Activity implements
 			}
 		}, 500);
 	}
-
+	
+	public void restartAudioMode() {
+    	AudioManager Audio =  (AudioManager) getSystemService(Context.AUDIO_SERVICE); 
+    	Audio.setMode(AudioManager.MODE_NORMAL);
+    	this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
+	
 	private void sessionConnect() {
 		if (mSession == null) {
 			mSession = new Session(this, OpenTokConfig.API_KEY,
@@ -204,7 +258,7 @@ public class VideoRendererActivity extends Activity implements
 
 	private void unsubscribeFromStream(Stream stream) {
 		mStreams.remove(stream);
-		if (mSubscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+		if (mSubscriber.getStream().equals(stream)) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
 			mSubscriber = null;
 			if (!mStreams.isEmpty()) {
@@ -324,9 +378,15 @@ public class VideoRendererActivity extends Activity implements
 	}
 
 	@Override
-	public void onVideoDisabled(SubscriberKit subscriber) {
-		Log.i(LOGTAG,
-				"Video quality changed. It is disabled for the subscriber. ");
+	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video disabled:" + reason);		
+	}
+
+	@Override
+	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG,
+                "Video enabled:" + reason);		
 	}
 
 	@Override
@@ -347,6 +407,16 @@ public class VideoRendererActivity extends Activity implements
 	private int dpToPx(int dp) {
 		double screenDensity = this.getResources().getDisplayMetrics().density;
 		return (int) (screenDensity * (double) dp);
+	}
+
+	@Override
+	public void onVideoDisableWarning(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
+	}
+
+	@Override
+	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
 	}
 
 }

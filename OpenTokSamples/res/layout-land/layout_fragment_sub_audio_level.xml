@@ -9,7 +9,7 @@
     tools:context=".UIActivity" >
 
     <RelativeLayout
-        android:id="@+id/subscriberWidget"
+        android:id="@+id/subscriberAudioLevelWidget"
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:layout_alignParentTop="true"

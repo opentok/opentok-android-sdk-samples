@@ -1,7 +1,7 @@
 OpenTok Android SDK Samples
 ===========================
 
-This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.2.0](http://tokbox.com/opentok/libraries/client/android/).
+This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.3](http://tokbox.com/opentok/libraries/client/android/).
 
 *Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
@@ -21,11 +21,11 @@ Testing the sample app
 1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
    Workspace. Choose the OpenTokSamples directory. Then click Finish.)
 
-   This project links to the opentok-android-sdk-2.2.jar file and the armeabi/libopentok.so file.
-   Both of these libraries are required to develop apps that use the OpenTok 2.2 Android SDK.
+   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so or x86/libopentok.so file.
+   Both of these libraries are required to develop apps that use the OpenTok 2.3 Android SDK.
    These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the 
-   opentok-android-sdk-2.2.jar file and armeabi directory into the libs directory of your project
-   in the ADT package explorer.) The opentok-android-sdk-2.2.jar file is available at
+   opentok-android-sdk-2.3.0.jar file and armeabi or x86 directory into the libs directory of your project
+   in the ADT package explorer.) The opentok-android-sdk-2.3.0.jar file is available at
    <http://tokbox.com/opentok/libraries/client/android/>.
    
 
@@ -459,7 +459,7 @@ After instantiating a Publisher object, the code sets a custom video renderer by
    mPublisher.setPublisherListener(this);
    // use an external custom video renderer
    mPublisher.setRenderer(new CustomVideoRenderer(this));
-   
+
 The CustomVideoRenderer class is defined in the com.opentok.android.demo.video package.
 This class extends the BaseVideoRenderer class, defined in the OpenTok Android SDK.
 The CustomVideoRenderer class includes a MyRenderer subclass that implements GLSurfaceView.Renderer.
@@ -477,6 +477,119 @@ the MyVideoRenderer instance:
         mRenderer.displayFrame(frame);
         mView.requestRender();
     }
+
+### Using a custom audio driver
+
+The AudioDeviceActivity sample shows how you can use a custom audio driver for publisher and
+subscriber audio.
+
+The AudioDeviceActivity class instantiates a CustomAudioDevice instance and passes it into the
+`AudioDeviceManager.setAudioDevice()` method:
+
+    CustomAudioDevice customAudioDevice = new CustomAudioDevice(
+        AudioDeviceActivity.this);
+    AudioDeviceManager.setAudioDevice(customAudioDevice);
+    mSession = new Session(AudioDeviceActivity.this,
+        OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+
+The CustomAudioDevice class extends the BaseAudioDevice class, defined in the OpenTok Android SDK. This class includes methods for setting up and using a custom audio driver. The audio driver
+includes an audio capturer -- used to get audio samples from a audio source -- and an audio
+renderer -- used to play back audio samples from the OpenTok streams the client has subscribed to.
+
+Note that you must call the method `AudioDeviceManager.setAudioDevice()` before you instantiate
+a Session object (and connect to the session).
+
+The constructor for the CustomAudioDevice class instantiates two instances of the
+BaseAudioDevice.AudioSettings class, defined in the OpenTok Android SDK. These are settings for
+audio capturing and audio rendering:
+
+    m_captureSettings = new AudioSettings(SAMPLING_RATE,
+            NUM_CHANNELS_CAPTURING);
+    m_rendererSettings = new AudioSettings(SAMPLING_RATE,
+            NUM_CHANNELS_RENDERING);
+
+The CustomAudioDevice class overrides the `initCapturer()` method, defined in the BaseAudioDevice
+class. This method initializes the app's audio capturer, instantiating a an
+andriod.media.AudioRecord instance to be used to capture audio from the device's audio input
+hardware:
+
+    m_audioRecord = new AudioRecord(AudioSource.VOICE_COMMUNICATION,
+        m_captureSettings.getSampleRate(),
+        NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO
+                : AudioFormat.CHANNEL_IN_STEREO,
+        AudioFormat.ENCODING_PCM_16BIT, recBufSize);
+
+The `initCapturer()` method also sets up a thread to capture audio from the device:
+
+    new Thread(m_captureThread).start();
+
+The CustomAudioDevice overrides the `startCapturer()` method, which is called when the app starts
+sampling audio to be sent to the publisher's stream. The audio capture thread reads audio samples
+from the AudioRecord object into a buffer, `m_recbuffer`:
+
+    int lengthInBytes = (samplesToRec << 1)
+            * NUM_CHANNELS_CAPTURING;
+    int readBytes = m_audioRecord.read(m_tempBufRec, 0,
+            lengthInBytes);
+
+    m_recBuffer.rewind();
+    m_recBuffer.put(m_tempBufRec);
+
+    samplesRead = (readBytes >> 1) / NUM_CHANNELS_CAPTURING;
+
+The `getAudioBus()` method, defined in the BaseAudioDevice class, returns a BaseAudioDevice.AudioBus
+object, also defined in the OpenTok Android SDK. This audio bus object includes a
+`writeCaptureData()` method, which you call to send audio samples to be used as audio data for the
+publisher's stream:
+
+    getAudioBus().writeCaptureData(m_recBuffer, samplesRead);
+
+The CustomAudioDevice class overrides the `initRenderer()` method, defined in the BaseAudioDevice
+class. This method initializes the app's audio renderer, instantiating an andriod.media.AudioTrack
+instance. This object will be used to play back audio to the device's audio output hardware:
+
+    m_audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL,
+            m_rendererSettings.getSampleRate(),
+            NUM_CHANNELS_RENDERING == 1 ? AudioFormat.CHANNEL_OUT_MONO
+                    : AudioFormat.CHANNEL_OUT_STEREO,
+            AudioFormat.ENCODING_PCM_16BIT, playBufSize,
+            AudioTrack.MODE_STREAM);
+
+The `initRenderer()` method also sets up a thread to play back audio to the device's audio output
+hardware:
+
+    new Thread(m_renderThread).start();
+
+The CustomAudioDevice overrides the `startRenderer()` method, which is called when the app starts
+receiving audio from subscribed streams.
+
+The AudioBus object includes a `readRenderData()` method, which the audio render thread calls
+to read audio samples from the subscribed streams into a playback buffer:
+
+    int samplesRead = getAudioBus().readRenderData(
+            m_playBuffer, samplesToPlay);
+
+Sample data is written from the playback buffer to the audio track:
+
+    int bytesRead = (samplesRead << 1)
+            * NUM_CHANNELS_RENDERING;
+    m_playBuffer.get(m_tempBufPlay, 0, bytesRead);
+
+    int bytesWritten = m_audioTrack.write(m_tempBufPlay, 0,
+            bytesRead);
+
+    // increase by number of written samples
+    m_bufferedPlaySamples += (bytesWritten >> 1)
+            / NUM_CHANNELS_RENDERING;
+
+    // decrease by number of played samples
+    int pos = m_audioTrack.getPlaybackHeadPosition();
+    if (pos < m_playPosition) {
+        // wrap or reset by driver
+        m_playPosition = 0;
+    }
+    m_bufferedPlaySamples -= (pos - m_playPosition);
+    m_playPosition = pos;
 
 ### Adding subclasses of the OpenTok Android SDK classes
 
@@ -506,6 +619,33 @@ OpenTok session:
         presentText("Welcome to OpenTok Chat.");
     }
 
+### Displaying an audio-level meter
+
+The VoiceOnlyActivity class adds an AudioLevelListener instance for the
+Subscriber:
+
+    subscriber
+        .setAudioLevelListener(new SubscriberKit.AudioLevelListener() {
+            @Override
+            public void onAudioLevelUpdated(
+                    SubscriberKit subscriber, float audioLevel) {
+                meterView.setMeterValue(audioLevel);
+            }
+        });
+
+This method is called periodically with updates to the Subscriber's audio level.
+The method updates the `meterView` element based on the audio level.
+
+Similarly, the VoiceOnlyActivity class adds an AudioLevelListener instance for
+the Publisher, which works similarly:
+
+    mPublisher.setAudioLevelListener(new PublisherKit.AudioLevelListener() {
+        @Override
+        public void onAudioLevelUpdated(PublisherKit publisher,
+                float audioLevel) {
+            meterView.setMeterValue(audioLevel);
+        }
+    });
 
 ### Sending and receiving messages in the session
 
