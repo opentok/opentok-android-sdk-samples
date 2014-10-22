@@ -290,8 +290,10 @@ public class EmulatorActivity extends Activity implements
 		mSubscriber = new Subscriber(EmulatorActivity.this, stream);
 		mSubscriber.setVideoListener(this);
 		mSession.subscribe(mSubscriber);
-		// start loading spinning
-		mLoadingSub.setVisibility(View.VISIBLE);
+		if (mSubscriber.getSubscribeToVideo()) {
+        	// start loading spinning
+        	mLoadingSub.setVisibility(View.VISIBLE);
+        }
 	}
 
 	private void unsubscribeFromStream(Stream stream) {

@@ -251,9 +251,12 @@ public class VideoRendererActivity extends Activity implements
 		mSubscriber = new Subscriber(VideoRendererActivity.this, stream);
 		mSubscriber.setVideoListener(this);
 		mSubscriber.setRenderer(new CustomVideoRenderer(this));
-		// start loading spinning
-		mLoadingSub.setVisibility(View.VISIBLE);
 		mSession.subscribe(mSubscriber);
+		
+		if (mSubscriber.getSubscribeToVideo()) {
+			// start loading spinning
+	        mLoadingSub.setVisibility(View.VISIBLE);
+	    }
 	}
 
 	private void unsubscribeFromStream(Stream stream) {
