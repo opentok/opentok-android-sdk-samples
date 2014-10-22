@@ -37,7 +37,8 @@ public class OpenTokSamples extends Activity {
 				getString(R.string.helloworldrenderer),
 				getString(R.string.helloworldsubclassing),
 				getString(R.string.voinceonly),
-				getString(R.string.audiodevice)};
+				getString(R.string.audiodevice),
+				getString(R.string.helloworldemulator)};
 
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, activityNames);
@@ -64,6 +65,8 @@ public class OpenTokSamples extends Activity {
                     startVoiceOnly();
                 } else if (6 == position) {
                 	startAudioDevice();
+                } else if (7 == position) {
+                	startHelloWorldEmulator();
                 } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
@@ -192,6 +195,22 @@ public class OpenTokSamples extends Activity {
 
         Intent intent = new Intent(OpenTokSamples.this,
                 AudioDeviceActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+    
+    /**
+     * Starts the Hello-World app using a custom audio device. See
+     * AudioDeviceActivity.java
+     */
+    public void startHelloWorldEmulator() {
+
+        Log.i(LOGTAG, "starting hello-world app for Android emulator");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                EmulatorActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
