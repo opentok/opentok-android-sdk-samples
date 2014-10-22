@@ -81,6 +81,8 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
 		m_audioManager = (AudioManager) m_context
 				.getSystemService(Context.AUDIO_SERVICE);
+		
+		m_audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);	
 	}
 
 	@Override
@@ -285,8 +287,6 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
 		m_bufferedPlaySamples = 0;
 
-		m_audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-		
 		m_shutdownRenderThread = false;
 		new Thread(m_renderThread).start();
 
