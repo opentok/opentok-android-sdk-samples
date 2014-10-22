@@ -322,7 +322,7 @@ public class CustomEmulatorVideoCapturer extends BaseVideoCapturer implements
 			if (data.length == mExpectedFrameSize) {
 				int currentRotation = 0;
 				
-				// Get the rotation of the camera
+				// Get the rotation of the camera depends on the app is running on the virtual device or real device
 				if (Build.BRAND.equalsIgnoreCase("generic")) {
 					currentRotation = 0; //it is running on emulator
 	     	    }
