@@ -113,9 +113,9 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        	gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	        gl.glClearColor(0, 0, 0, 1); 
-
+	        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+	        
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER,
                     vertexShaderCode);
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER,
@@ -294,8 +294,8 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
             }
             else {
             	//black frame when video is disabled
- 	            gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
- 	            gl.glClearColor(0, 0, 0, 1); 
+            	gl.glClearColor(0, 0, 0, 1); 
+            	GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             }
             mFrameLock.unlock();
         }
