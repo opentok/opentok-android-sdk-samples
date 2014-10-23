@@ -38,12 +38,12 @@ public class CustomAudioDevice extends BaseAudioDevice {
 	private byte[] m_tempBufPlay;
 	private byte[] m_tempBufRec;
 
-	private final ReentrantLock m_rendererLock = new ReentrantLock();
+	private final ReentrantLock m_rendererLock = new ReentrantLock(true);
 	private final Condition m_renderEvent = m_rendererLock.newCondition();
 	private volatile boolean m_isRendering = false;
 	private volatile boolean m_shutdownRenderThread = false;
 
-	private final ReentrantLock m_captureLock = new ReentrantLock();
+	private final ReentrantLock m_captureLock = new ReentrantLock(true);
 	private final Condition m_captureEvent = m_captureLock.newCondition();
 	private volatile boolean m_isCapturing = false;
 	private volatile boolean m_shutdownCaptureThread = false;

@@ -252,9 +252,12 @@ public class VideoCapturerActivity extends Activity implements
     private void subscribeToStream(Stream stream) {
         mSubscriber = new Subscriber(VideoCapturerActivity.this, stream);
         mSubscriber.setVideoListener(this);
-        // start loading spinning
-        mLoadingSub.setVisibility(View.VISIBLE);
         mSession.subscribe(mSubscriber);
+        
+        if (mSubscriber.getSubscribeToVideo()) {
+        	// start loading spinning
+        	mLoadingSub.setVisibility(View.VISIBLE);
+        }
     }
 
     private void unsubscribeFromStream(Stream stream) {
