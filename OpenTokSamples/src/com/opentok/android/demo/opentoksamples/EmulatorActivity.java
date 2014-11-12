@@ -311,6 +311,7 @@ public class EmulatorActivity extends Activity implements
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 				getResources().getDisplayMetrics().widthPixels, getResources()
 						.getDisplayMetrics().heightPixels);
+		mSubscriberViewContainer.removeView(mSubscriber.getView());
 		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
 		subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
 				BaseVideoRenderer.STYLE_VIDEO_FILL);
