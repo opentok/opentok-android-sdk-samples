@@ -92,17 +92,6 @@ public class EmulatorActivity extends Activity implements
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-
-		// Remove publisher & subscriber views because we want to reuse them
-		if (mSubscriber != null) {
-			mSubscriberViewContainer.removeView(mSubscriber.getView());
-		}
-		reloadInterface();
-	}
-
-	@Override
 	public void onPause() {
 		super.onPause();
 

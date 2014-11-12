@@ -151,18 +151,20 @@ public class SubscriberQualityFragment extends Fragment  {
 	}
 	
 	private void showSubscriberWidget(boolean show, boolean animate) {
-		mSubQualityContainer.clearAnimation();
-		mSubscriberWidgetVisible = show;
-		float dest = show ? 1.0f : 0.0f;
-		AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
-		aa.setDuration(animate ? ANIMATION_DURATION : 1);
-		aa.setFillAfter(true);
-		mSubQualityContainer.startAnimation(aa);
+		if ( mSubQualityContainer != null ) {
+			mSubQualityContainer.clearAnimation();
+			mSubscriberWidgetVisible = show;
+			float dest = show ? 1.0f : 0.0f;
+			AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
+			aa.setDuration(animate ? ANIMATION_DURATION : 1);
+			aa.setFillAfter(true);
+			mSubQualityContainer.startAnimation(aa);
 
-		if (show) {
-			mSubQualityContainer.setVisibility(View.VISIBLE);
-		} else {
-			mSubQualityContainer.setVisibility(View.GONE);
+			if (show) {
+				mSubQualityContainer.setVisibility(View.VISIBLE);
+			} else {
+				mSubQualityContainer.setVisibility(View.GONE);
+			}
 		}
 	}
 	

@@ -84,16 +84,6 @@ public class VideoCapturerActivity extends Activity implements
         sessionConnect();
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Remove publisher & subscriber views because we want to reuse them
-        if (mSubscriber != null) {
-            mSubscriberViewContainer.removeView(mSubscriber.getView());
-        }
-        reloadInterface();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

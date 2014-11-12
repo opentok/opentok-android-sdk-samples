@@ -126,19 +126,20 @@ public class PublisherStatusFragment extends Fragment {
 	}
 
 	private void showPubStatusWidget(boolean show, boolean animate) {
+		if ( mPubStatusContainer != null ) {
+			mPubStatusContainer.clearAnimation();
+			mPubStatusWidgetVisible = show;
+			float dest = show ? 1.0f : 0.0f;
+			AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
+			aa.setDuration(animate ? ANIMATION_DURATION : 1);
+			aa.setFillAfter(true);
+			mPubStatusContainer.startAnimation(aa);
 
-		mPubStatusContainer.clearAnimation();
-		mPubStatusWidgetVisible = show;
-		float dest = show ? 1.0f : 0.0f;
-		AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
-		aa.setDuration(animate ? ANIMATION_DURATION : 1);
-		aa.setFillAfter(true);
-		mPubStatusContainer.startAnimation(aa);
-
-		if (show && archivingOn) {
-			mPubStatusContainer.setVisibility(View.VISIBLE);
-		} else {
-			mPubStatusContainer.setVisibility(View.GONE);
+			if (show && archivingOn) {
+				mPubStatusContainer.setVisibility(View.VISIBLE);
+			} else {
+				mPubStatusContainer.setVisibility(View.GONE);
+			}
 		}
 	}
 

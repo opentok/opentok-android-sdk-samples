@@ -203,20 +203,21 @@ public class PublisherControlFragment extends Fragment implements
 	}
 
 	private void showPublisherWidget(boolean show, boolean animate) {
-		mPublisherContainer.clearAnimation();
-		mPublisherWidgetVisible = show;
-		float dest = show ? 1.0f : 0.0f;
-		AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
-		aa.setDuration(animate ? ANIMATION_DURATION : 1);
-		aa.setFillAfter(true);
-		mPublisherContainer.startAnimation(aa);
+		if ( mPublisherContainer != null ) {
+			mPublisherContainer.clearAnimation();
+			mPublisherWidgetVisible = show;
+			float dest = show ? 1.0f : 0.0f;
+			AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
+			aa.setDuration(animate ? ANIMATION_DURATION : 1);
+			aa.setFillAfter(true);
+			mPublisherContainer.startAnimation(aa);
 
-		if (show) {
-			mPublisherContainer.setVisibility(View.VISIBLE);
-		} else {
-			mPublisherContainer.setVisibility(View.GONE);
+			if (show) {
+				mPublisherContainer.setVisibility(View.VISIBLE);
+			} else {
+				mPublisherContainer.setVisibility(View.GONE);
+			}
 		}
-
 	}
 
 	public boolean isMPublisherWidgetVisible() {
