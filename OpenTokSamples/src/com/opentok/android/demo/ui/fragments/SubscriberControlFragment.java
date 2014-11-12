@@ -158,20 +158,21 @@ public class SubscriberControlFragment extends Fragment implements
 	}
 
 	private void showSubscriberWidget(boolean show, boolean animate) {
-		mSubContainer.clearAnimation();
-		mSubscriberWidgetVisible = show;
-		float dest = show ? 1.0f : 0.0f;
-		AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
-		aa.setDuration(animate ? ANIMATION_DURATION : 1);
-		aa.setFillAfter(true);
-		mSubContainer.startAnimation(aa);
+		if ( mSubContainer != null ) {
+			mSubContainer.clearAnimation();
+			mSubscriberWidgetVisible = show;
+			float dest = show ? 1.0f : 0.0f;
+			AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
+			aa.setDuration(animate ? ANIMATION_DURATION : 1);
+			aa.setFillAfter(true);
+			mSubContainer.startAnimation(aa);
 
-		if (show) {
-			mSubContainer.setVisibility(View.VISIBLE);
-		} else {
-			mSubContainer.setVisibility(View.GONE);
+			if (show) {
+				mSubContainer.setVisibility(View.VISIBLE);
+			} else {
+				mSubContainer.setVisibility(View.GONE);
+			}	
 		}
-
 	}
 
 	public void subscriberClick() {

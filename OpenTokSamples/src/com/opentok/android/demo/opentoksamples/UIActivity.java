@@ -479,7 +479,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
-        
+        mSubscriberViewContainer.removeView(mSubscriber.getView());
         mSubscriberViewContainer.addView(subscriber.getView(), layoutParams);
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);

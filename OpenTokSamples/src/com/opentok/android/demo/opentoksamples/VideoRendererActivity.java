@@ -83,17 +83,6 @@ public class VideoRendererActivity extends Activity implements
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-
-		// Remove publisher & subscriber views because we want to reuse them
-		if (mSubscriber != null) {
-			mSubscriberViewContainer.removeView(mSubscriber.getView());
-		}
-		reloadInterface();
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
@@ -276,6 +265,7 @@ public class VideoRendererActivity extends Activity implements
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 				getResources().getDisplayMetrics().widthPixels, getResources()
 						.getDisplayMetrics().heightPixels);
+		mSubscriberViewContainer.removeView(mSubscriber.getView());
 		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
 
 	}
