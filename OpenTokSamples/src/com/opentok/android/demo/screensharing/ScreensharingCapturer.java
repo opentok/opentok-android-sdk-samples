@@ -31,12 +31,6 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 				int height = contentView.getHeight();
 				float scale = 1;
 				
-				if (height > 1080) {
-					scale = 1080.0f/contentView.getHeight();
-					width = (int)(contentView.getWidth() * scale);
-					height = 1080;
-				}
- 
 				if (frame == null || 
 					ScreensharingCapturer.this.width != width ||
 					ScreensharingCapturer.this.height != height) {
