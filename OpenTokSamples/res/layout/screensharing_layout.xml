@@ -5,12 +5,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#000000" >
-
+	<WebView 
+   	 	android:id="@+id/webview_screen"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent" />
+    
     <RelativeLayout
         android:id="@+id/subscriberview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center_horizontal" >
+        android:layout_width="176px"
+        android:layout_height="144px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true">
 
         <ProgressBar
             android:id="@+id/loadingSpinner"
@@ -22,9 +27,5 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-   <WebView 
-    android:id="@+id/webview_screen"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
-
+   
 </RelativeLayout>

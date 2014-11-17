@@ -1,8 +1,8 @@
 package com.opentok.android.demo.screensharing;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Handler;
 import android.view.View;
 
@@ -19,6 +19,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 	int[] frame;
 
 	Bitmap bmp;
+	Canvas canvas;
 	
 	Handler mHandler = new Handler();
 
@@ -26,12 +27,19 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 		@Override
 		public void run() {
 			if (capturing) {
-				int width =  contentView.getWidth();
+				int width = contentView.getWidth();
 				int height = contentView.getHeight();
+				float scale = 1;
 				
-				if (frame == null || ScreensharingCapturer.this.width != width
-						|| ScreensharingCapturer.this.height != height) {
-
+				if (height > 1080) {
+					scale = 1080.0f/contentView.getHeight();
+					width = (int)(contentView.getWidth() * scale);
+					height = 1080;
+				}
+ 
+				if (frame == null || 
+					ScreensharingCapturer.this.width != width ||
+					ScreensharingCapturer.this.height != height) {
 					
 					ScreensharingCapturer.this.width = width;
 					ScreensharingCapturer.this.height = height;
@@ -40,27 +48,30 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 						bmp.recycle();
 						bmp = null;
 					}
-					contentView.setDrawingCacheEnabled(true);
 					
-					bmp = contentView.getDrawingCache();
+					bmp = Bitmap.createBitmap(width, 
+                            height, Bitmap.Config.ARGB_8888);
+					
+					canvas = new Canvas(bmp);
+					canvas.scale(scale, scale);
+										
 					frame = new int[width * height];
-					bmp.getPixels(frame, 0, width, 0, 0, width, height);
-					provideIntArrayFrame(frame, ARGB, width, height, 0, false);
-
-					mHandler.postDelayed(newFrame, 1000 / fps);
-
-					contentView.destroyDrawingCache();
 				}
+				
+				contentView.draw(canvas);
+				
+				bmp.getPixels(frame, 0, width, 0, 0, width, height);
+ 
+				provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+ 
+				mHandler.postDelayed(newFrame, 1000 / fps);
+				
 			}
 		}
 	};
 
-	public ScreensharingCapturer(Context context) {
+	public ScreensharingCapturer(Context context, View view) {
 		this.context = context;
-		this.contentView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
-	}
-
-	public void setScreenView (View view) {
 		this.contentView = view;
 	}
 	
@@ -85,11 +96,6 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 	}
 
 	@Override
-	public void destroy() {
-		
-	}
-
-	@Override
 	public boolean isCaptureStarted() {
 		return capturing;
 	}
@@ -106,11 +112,18 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 	}
 
 	@Override
+	public void destroy() {
+		
+	}
+
+	@Override
 	public void onPause() {
+		
 	}
 
 	@Override
 	public void onResume() {
+		
 	}
 
 }

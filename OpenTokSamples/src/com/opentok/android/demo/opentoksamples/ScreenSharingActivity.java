@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +36,6 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.opentok.android.demo.config.*;
 import com.opentok.android.demo.screensharing.ScreensharingCapturer;
 import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
@@ -75,13 +75,9 @@ ServiceConnection mConnection;
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
+		//We are using a webView to show the screensharing action
+		//If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
 		mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
-		
-		mPubScreenWebView.setWebViewClient(new WebViewClient());
-		WebSettings webSettings = mPubScreenWebView.getSettings();
-		webSettings.setJavaScriptEnabled(true);
-		mPubScreenWebView.loadUrl("http://www.google.com");
-		mPubScreenWebView.setVisibility(View.GONE);
 		
 		mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
 		mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
@@ -89,16 +85,7 @@ ServiceConnection mConnection;
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		mStreams = new ArrayList<Stream>();
-
-		 try {
-        		//set environment
- 	    	OpenTokConfig.setAPIRootURL("https://anvil-dev.opentok.com", false);
- 	    	
- 	    } catch (MalformedURLException e) {
-             e.printStackTrace();
-         }
- 
-		
+	
 		sessionConnect();
 	}
 
@@ -271,6 +258,20 @@ ServiceConnection mConnection;
 	public void onConnected(Session session) {
 		Log.i(LOGTAG, "Connected to the session.");
 		
+		//Start screensharing 
+		if (mPublisher == null) {
+			mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
+			mPublisher.setPublisherListener(this);
+			mPublisher
+					.setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+			ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
+					this, mPubScreenWebView);
+			mPublisher.setCapturer(screenCapturer);
+			loadScreenWebView();
+			
+			mSession.publish(mPublisher);
+		}
+			
 	}
 
 	@Override
@@ -279,7 +280,7 @@ ServiceConnection mConnection;
 		if (mSubscriber != null) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
 		}
-
+	
 		mPublisher = null;
 		mSubscriber = null;
 		mStreams.clear();
@@ -287,12 +288,11 @@ ServiceConnection mConnection;
 	}
 
 	private void subscribeToStream(Stream stream) {
-		Log.i(LOGTAG, "mARINAS subscribeToStream");
 		mSubscriber = new Subscriber(ScreenSharingActivity.this, stream);
 		mSubscriber.setVideoListener(this);
 		mSubscriber.setSubscriberListener(this);
 		mSession.subscribe(mSubscriber);
-
+		mSubscriberViewContainer.setBackgroundColor(Color.BLACK);
 		if (mSubscriber.getSubscribeToVideo()) {
 			// start loading spinning
 			mLoadingSub.setVisibility(View.VISIBLE);
@@ -314,11 +314,23 @@ ServiceConnection mConnection;
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 				getResources().getDisplayMetrics().widthPixels, getResources()
 						.getDisplayMetrics().heightPixels);
-		mSubscriberViewContainer.removeView(mSubscriber.getView());
+		mSubscriberViewContainer.removeView(mSubscriber.getView());  
 		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
+		
 		subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
 				BaseVideoRenderer.STYLE_VIDEO_FILL);
 	}
+	
+
+	private void loadScreenWebView(){
+		mPubScreenWebView.setWebViewClient(new WebViewClient());
+		WebSettings webSettings = mPubScreenWebView.getSettings();
+		webSettings.setJavaScriptEnabled(true);
+		mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // to turn off hardware-accelerated canvas
+		mPubScreenWebView.loadUrl("http://www.google.com");
+	}
+	
+	
 
 	@Override
 	public void onError(Session session, OpentokError exception) {
@@ -413,27 +425,13 @@ ServiceConnection mConnection;
 	@Override
 	public void onConnected(SubscriberKit subscriber) {
 		Log.i(LOGTAG, "Subscriber is connected: ");
-		//Start screensharing when the subscriber is connected
-		if (mPublisher == null) {
-			mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
-			mPublisher.setPublisherListener(this);
-			mPublisher.setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
-			ScreensharingCapturer screenCapturer = new ScreensharingCapturer(this);
-			mPublisher.setCapturer(screenCapturer);
-			screenCapturer.setScreenView(mPubScreenWebView);
-			mSession.publish(mPublisher);
-		}
-	
+		
 	}
-
+	
 	@Override
 	public void onDisconnected(SubscriberKit subscriber) {
 		Log.i(LOGTAG, "Subscriber is disconnected: ");
-		//Stop screensharing when subscriber is disconnected
-		if (mPublisher != null) {
-			mSession.unpublish(mPublisher);
-			mPublisher = null;
-		}
+		
 	}
 
 	@Override
