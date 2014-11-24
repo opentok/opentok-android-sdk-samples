@@ -29,7 +29,6 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 			if (capturing) {
 				int width = contentView.getWidth();
 				int height = contentView.getHeight();
-				float scale = 1;
 				
 				if (frame == null || 
 					ScreensharingCapturer.this.width != width ||
@@ -46,9 +45,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 					bmp = Bitmap.createBitmap(width, 
                             height, Bitmap.Config.ARGB_8888);
 					
-					canvas = new Canvas(bmp);
-					canvas.scale(scale, scale);
-										
+					canvas = new Canvas(bmp);						
 					frame = new int[width * height];
 				}
 				
