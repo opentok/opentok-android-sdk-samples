@@ -291,7 +291,7 @@ ServiceConnection mConnection;
 		mSubscriber.setVideoListener(this);
 		mSubscriber.setSubscriberListener(this);
 		mSession.subscribe(mSubscriber);
-		mSubscriberViewContainer.setBackgroundColor(Color.BLACK);
+		mSubscriberViewContainer.setVisibility(View.VISIBLE);
 		if (mSubscriber.getSubscribeToVideo()) {
 			// start loading spinning
 			mLoadingSub.setVisibility(View.VISIBLE);
@@ -302,6 +302,7 @@ ServiceConnection mConnection;
 		mStreams.remove(stream);
 		if (mSubscriber.getStream().equals(stream)) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
+			mSubscriberViewContainer.setVisibility(View.GONE);
 			mSubscriber = null;
 			if (!mStreams.isEmpty()) {
 				subscribeToStream(mStreams.get(0));
