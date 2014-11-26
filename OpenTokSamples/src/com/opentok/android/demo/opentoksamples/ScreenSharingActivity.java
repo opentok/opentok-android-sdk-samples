@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.opentok.android.BaseVideoRenderer;
-import com.opentok.android.OpenTokConfig;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
