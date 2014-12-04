@@ -10,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -337,7 +336,7 @@ public class EmulatorActivity extends Activity implements
 	}
 
 	@Override
-	public void onStreamDropped(Session session, Stream stream) {
+	public void onStreamDropped(Session session, Stream stream, String reason) {
 		if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
 			if (mSubscriber != null) {
 				unsubscribeFromStream(stream);

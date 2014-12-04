@@ -1,6 +1,5 @@
 package com.opentok.android.demo.opentoksamples;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
@@ -11,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +29,7 @@ import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.PublisherKit.PublisherKitVideoType;
+//import com.opentok.android.PublisherKit.PublisherKitVideoType;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
@@ -84,7 +83,7 @@ ServiceConnection mConnection;
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		mStreams = new ArrayList<Stream>();
-	
+
 		sessionConnect();
 	}
 
@@ -348,7 +347,7 @@ ServiceConnection mConnection;
 	}
 
 	@Override
-	public void onStreamDropped(Session session, Stream stream) {
+	public void onStreamDropped(Session session, Stream stream, String reason) {
 		if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
 			if (mSubscriber != null) {
 				unsubscribeFromStream(stream);

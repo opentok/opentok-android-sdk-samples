@@ -334,7 +334,7 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
 	}
 
 	@Override
-	public void onStreamDropped(Session session, Stream stream) {
+	public void onStreamDropped(Session session, Stream stream, String reason) {
 		Subscriber subscriber = mSubscriberStream.get(stream);
 		if (subscriber != null) {
 			mSession.unsubscribe(subscriber);

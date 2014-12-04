@@ -606,7 +606,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     @Override
-    public void onStreamDropped(Session session, Stream stream) {
+    public void onStreamDropped(Session session, Stream stream, String reason) {
         mStreams.remove(stream);
         if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
             if (mSubscriber != null
