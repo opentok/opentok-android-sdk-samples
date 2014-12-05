@@ -166,7 +166,7 @@ public class MySession extends Session {
     }
 
     @Override
-    protected void onStreamDropped(Stream stream, String reason) {
+    protected void onStreamDropped(Stream stream) {
     	MySubscriber p = mSubscriberStream.get(stream);
         if (p != null) {
             mSubscribers.remove(p);

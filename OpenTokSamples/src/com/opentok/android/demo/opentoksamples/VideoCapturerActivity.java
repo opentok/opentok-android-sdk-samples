@@ -332,7 +332,7 @@ public class VideoCapturerActivity extends Activity implements
     }
 
     @Override
-    public void onStreamDropped(Session session, Stream stream, String reason) {
+    public void onStreamDropped(Session session, Stream stream) {
         if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
             if (mSubscriber != null) {
                 unsubscribeFromStream(stream);

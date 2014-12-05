@@ -1,5 +1,6 @@
 package com.opentok.android.demo.opentoksamples;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
@@ -335,7 +336,7 @@ public class HelloWorldActivity extends Activity implements
     }
 
     @Override
-    public void onStreamDropped(Session session, Stream stream, String reason) {
+    public void onStreamDropped(Session session, Stream stream) {
         if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
             if (mSubscriber != null) {
                 unsubscribeFromStream(stream);
