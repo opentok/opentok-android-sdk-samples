@@ -18,6 +18,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -25,57 +28,62 @@ import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
+import com.opentok.android.PublisherKit.PublisherKitVideoType;
+//import com.opentok.android.PublisherKit.PublisherKitVideoType;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.screensharing.ScreensharingCapturer;
 import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
-import com.opentok.android.demo.video.CustomEmulatorVideoCapturer;
 
-public class EmulatorActivity extends Activity implements
-		Session.SessionListener, Publisher.PublisherListener,
-		Subscriber.VideoListener {
+public class ScreenSharingActivity extends Activity implements
+Session.SessionListener, Publisher.PublisherListener,
+Subscriber.VideoListener, Subscriber.SubscriberListener {
 
-	private static final String LOGTAG = "demo-hello-world";
-	private Session mSession;
-	private Publisher mPublisher;
-	private Subscriber mSubscriber;
-	private ArrayList<Stream> mStreams;
-	protected Handler mHandler = new Handler();
+private static final String LOGTAG = "demo-hello-world";
+private Session mSession;
+private Publisher mPublisher;
+private Subscriber mSubscriber;
+private ArrayList<Stream> mStreams;
+protected Handler mHandler = new Handler();
 
-	private RelativeLayout mPublisherViewContainer;
-	private RelativeLayout mSubscriberViewContainer;
+private WebView mPubScreenWebView;
+private RelativeLayout mSubscriberViewContainer;
 
-	// Spinning wheel for loading subscriber view
-	private ProgressBar mLoadingSub;
+// Spinning wheel for loading subscriber view
+private ProgressBar mLoadingSub;
 
-	private boolean resumeHasRun = false;
+private boolean resumeHasRun = false;
 
-	private boolean mIsBound = false;
-	private NotificationCompat.Builder mNotifyBuilder;
-	NotificationManager mNotificationManager;
-	ServiceConnection mConnection;
+private boolean mIsBound = false;
+private NotificationCompat.Builder mNotifyBuilder;
+NotificationManager mNotificationManager;
+ServiceConnection mConnection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(LOGTAG, "ONCREATE");
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.main_layout);
+		setContentView(R.layout.screensharing_layout);
 
 		ActionBar actionBar = getActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
-		mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
+		//We are using a webView to show the screensharing action
+		//If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
+		mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
+		
 		mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
 		mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
 
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		mStreams = new ArrayList<Stream>();
+
 		sessionConnect();
 	}
 
@@ -120,7 +128,7 @@ public class EmulatorActivity extends Activity implements
 				public void onServiceConnected(ComponentName className,
 						IBinder binder) {
 					((ClearBinder) binder).service.startService(new Intent(
-							EmulatorActivity.this,
+							ScreenSharingActivity.this,
 							ClearNotificationService.class));
 					NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 					mNotificationManager.notify(
@@ -137,7 +145,7 @@ public class EmulatorActivity extends Activity implements
 		}
 
 		if (!mIsBound) {
-			bindService(new Intent(EmulatorActivity.this,
+			bindService(new Intent(ScreenSharingActivity.this,
 					ClearNotificationService.class), mConnection,
 					Context.BIND_AUTO_CREATE);
 			mIsBound = true;
@@ -237,37 +245,40 @@ public class EmulatorActivity extends Activity implements
 
 	private void sessionConnect() {
 		if (mSession == null) {
-			mSession = new Session(EmulatorActivity.this,
-					OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+			mSession = new Session(ScreenSharingActivity.this,
+					com.opentok.android.demo.config.OpenTokConfig.API_KEY, com.opentok.android.demo.config.OpenTokConfig.SESSION_ID);
 			mSession.setSessionListener(this);
-			mSession.connect(OpenTokConfig.TOKEN);
+			mSession.connect(com.opentok.android.demo.config.OpenTokConfig.TOKEN);
 		}
 	}
 
 	@Override
 	public void onConnected(Session session) {
 		Log.i(LOGTAG, "Connected to the session.");
+		
+		//Start screensharing 
 		if (mPublisher == null) {
-			mPublisher = new Publisher(EmulatorActivity.this, "publisher");
+			mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
 			mPublisher.setPublisherListener(this);
-			// use an external customer video capturer for emulator
-			mPublisher.setCapturer(new CustomEmulatorVideoCapturer(EmulatorActivity.this));
-			attachPublisherView(mPublisher);
+			mPublisher
+					.setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+			ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
+					this, mPubScreenWebView);
+			mPublisher.setCapturer(screenCapturer);
+			loadScreenWebView();
+			
 			mSession.publish(mPublisher);
 		}
+			
 	}
 
 	@Override
 	public void onDisconnected(Session session) {
 		Log.i(LOGTAG, "Disconnected from the session.");
-		if (mPublisher != null) {
-			mPublisherViewContainer.removeView(mPublisher.getView());
-		}
-
 		if (mSubscriber != null) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
 		}
-
+	
 		mPublisher = null;
 		mSubscriber = null;
 		mStreams.clear();
@@ -275,19 +286,22 @@ public class EmulatorActivity extends Activity implements
 	}
 
 	private void subscribeToStream(Stream stream) {
-		mSubscriber = new Subscriber(EmulatorActivity.this, stream);
+		mSubscriber = new Subscriber(ScreenSharingActivity.this, stream);
 		mSubscriber.setVideoListener(this);
+		mSubscriber.setSubscriberListener(this);
 		mSession.subscribe(mSubscriber);
+		mSubscriberViewContainer.setVisibility(View.VISIBLE);
 		if (mSubscriber.getSubscribeToVideo()) {
-        	// start loading spinning
-        	mLoadingSub.setVisibility(View.VISIBLE);
-        }
+			// start loading spinning
+			mLoadingSub.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void unsubscribeFromStream(Stream stream) {
 		mStreams.remove(stream);
 		if (mSubscriber.getStream().equals(stream)) {
 			mSubscriberViewContainer.removeView(mSubscriber.getView());
+			mSubscriberViewContainer.setVisibility(View.GONE);
 			mSubscriber = null;
 			if (!mStreams.isEmpty()) {
 				subscribeToStream(mStreams.get(0));
@@ -299,25 +313,23 @@ public class EmulatorActivity extends Activity implements
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 				getResources().getDisplayMetrics().widthPixels, getResources()
 						.getDisplayMetrics().heightPixels);
-		mSubscriberViewContainer.removeView(mSubscriber.getView());
+		mSubscriberViewContainer.removeView(mSubscriber.getView());  
 		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
+		
 		subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
 				BaseVideoRenderer.STYLE_VIDEO_FILL);
 	}
+	
 
-	private void attachPublisherView(Publisher publisher) {
-		mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-				BaseVideoRenderer.STYLE_VIDEO_FILL);
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-				320, 240);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-				RelativeLayout.TRUE);
-		layoutParams.bottomMargin = dpToPx(8);
-		layoutParams.rightMargin = dpToPx(8);
-		mPublisherViewContainer.addView(mPublisher.getView(), layoutParams);
+	private void loadScreenWebView(){
+		mPubScreenWebView.setWebViewClient(new WebViewClient());
+		WebSettings webSettings = mPubScreenWebView.getSettings();
+		webSettings.setJavaScriptEnabled(true);
+		mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // to turn off hardware-accelerated canvas
+		mPubScreenWebView.loadUrl("http://www.google.com");
 	}
+	
+	
 
 	@Override
 	public void onError(Session session, OpentokError exception) {
@@ -326,8 +338,7 @@ public class EmulatorActivity extends Activity implements
 
 	@Override
 	public void onStreamReceived(Session session, Stream stream) {
-
-		if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
+		if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
 			mStreams.add(stream);
 			if (mSubscriber == null) {
 				subscribeToStream(stream);
@@ -337,7 +348,7 @@ public class EmulatorActivity extends Activity implements
 
 	@Override
 	public void onStreamDropped(Session session, Stream stream) {
-		if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
+		if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
 			if (mSubscriber != null) {
 				unsubscribeFromStream(stream);
 			}
@@ -346,7 +357,7 @@ public class EmulatorActivity extends Activity implements
 
 	@Override
 	public void onStreamCreated(PublisherKit publisher, Stream stream) {
-		if (OpenTokConfig.SUBSCRIBE_TO_SELF) {
+		if (com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
 			mStreams.add(stream);
 			if (mSubscriber == null) {
 				subscribeToStream(stream);
@@ -356,7 +367,7 @@ public class EmulatorActivity extends Activity implements
 
 	@Override
 	public void onStreamDestroyed(PublisherKit publisher, Stream stream) {
-		if ((OpenTokConfig.SUBSCRIBE_TO_SELF && mSubscriber != null)) {
+		if ((com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF && mSubscriber != null)) {
 			unsubscribeFromStream(stream);
 		}
 	}
@@ -409,4 +420,21 @@ public class EmulatorActivity extends Activity implements
 				"Video may no longer be disabled as stream quality improved. Add UI handling here.");
 	}
 
+	
+	@Override
+	public void onConnected(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Subscriber is connected: ");
+		
+	}
+	
+	@Override
+	public void onDisconnected(SubscriberKit subscriber) {
+		Log.i(LOGTAG, "Subscriber is disconnected: ");
+		
+	}
+
+	@Override
+	public void onError(SubscriberKit subscriber, OpentokError exception) {
+		Log.i(LOGTAG, "Subscriber exception: " + exception.getMessage());
+	}
 }
