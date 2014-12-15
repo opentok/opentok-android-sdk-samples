@@ -36,12 +36,12 @@ import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
+import com.opentok.android.Stream.StreamVideoType;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
 import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
-import com.opentok.android.demo.opentoksamples.R;
 import com.opentok.android.demo.ui.AudioLevelView;
 import com.opentok.android.demo.ui.fragments.PublisherControlFragment;
 import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;
@@ -897,6 +897,12 @@ public class UIActivity extends Activity implements Session.SessionListener,
 		mSubscriberQualityFragment.setCongestion(CongestionLevel.Low);
 		congestion = CongestionLevel.Low;
 		mSubscriberQualityFragment.showSubscriberWidget(false);
+	}
+
+	@Override
+	public void onStreamVideoTypeChanged(Session arg0, Stream arg1,
+			StreamVideoType arg2) {
+		Log.i(LOGTAG, "Stream video type has changed");
 	}
 
 }
