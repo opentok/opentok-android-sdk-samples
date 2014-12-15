@@ -1,8 +1,8 @@
-package main.android.demo.ui.fragments;
+package com.opentok.android.demo.ui.fragments;
 
-import main.android.demo.opentoksamples.R;
-import main.android.demo.opentoksamples.UIActivity;
-import main.android.demo.ui.fragments.SubscriberControlFragment.SubscriberCallbacks;
+import com.opentok.android.demo.opentoksamples.R;
+import com.opentok.android.demo.opentoksamples.UIActivity;
+import com.opentok.android.demo.ui.fragments.SubscriberControlFragment.SubscriberCallbacks;
 
 import android.app.Activity;
 import android.app.Fragment;

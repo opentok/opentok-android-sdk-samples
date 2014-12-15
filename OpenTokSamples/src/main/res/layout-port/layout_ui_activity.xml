@@ -26,7 +26,7 @@
             android:layout_height="fill_parent"
             android:visibility="gone" >
 		 	
-		 	<main.android.demo.ui.AudioLevelView
+		 	<com.opentok.android.demo.ui.AudioLevelView
 		 	    android:id="@+id/subscribermeter"
 		 	    android:layout_width="fill_parent"
 		 	    android:layout_height="fill_parent"

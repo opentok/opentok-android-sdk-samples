@@ -1,4 +1,4 @@
-package main.android.demo.config;
+package com.opentok.android.demo.config;
 
 public class OpenTokConfig {
 	

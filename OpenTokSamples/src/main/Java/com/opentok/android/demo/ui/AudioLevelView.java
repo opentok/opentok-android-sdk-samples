@@ -1,4 +1,4 @@
-package main.android.demo.ui;
+package com.opentok.android.demo.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,9 +35,9 @@ public class AudioLevelView extends View {
 
 	private void init() {
 		mPaint.setStyle(Style.FILL);
-		mPaint.setColor(getResources().getColor(main.android.demo.opentoksamples.R.color.black_grey));
+		mPaint.setColor(getResources().getColor(com.opentok.android.demo.opentoksamples.R.color.black_grey));
 		mPaintGradient.setStyle(Style.FILL);
-		mPaintGradient.setColor(getResources().getColor(main.android.demo.opentoksamples.R.color.init_gradient));
+		mPaintGradient.setColor(getResources().getColor(com.opentok.android.demo.opentoksamples.R.color.init_gradient));
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class AudioLevelView extends View {
 		mBounds.bottom = (int) (h * 0.90);
 		// Update gradient
 		mPaintGradient.setShader(new RadialGradient(w / 2, h / 2, h / 2,
-				getResources().getColor(main.android.demo.opentoksamples.R.color.color0_gradient), getResources().getColor(main.android.demo.opentoksamples.R.color.color1_gradient), TileMode.CLAMP));
+				getResources().getColor(com.opentok.android.demo.opentoksamples.R.color.color0_gradient), getResources().getColor(com.opentok.android.demo.opentoksamples.R.color.color1_gradient), TileMode.CLAMP));
 
 	}
 

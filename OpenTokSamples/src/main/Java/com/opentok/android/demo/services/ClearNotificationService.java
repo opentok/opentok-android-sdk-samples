@@ -1,4 +1,4 @@
-package main.android.demo.services;
+package com.opentok.android.demo.services;
 
 import android.app.NotificationManager;
 import android.app.Service;

@@ -19,9 +19,10 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'src/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/res']
             jniLibs.srcDir 'libs'
         }
-
 
     }
 }

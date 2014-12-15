@@ -1,4 +1,4 @@
-package main.android.demo.multiparty;
+package com.opentok.android.demo.multiparty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import com.opentok.android.Publisher;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.BaseVideoRenderer;
-import main.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.config.OpenTokConfig;
 
 public class MySession extends Session {
 

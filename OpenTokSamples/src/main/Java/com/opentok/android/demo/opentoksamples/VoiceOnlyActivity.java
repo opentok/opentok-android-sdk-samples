@@ -1,4 +1,4 @@
-package main.android.demo.opentoksamples;
+package com.opentok.android.demo.opentoksamples;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +37,10 @@ import com.opentok.android.Session.SessionListener;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import main.android.demo.services.ClearNotificationService;
-import main.android.demo.config.OpenTokConfig;
-import main.android.demo.services.ClearNotificationService.ClearBinder;
-import main.android.demo.ui.MeterView;
+import com.opentok.android.demo.services.ClearNotificationService;
+import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
+import com.opentok.android.demo.ui.MeterView;
 
 public class VoiceOnlyActivity extends Activity implements SessionListener,
 		ArchiveListener {

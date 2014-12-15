@@ -1,4 +1,4 @@
-package main.android.demo.opentoksamples;
+package com.opentok.android.demo.opentoksamples;
 
 import java.util.ArrayList;
 
@@ -39,14 +39,14 @@ import com.opentok.android.Stream;
 import com.opentok.android.Stream.StreamVideoType;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import main.android.demo.services.ClearNotificationService;
-import main.android.demo.config.OpenTokConfig;
-import main.android.demo.services.ClearNotificationService.ClearBinder;
-import main.android.demo.ui.AudioLevelView;
-import main.android.demo.ui.fragments.PublisherControlFragment;
-import main.android.demo.ui.fragments.PublisherStatusFragment;
-import main.android.demo.ui.fragments.SubscriberControlFragment;
-import main.android.demo.ui.fragments.SubscriberQualityFragment;
+import com.opentok.android.demo.services.ClearNotificationService;
+import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
+import com.opentok.android.demo.ui.AudioLevelView;
+import com.opentok.android.demo.ui.fragments.PublisherControlFragment;
+import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;
+import com.opentok.android.demo.ui.fragments.SubscriberControlFragment;
+import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment;
 
 public class UIActivity extends Activity implements Session.SessionListener,
        	Session.ArchiveListener,

@@ -28,7 +28,7 @@
             </intent-filter>
         </service>
         <activity
-            android:name="main.android.demo.opentoksamples.OpenTokSamples"
+            android:name="com.opentok.android.demo.opentoksamples.OpenTokSamples"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="fullSensor" >
@@ -40,7 +40,7 @@
         </activity>
         
         <activity
-            android:name="main.android.demo.opentoksamples.HelloWorldActivity"
+            android:name="com.opentok.android.demo.opentoksamples.HelloWorldActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokHelloWorld" />
@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.UIActivity"
+            android:name="com.opentok.android.demo.opentoksamples.UIActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokHelloWorldUI" />
@@ -58,7 +58,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.VideoCapturerActivity"
+            android:name="com.opentok.android.demo.opentoksamples.VideoCapturerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokCapturer" />
@@ -67,7 +67,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.VideoRendererActivity"
+            android:name="com.opentok.android.demo.opentoksamples.VideoRendererActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokRenderer" />
@@ -76,7 +76,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.MultipartyActivity"
+            android:name="com.opentok.android.demo.opentoksamples.MultipartyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokSubclassing" />
@@ -85,7 +85,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.VoiceOnlyActivity"
+            android:name="com.opentok.android.demo.opentoksamples.VoiceOnlyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentokhelloworld.VoiceOnlyActivity" />
@@ -94,7 +94,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.AudioDeviceActivity"
+            android:name="com.opentok.android.demo.opentoksamples.AudioDeviceActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.AudioDeviceActivity" />
@@ -103,7 +103,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="main.android.demo.opentoksamples.EmulatorActivity"
+            android:name="com.opentok.android.demo.opentoksamples.EmulatorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.EmulatorActivity" />

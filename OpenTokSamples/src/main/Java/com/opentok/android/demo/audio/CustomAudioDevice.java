@@ -1,4 +1,4 @@
-package main.android.demo.audio;
+package com.opentok.android.demo.audio;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Condition;

@@ -1,4 +1,4 @@
-package main.android.demo.ui;
+package com.opentok.android.demo.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;

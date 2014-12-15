@@ -1,4 +1,4 @@
-package main.android.demo.multiparty;
+package com.opentok.android.demo.multiparty;
 
 import android.content.Context;
 

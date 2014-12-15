@@ -1,4 +1,4 @@
-package main.android.demo.opentoksamples;
+package com.opentok.android.demo.opentoksamples;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -21,9 +21,9 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import main.android.demo.services.ClearNotificationService;
-import main.android.demo.services.ClearNotificationService.ClearBinder;
-import main.android.demo.multiparty.MySession;
+import com.opentok.android.demo.services.ClearNotificationService;
+import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
+import com.opentok.android.demo.multiparty.MySession;
 
 public class MultipartyActivity extends Activity {
 

@@ -1,4 +1,4 @@
-package main.android.demo.opentoksamples;
+package com.opentok.android.demo.opentoksamples;
 
 import android.os.Bundle;
 import android.app.Activity;

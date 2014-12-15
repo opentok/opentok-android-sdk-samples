@@ -1,4 +1,4 @@
-package main.android.demo.video;
+package com.opentok.android.demo.video;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

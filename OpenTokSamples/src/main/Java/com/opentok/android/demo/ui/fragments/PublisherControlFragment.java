@@ -1,6 +1,6 @@
-package main.android.demo.ui.fragments;
+package com.opentok.android.demo.ui.fragments;
 
-import main.android.demo.opentoksamples.UIActivity;
+import com.opentok.android.demo.opentoksamples.UIActivity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -80,20 +80,20 @@ public class PublisherControlFragment extends Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(main.android.demo.opentoksamples.R.layout.layout_fragment_pub_control,
+		View rootView = inflater.inflate(com.opentok.android.demo.opentoksamples.R.layout.layout_fragment_pub_control,
 				container, false);
 
 		mPublisherContainer = (RelativeLayout) openTokActivity
-				.findViewById(main.android.demo.opentoksamples.R.id.fragment_pub_container);
+				.findViewById(com.opentok.android.demo.opentoksamples.R.id.fragment_pub_container);
 
 		mPublisherMute = (ImageButton) rootView
-				.findViewById(main.android.demo.opentoksamples.R.id.mutePublisher);
+				.findViewById(com.opentok.android.demo.opentoksamples.R.id.mutePublisher);
 		mPublisherMute.setOnClickListener(this);
 
-		mSwapCamera = (ImageButton) rootView.findViewById(main.android.demo.opentoksamples.R.id.swapCamera);
+		mSwapCamera = (ImageButton) rootView.findViewById(com.opentok.android.demo.opentoksamples.R.id.swapCamera);
 		mSwapCamera.setOnClickListener(this);
 
-		mEndCall = (Button) rootView.findViewById(main.android.demo.opentoksamples.R.id.endCall);
+		mEndCall = (Button) rootView.findViewById(com.opentok.android.demo.opentoksamples.R.id.endCall);
 		mEndCall.setOnClickListener(this);
 
 		return rootView;
@@ -139,15 +139,15 @@ public class PublisherControlFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case main.android.demo.opentoksamples.R.id.mutePublisher:
+		case com.opentok.android.demo.opentoksamples.R.id.mutePublisher:
 			mutePublisher();
 			break;
 
-		case main.android.demo.opentoksamples.R.id.swapCamera:
+		case com.opentok.android.demo.opentoksamples.R.id.swapCamera:
 			swapCamera();
 			break;
 
-		case main.android.demo.opentoksamples.R.id.endCall:
+		case com.opentok.android.demo.opentoksamples.R.id.endCall:
 			endCall();
 			break;
 		}
@@ -157,8 +157,8 @@ public class PublisherControlFragment extends Fragment implements
 		mCallbacks.onMutePublisher();
 
 		mPublisherMute.setImageResource(openTokActivity.getmPublisher()
-				.getPublishAudio() ? main.android.demo.opentoksamples.R.drawable.unmute_pub
-				: main.android.demo.opentoksamples.R.drawable.mute_pub);
+				.getPublishAudio() ? com.opentok.android.demo.opentoksamples.R.drawable.unmute_pub
+				: com.opentok.android.demo.opentoksamples.R.drawable.mute_pub);
 	}
 
 	public void swapCamera() {
@@ -175,8 +175,8 @@ public class PublisherControlFragment extends Fragment implements
 		openTokActivity.getmHandler().postDelayed(mPublisherWidgetTimerTask,
 				PUBLISHER_CONTROLS_DURATION);
 		mPublisherMute.setImageResource(openTokActivity.getmPublisher()
-				.getPublishAudio() ? main.android.demo.opentoksamples.R.drawable.unmute_pub
-				: main.android.demo.opentoksamples.R.drawable.mute_pub);
+				.getPublishAudio() ? com.opentok.android.demo.opentoksamples.R.drawable.unmute_pub
+				: com.opentok.android.demo.opentoksamples.R.drawable.mute_pub);
 
 	}
 

@@ -1,4 +1,4 @@
-package main.android.demo.opentoksamples;
+package com.opentok.android.demo.opentoksamples;
 
 import java.util.ArrayList;
 
@@ -29,8 +29,8 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import main.android.demo.services.ClearNotificationService;
-import main.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.services.ClearNotificationService;
+import com.opentok.android.demo.config.OpenTokConfig;
 
 /**
  * This application demonstrates the basic workflow for getting started with the

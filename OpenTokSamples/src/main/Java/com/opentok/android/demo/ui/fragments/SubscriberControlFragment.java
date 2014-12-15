@@ -1,6 +1,6 @@
-package main.android.demo.ui.fragments;
+package com.opentok.android.demo.ui.fragments;
 
-import main.android.demo.opentoksamples.UIActivity;
+import com.opentok.android.demo.opentoksamples.UIActivity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -69,19 +69,19 @@ public class SubscriberControlFragment extends Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(main.android.demo.opentoksamples.R.layout.layout_fragment_sub_control,
+		View rootView = inflater.inflate(com.opentok.android.demo.opentoksamples.R.layout.layout_fragment_sub_control,
 				container, false);
 
 		mSubContainer = (RelativeLayout) openTokActivity
-				.findViewById(main.android.demo.opentoksamples.R.id.fragment_sub_container);
+				.findViewById(com.opentok.android.demo.opentoksamples.R.id.fragment_sub_container);
 
 		showSubscriberWidget(mSubscriberWidgetVisible, false);
 
 		mSubscriberMute = (ImageButton) rootView
-				.findViewById(main.android.demo.opentoksamples.R.id.muteSubscriber);
+				.findViewById(com.opentok.android.demo.opentoksamples.R.id.muteSubscriber);
 		mSubscriberMute.setOnClickListener(this);
 
-		mSubscriberName = (TextView) rootView.findViewById(main.android.demo.opentoksamples.R.id.subscriberName);
+		mSubscriberName = (TextView) rootView.findViewById(com.opentok.android.demo.opentoksamples.R.id.subscriberName);
 
 		if (openTokActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) container
@@ -139,7 +139,7 @@ public class SubscriberControlFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case main.android.demo.opentoksamples.R.id.muteSubscriber:
+		case com.opentok.android.demo.opentoksamples.R.id.muteSubscriber:
 			muteSubscriber();
 			break;
 		}
@@ -197,8 +197,8 @@ public class SubscriberControlFragment extends Fragment implements
 		mCallbacks.onMuteSubscriber();
 
 		mSubscriberMute.setImageResource(openTokActivity.getmSubscriber()
-				.getSubscribeToAudio() ? main.android.demo.opentoksamples.R.drawable.unmute_sub
-				: main.android.demo.opentoksamples.R.drawable.mute_sub);
+				.getSubscribeToAudio() ? com.opentok.android.demo.opentoksamples.R.drawable.unmute_sub
+				: com.opentok.android.demo.opentoksamples.R.drawable.mute_sub);
 	}
 
 	public void initSubscriberUI() {
@@ -209,8 +209,8 @@ public class SubscriberControlFragment extends Fragment implements
 		mSubscriberName.setText(openTokActivity.getmSubscriber().getStream()
 				.getName());
 		mSubscriberMute.setImageResource(openTokActivity.getmSubscriber()
-				.getSubscribeToAudio() ? main.android.demo.opentoksamples.R.drawable.unmute_sub
-				: main.android.demo.opentoksamples.R.drawable.mute_sub);
+				.getSubscribeToAudio() ? com.opentok.android.demo.opentoksamples.R.drawable.unmute_sub
+				: com.opentok.android.demo.opentoksamples.R.drawable.mute_sub);
 	}
 
 }
