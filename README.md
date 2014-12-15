@@ -61,6 +61,7 @@ Testing the sample app
       capturer and player.
     * Emulator Hello World -- Shows how to correct the video orientation when testing in a
       virtual machine.
+    * Screen Sharing -- Shows how to publish a screen-sharing stream to a session.
 
 5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
     in a new view.
@@ -96,7 +97,7 @@ the app:
   capturer and player.
 * Emulator Hello World -- Shows how to correct the video orientation when testing in a
   virtual machine.
-
+* Screen Sharing -- Shows how to publish a screen-sharing stream to a session.
 
 For information on how these activities use the OpenTok Android SDK, see the next section,
 "Understanding the code."
@@ -834,6 +835,97 @@ orientation of the virtual device:
         return totalCameraRotation;
     }
 
+### Screen sharing
+
+You can use a custom video capturer to use a view from the Android application as the source of
+a published stream. (See "Using a custom video capturer" for basic information on using a custom
+video capturer.)
+
+When the app starts up, the `onCreate(Bundle savedInstanceState)` method instantiates a WebView
+object:
+
+    //We are using a webView to show the screensharing action
+    //If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
+    mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
+
+The app will use this WebView as the source for the publisher video (instead of a camera).
+
+Upon connecting to the OpenTok session, the app instantiates a Publisher object, and calls its
+`setCapturer()` method to use a custom video capturer, defined by the ScreensharingCapturer
+class:
+
+    @Override
+    public void onConnected(Session session) {
+        Log.i(LOGTAG, "Connected to the session.");
+    
+        //Start screensharing
+        if (mPublisher == null) {
+            mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
+            mPublisher.setPublisherListener(this);
+            mPublisher
+                    .setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+            ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
+                    this, mPubScreenWebView);
+            mPublisher.setCapturer(screenCapturer);
+            loadScreenWebView();
+        
+            mSession.publish(mPublisher);
+        }
+    }
+
+The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
+configures the WebView object, loading the Google URL:
+
+    private void loadScreenWebView(){
+            mPubScreenWebView.setWebViewClient(new WebViewClient());
+            WebSettings webSettings = mPubScreenWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+              // to turn off hardware-accelerated canvas
+            mPubScreenWebView.loadUrl("http://www.google.com");
+        }
+
+Note that the `mPubScreenWebView` object is passed into the ScreensharingCapturer() constructor,
+which assigns it to the `contentView` property. The `newFrame()` method is called when the video
+capturer supplies a new frame to the video stream. It creates a canvas, draws the `contentView`
+to the canvas, and assigns the bitmap representation of `contentView` to the frame to be sent:
+
+    Runnable newFrame = new Runnable() {
+        @Override
+        public void run() {
+            if (capturing) {
+                int width = contentView.getWidth();
+                int height = contentView.getHeight();
+                
+                if (frame == null ||
+                    ScreensharingCapturer.this.width != width ||
+                    ScreensharingCapturer.this.height != height) {
+                    
+                    ScreensharingCapturer.this.width = width;
+                    ScreensharingCapturer.this.height = height;
+                    
+                    if (bmp != null) {
+                        bmp.recycle();
+                        bmp = null;
+                    }
+                    
+                    bmp = Bitmap.createBitmap(width,
+                            height, Bitmap.Config.ARGB_8888);
+                    
+                    canvas = new Canvas(bmp);
+                    frame = new int[width * height];
+                }
+                
+                contentView.draw(canvas);
+                
+                bmp.getPixels(frame, 0, width, 0, 0, width, height);
+ 
+                provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+ 
+                mHandler.postDelayed(newFrame, 1000 / fps);
+            }
+        }
+    };
 
 Next steps
 ----------
