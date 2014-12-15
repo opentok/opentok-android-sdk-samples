@@ -85,19 +85,7 @@ Testing the sample app
     -   Run the app on your Android device again.
 
 In addition to the Hello World activity, try running the other activities from the main menu of
-the app:
-
-* UI Controls -- Adds custom UI controls to the Hello World app.
-* Custom Capturer -- Shows how to use a custom video capturer.
-* Custom Renderer -- Shows how to use a custom video renderer.
-* Multiparty -- Shows how to created subclasses of the Session and Subscriber
-  classes. It also shows how to use the signaling API.
-* Voice Only -- Shows how to implement a voice-only OpenTok session.
-* Audio device -- Shows how to use the audio driver API to implement a custom audio
-  capturer and player.
-* Emulator Hello World -- Shows how to correct the video orientation when testing in a
-  virtual machine.
-* Screen Sharing -- Shows how to publish a screen-sharing stream to a session.
+the app.
 
 For information on how these activities use the OpenTok Android SDK, see the next section,
 "Understanding the code."
@@ -930,4 +918,5 @@ to the canvas, and assigns the bitmap representation of `contentView` to the fra
 Next steps
 ----------
 
-For details on the full OpenTok Android API, see the reference documentation.
+For details on the full OpenTok Android API, see the [reference
+documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
