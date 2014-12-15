@@ -763,6 +763,73 @@ notification to the PublisherStatusFragment view:
         setPubViewMargins();
     }
 
+### Testing in the Android Emulator
+
+You can use the OpenTok Android SDK in a virtual machine in the Android Emulator. Note that you can
+set the front and back cameras to use either the computer's webcam or an emulator camera. However,
+the orientation of the video from the camera can be rotated incorrectly. The Emulator Hello World
+activity corrects this issue.
+
+Upon connecting to the OpenTok session, the app instantiates a Publisher object, and calls its
+`setCapturer()` method to use a custom video capturer, defined by the CustomEmulatorVideoCapturer
+class:
+
+    @Override
+    public void onConnected(Session session) {
+        Log.i(LOGTAG, "Connected to the session.");
+        if (mPublisher == null) {
+            mPublisher = new Publisher(EmulatorActivity.this, "publisher");
+            mPublisher.setPublisherListener(this);
+            // use an external customer video capturer for emulator
+            mPublisher.setCapturer(new CustomEmulatorVideoCapturer(EmulatorActivity.this));
+            attachPublisherView(mPublisher);
+            mSession.publish(mPublisher);
+        }
+    }
+
+The CustomEmulatorVideoCapturer (defined in the com.opentok.android.demo.video package) defines a
+custom video capturer (see "Using a custom video capturer"). The `onPreviewFrame(byte[] data,
+Camera camera)` method is called when the video capturer supplies a frame of video. The
+`compensateCameraRotation()` method adjusts the orientation of the video stream based on the
+orientation of the virtual device:
+
+    private int compensateCameraRotation(int uiRotation) {
+
+        int cameraRotation = 0;
+        switch (uiRotation) {
+        case (Surface.ROTATION_0):
+            cameraRotation = 0;
+            break;
+        case (Surface.ROTATION_90):
+            cameraRotation = 270;
+            break;
+        case (Surface.ROTATION_180):
+            cameraRotation = 180;
+            break;
+        case (Surface.ROTATION_270):
+            cameraRotation = 90;
+            break;
+        default:
+            break;
+        }
+
+        int cameraOrientation = this.getNaturalCameraOrientation();
+
+        int totalCameraRotation = 0;
+        boolean usingFrontCamera = this.isFrontCamera();
+        if (usingFrontCamera) {
+            // The front camera rotates in the opposite direction of the
+            // device.
+            int inverseCameraRotation = (360 - cameraRotation) % 360;
+            totalCameraRotation = (inverseCameraRotation + cameraOrientation) % 360;
+        } else {
+            totalCameraRotation = (cameraRotation + cameraOrientation) % 360;
+        }
+
+        return totalCameraRotation;
+    }
+
+
 Next steps
 ----------
 
