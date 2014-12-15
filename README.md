@@ -59,6 +59,8 @@ Testing the sample app
     * Voice Only -- Shows how to implement a voice-only OpenTok session.
     * Audio device -- Shows how to use the audio driver API to implement a custom audio
       capturer and player.
+    * Emulator Hello World -- Shows how to correct the video orientation when testing in a
+      virtual machine.
 
 5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
     in a new view.
@@ -92,6 +94,9 @@ the app:
 * Voice Only -- Shows how to implement a voice-only OpenTok session.
 * Audio device -- Shows how to use the audio driver API to implement a custom audio
   capturer and player.
+* Emulator Hello World -- Shows how to correct the video orientation when testing in a
+  virtual machine.
+
 
 For information on how these activities use the OpenTok Android SDK, see the next section,
 "Understanding the code."
