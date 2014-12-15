@@ -1,7 +1,7 @@
-OpenTok Android SDK Samples
+                             OpenTok Android SDK Samples
 ===========================
 
-This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.3](http://tokbox.com/opentok/libraries/client/android/).
+This is a basic sample app that shows the most basic features of the [OpenTok Android SDK](http://tokbox.com/opentok/libraries/client/android/).
 
 *Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
@@ -18,24 +18,30 @@ for details on the API.
 Testing the sample app
 ----------------------
 
-1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
-   Workspace. Choose the OpenTokSamples directory. Then click Finish.)
+1. Import the project into Android Studio or ADT.
 
-   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so or x86/libopentok.so file.
-   Both of these libraries are required to develop apps that use the OpenTok 2.3 Android SDK.
-   These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the 
-   opentok-android-sdk-2.3.0.jar file and armeabi or x86 directory into the libs directory of your project
-   in the ADT package explorer.) The opentok-android-sdk-2.3.0.jar file is available at
+   This project links to the opentok-android-sdk-2.4.0.jar file and the armeabi/libopentok.so or
+   x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
+   Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
-   
+
+   In Android Studio, copy the opentok-android-sdk-2.4.0.jar file into the libs directory, and
+   copy the armeabi and x86 directories into a app/src/main/jniLibs (which you may need to create).
+
+   If you are using ADT, from the desktop, drag the opentok-android-sdk-2.4.0.jar file and armeabi
+   or x86 directory into the libs directory of your project in the ADT package explorer.
 
 2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
-   Then to generate the session ID and token, use the Project Tools on the
+   Then to generate a test session ID and token, use the Project Tools on the
    [Project Details](https://dashboard.tokbox.com/projects) page.
 
    Open the OpenTokConfig.java file and set the `SESSION_ID`, `TOKEN`, and `API_KEY` strings
    to your own session ID, token, and API key respectively.
+
+   For more information, see the OpenTok [Session Creation
+   Overview](https://tokbox.com/opentok/tutorials/create-session/) and the [Token Creation
+   Overview](https://tokbox.com/opentok/tutorials/create-token/).
 
 3.  Connect your Android device to a USB port on your computer. Set up
     [USB debugging](http://developer.android.com/tools/device.html) on your device.
