@@ -168,8 +168,11 @@ public class SubscriberControlFragment extends Fragment implements
 			mSubContainer.startAnimation(aa);
 
 			if (show) {
+                mSubscriberMute.setClickable(true);
 				mSubContainer.setVisibility(View.VISIBLE);
+
 			} else {
+                mSubscriberMute.setClickable(false);
 				mSubContainer.setVisibility(View.GONE);
 			}	
 		}
