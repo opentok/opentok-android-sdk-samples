@@ -213,8 +213,14 @@ public class PublisherControlFragment extends Fragment implements
 			mPublisherContainer.startAnimation(aa);
 
 			if (show) {
+				mEndCall.setClickable(true);
+				mSwapCamera.setClickable(true);
+				mPublisherMute.setClickable(true);
 				mPublisherContainer.setVisibility(View.VISIBLE);
 			} else {
+				mEndCall.setClickable(false);
+				mSwapCamera.setClickable(false);
+				mPublisherMute.setClickable(false);
 				mPublisherContainer.setVisibility(View.GONE);
 			}
 		}
