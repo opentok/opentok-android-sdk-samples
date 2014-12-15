@@ -1,4 +1,4 @@
-                             OpenTok Android SDK Samples
+OpenTok Android SDK Samples
 ===========================
 
 This is a basic sample app that shows the most basic features of the [OpenTok Android SDK](http://tokbox.com/opentok/libraries/client/android/).

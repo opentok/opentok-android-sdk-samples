@@ -592,7 +592,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     @Override
     public void onDisconnected(Session session) {
-        Log.i(LOGTAG, "Disconnected to the session.");
+        Log.i(LOGTAG, "Disconnected from the session.");
     }
 
     @Override
