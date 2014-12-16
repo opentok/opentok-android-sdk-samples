@@ -591,6 +591,22 @@ public class UIActivity extends Activity implements Session.SessionListener,
     @Override
     public void onDisconnected(Session session) {
         Log.i(LOGTAG, "Disconnected to the session.");
+
+        if (mPublisher != null) {
+            mPublisherViewContainer.removeView(mPublisher.getRenderer()
+                    .getView());
+        }
+
+        if (mSubscriber != null) {
+            mSubscriberViewContainer.removeView(mSubscriber.getRenderer()
+                    .getView());
+        }
+
+        mPublisher = null;
+        mSubscriber = null;
+        mStreams.clear();
+        mSession = null;
+
     }
 
     @Override
