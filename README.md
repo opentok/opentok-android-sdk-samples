@@ -25,8 +25,7 @@ Testing the sample app
    Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
 
-   In Android Studio, copy the opentok-android-sdk-2.4.0.jar file into the libs directory, and
-   copy the armeabi and x86 directories into a app/src/main/jniLibs (which you may need to create).
+   In Android Studio, copy the opentok-android-sdk-2.4.0.jar file, the armbeabi and x86 directories into the libs directory.
 
    If you are using ADT, from the desktop, drag the opentok-android-sdk-2.4.0.jar file and armeabi
    or x86 directory into the libs directory of your project in the ADT package explorer.
