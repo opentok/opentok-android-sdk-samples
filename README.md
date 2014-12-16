@@ -757,12 +757,11 @@ notification to the PublisherStatusFragment view:
         setPubViewMargins();
     }
 
-### Testing in the Android Emulator
+### Testing in the Android emulator
 
-You can use the OpenTok Android SDK in a virtual machine in the Android Emulator. Note that you can
-set the front and back cameras to use either the computer's webcam or an emulator camera. However,
-the orientation of the video from the camera can be rotated incorrectly. The Emulator Hello World
-activity corrects this issue.
+You can use the OpenTok Android SDK in the Genymotion Android emulator, which is available at
+https://www.genymotion.com. However, by default, the orientation of the video from the camera
+can be rotated incorrectly. The Emulator Hello World activity corrects this issue.
 
 Upon connecting to the OpenTok session, the app instantiates a Publisher object, and calls its
 `setCapturer()` method to use a custom video capturer, defined by the CustomEmulatorVideoCapturer
@@ -860,6 +859,13 @@ class:
             mSession.publish(mPublisher);
         }
     }
+
+Note that the call to the `setPublisherVideoType()` method sets the video type of the published
+stream to `PublisherKitVideoType.PublisherKitVideoTypeScreen`. This optimizes the video encoding for
+screen sharing. It is recommended to use a low frame rate (5 frames per second or lower) with this
+video type. When using the screen video type in a session that uses the [OpenTok Media
+Server](https://tokbox.com/opentok/tutorials/create-session/#media-mode), the
+audio-only fallback feature is disabled, so that the video does not drop out in subscribers.
 
 The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
 configures the WebView object, loading the Google URL:
