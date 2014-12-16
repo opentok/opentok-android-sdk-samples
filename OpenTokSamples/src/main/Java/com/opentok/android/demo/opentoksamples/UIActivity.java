@@ -915,9 +915,9 @@ public class UIActivity extends Activity implements Session.SessionListener,
 	}
 
 	@Override
-	public void onStreamVideoTypeChanged(Session arg0, Stream arg1,
-			StreamVideoType arg2) {
-		Log.i(LOGTAG, "Stream video type has changed");
+	public void onStreamVideoTypeChanged(Session session, Stream stream,
+			StreamVideoType videoType) {
+		  Log.i(LOGTAG, "Stream video type changed");
 	}
 
 }

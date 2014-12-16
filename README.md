@@ -1,7 +1,7 @@
 OpenTok Android SDK Samples
 ===========================
 
-This is a basic sample app that shows the most basic features of the [OpenTok Android SDK 2.3](http://tokbox.com/opentok/libraries/client/android/).
+This is a basic sample app that shows the most basic features of the [OpenTok Android SDK](http://tokbox.com/opentok/libraries/client/android/).
 
 *Important:* Read "Testing the sample app" below for information on configuring and testing the sample app.
 
@@ -18,24 +18,29 @@ for details on the API.
 Testing the sample app
 ----------------------
 
-1. Import the project into ADT. (Select File > Import > Android > Existing Android Code into
-   Workspace. Choose the OpenTokSamples directory. Then click Finish.)
+1. Import the project into Android Studio or ADT.
 
-   This project links to the opentok-android-sdk-2.3.0.jar file and the armeabi/libopentok.so or x86/libopentok.so file.
-   Both of these libraries are required to develop apps that use the OpenTok 2.3 Android SDK.
-   These are included in the OpenTok/libs subdirectory of the SDK. (From the desktop, drag the 
-   opentok-android-sdk-2.3.0.jar file and armeabi or x86 directory into the libs directory of your project
-   in the ADT package explorer.) The opentok-android-sdk-2.3.0.jar file is available at
+   This project links to the opentok-android-sdk-2.4.0.jar file and the armeabi/libopentok.so or
+   x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
+   Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
-   
+
+   In Android Studio, copy the opentok-android-sdk-2.4.0.jar file, the armbeabi and x86 directories into the libs directory.
+
+   If you are using ADT, from the desktop, drag the opentok-android-sdk-2.4.0.jar file and armeabi
+   or x86 directory into the libs directory of your project in the ADT package explorer.
 
 2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
-   Then to generate the session ID and token, use the Project Tools on the
+   Then to generate a test session ID and token, use the Project Tools on the
    [Project Details](https://dashboard.tokbox.com/projects) page.
 
    Open the OpenTokConfig.java file and set the `SESSION_ID`, `TOKEN`, and `API_KEY` strings
    to your own session ID, token, and API key respectively.
+
+   For more information, see the OpenTok [Session Creation
+   Overview](https://tokbox.com/opentok/tutorials/create-session/) and the [Token Creation
+   Overview](https://tokbox.com/opentok/tutorials/create-token/).
 
 3.  Connect your Android device to a USB port on your computer. Set up
     [USB debugging](http://developer.android.com/tools/device.html) on your device.
@@ -50,6 +55,12 @@ Testing the sample app
     * Custom Renderer -- Shows how to use a custom video renderer
     * Multiparty -- Shows how to created subclasses of the Session and Subscriber
       classes. It also shows how to use the signaling API.
+    * Voice Only -- Shows how to implement a voice-only OpenTok session.
+    * Audio device -- Shows how to use the audio driver API to implement a custom audio
+      capturer and player.
+    * Emulator Hello World -- Shows how to correct the video orientation when testing in a
+      virtual machine.
+    * Screen Sharing -- Shows how to publish a screen-sharing stream to a session.
 
 5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
     in a new view.
@@ -73,13 +84,7 @@ Testing the sample app
     -   Run the app on your Android device again.
 
 In addition to the Hello World activity, try running the other activities from the main menu of
-the app:
-
-* UI Controls -- Adds custom UI controls to the Hello World app.
-* Custom Capturer -- Shows how to use a custom video capturer.
-* Custom Renderer -- Shows how to use a custom video renderer.
-* Multiparty -- Shows how to created subclasses of the Session and Subscriber
-  classes. It also shows how to use the signaling API.
+the app.
 
 For information on how these activities use the OpenTok Android SDK, see the next section,
 "Understanding the code."
@@ -751,7 +756,172 @@ notification to the PublisherStatusFragment view:
         setPubViewMargins();
     }
 
+### Testing in the Android emulator
+
+You can use the OpenTok Android SDK in the Genymotion Android emulator, which is available at
+https://www.genymotion.com. However, by default, the orientation of the video from the camera
+can be rotated incorrectly. The Emulator Hello World activity corrects this issue.
+
+Upon connecting to the OpenTok session, the app instantiates a Publisher object, and calls its
+`setCapturer()` method to use a custom video capturer, defined by the CustomEmulatorVideoCapturer
+class:
+
+    @Override
+    public void onConnected(Session session) {
+        Log.i(LOGTAG, "Connected to the session.");
+        if (mPublisher == null) {
+            mPublisher = new Publisher(EmulatorActivity.this, "publisher");
+            mPublisher.setPublisherListener(this);
+            // use an external customer video capturer for emulator
+            mPublisher.setCapturer(new CustomEmulatorVideoCapturer(EmulatorActivity.this));
+            attachPublisherView(mPublisher);
+            mSession.publish(mPublisher);
+        }
+    }
+
+The CustomEmulatorVideoCapturer (defined in the com.opentok.android.demo.video package) defines a
+custom video capturer (see "Using a custom video capturer"). The `onPreviewFrame(byte[] data,
+Camera camera)` method is called when the video capturer supplies a frame of video. The
+`compensateCameraRotation()` method adjusts the orientation of the video stream based on the
+orientation of the virtual device:
+
+    private int compensateCameraRotation(int uiRotation) {
+
+        int cameraRotation = 0;
+        switch (uiRotation) {
+        case (Surface.ROTATION_0):
+            cameraRotation = 0;
+            break;
+        case (Surface.ROTATION_90):
+            cameraRotation = 270;
+            break;
+        case (Surface.ROTATION_180):
+            cameraRotation = 180;
+            break;
+        case (Surface.ROTATION_270):
+            cameraRotation = 90;
+            break;
+        default:
+            break;
+        }
+
+        int cameraOrientation = this.getNaturalCameraOrientation();
+
+        int totalCameraRotation = 0;
+        boolean usingFrontCamera = this.isFrontCamera();
+        if (usingFrontCamera) {
+            // The front camera rotates in the opposite direction of the
+            // device.
+            int inverseCameraRotation = (360 - cameraRotation) % 360;
+            totalCameraRotation = (inverseCameraRotation + cameraOrientation) % 360;
+        } else {
+            totalCameraRotation = (cameraRotation + cameraOrientation) % 360;
+        }
+
+        return totalCameraRotation;
+    }
+
+### Screen sharing
+
+You can use a custom video capturer to use a view from the Android application as the source of
+a published stream. (See "Using a custom video capturer" for basic information on using a custom
+video capturer.)
+
+When the app starts up, the `onCreate(Bundle savedInstanceState)` method instantiates a WebView
+object:
+
+    //We are using a webView to show the screensharing action
+    //If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
+    mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
+
+The app will use this WebView as the source for the publisher video (instead of a camera).
+
+Upon connecting to the OpenTok session, the app instantiates a Publisher object, and calls its
+`setCapturer()` method to use a custom video capturer, defined by the ScreensharingCapturer
+class:
+
+    @Override
+    public void onConnected(Session session) {
+        Log.i(LOGTAG, "Connected to the session.");
+    
+        //Start screensharing
+        if (mPublisher == null) {
+            mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
+            mPublisher.setPublisherListener(this);
+            mPublisher
+                    .setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+            ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
+                    this, mPubScreenWebView);
+            mPublisher.setCapturer(screenCapturer);
+            loadScreenWebView();
+        
+            mSession.publish(mPublisher);
+        }
+    }
+
+Note that the call to the `setPublisherVideoType()` method sets the video type of the published
+stream to `PublisherKitVideoType.PublisherKitVideoTypeScreen`. This optimizes the video encoding for
+screen sharing. It is recommended to use a low frame rate (5 frames per second or lower) with this
+video type. When using the screen video type in a session that uses the [OpenTok Media
+Server](https://tokbox.com/opentok/tutorials/create-session/#media-mode), the
+audio-only fallback feature is disabled, so that the video does not drop out in subscribers.
+
+The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
+configures the WebView object, loading the Google URL:
+
+    private void loadScreenWebView(){
+            mPubScreenWebView.setWebViewClient(new WebViewClient());
+            WebSettings webSettings = mPubScreenWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+              // to turn off hardware-accelerated canvas
+            mPubScreenWebView.loadUrl("http://www.google.com");
+        }
+
+Note that the `mPubScreenWebView` object is passed into the ScreensharingCapturer() constructor,
+which assigns it to the `contentView` property. The `newFrame()` method is called when the video
+capturer supplies a new frame to the video stream. It creates a canvas, draws the `contentView`
+to the canvas, and assigns the bitmap representation of `contentView` to the frame to be sent:
+
+    Runnable newFrame = new Runnable() {
+        @Override
+        public void run() {
+            if (capturing) {
+                int width = contentView.getWidth();
+                int height = contentView.getHeight();
+                
+                if (frame == null ||
+                    ScreensharingCapturer.this.width != width ||
+                    ScreensharingCapturer.this.height != height) {
+                    
+                    ScreensharingCapturer.this.width = width;
+                    ScreensharingCapturer.this.height = height;
+                    
+                    if (bmp != null) {
+                        bmp.recycle();
+                        bmp = null;
+                    }
+                    
+                    bmp = Bitmap.createBitmap(width,
+                            height, Bitmap.Config.ARGB_8888);
+                    
+                    canvas = new Canvas(bmp);
+                    frame = new int[width * height];
+                }
+                
+                contentView.draw(canvas);
+                
+                bmp.getPixels(frame, 0, width, 0, 0, width, height);
+ 
+                provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+ 
+                mHandler.postDelayed(newFrame, 1000 / fps);
+            }
+        }
+    };
+
 Next steps
 ----------
 
-For details on the full OpenTok Android API, see the reference documentation.
+For details on the full OpenTok Android API, see the [reference
+documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).

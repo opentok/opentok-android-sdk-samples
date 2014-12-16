@@ -1,5 +1,6 @@
 package com.opentok.android.demo.opentoksamples;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
@@ -77,8 +78,9 @@ public class HelloWorldActivity extends Activity implements
         mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+  
         mStreams = new ArrayList<Stream>();
+        
         sessionConnect();
     }
 
