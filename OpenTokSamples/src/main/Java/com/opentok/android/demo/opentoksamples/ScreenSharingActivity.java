@@ -1,8 +1,5 @@
 package com.opentok.android.demo.opentoksamples;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -30,7 +27,6 @@ import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.PublisherKit.PublisherKitVideoType;
-//import com.opentok.android.PublisherKit.PublisherKitVideoType;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
@@ -84,22 +80,7 @@ ServiceConnection mConnection;
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		mStreams = new ArrayList<Stream>();
-
-        try {
-            // set environment
-            com.opentok.android.OpenTokConfig.setAPIRootURL("https://anvil-dev.opentok.com",
-                    false);
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        // enable OTKit logs
-        com.opentok.android.OpenTokConfig.setOTKitLogs(true);
-        // enable bindings logs
-        com.opentok.android.OpenTokConfig.setJNILogs(true);
-        // OpenTokConfig.setWebRTCLogs(true);
-		sessionConnect();
+    	sessionConnect();
 	}
 
 	@Override
