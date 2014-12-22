@@ -1,5 +1,6 @@
 package com.opentok.android.demo.opentoksamples;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
@@ -84,6 +85,20 @@ ServiceConnection mConnection;
 
 		mStreams = new ArrayList<Stream>();
 
+        try {
+            // set environment
+            com.opentok.android.OpenTokConfig.setAPIRootURL("https://anvil-dev.opentok.com",
+                    false);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // enable OTKit logs
+        com.opentok.android.OpenTokConfig.setOTKitLogs(true);
+        // enable bindings logs
+        com.opentok.android.OpenTokConfig.setJNILogs(true);
+        // OpenTokConfig.setWebRTCLogs(true);
 		sessionConnect();
 	}
 
@@ -315,11 +330,7 @@ ServiceConnection mConnection;
 						.getDisplayMetrics().heightPixels);
 		mSubscriberViewContainer.removeView(mSubscriber.getView());  
 		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
-		
-		subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-				BaseVideoRenderer.STYLE_VIDEO_FILL);
 	}
-	
 
 	private void loadScreenWebView(){
 		mPubScreenWebView.setWebViewClient(new WebViewClient());
