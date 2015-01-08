@@ -18,7 +18,7 @@ for details on the API.
 Testing the sample app
 ----------------------
 
-1. Import the project into Android Studio.
+1. Import the project into Android Studio or ADT.
 
    This project links to the opentok-android-sdk-2.4.0.jar file and the armeabi/libopentok.so or
    x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
@@ -26,12 +26,12 @@ Testing the sample app
    <http://tokbox.com/opentok/libraries/client/android/>.
 
    You should be able to import the project directly into Android Studio:
-    1- Clone this repository onto your machine.
-    2- Start Android Studio.
-    3- The first time, import OpenTokSamples as a Non-Android Studio Project. 
+    1 - Clone this repository onto your machine.
+    2 - Start Android Studio.
+    3 - The first time, import OpenTokSamples as a Non-Android Studio Project. 
         * Choose File / Import Project and choose the build.gradle file in the OpenTokSamples directory you cloned earlier. 
         If you are on the welcome screen, choose "Import Non-Android Studio Project".
-    4- Copy the opentok-android-sdk-2.4.0.jar file and the armbeabi or x86 directories into the libs directory.
+    4 - Copy the opentok-android-sdk-2.4.0.jar file and the armbeabi or x86 directories into the libs directory.
 
    If you are using ADT, drag the opentok-android-sdk-2.4.0.jar file and armeabi
    or x86 directory into the libs directory of your project in the ADT package explorer.
