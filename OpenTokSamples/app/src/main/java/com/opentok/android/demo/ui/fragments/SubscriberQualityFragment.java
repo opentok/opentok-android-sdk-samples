@@ -1,9 +1,5 @@
 package com.opentok.android.demo.ui.fragments;
 
-import com.opentok.android.demo.opentoksamples.R;
-import com.opentok.android.demo.opentoksamples.UIActivity;
-import com.opentok.android.demo.ui.fragments.SubscriberControlFragment.SubscriberCallbacks;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Configuration;
@@ -17,169 +13,173 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-public class SubscriberQualityFragment extends Fragment  {
-	
-	private static final String LOGTAG = "demo-UI-sub-quality-fragment";
-	
-	private static final int ANIMATION_DURATION = 500;
-	
-	private boolean mSubscriberWidgetVisible = false;
-	private ImageButton congestionIndicator;
-	private RelativeLayout mSubQualityContainer;
-	private UIActivity openTokActivity;
+import com.opentok.android.demo.opentoksamples.R;
+import com.opentok.android.demo.opentoksamples.UIActivity;
+import com.opentok.android.demo.ui.fragments.SubscriberControlFragment.SubscriberCallbacks;
+
+public class SubscriberQualityFragment extends Fragment {
+
+    private static final String LOGTAG = "demo-UI-sub-quality-fragment";
+
+    private static final int ANIMATION_DURATION = 500;
+
+    private boolean mSubscriberWidgetVisible = false;
+    private ImageButton congestionIndicator;
+    private RelativeLayout mSubQualityContainer;
+    private UIActivity openTokActivity;
 
     private CongestionLevel congestion = CongestionLevel.Low;
-    
+
     public enum CongestionLevel {
-    	 High(2), Mid(1), Low(0);
-    	 
-    	 private int congestionLevel;
-    	 
-    	 private CongestionLevel(int congestionLevel) {
-    		 this.congestionLevel = congestionLevel;
-    	 }
-    	 
-    	 public int getCongestionLevel() {
-    	   return congestionLevel;
-    	 }
+        High(2), Mid(1), Low(0);
+
+        private int congestionLevel;
+
+        private CongestionLevel(int congestionLevel) {
+            this.congestionLevel = congestionLevel;
+        }
+
+        public int getCongestionLevel() {
+            return congestionLevel;
+        }
     }
-  
-		@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		Log.i(LOGTAG, "On attach Subscriber control fragment");
-		openTokActivity = (UIActivity) activity;
-		if (!(activity instanceof SubscriberCallbacks)) {
-			throw new IllegalStateException(
-					"Activity must implement fragment's callback");
-		}
 
-	}
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.i(LOGTAG, "On attach Subscriber control fragment");
+        openTokActivity = (UIActivity) activity;
+        if (!(activity instanceof SubscriberCallbacks)) {
+            throw new IllegalStateException(
+                    "Activity must implement fragment's callback");
+        }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
-		View rootView = inflater.inflate(R.layout.layout_fragment_sub_quality,
-				container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-		mSubQualityContainer = (RelativeLayout) openTokActivity
-				.findViewById(R.id.fragment_sub_quality_container);
+        View rootView = inflater.inflate(R.layout.layout_fragment_sub_quality,
+                container, false);
 
-		congestionIndicator = (ImageButton) rootView
-				.findViewById(R.id.congestionIndicator);
-		
-		if (openTokActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) container
-					.getLayoutParams();
+        mSubQualityContainer = (RelativeLayout) openTokActivity
+                .findViewById(R.id.fragment_sub_quality_container);
 
-			DisplayMetrics metrics = new DisplayMetrics();
-			openTokActivity.getWindowManager().getDefaultDisplay()
-					.getMetrics(metrics);
+        congestionIndicator = (ImageButton) rootView
+                .findViewById(R.id.congestionIndicator);
 
-			params.width = metrics.widthPixels - openTokActivity.dpToPx(48);
-			container.setLayoutParams(params);
-		}
+        if (openTokActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) container
+                    .getLayoutParams();
 
-		return rootView;
-	}
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
+            DisplayMetrics metrics = new DisplayMetrics();
+            openTokActivity.getWindowManager().getDefaultDisplay()
+                    .getMetrics(metrics);
 
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
+            params.width = metrics.widthPixels - openTokActivity.dpToPx(48);
+            container.setLayoutParams(params);
+        }
 
-	@Override
-	public void onPause() {
-		super.onPause();
-	}
+        return rootView;
+    }
 
-	@Override
-	public void onStop() {
-		super.onStop();
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
-		Log.i(LOGTAG, "On detach Subscriber control fragment");
-	}
-	
-	public void showSubscriberWidget(boolean show) {
-		if (show) {
-			switch (congestion) {
-				case High:
-					this.congestionIndicator.setImageResource(R.drawable.high_congestion);
-					break;
-				case Mid:
-					this.congestionIndicator.setImageResource(R.drawable.mid_congestion);
-					break;
-				case Low:
-					break;
-				
-				default:
-						break;
-			}
-		}
-		else {
-			Log.i(LOGTAG, "Hidding subscriber quality");
-		}
-		
-		showSubscriberWidget(show, true);
-		
-	}
-	
-	private void showSubscriberWidget(boolean show, boolean animate) {
-		if ( mSubQualityContainer != null ) {
-			mSubQualityContainer.clearAnimation();
-			mSubscriberWidgetVisible = show;
-			float dest = show ? 1.0f : 0.0f;
-			AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
-			aa.setDuration(animate ? ANIMATION_DURATION : 1);
-			aa.setFillAfter(true);
-			mSubQualityContainer.startAnimation(aa);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 
-			if (show) {
-				mSubQualityContainer.setVisibility(View.VISIBLE);
-			} else {
-				mSubQualityContainer.setVisibility(View.GONE);
-			}
-		}
-	}
-	
-	public CongestionLevel getCongestion() {
-		return congestion;
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-	public void setCongestion(CongestionLevel high) {
-		this.congestion = high;
-	}
+    @Override
+    public void onDetach() {
+        super.onDetach();
 
-	public boolean isSubscriberWidgetVisible() {
-		return mSubscriberWidgetVisible;
-	}
+        Log.i(LOGTAG, "On detach Subscriber control fragment");
+    }
 
-	public RelativeLayout getSubQualityContainer() {
-		return mSubQualityContainer;
-	}
+    public void showSubscriberWidget(boolean show) {
+        if (show) {
+            switch (congestion) {
+                case High:
+                    this.congestionIndicator.setImageResource(R.drawable.high_congestion);
+                    break;
+                case Mid:
+                    this.congestionIndicator.setImageResource(R.drawable.mid_congestion);
+                    break;
+                case Low:
+                    break;
+
+                default:
+                    break;
+            }
+        } else {
+            Log.i(LOGTAG, "Hidding subscriber quality");
+        }
+
+        showSubscriberWidget(show, true);
+
+    }
+
+    private void showSubscriberWidget(boolean show, boolean animate) {
+        if (mSubQualityContainer != null) {
+            mSubQualityContainer.clearAnimation();
+            mSubscriberWidgetVisible = show;
+            float dest = show ? 1.0f : 0.0f;
+            AlphaAnimation aa = new AlphaAnimation(1.0f - dest, dest);
+            aa.setDuration(animate ? ANIMATION_DURATION : 1);
+            aa.setFillAfter(true);
+            mSubQualityContainer.startAnimation(aa);
+
+            if (show) {
+                mSubQualityContainer.setVisibility(View.VISIBLE);
+            } else {
+                mSubQualityContainer.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public CongestionLevel getCongestion() {
+        return congestion;
+    }
+
+    public void setCongestion(CongestionLevel high) {
+        this.congestion = high;
+    }
+
+    public boolean isSubscriberWidgetVisible() {
+        return mSubscriberWidgetVisible;
+    }
+
+    public RelativeLayout getSubQualityContainer() {
+        return mSubQualityContainer;
+    }
 }

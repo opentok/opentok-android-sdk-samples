@@ -1,8 +1,8 @@
 package com.opentok.android.demo.opentoksamples;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -20,33 +20,33 @@ import android.widget.ListView;
  */
 public class OpenTokSamples extends Activity {
 
-	private static final String LOGTAG = "demo-opentok-sdk";
+    private static final String LOGTAG = "demo-opentok-sdk";
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.main_activity);
+        setContentView(R.layout.main_activity);
 
-		final ListView listActivities = (ListView) findViewById(R.id.listview);
-		String[] activityNames = { getString(R.string.helloworld),
-				getString(R.string.helloworldui),
-				getString(R.string.helloworldcapturer),
-				getString(R.string.helloworldrenderer),
-				getString(R.string.helloworldsubclassing),
-				getString(R.string.voinceonly),
-				getString(R.string.audiodevice),
-				getString(R.string.helloworldemulator),
-				getString(R.string.screensharing)};
+        final ListView listActivities = (ListView) findViewById(R.id.listview);
+        String[] activityNames = {getString(R.string.helloworld),
+                getString(R.string.helloworldui),
+                getString(R.string.helloworldcapturer),
+                getString(R.string.helloworldrenderer),
+                getString(R.string.helloworldsubclassing),
+                getString(R.string.voinceonly),
+                getString(R.string.audiodevice),
+                getString(R.string.helloworldemulator),
+                getString(R.string.screensharing)};
 
-		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, activityNames);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, activityNames);
         listActivities.setAdapter(adapter);
 
         listActivities.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position,
-                    long id) {
+                                    long id) {
                 // these positions are hard-coded to some example activities,
                 // they match
                 // the array contents of activityNames above.
@@ -63,11 +63,11 @@ public class OpenTokSamples extends Activity {
                 } else if (5 == position) {
                     startVoiceOnly();
                 } else if (6 == position) {
-                	startAudioDevice();
+                    startAudioDevice();
                 } else if (7 == position) {
-                	startHelloWorldEmulator();
+                    startHelloWorldEmulator();
                 } else if (8 == position) {
-                	startScreensharing();
+                    startScreensharing();
                 } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
@@ -75,7 +75,7 @@ public class OpenTokSamples extends Activity {
         });
 
         // Disable screen dimming
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class OpenTokSamples extends Activity {
         return true;
     }
 
-    
+
     @Override
     public void onPause() {
         super.onPause();
@@ -91,9 +91,9 @@ public class OpenTokSamples extends Activity {
 
     @Override
     public void onResume() {
-        super.onResume(); 
+        super.onResume();
     }
-    
+
     /**
      * Starts the Hello-World demo app. See OpenTokHelloWorld.java
      */
@@ -201,7 +201,7 @@ public class OpenTokSamples extends Activity {
         startActivity(intent);
 
     }
-    
+
     /**
      * Starts the Hello-World app using a custom audio device. See
      * AudioDeviceActivity.java
@@ -217,7 +217,7 @@ public class OpenTokSamples extends Activity {
         startActivity(intent);
 
     }
-    
+
     /**
      * Starts the Hello-World app using a custom audio device. See
      * AudioDeviceActivity.java
