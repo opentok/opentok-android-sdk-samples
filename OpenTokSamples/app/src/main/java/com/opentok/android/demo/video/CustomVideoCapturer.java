@@ -1,8 +1,5 @@
 package com.opentok.android.demo.video;
 
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
-
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
@@ -17,6 +14,9 @@ import android.view.WindowManager;
 
 import com.opentok.android.BaseVideoCapturer;
 
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class CustomVideoCapturer extends BaseVideoCapturer implements
         PreviewCallback {
 
@@ -26,13 +26,15 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
     private Camera mCamera;
     private Camera.CameraInfo mCurrentDeviceInfo = null;
     public ReentrantLock mPreviewBufferLock = new ReentrantLock(); // sync
-                                                                   // start/stop
-                                                                   // capture
-                                                                   // and
-                                                                   // surface
-                                                                   // changes
+    // start/stop
+    // capture
+    // and
+    // surface
+    // changes
 
     private final static int PIXEL_FORMAT = ImageFormat.NV21;
+    private final static int PREFERRED_CAPTURE_WIDTH = 640;
+    private final static int PREFERRED_CAPTURE_HEIGHT = 480;
 
     private boolean isCaptureStarted = false;
     private boolean isCaptureRunning = false;
@@ -66,7 +68,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         }
 
         // Set the preferred capturing size
-        configureCaptureSize(640, 480);
+        configureCaptureSize(PREFERRED_CAPTURE_WIDTH, PREFERRED_CAPTURE_HEIGHT);
 
         // Set the capture parameters
         Camera.Parameters parameters = mCamera.getParameters();
@@ -152,7 +154,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
     public CaptureSettings getCaptureSettings() {
 
         // Set the preferred capturing size
-        configureCaptureSize(640, 480);
+        configureCaptureSize(PREFERRED_CAPTURE_WIDTH, PREFERRED_CAPTURE_HEIGHT);
 
         CaptureSettings settings = new CaptureSettings();
         settings.fps = mCaptureFPS;
@@ -228,20 +230,20 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
 
         int cameraRotation = 0;
         switch (uiRotation) {
-        case (Surface.ROTATION_0):
-            cameraRotation = 0;
-            break;
-        case (Surface.ROTATION_90):
-            cameraRotation = 270;
-            break;
-        case (Surface.ROTATION_180):
-            cameraRotation = 180;
-            break;
-        case (Surface.ROTATION_270):
-            cameraRotation = 90;
-            break;
-        default:
-            break;
+            case (Surface.ROTATION_0):
+                cameraRotation = 0;
+                break;
+            case (Surface.ROTATION_90):
+                cameraRotation = 270;
+                break;
+            case (Surface.ROTATION_180):
+                cameraRotation = 180;
+                break;
+            case (Surface.ROTATION_270):
+                cameraRotation = 90;
+                break;
+            default:
+                break;
         }
 
         int cameraOrientation = this.getNaturalCameraOrientation();

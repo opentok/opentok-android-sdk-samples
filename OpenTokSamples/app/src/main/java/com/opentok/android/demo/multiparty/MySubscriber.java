@@ -9,12 +9,12 @@ public class MySubscriber extends Subscriber {
 
     private String userId;
     private String name;
-        
+
     public MySubscriber(Context context, Stream stream) {
         super(context, stream);
         // With the userId we can query our own database
         // to extract player information
-        setName("User" + ((int)(Math.random()*1000)));
+        setName("User" + ((int) (Math.random() * 1000)));
     }
 
     public String getUserId() {
@@ -33,6 +33,5 @@ public class MySubscriber extends Subscriber {
         this.name = name;
     }
 
-    
 
 }

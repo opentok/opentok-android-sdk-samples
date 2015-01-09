@@ -1,7 +1,5 @@
 package com.opentok.android.demo.opentoksamples;
 
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -29,9 +27,11 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.config.OpenTokConfig;
+import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.video.CustomVideoCapturer;
+
+import java.util.ArrayList;
 
 public class VideoCapturerActivity extends Activity implements
         Session.SessionListener, Publisher.PublisherListener,
@@ -54,9 +54,9 @@ public class VideoCapturerActivity extends Activity implements
     private boolean resumeHasRun = false;
 
     private boolean mIsBound = false;
-	private NotificationCompat.Builder mNotifyBuilder;
-	NotificationManager mNotificationManager;
-	ServiceConnection mConnection;
+    private NotificationCompat.Builder mNotifyBuilder;
+    NotificationManager mNotificationManager;
+    ServiceConnection mConnection;
 
 
     @Override
@@ -85,11 +85,11 @@ public class VideoCapturerActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            onBackPressed();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -118,40 +118,40 @@ public class VideoCapturerActivity extends Activity implements
                 notificationIntent, 0);
 
         mNotifyBuilder.setContentIntent(intent);
-        if(mConnection == null){	    
-        	mConnection = new ServiceConnection() {
-        		@Override
-        		public void onServiceConnected(ComponentName className,IBinder binder){
-        			((ClearNotificationService.ClearBinder) binder).service.startService(new Intent(VideoCapturerActivity.this, ClearNotificationService.class));
-        			NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);					
-        			mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
-        		}
+        if (mConnection == null) {
+            mConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName className, IBinder binder) {
+                    ((ClearNotificationService.ClearBinder) binder).service.startService(new Intent(VideoCapturerActivity.this, ClearNotificationService.class));
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(ClearNotificationService.NOTIFICATION_ID, mNotifyBuilder.build());
+                }
 
-        		@Override
-        		public void onServiceDisconnected(ComponentName className) {
-        			mConnection = null;
-        		}
+                @Override
+                public void onServiceDisconnected(ComponentName className) {
+                    mConnection = null;
+                }
 
-        	};
+            };
         }
 
-        if(!mIsBound){
-        	bindService(new Intent(VideoCapturerActivity.this,
-        			ClearNotificationService.class), mConnection,
-        			Context.BIND_AUTO_CREATE);
-        	mIsBound = true;
+        if (!mIsBound) {
+            bindService(new Intent(VideoCapturerActivity.this,
+                            ClearNotificationService.class), mConnection,
+                    Context.BIND_AUTO_CREATE);
+            mIsBound = true;
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        
-        if(mIsBound){
-			unbindService(mConnection);
-			mIsBound = false;
-		}
-       
+
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+
         if (!resumeHasRun) {
             resumeHasRun = true;
             return;
@@ -169,11 +169,11 @@ public class VideoCapturerActivity extends Activity implements
     public void onStop() {
         super.onStop();
 
-        if(mIsBound){
-			unbindService(mConnection);
-			mIsBound = false;
-		}
-        
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+
         if (isFinishing()) {
             mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
             if (mSession != null) {
@@ -184,30 +184,30 @@ public class VideoCapturerActivity extends Activity implements
 
     @Override
     public void onDestroy() {
-    	mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
-  
-    	if(mIsBound){
-			unbindService(mConnection);
-			mIsBound = false;
-		}
-    	
-    	if (mSession != null)  {
-    		mSession.disconnect();
-    	}
-    	restartAudioMode();
-    	
-    	super.onDestroy();
-    	finish();
+        mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+
+        if (mSession != null) {
+            mSession.disconnect();
+        }
+        restartAudioMode();
+
+        super.onDestroy();
+        finish();
     }
-    
+
     @Override
     public void onBackPressed() {
         if (mSession != null) {
             mSession.disconnect();
         }
-        
+
         restartAudioMode();
-        
+
         super.onBackPressed();
     }
 
@@ -223,10 +223,11 @@ public class VideoCapturerActivity extends Activity implements
     }
 
     public void restartAudioMode() {
-    	AudioManager Audio =  (AudioManager) getSystemService(Context.AUDIO_SERVICE); 
-    	Audio.setMode(AudioManager.MODE_NORMAL);
-    	this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+        AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        Audio.setMode(AudioManager.MODE_NORMAL);
+        this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
     }
+
     private void sessionConnect() {
         if (mSession == null) {
             mSession = new Session(this, OpenTokConfig.API_KEY,
@@ -240,10 +241,10 @@ public class VideoCapturerActivity extends Activity implements
         mSubscriber = new Subscriber(VideoCapturerActivity.this, stream);
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
-        
+
         if (mSubscriber.getSubscribeToVideo()) {
-        	// start loading spinning
-        	mLoadingSub.setVisibility(View.VISIBLE);
+            // start loading spinning
+            mLoadingSub.setVisibility(View.VISIBLE);
         }
     }
 
@@ -263,7 +264,7 @@ public class VideoCapturerActivity extends Activity implements
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 getResources().getDisplayMetrics().widthPixels, getResources()
-                        .getDisplayMetrics().heightPixels);
+                .getDisplayMetrics().heightPixels);
         mSubscriberViewContainer.removeView(mSubscriber.getView());
         mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
     }
@@ -368,17 +369,17 @@ public class VideoCapturerActivity extends Activity implements
         Log.i(LOGTAG, "Session exception: " + exception.getMessage());
     }
 
-	@Override
-	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+    @Override
+    public void onVideoDisabled(SubscriberKit subscriber, String reason) {
         Log.i(LOGTAG,
-                "Video disabled:" + reason);		
-	}
+                "Video disabled:" + reason);
+    }
 
-	@Override
-	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+    @Override
+    public void onVideoEnabled(SubscriberKit subscriber, String reason) {
         Log.i(LOGTAG,
-                "Video enabled:" + reason);		
-	}
+                "Video enabled:" + reason);
+    }
 
     @Override
     public void onVideoDataReceived(SubscriberKit subscriber) {
@@ -391,9 +392,8 @@ public class VideoCapturerActivity extends Activity implements
 
     /**
      * Converts dp to real pixels, according to the screen density.
-     * 
-     * @param dp
-     *            A number of density-independent pixels.
+     *
+     * @param dp A number of density-independent pixels.
      * @return The equivalent number of real pixels.
      */
     private int dpToPx(int dp) {
@@ -402,13 +402,13 @@ public class VideoCapturerActivity extends Activity implements
     }
 
     @Override
-	public void onVideoDisableWarning(SubscriberKit subscriber) {
-		Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");	
-	}
+    public void onVideoDisableWarning(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "Video may be disabled soon due to network quality degradation. Add UI handling here.");
+    }
 
-	@Override
-	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
-		Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
-	}
+    @Override
+    public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "Video may no longer be disabled as stream quality improved. Add UI handling here.");
+    }
 
 }

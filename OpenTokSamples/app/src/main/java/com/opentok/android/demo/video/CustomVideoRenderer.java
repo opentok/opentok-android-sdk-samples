@@ -1,5 +1,13 @@
 package com.opentok.android.demo.video;
 
+import android.content.Context;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
+import android.view.View;
+
+import com.opentok.android.BaseVideoRenderer;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -8,14 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import android.content.Context;
-import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.view.View;
-
-import com.opentok.android.BaseVideoRenderer;
 
 public class CustomVideoRenderer extends BaseVideoRenderer {
 
@@ -41,19 +41,19 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
         static final int COORDS_PER_VERTEX = 3;
         static final int TEXTURECOORDS_PER_VERTEX = 2;
 
-        static float mXYZCoords[] = { -1.0f, 1.0f, 0.0f, // top left
+        static float mXYZCoords[] = {-1.0f, 1.0f, 0.0f, // top left
                 -1.0f, -1.0f, 0.0f, // bottom left
                 1.0f, -1.0f, 0.0f, // bottom right
                 1.0f, 1.0f, 0.0f // top right
         };
 
-        static float mUVCoords[] = { 0, 0, // top left
+        static float mUVCoords[] = {0, 0, // top left
                 0, 1, // bottom left
                 1, 1, // bottom right
-                1, 0 }; // top right
+                1, 0}; // top right
 
-        private short mVertexIndex[] = { 0, 1, 2, 0, 2, 3 }; // order to draw
-                                                             // vertices
+        private short mVertexIndex[] = {0, 1, 2, 0, 2, 3}; // order to draw
+        // vertices
 
         private final String vertexShaderCode = "uniform mat4 uMVPMatrix;"
                 + "attribute vec4 aPosition;\n"
@@ -113,21 +113,21 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-	        gl.glClearColor(0, 0, 0, 1); 
-	        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-	        
+            gl.glClearColor(0, 0, 0, 1);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER,
                     vertexShaderCode);
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER,
                     fragmentShaderCode);
 
             mProgram = GLES20.glCreateProgram(); // create empty OpenGL ES
-                                                 // Program
+            // Program
             GLES20.glAttachShader(mProgram, vertexShader); // add the vertex
-                                                           // shader to program
+            // shader to program
             GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment
-                                                             // shader to
-                                                             // program
+            // shader to
+            // program
             GLES20.glLinkProgram(mProgram);
 
             int positionHandle = GLES20.glGetAttribLocation(mProgram,
@@ -186,7 +186,7 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
             int w = frame.getWidth();
             int h = frame.getHeight();
             int hw = (w + 1) >> 1;
-            int hh = (h +1) >> 1;
+            int hh = (h + 1) >> 1;
 
             initializeTexture(GLES20.GL_TEXTURE0, mTextureIds[0], w, h);
             initializeTexture(GLES20.GL_TEXTURE1, mTextureIds[1], hw, hh);
@@ -200,7 +200,7 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
             int width = frame.getWidth();
             int height = frame.getHeight();
             int half_width = (width + 1) >> 1;
-            int half_height = (height +1) >> 1;
+            int half_height = (height + 1) >> 1;
             int y_size = width * height;
             int uv_size = half_width * half_height;
 
@@ -213,7 +213,7 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
                 bb.position(0);
 
                 GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
-                GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT , 1);
+                GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
 
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
@@ -250,7 +250,7 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-        	  mFrameLock.lock();
+            mFrameLock.lock();
             if (mCurrentFrame != null && !mVideoDisabled) {
                 GLES20.glUseProgram(mProgram);
 
@@ -291,11 +291,10 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
                 GLES20.glDrawElements(GLES20.GL_TRIANGLES, mVertexIndex.length,
                         GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-            }
-            else {
-            	//black frame when video is disabled
-            	gl.glClearColor(0, 0, 0, 1); 
-            	GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            } else {
+                //black frame when video is disabled
+                gl.glClearColor(0, 0, 0, 1);
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             }
             mFrameLock.unlock();
         }
@@ -336,7 +335,9 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
         public void enableVideoFit(boolean enableVideoFit) {
             mVideoFitEnabled = enableVideoFit;
         }
-    };
+    }
+
+    ;
 
     public CustomVideoRenderer(Context context) {
         this.mContext = context;

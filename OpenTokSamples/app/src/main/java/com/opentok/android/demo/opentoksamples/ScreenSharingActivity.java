@@ -1,7 +1,5 @@
 package com.opentok.android.demo.opentoksamples;
 
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -29,7 +27,6 @@ import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.PublisherKit.PublisherKitVideoType;
-//import com.opentok.android.PublisherKit.PublisherKitVideoType;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
@@ -38,403 +35,402 @@ import com.opentok.android.demo.screensharing.ScreensharingCapturer;
 import com.opentok.android.demo.services.ClearNotificationService;
 import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
 
+import java.util.ArrayList;
+
+//import com.opentok.android.PublisherKit.PublisherKitVideoType;
+
 public class ScreenSharingActivity extends Activity implements
-Session.SessionListener, Publisher.PublisherListener,
-Subscriber.VideoListener, Subscriber.SubscriberListener {
+        Session.SessionListener, Publisher.PublisherListener,
+        Subscriber.VideoListener, Subscriber.SubscriberListener {
 
-private static final String LOGTAG = "demo-hello-world";
-private Session mSession;
-private Publisher mPublisher;
-private Subscriber mSubscriber;
-private ArrayList<Stream> mStreams;
-protected Handler mHandler = new Handler();
+    private static final String LOGTAG = "demo-hello-world";
+    private Session mSession;
+    private Publisher mPublisher;
+    private Subscriber mSubscriber;
+    private ArrayList<Stream> mStreams;
+    protected Handler mHandler = new Handler();
 
-private WebView mPubScreenWebView;
-private RelativeLayout mSubscriberViewContainer;
+    private WebView mPubScreenWebView;
+    private RelativeLayout mSubscriberViewContainer;
 
-// Spinning wheel for loading subscriber view
-private ProgressBar mLoadingSub;
+    // Spinning wheel for loading subscriber view
+    private ProgressBar mLoadingSub;
 
-private boolean resumeHasRun = false;
+    private boolean resumeHasRun = false;
 
-private boolean mIsBound = false;
-private NotificationCompat.Builder mNotifyBuilder;
-NotificationManager mNotificationManager;
-ServiceConnection mConnection;
+    private boolean mIsBound = false;
+    private NotificationCompat.Builder mNotifyBuilder;
+    NotificationManager mNotificationManager;
+    ServiceConnection mConnection;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		Log.i(LOGTAG, "ONCREATE");
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.i(LOGTAG, "ONCREATE");
+        super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.screensharing_layout);
+        setContentView(R.layout.screensharing_layout);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-		//We are using a webView to show the screensharing action
-		//If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
-		mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
-		
-		mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
-		mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
+        //We are using a webView to show the screensharing action
+        //If we want to share our screen we could use: mView = ((Activity)this.context).getWindow().getDecorView().findViewById(android.R.id.content);
+        mPubScreenWebView = (WebView) findViewById(R.id.webview_screen);
 
-		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mSubscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
+        mLoadingSub = (ProgressBar) findViewById(R.id.loadingSpinner);
 
-		mStreams = new ArrayList<Stream>();
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-		sessionConnect();
-	}
+        mStreams = new ArrayList<Stream>();
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+        sessionConnect();
+    }
 
-	@Override
-	public void onPause() {
-		super.onPause();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-		if (mSession != null) {
-			mSession.onPause();
+    @Override
+    public void onPause() {
+        super.onPause();
 
-			if (mSubscriber != null) {
-				mSubscriberViewContainer.removeView(mSubscriber.getView());
-			}
-		}
+        if (mSession != null) {
+            mSession.onPause();
 
-		mNotifyBuilder = new NotificationCompat.Builder(this)
-				.setContentTitle(this.getTitle())
-				.setContentText(getResources().getString(R.string.notification))
-				.setSmallIcon(R.drawable.ic_launcher).setOngoing(true);
+            if (mSubscriber != null) {
+                mSubscriberViewContainer.removeView(mSubscriber.getView());
+            }
+        }
 
-		Intent notificationIntent = new Intent(this, HelloWorldActivity.class);
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent intent = PendingIntent.getActivity(this, 0,
-				notificationIntent, 0);
+        mNotifyBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle(this.getTitle())
+                .setContentText(getResources().getString(R.string.notification))
+                .setSmallIcon(R.drawable.ic_launcher).setOngoing(true);
 
-		mNotifyBuilder.setContentIntent(intent);
-		if (mConnection == null) {
-			mConnection = new ServiceConnection() {
-				@Override
-				public void onServiceConnected(ComponentName className,
-						IBinder binder) {
-					((ClearBinder) binder).service.startService(new Intent(
-							ScreenSharingActivity.this,
-							ClearNotificationService.class));
-					NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-					mNotificationManager.notify(
-							ClearNotificationService.NOTIFICATION_ID,
-							mNotifyBuilder.build());
-				}
+        Intent notificationIntent = new Intent(this, HelloWorldActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
 
-				@Override
-				public void onServiceDisconnected(ComponentName className) {
-					mConnection = null;
-				}
+        mNotifyBuilder.setContentIntent(intent);
+        if (mConnection == null) {
+            mConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName className,
+                                               IBinder binder) {
+                    ((ClearBinder) binder).service.startService(new Intent(
+                            ScreenSharingActivity.this,
+                            ClearNotificationService.class));
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(
+                            ClearNotificationService.NOTIFICATION_ID,
+                            mNotifyBuilder.build());
+                }
 
-			};
-		}
+                @Override
+                public void onServiceDisconnected(ComponentName className) {
+                    mConnection = null;
+                }
 
-		if (!mIsBound) {
-			bindService(new Intent(ScreenSharingActivity.this,
-					ClearNotificationService.class), mConnection,
-					Context.BIND_AUTO_CREATE);
-			mIsBound = true;
-		}
+            };
+        }
 
-	}
+        if (!mIsBound) {
+            bindService(new Intent(ScreenSharingActivity.this,
+                            ClearNotificationService.class), mConnection,
+                    Context.BIND_AUTO_CREATE);
+            mIsBound = true;
+        }
 
-	@Override
-	public void onResume() {
-		super.onResume();
+    }
 
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
+    @Override
+    public void onResume() {
+        super.onResume();
 
-		if (!resumeHasRun) {
-			resumeHasRun = true;
-			return;
-		} else {
-			if (mSession != null) {
-				mSession.onResume();
-			}
-		}
-		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
 
-		reloadInterface();
-	}
+        if (!resumeHasRun) {
+            resumeHasRun = true;
+            return;
+        } else {
+            if (mSession != null) {
+                mSession.onResume();
+            }
+        }
+        mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
 
-	@Override
-	public void onStop() {
-		super.onStop();
+        reloadInterface();
+    }
 
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
+    @Override
+    public void onStop() {
+        super.onStop();
 
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
-		if (isFinishing()) {
-			mNotificationManager
-					.cancel(ClearNotificationService.NOTIFICATION_ID);
-			if (mSession != null) {
-				mSession.disconnect();
-			}
-		}
-	}
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
 
-	@Override
-	public void onDestroy() {
-		mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
-		if (mIsBound) {
-			unbindService(mConnection);
-			mIsBound = false;
-		}
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+        if (isFinishing()) {
+            mNotificationManager
+                    .cancel(ClearNotificationService.NOTIFICATION_ID);
+            if (mSession != null) {
+                mSession.disconnect();
+            }
+        }
+    }
 
-		if (mSession != null) {
-			mSession.disconnect();
-		}
+    @Override
+    public void onDestroy() {
+        mNotificationManager.cancel(ClearNotificationService.NOTIFICATION_ID);
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
 
-		restartAudioMode();
+        if (mSession != null) {
+            mSession.disconnect();
+        }
 
-		super.onDestroy();
-		finish();
-	}
+        restartAudioMode();
 
-	@Override
-	public void onBackPressed() {
-		if (mSession != null) {
-			mSession.disconnect();
-		}
+        super.onDestroy();
+        finish();
+    }
 
-		restartAudioMode();
+    @Override
+    public void onBackPressed() {
+        if (mSession != null) {
+            mSession.disconnect();
+        }
 
-		super.onBackPressed();
-	}
+        restartAudioMode();
 
-	public void reloadInterface() {
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (mSubscriber != null) {
-					attachSubscriberView(mSubscriber);
-				}
-			}
-		}, 500);
-	}
+        super.onBackPressed();
+    }
 
-	public void restartAudioMode() {
-		AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		Audio.setMode(AudioManager.MODE_NORMAL);
-		this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-	}
+    public void reloadInterface() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mSubscriber != null) {
+                    attachSubscriberView(mSubscriber);
+                }
+            }
+        }, 500);
+    }
 
-	private void sessionConnect() {
-		if (mSession == null) {
-			mSession = new Session(ScreenSharingActivity.this,
-					com.opentok.android.demo.config.OpenTokConfig.API_KEY, com.opentok.android.demo.config.OpenTokConfig.SESSION_ID);
-			mSession.setSessionListener(this);
-			mSession.connect(com.opentok.android.demo.config.OpenTokConfig.TOKEN);
-		}
-	}
+    public void restartAudioMode() {
+        AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        Audio.setMode(AudioManager.MODE_NORMAL);
+        this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+    }
 
-	@Override
-	public void onConnected(Session session) {
-		Log.i(LOGTAG, "Connected to the session.");
-		
-		//Start screensharing 
-		if (mPublisher == null) {
-			mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
-			mPublisher.setPublisherListener(this);
-			mPublisher
-					.setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
-			ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
-					this, mPubScreenWebView);
-			mPublisher.setCapturer(screenCapturer);
-			loadScreenWebView();
-			
-			mSession.publish(mPublisher);
-		}
-			
-	}
+    private void sessionConnect() {
+        if (mSession == null) {
+            mSession = new Session(ScreenSharingActivity.this,
+                    com.opentok.android.demo.config.OpenTokConfig.API_KEY, com.opentok.android.demo.config.OpenTokConfig.SESSION_ID);
+            mSession.setSessionListener(this);
+            mSession.connect(com.opentok.android.demo.config.OpenTokConfig.TOKEN);
+        }
+    }
 
-	@Override
-	public void onDisconnected(Session session) {
-		Log.i(LOGTAG, "Disconnected from the session.");
-		if (mSubscriber != null) {
-			mSubscriberViewContainer.removeView(mSubscriber.getView());
-		}
-	
-		mPublisher = null;
-		mSubscriber = null;
-		mStreams.clear();
-		mSession = null;
-	}
+    @Override
+    public void onConnected(Session session) {
+        Log.i(LOGTAG, "Connected to the session.");
 
-	private void subscribeToStream(Stream stream) {
-		mSubscriber = new Subscriber(ScreenSharingActivity.this, stream);
-		mSubscriber.setVideoListener(this);
-		mSubscriber.setSubscriberListener(this);
-		mSession.subscribe(mSubscriber);
-		mSubscriberViewContainer.setVisibility(View.VISIBLE);
-		if (mSubscriber.getSubscribeToVideo()) {
-			// start loading spinning
-			mLoadingSub.setVisibility(View.VISIBLE);
-		}
-	}
+        //Start screensharing
+        if (mPublisher == null) {
+            mPublisher = new Publisher(ScreenSharingActivity.this, "publisher");
+            mPublisher.setPublisherListener(this);
+            mPublisher
+                    .setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+            ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
+                    this, mPubScreenWebView);
+            mPublisher.setCapturer(screenCapturer);
+            loadScreenWebView();
 
-	private void unsubscribeFromStream(Stream stream) {
-		mStreams.remove(stream);
-		if (mSubscriber.getStream().equals(stream)) {
-			mSubscriberViewContainer.removeView(mSubscriber.getView());
-			mSubscriberViewContainer.setVisibility(View.GONE);
-			mSubscriber = null;
-			if (!mStreams.isEmpty()) {
-				subscribeToStream(mStreams.get(0));
-			}
-		}
-	}
+            mSession.publish(mPublisher);
+        }
 
-	private void attachSubscriberView(Subscriber subscriber) {
-		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-				getResources().getDisplayMetrics().widthPixels, getResources()
-						.getDisplayMetrics().heightPixels);
-		mSubscriberViewContainer.removeView(mSubscriber.getView());  
-		mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
-		
-		subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-				BaseVideoRenderer.STYLE_VIDEO_FILL);
-	}
-	
+    }
 
-	private void loadScreenWebView(){
-		mPubScreenWebView.setWebViewClient(new WebViewClient());
-		WebSettings webSettings = mPubScreenWebView.getSettings();
-		webSettings.setJavaScriptEnabled(true);
-		mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // to turn off hardware-accelerated canvas
-		mPubScreenWebView.loadUrl("http://www.google.com");
-	}
-	
-	
+    @Override
+    public void onDisconnected(Session session) {
+        Log.i(LOGTAG, "Disconnected from the session.");
+        if (mSubscriber != null) {
+            mSubscriberViewContainer.removeView(mSubscriber.getView());
+        }
 
-	@Override
-	public void onError(Session session, OpentokError exception) {
-		Log.i(LOGTAG, "Session exception: " + exception.getMessage());
-	}
+        mPublisher = null;
+        mSubscriber = null;
+        mStreams.clear();
+        mSession = null;
+    }
 
-	@Override
-	public void onStreamReceived(Session session, Stream stream) {
-		if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
-			mStreams.add(stream);
-			if (mSubscriber == null) {
-				subscribeToStream(stream);
-			}
-		}
-	}
+    private void subscribeToStream(Stream stream) {
+        mSubscriber = new Subscriber(ScreenSharingActivity.this, stream);
+        mSubscriber.setVideoListener(this);
+        mSubscriber.setSubscriberListener(this);
+        mSession.subscribe(mSubscriber);
+        mSubscriberViewContainer.setVisibility(View.VISIBLE);
+        if (mSubscriber.getSubscribeToVideo()) {
+            // start loading spinning
+            mLoadingSub.setVisibility(View.VISIBLE);
+        }
+    }
 
-	@Override
-	public void onStreamDropped(Session session, Stream stream) {
-		if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
-			if (mSubscriber != null) {
-				unsubscribeFromStream(stream);
-			}
-		}
-	}
+    private void unsubscribeFromStream(Stream stream) {
+        mStreams.remove(stream);
+        if (mSubscriber.getStream().equals(stream)) {
+            mSubscriberViewContainer.removeView(mSubscriber.getView());
+            mSubscriberViewContainer.setVisibility(View.GONE);
+            mSubscriber = null;
+            if (!mStreams.isEmpty()) {
+                subscribeToStream(mStreams.get(0));
+            }
+        }
+    }
 
-	@Override
-	public void onStreamCreated(PublisherKit publisher, Stream stream) {
-		if (com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
-			mStreams.add(stream);
-			if (mSubscriber == null) {
-				subscribeToStream(stream);
-			}
-		}
-	}
+    private void attachSubscriberView(Subscriber subscriber) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                getResources().getDisplayMetrics().widthPixels, getResources()
+                .getDisplayMetrics().heightPixels);
+        mSubscriberViewContainer.removeView(mSubscriber.getView());
+        mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
+    }
 
-	@Override
-	public void onStreamDestroyed(PublisherKit publisher, Stream stream) {
-		if ((com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF && mSubscriber != null)) {
-			unsubscribeFromStream(stream);
-		}
-	}
 
-	@Override
-	public void onError(PublisherKit publisher, OpentokError exception) {
-		Log.i(LOGTAG, "Publisher exception: " + exception.getMessage());
-	}
+    private void loadScreenWebView() {
+        mPubScreenWebView.setWebViewClient(new WebViewClient());
+        WebSettings webSettings = mPubScreenWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // to turn off hardware-accelerated canvas
+        mPubScreenWebView.loadUrl("http://www.google.com");
+    }
 
-	@Override
-	public void onVideoDataReceived(SubscriberKit subscriber) {
-		Log.i(LOGTAG, "First frame received");
 
-		// stop loading spinning
-		mLoadingSub.setVisibility(View.GONE);
-		attachSubscriberView(mSubscriber);
-	}
+    @Override
+    public void onError(Session session, OpentokError exception) {
+        Log.i(LOGTAG, "Session exception: " + exception.getMessage());
+    }
 
-	/**
-	 * Converts dp to real pixels, according to the screen density.
-	 * 
-	 * @param dp
-	 *            A number of density-independent pixels.
-	 * @return The equivalent number of real pixels.
-	 */
-	private int dpToPx(int dp) {
-		double screenDensity = this.getResources().getDisplayMetrics().density;
-		return (int) (screenDensity * (double) dp);
-	}
+    @Override
+    public void onStreamReceived(Session session, Stream stream) {
+        if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            mStreams.add(stream);
+            if (mSubscriber == null) {
+                subscribeToStream(stream);
+            }
+        }
+    }
 
-	@Override
-	public void onVideoDisabled(SubscriberKit subscriber, String reason) {
-		Log.i(LOGTAG, "Video disabled:" + reason);
-	}
+    @Override
+    public void onStreamDropped(Session session, Stream stream) {
+        if (!com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            if (mSubscriber != null) {
+                unsubscribeFromStream(stream);
+            }
+        }
+    }
 
-	@Override
-	public void onVideoEnabled(SubscriberKit subscriber, String reason) {
-		Log.i(LOGTAG, "Video enabled:" + reason);
-	}
+    @Override
+    public void onStreamCreated(PublisherKit publisher, Stream stream) {
+        if (com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF) {
+            mStreams.add(stream);
+            if (mSubscriber == null) {
+                subscribeToStream(stream);
+            }
+        }
+    }
 
-	@Override
-	public void onVideoDisableWarning(SubscriberKit subscriber) {
-		Log.i(LOGTAG,
-				"Video may be disabled soon due to network quality degradation. Add UI handling here.");
-	}
+    @Override
+    public void onStreamDestroyed(PublisherKit publisher, Stream stream) {
+        if ((com.opentok.android.demo.config.OpenTokConfig.SUBSCRIBE_TO_SELF && mSubscriber != null)) {
+            unsubscribeFromStream(stream);
+        }
+    }
 
-	@Override
-	public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
-		Log.i(LOGTAG,
-				"Video may no longer be disabled as stream quality improved. Add UI handling here.");
-	}
+    @Override
+    public void onError(PublisherKit publisher, OpentokError exception) {
+        Log.i(LOGTAG, "Publisher exception: " + exception.getMessage());
+    }
 
-	
-	@Override
-	public void onConnected(SubscriberKit subscriber) {
-		Log.i(LOGTAG, "Subscriber is connected: ");
-		
-	}
-	
-	@Override
-	public void onDisconnected(SubscriberKit subscriber) {
-		Log.i(LOGTAG, "Subscriber is disconnected: ");
-		
-	}
+    @Override
+    public void onVideoDataReceived(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "First frame received");
 
-	@Override
-	public void onError(SubscriberKit subscriber, OpentokError exception) {
-		Log.i(LOGTAG, "Subscriber exception: " + exception.getMessage());
-	}
+        // stop loading spinning
+        mLoadingSub.setVisibility(View.GONE);
+        attachSubscriberView(mSubscriber);
+    }
+
+    /**
+     * Converts dp to real pixels, according to the screen density.
+     *
+     * @param dp A number of density-independent pixels.
+     * @return The equivalent number of real pixels.
+     */
+    private int dpToPx(int dp) {
+        double screenDensity = this.getResources().getDisplayMetrics().density;
+        return (int) (screenDensity * (double) dp);
+    }
+
+    @Override
+    public void onVideoDisabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG, "Video disabled:" + reason);
+    }
+
+    @Override
+    public void onVideoEnabled(SubscriberKit subscriber, String reason) {
+        Log.i(LOGTAG, "Video enabled:" + reason);
+    }
+
+    @Override
+    public void onVideoDisableWarning(SubscriberKit subscriber) {
+        Log.i(LOGTAG,
+                "Video may be disabled soon due to network quality degradation. Add UI handling here.");
+    }
+
+    @Override
+    public void onVideoDisableWarningLifted(SubscriberKit subscriber) {
+        Log.i(LOGTAG,
+                "Video may no longer be disabled as stream quality improved. Add UI handling here.");
+    }
+
+
+    @Override
+    public void onConnected(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "Subscriber is connected: ");
+
+    }
+
+    @Override
+    public void onDisconnected(SubscriberKit subscriber) {
+        Log.i(LOGTAG, "Subscriber is disconnected: ");
+
+    }
+
+    @Override
+    public void onError(SubscriberKit subscriber, OpentokError exception) {
+        Log.i(LOGTAG, "Subscriber exception: " + exception.getMessage());
+    }
 }
