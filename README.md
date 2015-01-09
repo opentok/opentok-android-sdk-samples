@@ -25,16 +25,22 @@ Testing the sample app
    Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
 
-   You should be able to import the project directly into Android Studio:
-    1 - Clone this repository onto your machine.
-    2 - Start Android Studio.
-    3 - The first time, import OpenTokSamples as a Non-Android Studio Project. 
-        * Choose File / Import Project and choose the build.gradle file in the OpenTokSamples directory you cloned earlier. 
-        If you are on the welcome screen, choose "Import Non-Android Studio Project".
-    4 - Copy the opentok-android-sdk-2.4.0.jar file and the armbeabi or x86 directories into the libs directory.
+   To import the project directly into Android Studio:
 
-   If you are using ADT, drag the opentok-android-sdk-2.4.0.jar file and armeabi
-   or x86 directory into the libs directory of your project in the ADT package explorer.
+   * In Android Studio, choose File > Import Project and choose the build.gradle file in
+     the OpenTokSamples directory. Or, if you are viewing the Android Studio welcome screen,
+     choose "Import Non-Android Studio Project".
+
+   * Copy the opentok-android-sdk-2.4.0.jar file into the libs directory.
+   
+   * Copy the armbeabi directory, the x86 directory, or both into the libs directory. You will
+     need the armbeabi directory for support on ARM-based devices, and you will need the x86
+     directory for support on x86-based devices or in the supported Android emulators.
+
+   If you are using ADT, drag the opentok-android-sdk-2.4.0.jar file and the armeabi
+   or x86 directory into the libs directory of your project in the ADT package explorer. You will
+   need the armbeabi directory for support on ARM-based devices, and you will need the x86
+   directory for support on x86-based devices or in the supported Android emulators.
 
 2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
