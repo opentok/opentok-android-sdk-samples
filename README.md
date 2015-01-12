@@ -12,15 +12,13 @@ Notes
 
 * See the [OpenTok Android SDK Reference](http://tokbox.com/opentok/libraries/client/android/reference/index.html)
 for details on the API.
- 
-* You cannot publish streams in the Android Emulator. Build and deploy to a supported device.
 
 Testing the sample app
 ----------------------
 
-1. Import the project into Android Studio or ADT.
+1. Import the project into Android Studio.
 
-   This project links to the opentok-android-sdk-2.4.0.jar file and the armeabi/libopentok.so or
+   This project needs the opentok-android-sdk-2.4.0.jar file and the armeabi/libopentok.so or
    x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
    Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
@@ -31,16 +29,12 @@ Testing the sample app
      the OpenTokSamples directory. Or, if you are viewing the Android Studio welcome screen,
      choose "Import Non-Android Studio Project".
 
-   * Copy the opentok-android-sdk-2.4.0.jar file into the libs directory.
+   * Copy the opentok-android-sdk-2.4.0.jar file into the libs directory of the app module.
    
-   * Copy the armbeabi directory, the x86 directory, or both into the libs directory. You will
+   * Copy the armbeabi directory, the x86 directory, or both into the jniLibs directory of the app module. You will
      need the armbeabi directory for support on ARM-based devices, and you will need the x86
      directory for support on x86-based devices or in the supported Android emulators.
 
-   If you are using ADT, drag the opentok-android-sdk-2.4.0.jar file and the armeabi
-   or x86 directory into the libs directory of your project in the ADT package explorer. You will
-   need the armbeabi directory for support on ARM-based devices, and you will need the x86
-   directory for support on x86-based devices or in the supported Android emulators.
 
 2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
@@ -56,6 +50,7 @@ Testing the sample app
 
 3.  Connect your Android device to a USB port on your computer. Set up
     [USB debugging](http://developer.android.com/tools/device.html) on your device.
+    Or launch the Genymotion x86 emulator or the official Android x86 emulator in combination with the Intel HAXM software.
 
 4.  Run the app on your device, selecting the default activity as the launch action.
 
