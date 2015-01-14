@@ -22,7 +22,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
@@ -37,7 +36,6 @@ import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
 
 import java.util.ArrayList;
 
-//import com.opentok.android.PublisherKit.PublisherKitVideoType;
 
 public class ScreenSharingActivity extends Activity implements
         Session.SessionListener, Publisher.PublisherListener,
@@ -48,7 +46,7 @@ public class ScreenSharingActivity extends Activity implements
     private Publisher mPublisher;
     private Subscriber mSubscriber;
     private ArrayList<Stream> mStreams;
-    protected Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
     private WebView mPubScreenWebView;
     private RelativeLayout mSubscriberViewContainer;
@@ -60,8 +58,8 @@ public class ScreenSharingActivity extends Activity implements
 
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

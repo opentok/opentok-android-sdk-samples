@@ -22,20 +22,20 @@ import java.util.HashMap;
 
 public class MySession extends Session {
 
-    Context mContext;
+    private Context mContext;
 
     // Interface
-    ViewPager mSubscribersViewContainer;
-    ViewGroup mPreview;
-    TextView mMessageView;
-    ScrollView mMessageScroll;
+    private ViewPager mSubscribersViewContainer;
+    private ViewGroup mPreview;
+    private TextView mMessageView;
+    private ScrollView mMessageScroll;
 
     // Players status
-    ArrayList<MySubscriber> mSubscribers = new ArrayList<MySubscriber>();
-    HashMap<Stream, MySubscriber> mSubscriberStream = new HashMap<Stream, MySubscriber>();
-    HashMap<String, MySubscriber> mSubscriberConnection = new HashMap<String, MySubscriber>();
+    private ArrayList<MySubscriber> mSubscribers = new ArrayList<MySubscriber>();
+    private HashMap<Stream, MySubscriber> mSubscriberStream = new HashMap<Stream, MySubscriber>();
+    private HashMap<String, MySubscriber> mSubscriberConnection = new HashMap<String, MySubscriber>();
 
-    PagerAdapter mPagerAdapter = new PagerAdapter() {
+    private PagerAdapter mPagerAdapter = new PagerAdapter() {
 
         @Override
         public boolean isViewFromObject(View arg0, Object arg1) {

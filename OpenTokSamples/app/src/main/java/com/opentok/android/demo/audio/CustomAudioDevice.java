@@ -189,7 +189,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
         return true;
     }
 
-    Runnable m_captureThread = new Runnable() {
+    private Runnable m_captureThread = new Runnable() {
         @Override
         public void run() {
 
@@ -362,7 +362,7 @@ public class CustomAudioDevice extends BaseAudioDevice {
         return true;
     }
 
-    Runnable m_renderThread = new Runnable() {
+    private Runnable m_renderThread = new Runnable() {
 
         @Override
         public void run() {

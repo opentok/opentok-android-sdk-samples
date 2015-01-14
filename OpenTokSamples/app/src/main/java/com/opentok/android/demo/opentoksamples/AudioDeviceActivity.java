@@ -49,7 +49,7 @@ public class AudioDeviceActivity extends Activity implements
     private Publisher mPublisher;
     private Subscriber mSubscriber;
     private ArrayList<Stream> mStreams;
-    protected Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
     private RelativeLayout mPublisherViewContainer;
     private RelativeLayout mSubscriberViewContainer;
@@ -61,8 +61,8 @@ public class AudioDeviceActivity extends Activity implements
 
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
 
     @Override
@@ -82,6 +82,7 @@ public class AudioDeviceActivity extends Activity implements
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mStreams = new ArrayList<Stream>();
+
         sessionConnect();
     }
 
@@ -301,7 +302,7 @@ public class AudioDeviceActivity extends Activity implements
                 getResources().getDisplayMetrics().widthPixels, getResources()
                 .getDisplayMetrics().heightPixels);
         mSubscriberViewContainer.removeView(mSubscriber.getView());
-        mSubscriberViewContainer.addView(mSubscriber.getView(), layoutParams);
+        mSubscriberViewContainer.addView(subscriber.getView(), layoutParams);
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
     }
@@ -317,7 +318,7 @@ public class AudioDeviceActivity extends Activity implements
                 RelativeLayout.TRUE);
         layoutParams.bottomMargin = dpToPx(8);
         layoutParams.rightMargin = dpToPx(8);
-        mPublisherViewContainer.addView(mPublisher.getView(), layoutParams);
+        mPublisherViewContainer.addView(publisher.getView(), layoutParams);
     }
 
     @Override

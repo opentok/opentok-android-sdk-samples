@@ -25,7 +25,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
     private int mCameraIndex = 0;
     private Camera mCamera;
     private Camera.CameraInfo mCurrentDeviceInfo = null;
-    public ReentrantLock mPreviewBufferLock = new ReentrantLock(); // sync
+    private ReentrantLock mPreviewBufferLock = new ReentrantLock(); // sync
     // start/stop
     // capture
     // and
@@ -188,10 +188,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
      * Check if the current camera is a front camera
      */
     public boolean isFrontCamera() {
-        if (mCurrentDeviceInfo != null) {
-            return mCurrentDeviceInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT;
-        }
-        return false;
+      return (mCurrentDeviceInfo != null && mCurrentDeviceInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
     }
 
     /*

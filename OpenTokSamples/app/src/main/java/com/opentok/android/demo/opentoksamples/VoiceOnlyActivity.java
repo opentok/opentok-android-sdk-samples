@@ -49,14 +49,14 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
     private Session mSession;
     private Publisher mPublisher;
     private ArrayList<Subscriber> mSubscribers = new ArrayList<Subscriber>();
-    HashMap<Stream, Subscriber> mSubscriberStream = new HashMap<Stream, Subscriber>();
-    MyAdapter mSubscriberAdapter = new MyAdapter(this, R.layout.voice_row);
-    Handler mHandler = new Handler();
+    private HashMap<Stream, Subscriber> mSubscriberStream = new HashMap<Stream, Subscriber>();
+    private MyAdapter mSubscriberAdapter = new MyAdapter(this, R.layout.voice_row);
+    private Handler mHandler = new Handler();
 
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
     public class MyAdapter extends BaseAdapter {
         private final Context mContext;
@@ -347,7 +347,7 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
         Toast.makeText(this, error.getMessage(), Toast.LENGTH_LONG).show();
     }
 
-    Runnable mHideStatus = new Runnable() {
+    private Runnable mHideStatus = new Runnable() {
         @Override
         public void run() {
             findViewById(R.id.archivingbar).setVisibility(View.GONE);

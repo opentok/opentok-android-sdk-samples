@@ -28,15 +28,14 @@ import com.opentok.android.demo.services.ClearNotificationService.ClearBinder;
 public class MultipartyActivity extends Activity {
 
     private static final String LOGTAG = "demo-subclassing";
+
     private MySession mSession;
-    EditText mMessageEditText;
-
+    private EditText mMessageEditText;
     private boolean resumeHasRun = false;
-
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +60,7 @@ public class MultipartyActivity extends Activity {
         ViewPager playersView = (ViewPager) findViewById(R.id.pager);
         mSession.setPlayersViewContainer(playersView);
         mSession.setMessageView((TextView) findViewById(R.id.messageView), (ScrollView) findViewById(R.id.scroller));
+
         mSession.connect();
     }
 

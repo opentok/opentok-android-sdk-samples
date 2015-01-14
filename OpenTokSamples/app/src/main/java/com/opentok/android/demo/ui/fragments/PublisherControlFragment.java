@@ -27,9 +27,8 @@ public class PublisherControlFragment extends Fragment implements
 
     private PublisherCallbacks mCallbacks = sOpenTokCallbacks;
     private UIActivity openTokActivity;
-    protected boolean mPublisherWidgetVisible = false;
-
-    protected RelativeLayout mPublisherContainer;
+    private boolean mPublisherWidgetVisible = false;
+    private RelativeLayout mPublisherContainer;
 
     public interface PublisherCallbacks {
         public void onMutePublisher();
@@ -43,17 +42,14 @@ public class PublisherControlFragment extends Fragment implements
 
         @Override
         public void onMutePublisher() {
-            return;
         }
 
         @Override
         public void onSwapCamera() {
-            return;
         }
 
         @Override
-        public void onEndCall() {
-            return;
+        public void onEndCall(){
         }
     };
 
@@ -69,11 +65,6 @@ public class PublisherControlFragment extends Fragment implements
         }
 
         mCallbacks = (PublisherCallbacks) activity;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -97,36 +88,6 @@ public class PublisherControlFragment extends Fragment implements
         mEndCall.setOnClickListener(this);
 
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

@@ -46,7 +46,7 @@ public class HelloWorldActivity extends Activity implements
     private Publisher mPublisher;
     private Subscriber mSubscriber;
     private ArrayList<Stream> mStreams;
-    protected Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
     private RelativeLayout mPublisherViewContainer;
     private RelativeLayout mSubscriberViewContainer;
@@ -58,8 +58,8 @@ public class HelloWorldActivity extends Activity implements
 
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -13,13 +13,13 @@ import android.view.View;
 
 public class AudioLevelView extends View {
 
-    Context mContext;
-    float mValue = 0;
-    Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Paint mPaintGradient = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Rect mBounds = new Rect();
-    Bitmap mHeadset;
-    boolean mMute = false;
+    private Context mContext;
+    private float mValue = 0;
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint mPaintGradient = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Rect mBounds = new Rect();
+    private Bitmap mHeadset;
+    private boolean mMute = false;
 
     public AudioLevelView(Context context) {
         super(context);

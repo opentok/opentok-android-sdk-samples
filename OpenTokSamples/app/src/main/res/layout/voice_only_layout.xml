@@ -51,7 +51,7 @@
             android:text="Publisher name"
             android:textColor="@color/white" />
 
-        <main.android.demo.ui.MeterView
+        <com.opentok.android.demo.ui.MeterView
             android:id="@+id/publishermeter"
             android:layout_width="78dp"
             android:layout_height="78dp"
