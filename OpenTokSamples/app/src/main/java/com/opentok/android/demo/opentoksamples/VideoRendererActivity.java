@@ -138,6 +138,7 @@ public class VideoRendererActivity extends Activity implements
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
 
     }

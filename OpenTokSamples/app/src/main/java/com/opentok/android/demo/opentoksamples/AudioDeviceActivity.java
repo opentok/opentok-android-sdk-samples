@@ -114,7 +114,7 @@ public class AudioDeviceActivity extends Activity implements
                 .setContentText(getResources().getString(R.string.notification))
                 .setSmallIcon(R.drawable.ic_launcher).setOngoing(true);
 
-        Intent notificationIntent = new Intent(this, HelloWorldActivity.class);
+        Intent notificationIntent = new Intent(this, AudioDeviceActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(this, 0,
@@ -143,6 +143,7 @@ public class AudioDeviceActivity extends Activity implements
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
 
     }

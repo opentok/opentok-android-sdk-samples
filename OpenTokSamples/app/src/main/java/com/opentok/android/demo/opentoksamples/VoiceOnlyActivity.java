@@ -209,6 +209,7 @@ public class VoiceOnlyActivity extends Activity implements SessionListener,
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
     }
 
