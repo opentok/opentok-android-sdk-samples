@@ -9,21 +9,23 @@ import android.view.View;
 import com.opentok.android.BaseVideoCapturer;
 
 public class ScreensharingCapturer extends BaseVideoCapturer {
-    boolean capturing = false;
-    Context context;
-    View contentView;
 
-    int fps = 15;
-    int width = 0;
-    int height = 0;
-    int[] frame;
+  private Context mContext;
 
-    Bitmap bmp;
-    Canvas canvas;
+    private boolean capturing = false;
+    private View contentView;
 
-    Handler mHandler = new Handler();
+    private int fps = 15;
+    private int width = 0;
+    private int height = 0;
+    private int[] frame;
 
-    Runnable newFrame = new Runnable() {
+    private Bitmap bmp;
+    private Canvas canvas;
+
+    private Handler mHandler = new Handler();
+
+    private Runnable newFrame = new Runnable() {
         @Override
         public void run() {
             if (capturing) {
@@ -62,7 +64,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
     };
 
     public ScreensharingCapturer(Context context, View view) {
-        this.context = context;
+        this.mContext = context;
         this.contentView = view;
     }
 

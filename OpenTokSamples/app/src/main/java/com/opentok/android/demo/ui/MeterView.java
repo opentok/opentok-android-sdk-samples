@@ -15,15 +15,16 @@ import android.view.View;
 
 public class MeterView extends View {
 
-    Context mContext;
-    float mValue = 0;
-    Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Paint mPaintGradient = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Rect mBounds = new Rect();
-    Bitmap mIconOn;
-    Bitmap mIconOff;
-    boolean mMute = false;
-    OnClickListener mListener;
+    private Context mContext;
+
+    private float mValue = 0;
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint mPaintGradient = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Rect mBounds = new Rect();
+    private Bitmap mIconOn;
+    private Bitmap mIconOff;
+    private boolean mMute = false;
+    private OnClickListener mListener;
 
     public interface OnClickListener {
         public void onClick(MeterView view);

@@ -19,11 +19,10 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class CustomVideoRenderer extends BaseVideoRenderer {
 
-    Context mContext;
+    private Context mContext;
 
-    GLSurfaceView mView;
-
-    MyRenderer mRenderer;
+    private GLSurfaceView mView;
+    private MyRenderer mRenderer;
 
     static class MyRenderer implements GLSurfaceView.Renderer {
 
@@ -336,8 +335,6 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
             mVideoFitEnabled = enableVideoFit;
         }
     }
-
-    ;
 
     public CustomVideoRenderer(Context context) {
         this.mContext = context;

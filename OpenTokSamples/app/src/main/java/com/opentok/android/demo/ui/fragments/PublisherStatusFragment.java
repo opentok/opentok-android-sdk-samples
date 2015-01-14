@@ -27,11 +27,11 @@ public class PublisherStatusFragment extends Fragment {
     private ImageButton archiving;
     private TextView statusText;
     private UIActivity openTokActivity;
-    protected boolean mPubStatusWidgetVisible = false;
+    private boolean mPubStatusWidgetVisible = false;
 
-    protected boolean archivingOn = false;
+    private boolean archivingOn = false;
 
-    protected RelativeLayout mPubStatusContainer;
+    private RelativeLayout mPubStatusContainer;
 
     @Override
     public void onAttach(Activity activity) {
@@ -43,11 +43,6 @@ public class PublisherStatusFragment extends Fragment {
             throw new IllegalStateException(
                     "Activity must implement fragment's callback");
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -75,36 +70,6 @@ public class PublisherStatusFragment extends Fragment {
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

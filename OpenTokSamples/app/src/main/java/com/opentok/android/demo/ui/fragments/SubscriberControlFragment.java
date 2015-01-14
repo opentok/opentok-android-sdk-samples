@@ -41,7 +41,6 @@ public class SubscriberControlFragment extends Fragment implements
 
         @Override
         public void onMuteSubscriber() {
-            return;
         }
 
     };
@@ -58,11 +57,6 @@ public class SubscriberControlFragment extends Fragment implements
 
         mCallbacks = (SubscriberCallbacks) activity;
 
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -96,36 +90,6 @@ public class SubscriberControlFragment extends Fragment implements
         }
 
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

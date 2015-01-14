@@ -59,10 +59,10 @@ public class UIActivity extends Activity implements Session.SessionListener,
     private static final int ANIMATION_DURATION = 3000;
 
     private Session mSession;
-    protected Publisher mPublisher;
-    protected Subscriber mSubscriber;
+    private Publisher mPublisher;
+    private Subscriber mSubscriber;
     private ArrayList<Stream> mStreams = new ArrayList<Stream>();
-    protected Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
     private boolean mSubscriberAudioOnly = false;
     private boolean archiving = false;
@@ -89,8 +89,8 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
     private boolean mIsBound = false;
     private NotificationCompat.Builder mNotifyBuilder;
-    NotificationManager mNotificationManager;
-    ServiceConnection mConnection;
+    private NotificationManager mNotificationManager;
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

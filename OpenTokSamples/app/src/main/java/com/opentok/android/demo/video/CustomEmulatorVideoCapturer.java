@@ -26,7 +26,7 @@ public class CustomEmulatorVideoCapturer extends BaseVideoCapturer implements
     private int mCameraIndex = 0;
     private Camera mCamera;
     private Camera.CameraInfo mCurrentDeviceInfo = null;
-    public ReentrantLock mPreviewBufferLock = new ReentrantLock();
+    private ReentrantLock mPreviewBufferLock = new ReentrantLock();
     private final static int PIXEL_FORMAT = ImageFormat.NV21;
     private final static int PREFERRED_CAPTURE_WIDTH = 640;
     private final static int PREFERRED_CAPTURE_HEIGHT = 480;
@@ -183,10 +183,7 @@ public class CustomEmulatorVideoCapturer extends BaseVideoCapturer implements
      * Check if the current camera is a front camera
      */
     public boolean isFrontCamera() {
-        if (mCurrentDeviceInfo != null) {
-            return mCurrentDeviceInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT;
-        }
-        return false;
+        return (mCurrentDeviceInfo != null && mCurrentDeviceInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
     }
 
     /*
