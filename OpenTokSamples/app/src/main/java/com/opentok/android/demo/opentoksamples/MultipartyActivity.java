@@ -115,6 +115,7 @@ public class MultipartyActivity extends Activity {
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
 
     }

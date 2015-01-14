@@ -140,6 +140,7 @@ public class VideoCapturerActivity extends Activity implements
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
     }
 

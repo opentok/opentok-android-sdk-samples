@@ -325,6 +325,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
                             ClearNotificationService.class), mConnection,
                     Context.BIND_AUTO_CREATE);
             mIsBound = true;
+            startService(notificationIntent);
         }
 
     }
