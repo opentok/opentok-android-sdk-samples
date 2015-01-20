@@ -287,6 +287,8 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
         m_bufferedPlaySamples = 0;
 
+        setOutputMode(OutputMode.SpeakerPhone);
+
         m_shutdownRenderThread = false;
         new Thread(m_renderThread).start();
 
