@@ -381,8 +381,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
             mSession.disconnect();
         }
 
-        restartAudioMode();
-
         super.onDestroy();
         finish();
     }
@@ -392,8 +390,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
         if (mSession != null) {
             mSession.disconnect();
         }
-
-        restartAudioMode();
 
         super.onBackPressed();
     }
@@ -414,12 +410,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
         }, 500);
 
         loadFragments();
-    }
-
-    public void restartAudioMode() {
-        AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        Audio.setMode(AudioManager.MODE_NORMAL);
-        this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
     }
 
     private void sessionConnect() {
@@ -470,7 +460,6 @@ public class UIActivity extends Activity implements Session.SessionListener,
         if (mSession != null) {
             mSession.disconnect();
         }
-        restartAudioMode();
 
         finish();
     }

@@ -167,7 +167,6 @@ public class MultipartyActivity extends Activity {
         if (mSession != null) {
             mSession.disconnect();
         }
-        restartAudioMode();
 
         super.onDestroy();
         finish();
@@ -178,7 +177,6 @@ public class MultipartyActivity extends Activity {
         if (mSession != null) {
             mSession.disconnect();
         }
-        restartAudioMode();
 
         super.onBackPressed();
     }
@@ -191,12 +189,6 @@ public class MultipartyActivity extends Activity {
             mSession.sendChatMessage(mMessageEditText.getText().toString());
             mMessageEditText.setText("");
         }
-    }
-
-    public void restartAudioMode() {
-        AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        Audio.setMode(AudioManager.MODE_NORMAL);
-        this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
     }
 
 }

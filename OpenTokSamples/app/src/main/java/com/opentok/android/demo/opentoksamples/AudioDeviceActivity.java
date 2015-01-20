@@ -203,8 +203,6 @@ public class AudioDeviceActivity extends Activity implements
             mSession.disconnect();
         }
 
-        restartAudioMode();
-
         super.onDestroy();
         finish();
     }
@@ -214,8 +212,6 @@ public class AudioDeviceActivity extends Activity implements
         if (mSession != null) {
             mSession.disconnect();
         }
-
-        restartAudioMode();
 
         super.onBackPressed();
     }
@@ -229,12 +225,6 @@ public class AudioDeviceActivity extends Activity implements
                 }
             }
         }, 500);
-    }
-
-    public void restartAudioMode() {
-        AudioManager Audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        Audio.setMode(AudioManager.MODE_NORMAL);
-        this.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
     }
 
     private void sessionConnect() {
