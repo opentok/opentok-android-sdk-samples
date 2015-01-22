@@ -252,6 +252,7 @@ public class ScreenSharingActivity extends Activity implements
             mPublisher.setPublisherListener(this);
             mPublisher
                     .setPublisherVideoType(PublisherKitVideoType.PublisherKitVideoTypeScreen);
+            mPublisher.setAudioFallbackEnabled(false);
             ScreensharingCapturer screenCapturer = new ScreensharingCapturer(
                     this, mPubScreenWebView);
             mPublisher.setCapturer(screenCapturer);
