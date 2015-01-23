@@ -22,9 +22,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
-        <service android:name="com.opentok.android.demo.config.ClearNotificationService" android:exported="false" >
+        <service android:name="com.opentok.android.demo.services.ClearNotificationService" android:exported="false" >
             <intent-filter android:label="@string/clearNotificationService" >
-                <action android:name="com.opentok.android.demo.config.ClearNotificationService" />
+                <action android:name="com.opentok.android.demo.services.ClearNotificationService" />
             </intent-filter>
         </service>
         <activity
