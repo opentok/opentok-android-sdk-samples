@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OpenTok Samples</string>
+    <string name="menu_settings">Settings</string>
+    <string name="helloworld">Hello World</string>
+    <string name="helloworldui">UI Controls</string>
+    <string name="helloworldcapturer">Custom Capturer</string>
+    <string name="helloworldrenderer">Custom Renderer</string>
+    <string name="helloworldsubclassing">Multiparty</string>
+    <string name="voinceonly">Voice Only</string>
+    <string name="audiodevice">Audio device</string>
+    <string name="helloworldemulator">Emulator Hello World</string>
+    <string name="screensharing">Screen Sharing</string>
+    
+    <string name="swapStr">Swap camera</string>
+    <string name="endCall1">End call</string>
+    <string name="endCall2">End</string>
+    <string name="audioOnly">Audio only</string>
+    <string name="send">Send</string>
+    <string name="archivingOn">Archiving on</string>
+    <string name="archivingOff">Archiving off</string>
+    <string name="notification">Ongoing call</string>
+    <string name="clearNotificationService">Clear Notification</string>
+
+</resources>
