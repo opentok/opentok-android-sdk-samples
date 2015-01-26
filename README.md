@@ -23,7 +23,8 @@ Testing the sample app
    Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
 
-   To import the project directly into Android Studio:
+   In Android Studio, copy the opentok-android-sdk-2.4.0.jar file into the libs directory, and
+   copy the armeabi and x86 directories into a app/src/main/jniLibs (which you may need to create).
 
    * In Android Studio, choose File > Import Project and choose the build.gradle file in
      the OpenTokSamples directory. Or, if you are viewing the Android Studio welcome screen,
