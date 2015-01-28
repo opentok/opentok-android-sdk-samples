@@ -355,10 +355,10 @@ or Subscriber:
 If an app cannot connect to the session (perhaps because of no network connection), the `onError()`
 method of the Session.Listener interface is called:
 
-   @Override
-   public void onError(Session session, OpentokError exception) {
-       Log.i(LOGTAG, "Session exception: " + exception.getMessage());
-   }
+    @Override
+    public void onError(Session session, OpentokError exception) {
+        Log.i(LOGTAG, "Session exception: " + exception.getMessage());
+    }
 
 ### Adding user interface controls
 
