@@ -10,7 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:keepScreenOn="true">
 
         <ProgressBar
             android:id="@+id/loadingSpinner"
@@ -55,7 +56,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
-        android:background="@drawable/publisher" >
+        android:background="@drawable/publisher"
+        android:keepScreenOn="true">
     </RelativeLayout>
 
     <RelativeLayout
