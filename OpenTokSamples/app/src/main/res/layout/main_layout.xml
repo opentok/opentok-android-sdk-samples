@@ -9,7 +9,8 @@
         android:id="@+id/subscriberview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal"
+        android:keepScreenOn="true">
 
         <ProgressBar
             android:id="@+id/loadingSpinner"
@@ -24,7 +25,8 @@
     <RelativeLayout
         android:id="@+id/publisherview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:keepScreenOn="true">
     </RelativeLayout>
 
 </RelativeLayout>

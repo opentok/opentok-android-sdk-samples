@@ -73,9 +73,6 @@ public class OpenTokSamples extends Activity {
                 }
             }
         });
-
-        // Disable screen dimming
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
