@@ -9,7 +9,8 @@
         android:id="@+id/subscriberView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:keepScreenOn="true">
 
         <ProgressBar
             android:id="@+id/loadingSpinner"
@@ -50,7 +51,8 @@
         android:layout_height="160dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="68dp"
-        android:layout_marginLeft="20dp" >
+        android:layout_marginLeft="20dp"
+        android:keepScreenOn="true">
     </RelativeLayout>
 
     <RelativeLayout
