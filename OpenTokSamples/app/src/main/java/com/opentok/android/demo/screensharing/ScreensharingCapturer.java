@@ -50,12 +50,15 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
                     canvas = new Canvas(bmp);
                     frame = new int[width * height];
                 }
-
+                canvas.save(Canvas.MATRIX_SAVE_FLAG);
+                canvas.translate(-contentView.getScrollX(), - contentView.getScrollY());
                 contentView.draw(canvas);
 
                 bmp.getPixels(frame, 0, width, 0, 0, width, height);
 
                 provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+
+                canvas.restore();
 
                 mHandler.postDelayed(newFrame, 1000 / fps);
 

@@ -314,7 +314,7 @@ public class ScreenSharingActivity extends Activity implements
         WebSettings webSettings = mPubScreenWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mPubScreenWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // to turn off hardware-accelerated canvas
-        mPubScreenWebView.loadUrl("http://www.google.com");
+        mPubScreenWebView.loadUrl("http://www.tokbox.com");
     }
 
 
