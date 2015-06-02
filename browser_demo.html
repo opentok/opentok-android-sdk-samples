@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>OpenTok Hello World</title>
-	<script src='http://static.opentok.com/webrtc/v2.0/js/TB.min.js'></script>
+	<script src='http://static.opentok.com/webrtc/v2.2/js/opentok.min.js'></script>
 	<script type="text/javascript" charset="utf-8">
 
 		// *** Fill the following variables using your own Project info from the Dashboard  ***
@@ -57,7 +57,12 @@
 				publisherProperties.name = 'A web-based OpenTok client';
 				publisherDiv.setAttribute('id', 'opentok_publisher');
 				parentDiv.appendChild(publisherDiv);
-				publisher = session.publish(publisherDiv.id, publisherProperties); // Pass the replacement div id to the publish method
+				publisher = OT.initPublisher(publisherDiv.id, publisherProperties);
++				session.publish(publisher, function(error) {
++			    	if (error) {
++			          console.log('The publisher failed to connect.');
++			    	}
++			    });
 				show('unpublishLink');
 				hide('publishLink');
 			}
