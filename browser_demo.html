@@ -58,11 +58,11 @@
 				publisherDiv.setAttribute('id', 'opentok_publisher');
 				parentDiv.appendChild(publisherDiv);
 				publisher = OT.initPublisher(publisherDiv.id, publisherProperties);
-+				session.publish(publisher, function(error) {
-+			    	if (error) {
-+			          console.log('The publisher failed to connect.');
-+			    	}
-+			    });
+				session.publish(publisher, function(error) {
+			    	if (error) {
+			          console.log('The publisher failed to connect.');
+			    	}
+			  });
 				show('unpublishLink');
 				hide('publishLink');
 			}
