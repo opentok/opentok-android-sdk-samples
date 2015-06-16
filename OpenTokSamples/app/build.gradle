@@ -1,17 +1,16 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 21
     buildToolsVersion "21.0.2"
 
-    defaultConfig {        
-        minSdkVersion 15
+    defaultConfig {
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 7
         versionName "2.4.0"
     }
     buildTypes {
-        release {            
+        release {
         }
     }
 
@@ -20,9 +19,15 @@ android {
             jniLibs.srcDir 'jniLibs'
         }
     }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
+    compile (name: 'opentok-android-sdk-ui-1.0', ext:'aar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/android-support-v4.jar')
 }
-

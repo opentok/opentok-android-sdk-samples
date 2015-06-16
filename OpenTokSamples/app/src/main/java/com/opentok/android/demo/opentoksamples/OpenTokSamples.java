@@ -37,7 +37,8 @@ public class OpenTokSamples extends Activity {
                 getString(R.string.voinceonly),
                 getString(R.string.audiodevice),
                 getString(R.string.helloworldemulator),
-                getString(R.string.screensharing)};
+                getString(R.string.screensharing),
+                "Text Chat"};
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, activityNames);
@@ -68,6 +69,8 @@ public class OpenTokSamples extends Activity {
                     startHelloWorldEmulator();
                 } else if (8 == position) {
                     startScreensharing();
+                } if (9 == position) {
+                    startTextChat();
                 } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
@@ -200,8 +203,8 @@ public class OpenTokSamples extends Activity {
     }
 
     /**
-     * Starts the Hello-World app using a custom audio device. See
-     * AudioDeviceActivity.java
+     * Starts the Hello-World app with emulator support. See
+     * EmulatorActivity.java
      */
     public void startHelloWorldEmulator() {
 
@@ -216,8 +219,8 @@ public class OpenTokSamples extends Activity {
     }
 
     /**
-     * Starts the Hello-World app using a custom audio device. See
-     * AudioDeviceActivity.java
+     * Starts the Hello-World app with screensharing support. See
+     * ScreenSharingActivity.java
      */
     public void startScreensharing() {
 
@@ -225,6 +228,22 @@ public class OpenTokSamples extends Activity {
 
         Intent intent = new Intent(OpenTokSamples.this,
                 ScreenSharingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Starts the Text app using the text-chat ui component . See
+     * TextChatActivity.java
+     */
+    public void startTextChat() {
+
+        Log.i(LOGTAG, "starting hello-world app with text-chat ui component");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                TextChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
