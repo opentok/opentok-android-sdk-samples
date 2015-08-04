@@ -18,7 +18,7 @@ Testing the sample app
 
 1. Import the project into Android Studio.
 
-   This project needs the opentok-android-sdk-2.5.0.jar file and the armeabi/libopentok.so or
+   This project needs the opentok-android-sdk-2.6.0.jar file and the armeabi/libopentok.so or
    x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
    Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
    <http://tokbox.com/opentok/libraries/client/android/>.
@@ -29,7 +29,7 @@ Testing the sample app
      the OpenTokSamples directory. Or, if you are viewing the Android Studio welcome screen,
      choose "Import Non-Android Studio Project".
 
-   * Copy the opentok-android-sdk-2.5.0.jar file into the libs directory of the app module.
+   * Copy the opentok-android-sdk-2.6.0.jar file into the libs directory of the app module.
    
    * Copy the armbeabi directory, the x86 directory, or both into the jniLibs directory of the app module. You will
      need the armbeabi directory for support on ARM-based devices, and you will need the x86
