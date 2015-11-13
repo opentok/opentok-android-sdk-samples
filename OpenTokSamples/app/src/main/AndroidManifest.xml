@@ -6,12 +6,13 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -116,6 +117,24 @@
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.ScreenSharingActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.opentok.android.demo.opentoksamples.DefaultCameraCapturerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
+            <intent-filter>
+                <action android:name="com.opentok.android.demo.opentoksamples.DefaultCameraCapturerActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.opentok.android.demo.opentoksamples.ScreenshotActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
+            <intent-filter>
+                <action android:name="com.opentok.android.demo.opentoksamples.ScreenshotActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
