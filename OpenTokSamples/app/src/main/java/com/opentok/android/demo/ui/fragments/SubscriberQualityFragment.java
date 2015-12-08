@@ -19,7 +19,7 @@ import com.opentok.android.demo.ui.fragments.SubscriberControlFragment.Subscribe
 
 public class SubscriberQualityFragment extends Fragment {
 
-    private static final String LOGTAG = "demo-UI-sub-quality-fragment";
+    private static final String LOGTAG = "sub-quality-fragment";
 
     private static final int ANIMATION_DURATION = 500;
 

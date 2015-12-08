@@ -16,25 +16,27 @@ for details on the API.
 Testing the sample app
 ----------------------
 
-1. Import the project into Android Studio.
+1. Import the project into Android Studio:
 
-   This project needs the opentok-android-sdk-2.6.0.jar file and the armeabi/libopentok.so or
-   x86/libopentok.so file. These libraries are required to develop apps that use the OpenTok
-   Android SDK. These are included in the OpenTok/libs subdirectory of the SDK, available at
-   <http://tokbox.com/opentok/libraries/client/android/>.
+   * In Android Studio, choose File > New > Import Project and choose the build.gradle file in
+     the Android-sample directory. Or, if you are viewing the Android Studio welcome screen,
+     click "Import Project".
 
-   To import the project directly into Android Studio:
+   * Copy the opentok-android-sdk-2.7.0.jar file into the app/libs directory of the project.
+     This file is included in the OpenTok/libs subdirectory of the OpenTok Android SDK, available at
+     <http://tokbox.com/opentok/libraries/client/android/>.
 
-   * In Android Studio, choose File > Import Project and choose the build.gradle file in
-     the OpenTokSamples directory. Or, if you are viewing the Android Studio welcome screen,
-     choose "Import Non-Android Studio Project".
+   * Copy the directories containing native dependencies required for your target environments into
+     the app/jniLibs directory of the project:
 
-   * Copy the opentok-android-sdk-2.6.0.jar file into the libs directory of the app module.
-   
-   * Copy the armbeabi directory, the x86 directory, or both into the jniLibs directory of the app module. You will
-     need the armbeabi directory for support on ARM-based devices, and you will need the x86
-     directory for support on x86-based devices or in the supported Android emulators.
+     * armeabi
+     * armeabi-v7a
+     * x86
 
+     You will need the armeabi directory, the armeabi-v7a directory, or both for support on
+     ARM-based devices. You will need the x86 directory for support on x86-based devices or in
+     the supported Android emulators. These directories are included in the OpenTok/libs
+     subdirectory of the OpenTok Android SDK.
 
 2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
@@ -42,7 +44,8 @@ Testing the sample app
    [Project Details](https://dashboard.tokbox.com/projects) page.
 
    Open the OpenTokConfig.java file and set the `SESSION_ID`, `TOKEN`, and `API_KEY` strings
-   to your own session ID, token, and API key respectively.
+   to your own session ID, token, and API key respectively. The OpenTokConfig class is in the
+   com.opentok.android.demo.config package.
 
    For more information, see the OpenTok [Session Creation
    Overview](https://tokbox.com/opentok/tutorials/create-session/) and the [Token Creation
@@ -68,6 +71,9 @@ Testing the sample app
     * Emulator Hello World -- Shows how to correct the video orientation when testing in a
       virtual machine.
     * Screen Sharing -- Shows how to publish a screen-sharing stream to a session.
+    * Default Camera Capturer -- Shows how to set the resolution and frame rate when using the
+      default camera capturer (used by the Publisher class).
+    * Screenshot -- Shows how to capture an image from a subscribed video stream.
 
 5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
     in a new view.
@@ -926,6 +932,117 @@ to the canvas, and assigns the bitmap representation of `contentView` to the fra
             }
         }
     };
+
+### Configuring the frame rate and resolution using the default camera capturer
+
+The Publisher class uses a pre-built camera capturer. You can set the frame rate and resolution
+when you instantiate the Publisher object.
+
+When the app user clicks "Default Camera Capturer" in the main menu, the app starts an activity
+defined by the DefaultCameraCapturerActivity class. Upon connecting to the OpenTok session, the
+`onConnected(Session session)` method of the DefaultCameraCapturerActivity object is called. It
+instantiates a Publisher object using the `Publisher(context, name, resolution, framerate)`
+constructor (defined in the OpenTok Android SDK):
+
+    mPublisher = new Publisher(DefaultCameraCapturerActivity.this,
+      "publisher",
+      Publisher.CameraCaptureResolution.LOW,
+      Publisher.CameraCaptureFrameRate.FPS_15);
+
+The `resolution` parameter is defined by the Publisher.CameraCaptureResolution enum. The
+`Publisher.CameraCaptureResolution.LOW` value specifies that publisher will use the lowest
+available camera capture resolution supported in the OpenTok Android SDK (352x288) or the closest
+resolution supported on the device.
+
+The `frameRate` parameter is defined by the Publisher.CameraCaptureFrameRate enum. The
+`Publisher.CameraCaptureFrameRate.FPS_15` value specifies that publisher will capture frames at a
+rate of 15 frames per second or the closest frame rate supported on the device.
+
+You can also use the PublisherKit class and define a custom camera capturer for more control than
+simply setting the frame rate and resolution. For example, you can use a custom capturer to
+implement a screen-sharing video stream (see "Screen sharing"). See "Using a custom video capturer"
+for basic information on using a custom video capturer.
+
+### Taking a screenshot of a subscribed video
+
+When the app user clicks "Screenshot" in the main menu, the app starts an activity
+defined by the ScreenshotActivity class. Upon connecting to the OpenTok session, the
+activity publishes a stream. Upon the stream being created in the session, it
+calls the `susbscribeToStream(stream)` method, which instantiates a Subscriber object and
+sets its video renderer to a BasicCustomVideoRenderer object:
+
+    mSubscriber = new Subscriber(ScreenshotActivity.this, stream);
+    mSubscriber.setRenderer(new BasicCustomVideoRenderer(this));
+
+The BasicCustomVideoRenderer class (in the com.opentok.android.demo.video package) extends the
+BaseVideoRenderer class (defined in the OpenTok Android SDK). It contains a Boolean
+`mSaveScreenshot` property (which is `false` by default).
+
+When the user clicks the screenshot (camera) icon at the top of the user interface, the app calls
+the `saveScreenshot(enableScreenshot)` method of the BasicCustomVideoRenderer instance, passing in
+`true`:
+
+    public void saveScreenshot(Boolean enableScreenshot){
+        mSaveScreenshot = enableScreenshot;
+    }
+
+After that, when the subscriber receives a stream and the `displayFrame(Frame frame)` of the
+BasicCustomVideoRenderer instance is called. It converts the frame into a Bitmap object, and then
+saves that bitmap as a PNG file to the external storage directory for the app:
+
+    public void displayFrame(Frame frame) {
+        mFrameLock.lock();
+        if (this.mCurrentFrame != null) {
+            this.mCurrentFrame.recycle();
+        }
+        this.mCurrentFrame = frame;
+        mFrameLock.unlock();
+
+        if(mCustomVideoRenderer.mSaveScreenshot) {
+            Log.d(LOG_TAG, "Screenshot capture");
+
+            ByteBuffer bb = frame.getBuffer();
+            bb.clear();
+
+            int width = frame.getWidth();
+            int height = frame.getHeight();
+            int half_width = (width + 1) >> 1;
+            int half_height = (height +1) >> 1;
+            int y_size = width * height;
+            int uv_size = half_width * half_height;
+
+            byte []yuv = new byte[y_size + uv_size * 2];
+            bb.get(yuv);
+            int[] intArray = new int[width*height];
+
+            // Decode Yuv data to integer array
+            decodeYUV420(intArray, yuv, width, height);
+
+            // Initialize the bitmap, with the replaced color
+            Bitmap bmp = Bitmap.createBitmap(intArray, width, height, Bitmap.Config.ARGB_8888);
+
+            try {
+                String path = Environment.getExternalStorageDirectory().toString();
+                OutputStream fOutputStream = null;
+                File file = new File(path, "opentok-capture-"+ System.currentTimeMillis() +".png");
+                fOutputStream = new FileOutputStream(file);
+
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, fOutputStream);
+
+                fOutputStream.flush();
+                fOutputStream.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
+            mCustomVideoRenderer.mSaveScreenshot = false;
+        }
+    }
+
+For more information on custom video renderers, see "Using a custom video renderer."
+
 
 Next steps
 ----------
