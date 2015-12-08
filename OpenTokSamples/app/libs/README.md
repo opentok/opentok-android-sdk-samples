@@ -1,0 +1,1 @@
+Add the opentok-android-sdk-x.y.z.jar to this directory

@@ -37,7 +37,9 @@ public class OpenTokSamples extends Activity {
                 getString(R.string.voinceonly),
                 getString(R.string.audiodevice),
                 getString(R.string.helloworldemulator),
-                getString(R.string.screensharing)};
+                getString(R.string.screensharing),
+                getString(R.string.defaultcameracapturer),
+                getString(R.string.screenshot)};
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, activityNames);
@@ -68,7 +70,13 @@ public class OpenTokSamples extends Activity {
                     startHelloWorldEmulator();
                 } else if (8 == position) {
                     startScreensharing();
-                } else {
+                }
+                else if (9 == position) {
+                    startDefaultCameraCapturer();
+                }
+                else if (10 == position) {
+                    startScreenshot();
+                }else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
             }
@@ -200,8 +208,8 @@ public class OpenTokSamples extends Activity {
     }
 
     /**
-     * Starts the Hello-World app using a custom audio device. See
-     * AudioDeviceActivity.java
+     * Starts the Hello-World app in the emulator. See
+     * EmulatorActivity.java
      */
     public void startHelloWorldEmulator() {
 
@@ -216,8 +224,8 @@ public class OpenTokSamples extends Activity {
     }
 
     /**
-     * Starts the Hello-World app using a custom audio device. See
-     * AudioDeviceActivity.java
+     * Starts the Hello-World app to share a website. See
+     * ScreenSharingActivity.java
      */
     public void startScreensharing() {
 
@@ -225,6 +233,38 @@ public class OpenTokSamples extends Activity {
 
         Intent intent = new Intent(OpenTokSamples.this,
                 ScreenSharingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Starts the Hello-World app using the default video capturer feature. See
+     * DefaultCameraCapturerActivity.java
+     */
+    public void startDefaultCameraCapturer() {
+
+        Log.i(LOGTAG, "starting hello-world app for default video capturer setting a preferred resolution and frame rate");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                DefaultCameraCapturerActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+    }
+
+    /**
+     * Starts the Hello-World app using a custom video renderer with the screenshot option. See
+     * ScreenshotActivity.java
+     */
+    public void startScreenshot() {
+
+        Log.i(LOGTAG, "starting hello-world app with screenshot option");
+
+        Intent intent = new Intent(OpenTokSamples.this,
+                ScreenshotActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

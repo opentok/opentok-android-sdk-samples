@@ -46,6 +46,7 @@ import com.opentok.android.demo.ui.fragments.PublisherStatusFragment;
 import com.opentok.android.demo.ui.fragments.SubscriberControlFragment;
 import com.opentok.android.demo.ui.fragments.SubscriberQualityFragment;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 public class UIActivity extends Activity implements Session.SessionListener,
@@ -539,7 +540,7 @@ public class UIActivity extends Activity implements Session.SessionListener,
 
             if (mPublisher != null) {
                 // check visibility of bars
-                if (!mPublisherFragment.isMPublisherWidgetVisible()) {
+                if (!mPublisherFragment.isPubControlWidgetVisible()) {
                     visible = true;
                 }
                 mPublisherFragment.publisherClick();
@@ -555,15 +556,15 @@ public class UIActivity extends Activity implements Session.SessionListener,
         }
     };
 
-    public Publisher getmPublisher() {
+    public Publisher getPublisher() {
         return mPublisher;
     }
 
-    public Subscriber getmSubscriber() {
+    public Subscriber getSubscriber() {
         return mSubscriber;
     }
 
-    public Handler getmHandler() {
+    public Handler getHandler() {
         return mHandler;
     }
 
@@ -661,45 +662,48 @@ public class UIActivity extends Activity implements Session.SessionListener,
                 .getLayoutParams();
         int bottomMargin = 0;
         boolean controlBarVisible = mPublisherFragment
-                .isMPublisherWidgetVisible();
+                .isPubControlWidgetVisible();
         boolean statusBarVisible = mPublisherStatusFragment
-                .isMPubStatusWidgetVisible();
-        RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) mPublisherFragment
-                .getMPublisherContainer().getLayoutParams();
-        RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
-                .getMPubStatusContainer().getLayoutParams();
+                .isPubStatusWidgetVisible();
+        RelativeLayout pubControlContainer = mPublisherFragment.getPublisherContainer();
+        RelativeLayout pubStatusContainer = mPublisherStatusFragment.getPubStatusContainer();
 
-        // setting margins for publisher view on portrait orientation
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (statusBarVisible && archiving) {
-                // height of publisher control bar + height of publisher status
-                // bar + 20 px
-                bottomMargin = pubControlLayoutParams.height
-                        + pubStatusLayoutParams.height + dpToPx(20);
-            } else {
-                if (controlBarVisible) {
-                    // height of publisher control bar + 20 px
-                    bottomMargin = pubControlLayoutParams.height + dpToPx(20);
+        if (pubControlContainer != null && pubStatusContainer != null) {
+
+            RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) pubControlContainer.getLayoutParams();
+            RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) pubStatusContainer.getLayoutParams();
+
+            // setting margins for publisher view on portrait orientation
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (statusBarVisible && archiving) {
+                    // height of publisher control bar + height of publisher status
+                    // bar + 20 px
+                    bottomMargin = pubControlLayoutParams.height
+                            + pubStatusLayoutParams.height + dpToPx(20);
+                } else {
+                    if (controlBarVisible) {
+                        // height of publisher control bar + 20 px
+                        bottomMargin = pubControlLayoutParams.height + dpToPx(20);
+                    } else {
+                        bottomMargin = dpToPx(20);
+                    }
+                }
+            }
+
+            // setting margins for publisher view on landscape orientation
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (statusBarVisible && archiving) {
+                    bottomMargin = pubStatusLayoutParams.height + dpToPx(20);
                 } else {
                     bottomMargin = dpToPx(20);
                 }
             }
+
+            pubLayoutParams.bottomMargin = bottomMargin;
+            pubLayoutParams.leftMargin = dpToPx(20);
+
+            mPublisherViewContainer.setLayoutParams(pubLayoutParams);
         }
-
-        // setting margins for publisher view on landscape orientation
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (statusBarVisible && archiving) {
-                bottomMargin = pubStatusLayoutParams.height + dpToPx(20);
-            } else {
-                bottomMargin = dpToPx(20);
-            }
-        }
-
-        pubLayoutParams.bottomMargin = bottomMargin;
-        pubLayoutParams.leftMargin = dpToPx(20);
-
-        mPublisherViewContainer.setLayoutParams(pubLayoutParams);
-
         if (mSubscriber != null) {
             if (mSubscriberAudioOnly) {
                 RelativeLayout.LayoutParams subLayoutParams = (LayoutParams) mSubscriberAudioOnlyView
@@ -715,59 +719,61 @@ public class UIActivity extends Activity implements Session.SessionListener,
     }
 
     public void setSubQualityMargins() {
-        RelativeLayout.LayoutParams subQualityLayoutParams = (LayoutParams) mSubscriberQualityFragment
-                .getSubQualityContainer().getLayoutParams();
-        boolean pubControlBarVisible = mPublisherFragment
-                .isMPublisherWidgetVisible();
-        boolean pubStatusBarVisible = mPublisherStatusFragment
-                .isMPubStatusWidgetVisible();
-        RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) mPublisherFragment
-                .getMPublisherContainer().getLayoutParams();
-        RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) mPublisherStatusFragment
-                .getMPubStatusContainer().getLayoutParams();
-        RelativeLayout.LayoutParams audioMeterLayoutParams = (LayoutParams) mAudioLevelView.getLayoutParams();
+        RelativeLayout subQualityContainer = mSubscriberQualityFragment.getSubQualityContainer();
+        RelativeLayout pubControlContainer = mPublisherFragment.getPublisherContainer();
+        RelativeLayout pubStatusContainer = mPublisherStatusFragment.getPubStatusContainer();
 
-        int bottomMargin = 0;
+        if (subQualityContainer != null && pubControlContainer != null && pubStatusContainer != null) {
+            RelativeLayout.LayoutParams subQualityLayoutParams = (LayoutParams) subQualityContainer.getLayoutParams();
+            boolean pubControlBarVisible = mPublisherFragment
+                    .isPubControlWidgetVisible();
+            boolean pubStatusBarVisible = mPublisherStatusFragment
+                    .isPubStatusWidgetVisible();
+            RelativeLayout.LayoutParams pubControlLayoutParams = (LayoutParams) pubControlContainer.getLayoutParams();
+            RelativeLayout.LayoutParams pubStatusLayoutParams = (LayoutParams) pubStatusContainer.getLayoutParams();
+            RelativeLayout.LayoutParams audioMeterLayoutParams = (LayoutParams) mAudioLevelView.getLayoutParams();
 
-        // control pub fragment
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (pubControlBarVisible) {
-                bottomMargin = pubControlLayoutParams.height + dpToPx(10);
-            }
-            if (pubStatusBarVisible && archiving) {
-                bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
-            }
-            if (bottomMargin == 0) {
-                bottomMargin = dpToPx(10);
-            }
-            subQualityLayoutParams.rightMargin = dpToPx(10);
-        }
+            int bottomMargin = 0;
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (!pubControlBarVisible) {
+            // control pub fragment
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (pubControlBarVisible) {
+                    bottomMargin = pubControlLayoutParams.height + dpToPx(10);
+                }
+                if (pubStatusBarVisible && archiving) {
+                    bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
+                }
+                if (bottomMargin == 0) {
+                    bottomMargin = dpToPx(10);
+                }
                 subQualityLayoutParams.rightMargin = dpToPx(10);
-                bottomMargin = dpToPx(10);
-                audioMeterLayoutParams.rightMargin = 0;
+            }
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (!pubControlBarVisible) {
+                    subQualityLayoutParams.rightMargin = dpToPx(10);
+                    bottomMargin = dpToPx(10);
+                    audioMeterLayoutParams.rightMargin = 0;
+                    mAudioLevelView.setLayoutParams(audioMeterLayoutParams);
+
+                } else {
+                    subQualityLayoutParams.rightMargin = pubControlLayoutParams.width;
+                    bottomMargin = dpToPx(10);
+                    audioMeterLayoutParams.rightMargin = pubControlLayoutParams.width;
+                }
+                if (pubStatusBarVisible && archiving) {
+                    bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
+                }
                 mAudioLevelView.setLayoutParams(audioMeterLayoutParams);
+            }
 
-            } else {
-                subQualityLayoutParams.rightMargin = pubControlLayoutParams.width;
-                bottomMargin = dpToPx(10);
-                audioMeterLayoutParams.rightMargin = pubControlLayoutParams.width;
-            }
-            if (pubStatusBarVisible && archiving) {
-                bottomMargin = pubStatusLayoutParams.height + dpToPx(10);
-            }
-            mAudioLevelView.setLayoutParams(audioMeterLayoutParams);
+            subQualityLayoutParams.bottomMargin = bottomMargin;
+
+            mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(
+                    subQualityLayoutParams);
         }
-
-        subQualityLayoutParams.bottomMargin = bottomMargin;
-
-        mSubscriberQualityFragment.getSubQualityContainer().setLayoutParams(
-                subQualityLayoutParams);
 
     }
-
 
     @Override
     public void onError(PublisherKit publisher, OpentokError exception) {
