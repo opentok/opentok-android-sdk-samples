@@ -13,7 +13,9 @@ Notes
 * See the [OpenTok Android SDK Reference](http://tokbox.com/opentok/libraries/client/android/reference/index.html)
 for details on the API.
 
-* Maven is now being used to host the opentok-android-sdk releases. In order to use properly, the following steps need to be followed.
+* Maven is now being used to host the opentok-android-sdk releases. Follow these
+  steps to use the SDK properly:
+
   a) Modify build.gradle for your solution and add the following code snippet to the section labeled 'repositories'
   
       maven { url  "http://tokbox.bintray.com/maven" }
