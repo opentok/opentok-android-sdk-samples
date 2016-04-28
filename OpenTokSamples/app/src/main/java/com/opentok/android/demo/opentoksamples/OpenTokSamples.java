@@ -119,6 +119,7 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
 
         final ListView listActivities = (ListView) findViewById(R.id.listview);
         String[] activityNames = {getString(R.string.helloworld),
+                "Publisher Preview",
                 getString(R.string.helloworldui),
                 getString(R.string.helloworldcapturer),
                 getString(R.string.helloworldrenderer),
@@ -144,24 +145,26 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
                 if (0 == position) {
                     startHelloWorld();
                 } else if (1 == position) {
-                    startHelloWorldUI();
+                    startPublisherPreview();
                 } else if (2 == position) {
-                    startHelloWorldVideoCapturer();
+                    startHelloWorldUI();
                 } else if (3 == position) {
-                    startHelloWorldVideoRenderer();
+                    startHelloWorldVideoCapturer();
                 } else if (4 == position) {
-                    startHelloWorldSubclassing();
+                    startHelloWorldVideoRenderer();
                 } else if (5 == position) {
-                    startVoiceOnly();
+                    startHelloWorldSubclassing();
                 } else if (6 == position) {
-                    startAudioDevice();
+                    startVoiceOnly();
                 } else if (7 == position) {
-                    startHelloWorldEmulator();
+                    startAudioDevice();
                 } else if (8 == position) {
-                    startScreensharing();
+                    startHelloWorldEmulator();
                 } else if (9 == position) {
-                    startDefaultCameraCapturer();
+                    startScreensharing();
                 } else if (10 == position) {
+                    startDefaultCameraCapturer();
+                } else if (11 == position) {
                     startScreenshot();
                 } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
@@ -197,6 +200,15 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
         Log.i(LOGTAG, "starting hello-world app");
 
         Intent intent = new Intent(OpenTokSamples.this, HelloWorldActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public void startPublisherPreview() {
+        Log.i(LOGTAG, "starting hello-world app");
+
+        Intent intent = new Intent(OpenTokSamples.this, PublisherPreviewActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
