@@ -51,6 +51,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.opentok.android.demo.opentoksamples.PublisherPreviewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
+            <intent-filter>
+                <action android:name="com.opentok.android.demo.opentoksamples.PublisherPreviewActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.opentok.android.demo.opentoksamples.UIActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>

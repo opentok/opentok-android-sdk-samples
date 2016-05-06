@@ -15,6 +15,10 @@
     <string name="defaultcameracapturer">Default Camera Capturer</string>
     <string name="screenshot">Screenshot</string>
 
+    <string name="connectStr">Connect</string>
+    <string name="publishStr">Publish</string>
+    <string name="previewOn">Start Preview</string>
+    <string name="disconnectStr">Disconnect</string>
     <string name="swapStr">Swap camera</string>
     <string name="endCall1">End call</string>
     <string name="endCall2">End</string>
