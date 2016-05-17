@@ -14,7 +14,7 @@ Notes
 for details on the API.
 
 * The OpenTok Android SDK is hosted on Maven. To use the SDK in your app, download it
-  from http://tokbox.bintray.com/maven. For example:
+  from `http://tokbox.bintray.com/maven`. For example:
 
   a) Edit the build.gradle for your project and add the following code snippet to the
      `allprojects/repositiories` section:
