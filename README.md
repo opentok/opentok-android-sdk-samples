@@ -103,16 +103,17 @@ The HelloWorldActivity class defines the activity of the basic example.
 
 The main_activity.xml defines a LinearLayout object used by the app.
 
-The AndroidManifest.xml app includes required permissions and features used by an OpenTok app:
+The OpenTok Android SDK uses following permissions:
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    android.permission.CAMERA
+    android.permission.INTERNET
+    android.permission.RECORD_AUDIO
+    android.permission.MODIFY_AUDIO_SETTINGS
+    android.permission.BLUETOOTH
+    android.permission.BROADCAST_STICKY
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+You do not need to add these to your app manifest. The OpenTok SDK adds them automatically.
+However, if you use Android 21+, certain permissions require you to prompt the user.
 
 ### Adding views for videos
 
