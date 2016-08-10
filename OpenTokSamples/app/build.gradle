@@ -8,16 +8,10 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 8
-        versionName "2.7.0"
+        versionName "2.9.0"
     }
     buildTypes {
         release {            
-        }
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDir 'jniLibs'
         }
     }
 }
@@ -25,5 +19,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.opentok.android:opentok-android-sdk:2.9.+'
 }
 
