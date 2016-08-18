@@ -1,24 +1,24 @@
 package com.opentok.android.demo.opentoksamples;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 /**
@@ -117,6 +117,7 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
 
         setContentView(R.layout.main_activity);
 
+
         final ListView listActivities = (ListView) findViewById(R.id.listview);
         String[] activityNames = {getString(R.string.helloworld),
                 "Publisher Preview",
@@ -133,8 +134,8 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, activityNames);
-        listActivities.setAdapter(adapter);
 
+        listActivities.setAdapter(adapter);
         listActivities.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position,
@@ -173,6 +174,10 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
         });
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(0);
+        } else {
+            // hide button for settings if not atleast android m
+            Button settings_btn = (Button)findViewById(R.id.btn_system_settings);
+            settings_btn.setVisibility(View.GONE);
         }
     }
 
@@ -416,7 +421,7 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
 
             Log.d(LOGTAG, "Requesting permission: " + permissionInfo.getPermission());
             if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permissionInfo.getPermission())) {
-                final String permissionArray[] = new String[] { permissionInfo.getPermission() };
+                final String permissionArray[] = new String[]{permissionInfo.getPermission()};
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionInfo.getPermission())) {
                     Snackbar.make(
                             layout,
@@ -444,5 +449,17 @@ public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.
                 requestPermissions(permissionIndex + 1);
             }
         }
+    }
+
+    public void onSystemSettingsClick(View v) {
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+
     }
 }
