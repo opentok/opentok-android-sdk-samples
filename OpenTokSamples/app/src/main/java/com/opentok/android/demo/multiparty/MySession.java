@@ -182,7 +182,7 @@ public class MySession extends Session {
     protected void onSignalReceived(String type, String data,
                                     Connection connection) {
 
-        if (type != null && "chat".equals(type)) {
+        if (type != null && "chat".equals(type) && connection != null) {
             String mycid = this.getConnection().getConnectionId();
             String cid = connection.getConnectionId();
             if (!cid.equals(mycid)) {

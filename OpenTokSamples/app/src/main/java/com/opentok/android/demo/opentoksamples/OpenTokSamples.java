@@ -1,9 +1,18 @@
 package com.opentok.android.demo.opentoksamples;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,9 +27,89 @@ import android.widget.ListView;
  * bar with action buttons to switch camera, audio mute and end call. - a basic
  * hello-world activity with a customer video capturer out of SDK.
  */
-public class OpenTokSamples extends Activity {
+public class OpenTokSamples extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String LOGTAG = "demo-opentok-sdk";
+
+    private static class PermissionRecord {
+        private String  mPermission;
+        private int     mRequestMsgId;
+        private int     mGrantMsgId;
+        private boolean mIsGranted;
+
+        public PermissionRecord(String permission, int requestMsgId, int grantMsgId) {
+            mPermission     = permission;
+            mRequestMsgId   = requestMsgId;
+            mGrantMsgId     = grantMsgId;
+            mIsGranted      = false;
+        }
+
+        public String getPermission() {
+            return mPermission;
+        }
+
+        public int getRequestMsgId() {
+            return mRequestMsgId;
+        }
+
+        public int getGrantMsgId() {
+            return mGrantMsgId;
+        }
+
+        public boolean isPermissionGranted() {
+            return mIsGranted;
+        }
+
+        public void grantPermission() {
+            mIsGranted = true;
+        }
+    }
+
+    private static final int REQUEST_CAMERA         = 0xf5;
+    private static final int REQUEST_INTERNET       = 0x11;
+    private static final int REQUEST_RECORDAUDIO    = 0x35;
+    private static final int REQUEST_AUDIOSETTINGS  = 0xe9;
+    private static final int WRITE_EXTERNALSTORAGE  = 0x50;
+
+    private static final SparseArray<PermissionRecord> mPermissionState = new SparseArray<PermissionRecord>() {
+        {
+            append( REQUEST_CAMERA,
+                    new PermissionRecord(
+                        Manifest.permission.CAMERA,
+                        R.string.permission_camera_rationale,
+                        R.string.permission_camera_granted
+                    )
+            );
+            append( REQUEST_INTERNET,
+                    new PermissionRecord(
+                        Manifest.permission.INTERNET,
+                        R.string.permission_internet_rationale,
+                        R.string.permission_internet_granted
+                    )
+            );
+            append( REQUEST_RECORDAUDIO,
+                    new PermissionRecord(
+                        Manifest.permission.RECORD_AUDIO,
+                        R.string.permission_audiorecord_rationale,
+                        R.string.permission_audiorecord_granted
+                    )
+            );
+            append( REQUEST_AUDIOSETTINGS,
+                    new PermissionRecord(
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        R.string.permission_audiosettings_rationale,
+                        R.string.permission_audiosettings_granted
+                    )
+            );
+            append( WRITE_EXTERNALSTORAGE,
+                    new PermissionRecord(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        R.string.permission_writeexternalstorage_rationale,
+                        R.string.permission_writeexternalstorage_granted
+                    )
+            );
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +119,7 @@ public class OpenTokSamples extends Activity {
 
         final ListView listActivities = (ListView) findViewById(R.id.listview);
         String[] activityNames = {getString(R.string.helloworld),
+                "Publisher Preview",
                 getString(R.string.helloworldui),
                 getString(R.string.helloworldcapturer),
                 getString(R.string.helloworldrenderer),
@@ -55,32 +145,35 @@ public class OpenTokSamples extends Activity {
                 if (0 == position) {
                     startHelloWorld();
                 } else if (1 == position) {
-                    startHelloWorldUI();
+                    startPublisherPreview();
                 } else if (2 == position) {
-                    startHelloWorldVideoCapturer();
+                    startHelloWorldUI();
                 } else if (3 == position) {
-                    startHelloWorldVideoRenderer();
+                    startHelloWorldVideoCapturer();
                 } else if (4 == position) {
-                    startHelloWorldSubclassing();
+                    startHelloWorldVideoRenderer();
                 } else if (5 == position) {
-                    startVoiceOnly();
+                    startHelloWorldSubclassing();
                 } else if (6 == position) {
-                    startAudioDevice();
+                    startVoiceOnly();
                 } else if (7 == position) {
-                    startHelloWorldEmulator();
+                    startAudioDevice();
                 } else if (8 == position) {
+                    startHelloWorldEmulator();
+                } else if (9 == position) {
                     startScreensharing();
-                }
-                else if (9 == position) {
+                } else if (10 == position) {
                     startDefaultCameraCapturer();
-                }
-                else if (10 == position) {
+                } else if (11 == position) {
                     startScreenshot();
-                }else {
+                } else {
                     Log.wtf(LOGTAG, "unknown item clicked?");
                 }
             }
         });
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(0);
+        }
     }
 
     @Override
@@ -107,6 +200,15 @@ public class OpenTokSamples extends Activity {
         Log.i(LOGTAG, "starting hello-world app");
 
         Intent intent = new Intent(OpenTokSamples.this, HelloWorldActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public void startPublisherPreview() {
+        Log.i(LOGTAG, "starting hello-world app");
+
+        Intent intent = new Intent(OpenTokSamples.this, PublisherPreviewActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -269,5 +371,78 @@ public class OpenTokSamples extends Activity {
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
 
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        final int               requestKey  = requestCode;
+        final View              layout      = findViewById(R.id.listview);
+        final PermissionRecord  permission  = mPermissionState.get(requestCode);
+        Snackbar.Callback       snackBarCB  = new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                super.onDismissed(snackbar, event);
+                requestPermissions(mPermissionState.indexOfKey(requestKey) + 1);
+            }
+        };
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            permission.isPermissionGranted();
+            Snackbar.make(
+                    layout,
+                    permission.getGrantMsgId(),
+                    Snackbar.LENGTH_SHORT
+            ).setCallback(snackBarCB).show();
+        } else {
+            Snackbar.make(
+                    layout,
+                    R.string.permission_notgranted,
+                    Snackbar.LENGTH_SHORT
+            ).setCallback(snackBarCB).show();
+        }
+    }
+
+    private void requestPermissions(int permissionIndex) {
+
+        View layout = findViewById(R.id.listview);
+
+        if (permissionIndex < mPermissionState.size()) {
+            final PermissionRecord permissionInfo = mPermissionState.valueAt(permissionIndex);
+            final int permissionTag = mPermissionState.keyAt(permissionIndex);
+
+            Log.d(LOGTAG, "Requesting permission: " + permissionInfo.getPermission());
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permissionInfo.getPermission())) {
+                final String permissionArray[] = new String[] { permissionInfo.getPermission() };
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionInfo.getPermission())) {
+                    Snackbar.make(
+                            layout,
+                            permissionInfo.getRequestMsgId(),
+                            Snackbar.LENGTH_INDEFINITE
+                    ).setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(
+                                    OpenTokSamples.this,
+                                    permissionArray,
+                                    permissionTag
+                            );
+                        }
+                    }).show();
+                } else {
+                    ActivityCompat.requestPermissions(
+                            this,
+                            permissionArray,
+                            permissionTag
+                    );
+                }
+            } else {
+                permissionInfo.grantPermission();
+                requestPermissions(permissionIndex + 1);
+            }
+        }
     }
 }

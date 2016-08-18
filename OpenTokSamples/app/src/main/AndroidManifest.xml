@@ -8,14 +8,7 @@
         android:minSdkVersion="16"
         android:targetSdkVersion="23" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -32,7 +25,8 @@
             android:name="com.opentok.android.demo.opentoksamples.OpenTokSamples"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="fullSensor" >
+            android:screenOrientation="fullSensor"
+            android:theme="@style/Theme.AppCompat" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,6 +39,15 @@
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="com.opentok.android.demo.opentoksamples.OpenTokHelloWorld" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.opentok.android.demo.opentoksamples.PublisherPreviewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
+            <intent-filter>
+                <action android:name="com.opentok.android.demo.opentoksamples.PublisherPreviewActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

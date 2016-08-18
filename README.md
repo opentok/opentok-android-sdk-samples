@@ -13,32 +13,26 @@ Notes
 * See the [OpenTok Android SDK Reference](http://tokbox.com/opentok/libraries/client/android/reference/index.html)
 for details on the API.
 
+* The OpenTok Android SDK is hosted on Maven. To use the SDK in your app, download it
+  from `http://tokbox.bintray.com/maven`. For example:
+
+  a) Edit the build.gradle for your project and add the following code snippet to the
+     `allprojects/repositiories` section:
+  
+      maven { url  "http://tokbox.bintray.com/maven" }
+
+  b) Modify build.gradle for your module and add the following code snippet to the `dependencies`
+     section:
+  
+      compile 'com.opentok.android:opentok-android-sdk:2.8.+'
+
+  See the [build.gradle](OpenTokSamples/build.gradle#L14) and
+  [app/build.gradle](OpenTokSamples/app/build.gradle#L21) files in this sample app.
+
 Testing the sample app
 ----------------------
 
-1. Import the project into Android Studio:
-
-   * In Android Studio, choose File > New > Import Project and choose the build.gradle file in
-     the Android-sample directory. Or, if you are viewing the Android Studio welcome screen,
-     click "Import Project".
-
-   * Copy the opentok-android-sdk-2.7.0.jar file into the app/libs directory of the project.
-     This file is included in the OpenTok/libs subdirectory of the OpenTok Android SDK, available at
-     <http://tokbox.com/opentok/libraries/client/android/>.
-
-   * Copy the directories containing native dependencies required for your target environments into
-     the app/jniLibs directory of the project:
-
-     * armeabi
-     * armeabi-v7a
-     * x86
-
-     You will need the armeabi directory, the armeabi-v7a directory, or both for support on
-     ARM-based devices. You will need the x86 directory for support on x86-based devices or in
-     the supported Android emulators. These directories are included in the OpenTok/libs
-     subdirectory of the OpenTok Android SDK.
-
-2. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
+1. Configure the project to use your own OpenTok session and token. If you don't have an OpenTok
    API key yet, [sign up for a Developer Account](https://dashboard.tokbox.com/signups/new).
    Then to generate a test session ID and token, use the Project Tools on the
    [Project Details](https://dashboard.tokbox.com/projects) page.
@@ -51,11 +45,11 @@ Testing the sample app
    Overview](https://tokbox.com/opentok/tutorials/create-session/) and the [Token Creation
    Overview](https://tokbox.com/opentok/tutorials/create-token/).
 
-3.  Connect your Android device to a USB port on your computer. Set up
+2.  Connect your Android device to a USB port on your computer. Set up
     [USB debugging](http://developer.android.com/tools/device.html) on your device.
     Or launch the Genymotion x86 emulator or the official Android x86 emulator in combination with the Intel HAXM software.
 
-4.  Run the app on your device, selecting the default activity as the launch action.
+3.  Run the app on your device, selecting the default activity as the launch action.
 
     The app should start on your connected device. The initial view of the app shows different
     processes you can run:
@@ -75,14 +69,14 @@ Testing the sample app
       default camera capturer (used by the Publisher class).
     * Screenshot -- Shows how to capture an image from a subscribed video stream.
 
-5.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
+4.  Tap the Hello World link in the main view of the app. This launches the Hello World activity
     in a new view.
 
     Once the app connects to the OpenTok session, it publishes an audio-video stream, which is
     displayed onscreen. Then, the same audio-video stream shows up as a subscribed stream
     (along with any other streams currently in the session).
 
-6.  Close the app. Now set up the app to subscribe to audio-video streams other than your own:
+5.  Close the app. Now set up the app to subscribe to audio-video streams other than your own:
 
     -   In the OpenTokConfig class (in the com.opentok.android.demo.config package), change the
         `SUBSCRIBE_TO_SELF` property to be set to `false`.
@@ -109,16 +103,17 @@ The HelloWorldActivity class defines the activity of the basic example.
 
 The main_activity.xml defines a LinearLayout object used by the app.
 
-The AndroidManifest.xml app includes required permissions and features used by an OpenTok app:
+The OpenTok Android SDK uses following permissions:
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    android.permission.CAMERA
+    android.permission.INTERNET
+    android.permission.RECORD_AUDIO
+    android.permission.MODIFY_AUDIO_SETTINGS
+    android.permission.BLUETOOTH
+    android.permission.BROADCAST_STICKY
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+You do not need to add these to your app manifest. The OpenTok SDK adds them automatically.
+However, if you use Android 21+, certain permissions require you to prompt the user.
 
 ### Adding views for videos
 
