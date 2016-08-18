@@ -40,5 +40,7 @@
     <string name="permission_audiosettings_granted">Audio settings permission granted</string>
     <string name="permission_writeexternalstorage_granted">SD card permission granted</string>
     <string name="permission_notgranted">Permissions were not granted.</string>
+
     <string name="systemSettings">On Android 6.0.1 and later, make sure the permissions are enabled from the settings menu.</string>
+
 </resources>
