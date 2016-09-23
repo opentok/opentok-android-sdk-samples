@@ -1,1 +1,1 @@
-include ':app', ':1.Hello-World', ':2.Custom-Video-Driver'
+include ':app', ':1.Hello-World', ':2.Custom-Video-Driver', ':3.Custom-Audio-Driver'
