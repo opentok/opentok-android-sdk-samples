@@ -127,7 +127,7 @@ The app uses other view contains to displaying the publisher and subscriber vide
     publisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
     subscriberViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
 
-A *Publisher* is an object represents an audio-video stream sent from the Android device to
+A *Publisher* is an object that represents an audio-video stream sent from the Android device to
 the OpenTok session. A *Subscriber* is an object that subscribes to an audio-video stream from
 the OpenTok session that you display on your device. The subscriber stream can be one published
 by your device or (more commonly) a stream another client publishes to the OpenTok session.
@@ -137,11 +137,11 @@ The `onCreate()` method also instantiates an ArrayList for keeping references to
     mStreams = new ArrayList<Stream>();
 
 A *Stream* object represents an audio-video stream in the OpenTok session. This app subscribes to only one stream at a time,
-and it uses this ArrayList to subscribe to a new stream if the a subscribed stream drops from the session.
+and it uses this ArrayList to subscribe to a new stream if the subscribed stream drops from the session.
 
 ### Initializing a Session object and connecting to an OpenTok session
 
-The code then calls a method to instantiate an a Session object and connection to the OpenTok session:
+The code then calls a method to instantiate a Session object and connection to the OpenTok session:
 
     private void sessionConnect() {
         if (mSession == null) {
@@ -200,7 +200,7 @@ Next the code adds a Publisher.PublisherListener object to respond to publisher-
 Note that the HelloWorldActivity class implements the Publisher.PublisherListener interface.
 
 (The Publisher class extends the PublisherKit class. The PublisherKit class is a base class for
-for streaming video to an OpenTok session. The Publisher class extends it, adding a default user
+streaming video to an OpenTok session. The Publisher class extends it, adding a default user
 interface and video renderer, and capturing video from the Android device's camera. For more
 information on the PublisherKit class, see "Using a custom video capturer" and "Using a custom
 video renderer" below.)
@@ -401,7 +401,7 @@ is invoked:
     }
 
 The `setPublishAudio(boolean publishAudio)` method of a Publisher object toggles its audio on or off, based on a
-Boolean parameter. The getPublishAudio() method of the Subscriber Publisher true if the the
+Boolean parameter. The getPublishAudio() method of the Publisher is true if the the
 Publisher is publishing an audio track, and it returns false if it is not.
 
 When the user taps the swapCamera button, the following method of the OpenTokUI class
@@ -523,7 +523,7 @@ audio capturing and audio rendering:
             NUM_CHANNELS_RENDERING);
 
 The CustomAudioDevice class overrides the `initCapturer()` method, defined in the BaseAudioDevice
-class. This method initializes the app's audio capturer, instantiating a an
+class. This method initializes the app's audio capturer, instantiating an
 andriod.media.AudioRecord instance to be used to capture audio from the device's audio input
 hardware:
 
