@@ -249,6 +249,9 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+            gl.glClearColor(0, 0, 0, 1);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
             mFrameLock.lock();
             if (mCurrentFrame != null && !mVideoDisabled) {
                 GLES20.glUseProgram(mProgram);
@@ -279,7 +282,7 @@ public class CustomVideoRenderer extends BaseVideoRenderer {
                     }
                 }
 
-                Matrix.scaleM(mScaleMatrix, 0,
+               Matrix.scaleM(mScaleMatrix, 0,
                         scaleX * (mCurrentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
 
