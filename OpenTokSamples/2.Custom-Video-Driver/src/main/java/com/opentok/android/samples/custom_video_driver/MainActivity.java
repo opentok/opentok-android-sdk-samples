@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         mPublisher.setPublisherListener(this);
 
         mPublisher.setCapturer(new CustomVideoCapturer(MainActivity.this));
-        mPublisher.setRenderer(new CustomVideoRenderer(MainActivity.this));
+        mPublisher.setRenderer(new InvertedColorsVideoRenderer(MainActivity.this));
 
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
