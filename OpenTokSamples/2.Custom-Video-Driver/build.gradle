@@ -23,6 +23,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'pub.devrel:easypermissions:0.2.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.9.+'
+    compile 'com.opentok.android:opentok-android-sdk:2.10.+'
     compile 'com.android.support:support-v4:24.2.1'
 }
