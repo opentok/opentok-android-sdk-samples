@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="publisher_view_id" type="id"/>
+
+    <item name="subscriber_1" type="id"/>
+    <item name="subscriber_2" type="id"/>
+    <item name="subscriber_3" type="id"/>
+    <item name="subscriber_4" type="id"/>
+    <item name="subscriber_5" type="id"/>
+    <item name="subscriber_6" type="id"/>
+    <item name="subscriber_7" type="id"/>
+    <item name="subscriber_8" type="id"/>
+    <item name="subscriber_9" type="id"/>
+    <item name="subscriber_10" type="id"/>
+
+    <array name="subscriber_view_ids">
+        <item>@id/subscriber_1</item>
+        <item>@id/subscriber_2</item>
+        <item>@id/subscriber_3</item>
+        <item>@id/subscriber_4</item>
+        <item>@id/subscriber_5</item>
+        <item>@id/subscriber_6</item>
+        <item>@id/subscriber_7</item>
+        <item>@id/subscriber_8</item>
+        <item>@id/subscriber_9</item>
+        <item>@id/subscriber_10</item>
+    </array>
+</resources>
