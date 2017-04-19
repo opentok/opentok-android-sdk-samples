@@ -1,0 +1,126 @@
+<html>
+<body>
+<button onclick="sendSignal()">Send signal</button>
+<button onclick="startRecording()">Start recording</button>
+<button onclick="stopRecording()">Stop recording</button>
+<br>
+<div id="videos">
+<div id="consoleDiv" style = "width:80%; height:50%; overflow:auto; font-family:monospace"></div>
+<script src="//static.opentok.com/webrtc/v2/js/opentok.js"></script>
+<script>
+var session,
+    openTokSessionInfo,
+    apiKey,
+    sessionId,
+    token,
+    archiveId;
+/*
+See https://github.com/opentok/learning-opentok-php.
+ 
+Set SAMPLE_SERVER_BASE_URL to the base URL of the web server that implements
+the OpenTok PHP Getting Started Sample code (see the main README file.) This
+web service handles some OpenTok-related API calls, related to obtaining
+session IDs and tokens, and for working with archives.
+*/
+var sampleServerBaseUrl = '',
+    sessionCredentialsUrl = sampleServerBaseUrl + '/session',
+    startArchiveUrl = sampleServerBaseUrl + '/start/',
+    stopArchiveUrl = sampleServerBaseUrl + '/stop/';
+var apiKey,
+  sessionId,
+  token;
+
+getApiKeyAndToken();
+function getApiKeyAndToken() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", sessionCredentialsUrl, true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        openTokSessionInfo = JSON.parse(xhr.responseText);
+        apiKey = openTokSessionInfo.apiKey;
+        sessionId = openTokSessionInfo.sessionId;
+        token = openTokSessionInfo.token;
+        initSession();
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.statusText);
+  };
+  xhr.send(null);
+}
+function initSession() {
+  session = OT.initSession(apiKey, sessionId);
+  session.on('streamCreated', function(event) {
+    session.subscribe(event.stream, 'videos', {insertMode:'append'});
+  });
+  
+  session.on('archiveStarted', function(event) {
+    archiveId = event.id;
+    console.log('archiveStarted: ' + archiveId);
+  });
+  session.on('archiveStopped', function(event) {
+    console.log('archiveStopped: ' + event.id)
+  });
+  session.on('signal:chat', function(event) {
+    console.log(event.data);
+  });
+  session.connect(token, function (error) {
+    if (!error) {
+      var publisher = OT.initPublisher('videos', {insertMode:'append'});
+      session.publish(publisher);
+      publisher.publishAudio(false);
+    }
+  });
+}
+function sendSignal() {
+  session.signal({
+    type:'chat',
+    data:'hello ' + new Date().toString()
+  });
+}
+function stopRecording() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", stopArchiveUrl + archiveId, true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        console.log(xhr.responseText);
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.statusText);
+  };
+  xhr.send(null);
+}
+function startRecording() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", startArchiveUrl, true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        console.log(xhr.responseText);
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.statusText);
+  };
+  xhr.send(null);
+}
+console.log = function(str) {
+  var consoleDiv = document.getElementById('consoleDiv');
+  consoleDiv.innerHTML += str + "<br>";
+  consoleDiv.scrollTop = consoleDiv.scrollHeight;
+}
+</script>
+</body>
+</html>
