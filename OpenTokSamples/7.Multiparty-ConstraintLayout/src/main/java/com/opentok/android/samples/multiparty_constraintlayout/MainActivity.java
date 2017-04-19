@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
+
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
@@ -180,8 +181,6 @@ public class MainActivity extends AppCompatActivity
         arr.recycle();
         return subId;
     }
-
-
 
     @Override
     public void onStreamReceived(Session session, Stream stream) {
@@ -303,7 +302,6 @@ public class MainActivity extends AppCompatActivity
         set.applyToLayout(mContainer, true);
     }
 
-
     private void disconnectSession() {
         if (mSession == null) {
             return;
@@ -320,6 +318,7 @@ public class MainActivity extends AppCompatActivity
 
         if (mPublisher != null) {
             mSession.unpublish(mPublisher);
+            mContainer.removeView(mPublisher.getView());
             mPublisher.destroy();
             mPublisher = null;
         }

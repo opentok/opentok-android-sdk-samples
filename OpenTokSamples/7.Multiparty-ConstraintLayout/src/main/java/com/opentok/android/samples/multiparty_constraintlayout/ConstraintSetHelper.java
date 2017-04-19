@@ -4,10 +4,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.transition.TransitionManager;
 
-/**
- * Created by rpc on 11/04/2017.
- */
-
 public class ConstraintSetHelper {
     private ConstraintSet set;
     private int container;
