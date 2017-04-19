@@ -37,6 +37,11 @@ This app module shows how to capture an image from a subscribed video stream.
 This app module shows how to implement a simple video call application with
 several parties.
 
+### Multiparty using ConstraintLayout
+
+This app module shows how to use Android SDK ConstraintLayout to position
+all the video views of several participants in a multiparty session.
+
 Check each app module's README file for more information.
 
 ## Getting Sample Code Updates
