@@ -1,4 +1,4 @@
-Starter Template
+Basic Video Chat
 ===================================
 
 This template serves as a starting point for building an Android application using OpenTok.
