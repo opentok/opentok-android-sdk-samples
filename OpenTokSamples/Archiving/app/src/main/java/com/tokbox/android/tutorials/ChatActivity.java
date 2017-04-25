@@ -64,7 +64,6 @@ public class ChatActivity   extends ActionBarActivity
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Log.e(LOG_TAG, "Configuration Error. " + OpenTokConfig.configErrorMessage);
-                            Log.e(LOG_TAG, OpenTokConfig.CHAT_SERVER_URL);
                             ChatActivity.this.finish();
                         }
                     })
