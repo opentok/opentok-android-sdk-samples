@@ -10,9 +10,9 @@ the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has 
 One  is that you can use a single layout to specify all the view positions instead of having to
 nest several different layouts.
 
-To use this sample application, install the ConstraintLayout for Android. In the Android Studio
-SDK Manager command, navigate to Appearance & Behavior > System Settings > Android SDK. Then click
-the SDK Tools tab and install ConstraintLayout for Android (listed under Support Repository).
+To use this sample application, install the ConstraintLayout for Android. See [these
+instructions](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project)
+on adding the ConstraintLayout to your project.
 
 ## Using Constraint Layout to display the views
 
