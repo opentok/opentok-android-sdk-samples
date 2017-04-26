@@ -2,15 +2,26 @@
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 
-In the Project of the Sample #6 we built a simple multiparty app which uses basic Layouts in order to display the different video views of the participants.
+Sample #6 shows a simple multiparty app which uses basic layouts to display the different video
+views of the participants.
 
-However, when building a complex app, there is a better option in order to lay out the views. The recommended way is to use the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has several benefits, one of them is that you can use a single layout to specify all the view positions instead of having to nest several different layouts.
+However, when building a complex app, there is a better option in order to lay out the views:
+the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has several benefits.
+One  is that you can use a single layout to specify all the view positions instead of having to
+nest several different layouts.
+
+To use this sample application, install the ConstraintLayout for Android. See [these
+instructions](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project)
+on adding the ConstraintLayout to your project.
 
 ## Using Constraint Layout to display the views
 
-In order to specify the layout parameters, we will use the sdk class `ConstraintSet`, that class will allow us to specify the relations between two views in the form of, _view A is above view B_, or _view A is the same size of view B_.
+In order to specify the layout parameters, the application uses the `ConstraintSet` class.
+This class lets you specify the relations between two views in the form of _view A is above
+view B_ or _view A is the same size as view B_.
 
-For example, to specify that a view is above another view, we have built a helper method inside the `ConstraintSetHelper` class with this code:
+For example, to specify that a view is above another view, the application uses a helper method
+inside the `ConstraintSetHelper` class:
 
 ```java
 public void layoutViewAboveView(int aboveViewId, int belowViewId) {
@@ -24,7 +35,7 @@ public void layoutViewAboveView(int aboveViewId, int belowViewId) {
 }
 ```
 
-Once we have all our constraints added to the `ConstraintSet`, we will apply them to the ConstraintLayout itself. We do that using this code:
+Once all constraints are added to the `ConstraintSet`, we apply them to the ConstraintLayout:
 
 ```java
 public void applyToLayout(ConstraintLayout layout, boolean animated) {
@@ -35,17 +46,30 @@ public void applyToLayout(ConstraintLayout layout, boolean animated) {
 }
 ```
 
-See `ConstraintSetHelper` class for more details about how we set up the constraints for different view positions.
+See the `ConstraintSetHelper` class for more details about how to set up the constraints for different view positions.
 
-In order to actually position the views, we need to calculate the constraints whenever a new view is added or removed, that happens in the OpenTok SDK callbacks like Session's listener `onStreamReceived`. In those listener methods we just add the view to the container and call `calculateLayout()` which is where all the logic of view positioning happens.
+In order to actually position the views, the application calculates the constraints whenever a new
+view is added or removed, in callback methods like the `SessionsListener.onStreamReceived()` method.
+Those callback add the view to the container and call `calculateLayout()`, which includes logic for
+view positioning.
 
-In this sample we have 4 possible lay outs:
-1. The publisher is alone, so it will be displayed in full screen
-2. There are just one subscriber. In this case the screen will be splitted in two, publisher will be above and subscriber below
-3. There are more than one subscriber and they are an even number. In that case we will display the Publisher ocuppying all the container wide above all subscribers and subscribers will be displayed in rows two by two.
-4. There are more than one subscriber and they are an odd number. In that case the container space will be set like a grid and all views will be displayed two by two leaving the publisher in the upper left corner.
+In this sample we have four possible layouts:
 
-All that code is inside `calculateLayout()` method. For example, this is the simplified code just showing what happens for case number 2)
+1. The publisher is alone, so it will be displayed fullscreen.
+
+2. There is just one subscriber. In this case the screen is split in two. The publisher will be
+   displayed above the subscriber.
+
+3. There are more than one subscriber, and they are an even number. In this case, the application
+  displays the Publisher using the full width of the container above all subscribers, and
+  subscribers are displayed in rows two by two.
+
+4. There are more than one subscriber, and they are an odd number. In this case, the container space
+   is like a grid and all views will be displayed two by two, with the publisher in the upper-left
+   corner.
+
+The `calculateLayout()` method implements this logic. For example, for the second case (where there
+is just one subscriber), here is a simplified version of the code:
 
 ```java
 private void calculateLayout() {
@@ -65,10 +89,12 @@ private void calculateLayout() {
 }
 ```
 
-Please refer to the code itself to see the rest of the cases.
+See the code itself for the other cases.
 
 ## Next steps
 
-* See Android Developers [guide](https://developer.android.com/training/constraint-layout/index.html) to Constraint Layout
+* See the Android [developers guide](https://developer.android.com/training/constraint-layout)
+for Constraint Layout
+
 * For details on the full OpenTok Android API, see the [reference
 documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
