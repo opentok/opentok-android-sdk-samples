@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:keepScreenOn="true"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".ChatActivity">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/subscriber_container" />
+
+        <FrameLayout
+            android:layout_width="@dimen/publisher_width"
+            android:layout_height="@dimen/publisher_height"
+            android:id="@+id/publisher_container"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="@dimen/publisher_bottom_margin"
+            android:layout_marginEnd="@dimen/publisher_right_margin"
+            android:padding="@dimen/publisher_padding"
+            android:background="@color/publisher_border_color">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/archiving_indicator_view"
+                android:layout_gravity="top|end"
+                android:src="@drawable/archiving_indicator"
+                android:layout_marginTop="@dimen/archiving_indicator_top_margin"
+                android:layout_marginEnd="@dimen/archiving_indicator_right_margin"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>
