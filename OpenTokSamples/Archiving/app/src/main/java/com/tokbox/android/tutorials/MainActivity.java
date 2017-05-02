@@ -1,9 +1,9 @@
 package com.tokbox.android.tutorials;
 
+import android.support.v7.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -22,14 +22,14 @@ import com.opentok.android.SubscriberKit;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 
-public class ChatActivity   extends ActionBarActivity
+public class MainActivity extends AppCompatActivity
                             implements  WebServiceCoordinator.Listener,
                                         Session.SessionListener,
                                         PublisherKit.PublisherListener,
                                         SubscriberKit.SubscriberListener,
                                         Session.ArchiveListener {
 
-    private static final String LOG_TAG = ChatActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     // Suppressing this warning. mWebServiceCoordinator will get GarbageCollected if it is local.
     @SuppressWarnings("FieldCanBeLocal")
@@ -38,7 +38,6 @@ public class ChatActivity   extends ActionBarActivity
     private String mApiKey;
     private String mSessionId;
     private String mToken;
-    private String mConfigErrorMessage;
     private Session mSession;
     private Publisher mPublisher;
     private Subscriber mSubscriber;
@@ -54,7 +53,7 @@ public class ChatActivity   extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_main);
 
         // alert the user if OpenTokConfig.java is not configured with a valid URL. Fail fast.
         if ( !OpenTokConfig.isConfigUrlValid() ) {
@@ -64,7 +63,7 @@ public class ChatActivity   extends ActionBarActivity
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Log.e(LOG_TAG, "Configuration Error. " + OpenTokConfig.configErrorMessage);
-                            ChatActivity.this.finish();
+                            MainActivity.this.finish();
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
