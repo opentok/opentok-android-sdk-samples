@@ -27,5 +27,6 @@ android {
 dependencies {
     compile 'com.opentok.android:opentok-android-sdk:2.10.+'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.volley:volley:1.0.0'
 }
