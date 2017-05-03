@@ -1,6 +1,7 @@
 package com.opentok.android.samples.custom_video_driver;
 
 import android.Manifest;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -154,13 +155,18 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
         mPublisher = new Publisher(MainActivity.this, "publisher");
+        mPublisher = new Publisher.Builder(MainActivity.this)
+                .name("publisher")
+                .capturer(new CustomVideoCapturer(MainActivity.this))
+                .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
         mPublisher.setPublisherListener(this);
-
-        mPublisher.setCapturer(new CustomVideoCapturer(MainActivity.this));
-        mPublisher.setRenderer(new InvertedColorsVideoRenderer(MainActivity.this));
 
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
+
+        if (mPublisher.getView() instanceof GLSurfaceView) {
+            ((GLSurfaceView)(mPublisher.getView())).setZOrderOnTop(true);
+        }
 
         mSession.publish(mPublisher);
     }
