@@ -135,11 +135,6 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.RECORD_AUDIO
         };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            startPublisherPreview();
-            mPublisher.getView().setId(R.id.publisher_view_id);
-            mContainer.addView(mPublisher.getView());
-            calculateLayout();
-
             mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).sessionOptions(new Session.SessionOptions() {
                 @Override
                 public boolean useTextureViews() {
@@ -148,6 +143,11 @@ public class MainActivity extends AppCompatActivity
             }).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
+
+            startPublisherPreview();
+            mPublisher.getView().setId(R.id.publisher_view_id);
+            mContainer.addView(mPublisher.getView());
+            calculateLayout();
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
