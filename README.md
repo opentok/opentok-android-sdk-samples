@@ -11,9 +11,9 @@ information.
 
 ## What's Inside
 
-### Hello World
+### Basic Video Chat
 
-This app module shows how to publish and subscribe to streams in a session.
+This app module provides a completed version of the [OpenTok Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/) for Android. It shows how to publish and subscribe to streams in a session.
 
 ### Custom Video Driver
 
