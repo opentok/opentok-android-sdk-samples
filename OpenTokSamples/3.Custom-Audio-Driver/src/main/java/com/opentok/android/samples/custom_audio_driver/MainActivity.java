@@ -1,6 +1,7 @@
 package com.opentok.android.samples.custom_audio_driver;
 
 import android.Manifest;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -157,12 +158,16 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        mPublisher = new Publisher(MainActivity.this, "publisher");
+        mPublisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
 
         mPublisher.setPublisherListener(this);
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
         mPublisherViewContainer.addView(mPublisher.getView());
+
+        if (mPublisher.getView() instanceof GLSurfaceView) {
+            ((GLSurfaceView)(mPublisher.getView())).setZOrderOnTop(true);
+        }
 
         mSession.publish(mPublisher);
     }

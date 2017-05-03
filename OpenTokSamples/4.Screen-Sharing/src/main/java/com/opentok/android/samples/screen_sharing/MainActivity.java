@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        mPublisher = new Publisher(MainActivity.this, "publisher");
+        mPublisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
         mPublisher.setPublisherListener(this);
         mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
         mPublisher.setAudioFallbackEnabled(false);
