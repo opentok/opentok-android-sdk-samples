@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.opentok.android.samples.screen_sharing"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -23,6 +23,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'pub.devrel:easypermissions:0.2.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.10.+'
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.opentok.android:opentok-android-sdk:2.11.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
 }
