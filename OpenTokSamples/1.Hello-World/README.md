@@ -55,7 +55,7 @@ for details on the API.
   b) Modify build.gradle for your module and add the following code snippet to the `dependencies`
      section:
 
-      compile 'com.opentok.android:opentok-android-sdk:2.9.+'
+      compile 'com.opentok.android:opentok-android-sdk:2.11.0'
 
 ## Understanding the code
 
