@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials;
+package com.tokbox.android.tutorials.archiving;
 
 import android.support.v7.app.AppCompatActivity;
 import android.content.DialogInterface;
