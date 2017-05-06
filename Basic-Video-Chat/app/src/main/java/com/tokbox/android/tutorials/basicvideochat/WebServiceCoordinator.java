@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials;
+package com.tokbox.android.tutorials.basicvideochat;
 
 import android.content.Context;
 import android.util.Log;

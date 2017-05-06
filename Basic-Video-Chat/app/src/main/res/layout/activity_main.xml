@@ -4,7 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context="com.tokbox.android.tutorials.MainActivity">
+tools:context="com.tokbox.android.tutorials.basicvideochat.MainActivity">
 
     <FrameLayout
         android:layout_width="fill_parent"
