@@ -98,7 +98,6 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
             mCamera.setPreviewTexture(mSurfaceTexture);
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
