@@ -1,4 +1,4 @@
-package com.opentok.android.samples.screen_sharing;
+package com.tokbox.android.tutorials.screen_sharing;
 
 import android.Manifest;
 import android.os.Bundle;

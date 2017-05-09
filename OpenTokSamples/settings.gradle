@@ -1,1 +1,1 @@
-include ':4.Screen-Sharing', ':5.Live-Photo-Capture', ':6.Simple-Multiparty', ':7.Multiparty-ConstraintLayout'
+include ':5.Live-Photo-Capture', ':6.Simple-Multiparty', ':7.Multiparty-ConstraintLayout'

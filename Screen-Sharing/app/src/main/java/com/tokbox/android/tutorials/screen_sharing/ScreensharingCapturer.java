@@ -1,4 +1,4 @@
-package com.opentok.android.samples.screen_sharing;
+package com.tokbox.android.tutorials.screen_sharing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
