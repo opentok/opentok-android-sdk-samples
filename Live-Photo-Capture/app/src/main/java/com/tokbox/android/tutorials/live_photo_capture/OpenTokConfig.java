@@ -1,4 +1,4 @@
-package com.opentok.android.samples.live_photo_capture;
+package com.tokbox.android.tutorials.live_photo_capture;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
