@@ -1,4 +1,4 @@
-package com.opentok.android.samples.custom_audio_driver;
+package com.tokbox.android.tutorials.custom_audio_driver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.opentok.android.samples.custom_audio_driver;
+package com.tokbox.android.tutorials.custom_audio_driver;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
