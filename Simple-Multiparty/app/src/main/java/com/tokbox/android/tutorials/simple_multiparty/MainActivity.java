@@ -1,4 +1,4 @@
-package com.opentok.android.samples.simple_multiparty;
+package com.tokbox.android.tutorials.simple_multiparty;
 
 import android.Manifest;
 import android.os.Bundle;

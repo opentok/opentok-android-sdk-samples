@@ -1,4 +1,4 @@
-package com.opentok.android.samples.simple_multiparty;
+package com.tokbox.android.tutorials.simple_multiparty;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
