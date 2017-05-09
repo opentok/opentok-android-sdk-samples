@@ -1,4 +1,4 @@
-package com.opentok.android.samples.multiparty_constraintlayout;
+package com.tokbox.android.tutorials.multiparty_constraintlayout;
 
 import android.Manifest;
 import android.content.res.TypedArray;

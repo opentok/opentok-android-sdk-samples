@@ -1,4 +1,4 @@
-package com.opentok.android.samples.multiparty_constraintlayout;
+package com.tokbox.android.tutorials.multiparty_constraintlayout;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***

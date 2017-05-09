@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.opentok.android.samples.multiparty_constraintlayout">
+          package="com.tokbox.android.tutorials.multiparty_constraintlayout">
 
     <application
         android:allowBackup="true"
