@@ -31,9 +31,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("FieldCanBeLocal")
     private WebServiceCoordinator mWebServiceCoordinator;
 
-    private String mApiKey;
-    private String mSessionId;
-    private String mToken;
     private Session mSession;
     private Publisher mPublisher;
     private Subscriber mSubscriber;
@@ -54,10 +51,7 @@ public class MainActivity extends AppCompatActivity
         if(OpenTokConfig.CHAT_SERVER_URL == null) {
             // use hard coded session values
             if(OpenTokConfig.areHardCodedConfigsValid()) {
-                mApiKey = OpenTokConfig.API_KEY;
-                mSessionId = OpenTokConfig.SESSION_ID;
-                mToken = OpenTokConfig.TOKEN;
-                initializeSession();
+                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
             } else {
                 presentErrorAlert("Configuration Error", OpenTokConfig.hardCodedConfigErrorMessage);
             }
@@ -66,7 +60,7 @@ public class MainActivity extends AppCompatActivity
             // session initialization occurs once data is returned, in onSessionConnectionDataReady
             if ( OpenTokConfig.isWebServerConfigUrlValid() ) {
                 mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-                mWebServiceCoordinator.fetchSessionConnectionData();
+                mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
             } else {
                 this.presentErrorAlert("Configuration Error", OpenTokConfig.webServerConfigErrorMessage);
             }
@@ -95,10 +89,10 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void initializeSession() {
-        mSession = new Session.Builder(this, mApiKey, mSessionId).build();
+    private void initializeSession(String apiKey, String sessionId, String token) {
+        mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
-        mSession.connect(mToken);
+        mSession.connect(token);
     }
 
     private void logOpenTokError(OpentokError opentokError) {
@@ -106,7 +100,6 @@ public class MainActivity extends AppCompatActivity
         Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
         Log.e(LOG_TAG, "Error Message: " + opentokError.getMessage());
     }
-
 
     /* Activity lifecycle methods */
 
@@ -134,11 +127,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
-        mApiKey = apiKey;
-        mSessionId = sessionId;
-        mToken = token;
-
-        initializeSession();
+        initializeSession(apiKey, sessionId, token);
     }
 
     @Override
@@ -219,7 +208,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(SubscriberKit subscriberKit) {
         Log.i(LOG_TAG, "Subscriber Connected");
-
         mSubscriberViewContainer.addView(mSubscriber.getView());
     }
 
