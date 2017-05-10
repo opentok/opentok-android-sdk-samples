@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
             // initialize WebServiceCoordinator and kick off request for session data
             // session initialization occurs once data is returned, in onSessionConnectionDataReady
             mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-            mWebServiceCoordinator.fetchSessionConnectionData();
+            mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
         }
     }
 
@@ -111,11 +111,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void initializeSession() {
-        mSession = new Session.Builder(this, mApiKey, mSessionId).build();
+    private void initializeSession(String apiKey, String sessionId, String token) {
+        mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
         mSession.setArchiveListener(this);
-        mSession.connect(mToken);
+        mSession.connect(token);
     }
 
     private void initializePublisher() {
@@ -181,8 +181,7 @@ public class MainActivity extends AppCompatActivity
         mApiKey = apiKey;
         mSessionId = sessionId;
         mToken = token;
-
-        initializeSession();
+        initializeSession(apiKey, sessionId, token);
         initializePublisher();
     }
 

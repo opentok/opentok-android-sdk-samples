@@ -29,12 +29,12 @@ public class WebServiceCoordinator {
         this.reqQueue = Volley.newRequestQueue(context);
     }
 
-    public void fetchSessionConnectionData() {
+    public void fetchSessionConnectionData(String sessionInfoUrlEndpoint) {
         RequestQueue reqQueue = Volley.newRequestQueue(context);
             reqQueue.add(
                     new JsonObjectRequest(
                         Request.Method.GET,
-                        OpenTokConfig.SESSION_INFO_ENDPOINT,
+                        sessionInfoUrlEndpoint,
                         null,
                         new Response.Listener<JSONObject>() {
                             @Override
