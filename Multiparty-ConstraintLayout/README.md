@@ -1,4 +1,4 @@
-# Project 7: Multiparty using ConstraintLayout
+# Multiparty using ConstraintLayout
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 

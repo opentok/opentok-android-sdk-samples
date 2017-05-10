@@ -1,4 +1,4 @@
-# Project 2: Custom Video Driver
+# Custom Video Driver
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 

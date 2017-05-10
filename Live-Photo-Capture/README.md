@@ -1,4 +1,4 @@
-# Project 5: Live Photo Capture
+# Live Photo Capture
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 

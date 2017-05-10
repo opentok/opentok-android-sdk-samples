@@ -1,4 +1,4 @@
-# Project 6: Simple Multiparty
+# Simple Multiparty
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 

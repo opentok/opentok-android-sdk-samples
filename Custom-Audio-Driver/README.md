@@ -1,4 +1,4 @@
-# Project 3: Custom Audio Driver
+# Custom Audio Driver
 
 Note: Read the README.md file in the Project 1 folder before starting here.
 
