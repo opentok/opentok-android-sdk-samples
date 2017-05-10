@@ -8,7 +8,7 @@ This repository is meant to provide some examples for you to better understand t
 
 This app provides a completed version of the [OpenTok Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/) for Android (with some minor validation checks added). It shows how to publish and subscribe to streams in a session. If you're just getting started with OpenTok, this is where you should start.
 
-###Archiving (recording)
+### Archiving (recording)
 
 This app provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (with some minor validation checks added). It uses an OpenTok server to start, stop, and play back recordings of your session. 
 
