@@ -137,8 +137,10 @@ public class MainActivity extends AppCompatActivity
     /* methods calling mWebServiceCoordinator to control Archiving */
 
     private void startArchive() {
-        mWebServiceCoordinator.startArchive(mSessionId);
-        setStartArchiveEnabled(false);
+        if(mSession != null) {
+            mWebServiceCoordinator.startArchive(mSessionId);
+            setStartArchiveEnabled(false);
+        }
     }
 
     private void stopArchive() {
