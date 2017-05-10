@@ -17,14 +17,14 @@ For the purposes of this tutorial, we'll be using a pre-built sample that we've 
 
 You can look through the details of that tutorial at a later point. For now, you just need to know that the sample web service provides a RESTful interface to interact with Archiving controls.
 
-####2. Clone this application
+####2. Clone this repository
 Once you have the above service deployed, clone this repository using:
 
 ```git clone git@github.com:opentok/opentok-android-sdk-samples.git```
 
 in your terminal. Using [Android Studio](https://developer.android.com/studio/index.html), open the project in the Archiving folder.
 
-####3. Configure your app to use your web service
+####3. Configure the app to use your web service
 In `OpenTokConfig.java`, configure the `CHAT_SERVER_URL` string to your web service domain.
 
 ####4. Run the app
