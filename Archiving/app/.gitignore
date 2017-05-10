@@ -1,0 +1,4 @@
+/build
+config.gradle
+*.jar
+*.so
