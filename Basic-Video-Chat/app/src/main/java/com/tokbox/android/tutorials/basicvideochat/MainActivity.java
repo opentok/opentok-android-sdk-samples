@@ -1,6 +1,8 @@
 package com.tokbox.android.tutorials.basicvideochat;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,14 +20,23 @@ import com.opentok.android.SubscriberKit;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 
+import java.util.List;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class MainActivity extends AppCompatActivity
-                            implements WebServiceCoordinator.Listener,
+                            implements EasyPermissions.PermissionCallbacks,
+                                        WebServiceCoordinator.Listener,
                                         Session.SessionListener,
                                         PublisherKit.PublisherListener,
                                         SubscriberKit.SubscriberListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+    private static final int RC_VIDEO_APP_PERM = 124;
 
     // Suppressing this warning. mWebServiceCoordinator will get GarbageCollected if it is local.
     @SuppressWarnings("FieldCanBeLocal")
@@ -39,6 +50,60 @@ public class MainActivity extends AppCompatActivity
     private FrameLayout mSubscriberViewContainer;
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(LOG_TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this)
+                    .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
+                    .setPositiveButton(getString(R.string.setting))
+                    .setNegativeButton(getString(R.string.cancel))
+                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
+                    .build()
+                    .show();
+        }
+    }
+
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // if there is no server URL set
+            if(OpenTokConfig.CHAT_SERVER_URL == null) {
+                // use hard coded session values
+                if(OpenTokConfig.areHardCodedConfigsValid()) {
+                    initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
+                } else {
+                    presentErrorAlert("Configuration Error", OpenTokConfig.hardCodedConfigErrorMessage);
+                }
+            } else {
+                // otherwise initialize WebServiceCoordinator and kick off request for session data
+                // session initialization occurs once data is returned, in onSessionConnectionDataReady
+                if ( OpenTokConfig.isWebServerConfigUrlValid() ) {
+                    mWebServiceCoordinator = new WebServiceCoordinator(this, this);
+                    mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
+                } else {
+                    this.presentErrorAlert("Configuration Error", OpenTokConfig.webServerConfigErrorMessage);
+                }
+            }
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -47,24 +112,7 @@ public class MainActivity extends AppCompatActivity
         mPublisherViewContainer = (FrameLayout)findViewById(R.id.publisher_container);
         mSubscriberViewContainer = (FrameLayout)findViewById(R.id.subscriber_container);
 
-        // if there is no server URL set
-        if(OpenTokConfig.CHAT_SERVER_URL == null) {
-            // use hard coded session values
-            if(OpenTokConfig.areHardCodedConfigsValid()) {
-                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
-            } else {
-                presentErrorAlert("Configuration Error", OpenTokConfig.hardCodedConfigErrorMessage);
-            }
-        } else {
-            // otherwise initialize WebServiceCoordinator and kick off request for session data
-            // session initialization occurs once data is returned, in onSessionConnectionDataReady
-            if ( OpenTokConfig.isWebServerConfigUrlValid() ) {
-                mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-                mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
-            } else {
-                this.presentErrorAlert("Configuration Error", OpenTokConfig.webServerConfigErrorMessage);
-            }
-        }
+        requestPermissions();
     }
 
     @Override
@@ -127,6 +175,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
+        Log.i(LOG_TAG, apiKey);
+        Log.i(LOG_TAG, sessionId);
+        Log.i(LOG_TAG, token);
+
         initializeSession(apiKey, sessionId, token);
     }
 
