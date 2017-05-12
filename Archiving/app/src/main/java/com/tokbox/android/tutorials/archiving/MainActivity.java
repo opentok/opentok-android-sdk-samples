@@ -1,5 +1,7 @@
 package com.tokbox.android.tutorials.archiving;
 
+import android.Manifest;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,14 +24,24 @@ import com.opentok.android.SubscriberKit;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 
+import java.util.List;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+
 public class MainActivity extends AppCompatActivity
-                            implements  WebServiceCoordinator.Listener,
+                            implements  EasyPermissions.PermissionCallbacks,
+                                        WebServiceCoordinator.Listener,
                                         Session.SessionListener,
                                         PublisherKit.PublisherListener,
                                         SubscriberKit.SubscriberListener,
                                         Session.ArchiveListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+    private static final int RC_VIDEO_APP_PERM = 124;
 
     // Suppressing this warning. mWebServiceCoordinator will get GarbageCollected if it is local.
     @SuppressWarnings("FieldCanBeLocal")
@@ -51,6 +63,51 @@ public class MainActivity extends AppCompatActivity
     private Menu mMenu;
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(LOG_TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this)
+                    .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
+                    .setPositiveButton(getString(R.string.setting))
+                    .setNegativeButton(getString(R.string.cancel))
+                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
+                    .build()
+                    .show();
+        }
+    }
+
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // initialize view objects from your layout
+            mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
+            mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
+            mArchivingIndicatorView = (ImageView) findViewById(R.id.archiving_indicator_view);
+
+            // initialize WebServiceCoordinator and kick off request for session data
+            // session initialization occurs once data is returned, in onSessionConnectionDataReady
+            mWebServiceCoordinator = new WebServiceCoordinator(this, this);
+            mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -69,15 +126,7 @@ public class MainActivity extends AppCompatActivity
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         } else {
-            // initialize view objects from your layout
-            mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
-            mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
-            mArchivingIndicatorView = (ImageView) findViewById(R.id.archiving_indicator_view);
-
-            // initialize WebServiceCoordinator and kick off request for session data
-            // session initialization occurs once data is returned, in onSessionConnectionDataReady
-            mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-            mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
+            requestPermissions();
         }
     }
 
@@ -180,9 +229,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
+        Log.i(LOG_TAG, apiKey);
+        Log.i(LOG_TAG, sessionId);
+        Log.i(LOG_TAG, token);
+
         mApiKey = apiKey;
         mSessionId = sessionId;
         mToken = token;
+
         initializeSession(apiKey, sessionId, token);
         initializePublisher();
     }
