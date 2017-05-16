@@ -21,11 +21,13 @@ public class WebServiceCoordinator {
     private Listener delegate;
 
     public WebServiceCoordinator(Context context, Listener delegate) {
+
         this.context = context;
         this.delegate = delegate;
     }
 
     public void fetchSessionConnectionData(String sessionInfoUrlEndpoint) {
+
         RequestQueue reqQueue = Volley.newRequestQueue(context);
         reqQueue.add(new JsonObjectRequest(Request.Method.GET, sessionInfoUrlEndpoint,
                                             null, new Response.Listener<JSONObject>() {
@@ -36,9 +38,7 @@ public class WebServiceCoordinator {
                     String sessionId = response.getString("sessionId");
                     String token = response.getString("token");
 
-                    Log.i(LOG_TAG, apiKey);
-                    Log.i(LOG_TAG, sessionId);
-                    Log.i(LOG_TAG, token);
+                    Log.i(LOG_TAG, "WebServiceCoordinator returned session information");
 
                     delegate.onSessionConnectionDataReady(apiKey, sessionId, token);
 
@@ -55,6 +55,7 @@ public class WebServiceCoordinator {
     }
 
     public static interface Listener {
+
         void onSessionConnectionDataReady(String apiKey, String sessionId, String token);
         void onWebServiceCoordinatorError(Exception error);
     }

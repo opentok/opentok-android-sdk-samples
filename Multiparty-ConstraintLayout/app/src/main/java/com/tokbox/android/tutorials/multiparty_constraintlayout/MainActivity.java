@@ -109,10 +109,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this, getString(R.string.rationale_ask_again))
+            new AppSettingsDialog.Builder(this)
                     .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
                     .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setNegativeButton(getString(R.string.cancel))
                     .setRequestCode(RC_SETTINGS_SCREEN_PERM)
                     .build()
                     .show();

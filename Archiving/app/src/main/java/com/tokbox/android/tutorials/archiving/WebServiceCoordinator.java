@@ -44,9 +44,7 @@ public class WebServiceCoordinator {
                                     String sessionId = response.getString("sessionId");
                                     String token = response.getString("token");
 
-                                    Log.i(LOG_TAG, apiKey);
-                                    Log.i(LOG_TAG, sessionId);
-                                    Log.i(LOG_TAG, token);
+                                    Log.i(LOG_TAG, "WebServiceCoordinator returned session information");
 
                                     delegate.onSessionConnectionDataReady(apiKey, sessionId, token);
                                 } catch (JSONException e) {

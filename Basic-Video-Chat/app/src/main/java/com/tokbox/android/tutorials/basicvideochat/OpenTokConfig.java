@@ -7,11 +7,11 @@ public class OpenTokConfig {
     // ***                      https://dashboard.tokbox.com/projects                           ***
 
     // Replace with your OpenTok API key
-    public static final String API_KEY = null;
+    public static final String API_KEY = "";
     // Replace with a generated Session ID
-    public static final String SESSION_ID = null;
+    public static final String SESSION_ID = "";
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = null;
+    public static final String TOKEN = "";
 
     /*                           ***** OPTIONAL *****
      If you have set up a server to provide session information replace the null value
@@ -29,18 +29,20 @@ public class OpenTokConfig {
     public static String hardCodedConfigErrorMessage;
 
     public static boolean areHardCodedConfigsValid() {
-        if (OpenTokConfig.API_KEY != null && OpenTokConfig.SESSION_ID != null && OpenTokConfig.TOKEN != null) {
+        if (OpenTokConfig.API_KEY != null && !OpenTokConfig.API_KEY.isEmpty()
+                && OpenTokConfig.SESSION_ID != null && !OpenTokConfig.SESSION_ID.isEmpty()
+                && OpenTokConfig.TOKEN != null && !OpenTokConfig.TOKEN.isEmpty()) {
             return true;
         }
         else {
-            hardCodedConfigErrorMessage = "API_KEY, SESSION_ID, and TOKEN in OpenTokConfig.java must not be null";
+            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN cannot be null or empty.";
             return false;
         }
     }
 
     public static boolean isWebServerConfigUrlValid(){
-        if (OpenTokConfig.CHAT_SERVER_URL == null) {
-            webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null";
+        if (OpenTokConfig.CHAT_SERVER_URL == null || OpenTokConfig.CHAT_SERVER_URL.isEmpty()) {
+            webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null or empty";
             return false;
         } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
             webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must be specified as either http or https";
