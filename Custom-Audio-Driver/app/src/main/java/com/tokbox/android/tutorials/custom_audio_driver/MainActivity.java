@@ -56,32 +56,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.d(TAG, "onRestart");
-
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-
-        super.onResume();
-
-        if (mSession == null) {
-            return;
-        }
-        mSession.onResume();
-    }
-
-    @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
 
@@ -98,10 +72,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        Log.d(TAG, "onPause");
+    protected void onResume() {
+        Log.d(TAG, "onResume");
 
-        super.onStop();
+        super.onResume();
+
+        if (mSession == null) {
+            return;
+        }
+        mSession.onResume();
     }
 
     @Override
@@ -130,10 +109,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this, getString(R.string.rationale_ask_again))
+            new AppSettingsDialog.Builder(this)
                     .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
                     .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setNegativeButton(getString(R.string.cancel))
                     .setRequestCode(RC_SETTINGS_SCREEN_PERM)
                     .build()
                     .show();
@@ -147,13 +127,14 @@ public class MainActivity extends AppCompatActivity
             CustomAudioDevice customAudioDevice = new CustomAudioDevice(MainActivity.this);
             AudioDeviceManager.setAudioDevice(customAudioDevice);
 
-            mSession = new Session(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
+
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
@@ -269,7 +250,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber(MainActivity.this, stream);
+        mSubscriber = new Subscriber.Builder(this, stream).build();
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
     }

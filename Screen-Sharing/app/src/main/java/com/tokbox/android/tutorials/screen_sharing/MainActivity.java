@@ -53,32 +53,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.d(TAG, "onRestart");
-
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-
-        super.onResume();
-
-        if (mSession == null) {
-            return;
-        }
-        mSession.onResume();
-    }
-
-    @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
 
@@ -95,10 +69,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        Log.d(TAG, "onPause");
+    protected void onResume() {
+        Log.d(TAG, "onResume");
 
-        super.onStop();
+        super.onResume();
+
+        if (mSession == null) {
+            return;
+        }
+        mSession.onResume();
     }
 
     @Override
@@ -113,7 +92,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
@@ -127,10 +105,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this, getString(R.string.rationale_ask_again))
+            new AppSettingsDialog.Builder(this)
                     .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
                     .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setNegativeButton(getString(R.string.cancel))
                     .setRequestCode(RC_SETTINGS_SCREEN_PERM)
                     .build()
                     .show();
@@ -141,7 +120,7 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -152,13 +131,15 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        mPublisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
+        ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, mWebViewContainer);
+
+        mPublisher = new Publisher.Builder(MainActivity.this)
+                .name("publisher")
+                .capturer(screenCapturer)
+                .build();
         mPublisher.setPublisherListener(this);
         mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
         mPublisher.setAudioFallbackEnabled(false);
-
-        ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, mWebViewContainer);
-        mPublisher.setCapturer(screenCapturer);
 
         mWebViewContainer.setWebViewClient(new WebViewClient());
         WebSettings webSettings = mWebViewContainer.getSettings();
