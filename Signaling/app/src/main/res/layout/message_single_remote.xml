@@ -13,4 +13,5 @@
         android:layout_marginRight="@dimen/message_horizontal_margin"
         android:layout_marginTop="@dimen/message_vertical_margin"
         android:layout_marginBottom="@dimen/message_vertical_margin" />
+
 </LinearLayout>

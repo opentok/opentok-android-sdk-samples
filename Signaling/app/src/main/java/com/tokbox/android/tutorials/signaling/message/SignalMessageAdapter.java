@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.signaling;
+package com.tokbox.android.tutorials.signaling.message;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.tokbox.android.tutorials.signaling.R;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
+public class SignalMessageAdapter extends ArrayAdapter<SignalMessage> {
 
     public static final int VIEW_TYPE_LOCAL = 0;
     public static final int VIEW_TYPE_REMOTE = 1;
@@ -23,14 +25,14 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
         viewTypes = Collections.unmodifiableMap(aMap);
     }
 
-    public ChatMessageAdapter(Context context) {
+    public SignalMessageAdapter(Context context) {
         super(context, 0);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ChatMessage message = getItem(position);
+        SignalMessage message = getItem(position);
 
         if (convertView == null) {
             int type = getItemViewType(position);
@@ -47,8 +49,9 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
 
     @Override
     public int getItemViewType(int position) {
-        ChatMessage message = getItem(position);
-        return message.getRemote() ? VIEW_TYPE_REMOTE : VIEW_TYPE_LOCAL;
+
+        SignalMessage message = getItem(position);
+        return message.isRemote() ? VIEW_TYPE_REMOTE : VIEW_TYPE_LOCAL;
     }
 
     @Override

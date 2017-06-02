@@ -29,6 +29,7 @@ public class OpenTokConfig {
     public static String hardCodedConfigErrorMessage;
 
     public static boolean areHardCodedConfigsValid() {
+
         if (OpenTokConfig.API_KEY != null && !OpenTokConfig.API_KEY.isEmpty()
                 && OpenTokConfig.SESSION_ID != null && !OpenTokConfig.SESSION_ID.isEmpty()
                 && OpenTokConfig.TOKEN != null && !OpenTokConfig.TOKEN.isEmpty()) {
@@ -41,6 +42,7 @@ public class OpenTokConfig {
     }
 
     public static boolean isWebServerConfigUrlValid(){
+
         if (OpenTokConfig.CHAT_SERVER_URL == null || OpenTokConfig.CHAT_SERVER_URL.isEmpty()) {
             webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null or empty";
             return false;
