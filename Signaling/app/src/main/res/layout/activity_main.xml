@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:keepScreenOn="true"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_button_text"
+        android:id="@+id/send_button"
+        android:enabled="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/message_history_height"
+        android:id="@+id/message_history_list_view"
+        android:layout_above="@id/send_button"
+        android:layout_centerHorizontal="true"
+        android:transcriptMode="alwaysScroll"
+        android:layout_marginTop="@dimen/message_history_vertical_margin"
+        android:layout_marginBottom="@dimen/message_history_vertical_margin"/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:id="@+id/video_container"
+        android:layout_above="@id/message_history_list_view">
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/subscriber_container"></FrameLayout>
+
+        <FrameLayout
+            android:layout_width="@dimen/publisher_width"
+            android:layout_height="@dimen/publisher_height"
+            android:id="@+id/publisher_container"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="@dimen/publisher_bottom_margin"
+            android:layout_marginEnd="@dimen/publisher_right_margin"
+            android:layout_marginRight="@dimen/publisher_right_margin"
+            android:padding="@dimen/publisher_padding"
+            android:background="@color/publisher_border_color" />
+
+    </FrameLayout>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/message_edit_text"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/send_button"
+        android:layout_toLeftOf="@+id/send_button"
+        android:inputType="text"
+        android:hint="Message"
+        android:maxLines="1"
+        android:enabled="false" />
+
+</RelativeLayout>
