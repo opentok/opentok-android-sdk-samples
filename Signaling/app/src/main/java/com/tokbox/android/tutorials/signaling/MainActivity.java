@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -32,14 +31,14 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class ChatActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
                             implements  EasyPermissions.PermissionCallbacks,
                                         WebServiceCoordinator.Listener,
                                         Session.SessionListener, PublisherKit.PublisherListener, SubscriberKit.SubscriberListener,
                                         View.OnClickListener,
                                         Session.SignalListener {
 
-    private static final String LOG_TAG = ChatActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
     public static final String SIGNAL_TYPE_CHAT = "chat";
@@ -61,7 +60,7 @@ public class ChatActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_main);
 
         requestPermissions();
     }
@@ -354,7 +353,7 @@ public class ChatActivity extends AppCompatActivity
                 .setMessage(errorMessage)
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        ChatActivity.this.finish();
+                        MainActivity.this.finish();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
