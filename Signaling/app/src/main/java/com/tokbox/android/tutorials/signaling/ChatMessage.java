@@ -10,8 +10,17 @@ public class ChatMessage {
         mRemote = false;
     }
 
+    public ChatMessage(String messageText, boolean remote) {
+        mMessageText = messageText;
+        mRemote = remote;
+    }
+
     public static ChatMessage fromData(String messageData) {
         return new ChatMessage(messageData);
+    }
+
+    public static ChatMessage fromData(String messageData, boolean remote) {
+        return new ChatMessage(messageData, remote);
     }
 
     public String getMessageText() {

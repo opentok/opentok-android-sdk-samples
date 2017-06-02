@@ -162,21 +162,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void initializeSession(String apiKey, String sessionId, String token) {
         Log.d(LOG_TAG, "Initializing Session");
         Log.d(LOG_TAG, "API Key: " + apiKey);
@@ -218,8 +203,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showMessage(String messageData, boolean remote) {
-        ChatMessage message = ChatMessage.fromData(messageData);
-        message.setRemote(remote);
+        ChatMessage message = ChatMessage.fromData(messageData, remote);
         mMessageHistory.add(message);
     }
 
