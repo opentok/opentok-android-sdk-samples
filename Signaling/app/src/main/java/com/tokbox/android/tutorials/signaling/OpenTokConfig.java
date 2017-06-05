@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.basicvideochat;
+package com.tokbox.android.tutorials.signaling;
 
 import android.webkit.URLUtil;
 
@@ -14,10 +14,10 @@ public class OpenTokConfig {
     public static final String TOKEN = "";
 
     /*                           ***** OPTIONAL *****
-     If you have set up a server to provide session information replace the null value
-     in CHAT_SERVER_URL with it.
+     If you have set up one of the OpenTok server side samples to provide session information
+     replace the null value in CHAT_SERVER_URL with it.
 
-     For example (if using a heroku subdomain): "https://yoursubdomain.herokuapp.com"
+     For example (if using a heroku subdomain), enter : "https://yoursubdomain.herokuapp.com"
     */
     public static final String CHAT_SERVER_URL = null;
     public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";
@@ -29,18 +29,20 @@ public class OpenTokConfig {
     public static String hardCodedConfigErrorMessage;
 
     public static boolean areHardCodedConfigsValid() {
+
         if (OpenTokConfig.API_KEY != null && !OpenTokConfig.API_KEY.isEmpty()
                 && OpenTokConfig.SESSION_ID != null && !OpenTokConfig.SESSION_ID.isEmpty()
                 && OpenTokConfig.TOKEN != null && !OpenTokConfig.TOKEN.isEmpty()) {
             return true;
         }
         else {
-            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN in OpenTokConfig.java cannot be null or empty.";
+            hardCodedConfigErrorMessage = "API KEY, SESSION ID, and TOKEN in OpenTokConfig.java cannot be null or empty.";
             return false;
         }
     }
 
     public static boolean isWebServerConfigUrlValid(){
+
         if (OpenTokConfig.CHAT_SERVER_URL == null || OpenTokConfig.CHAT_SERVER_URL.isEmpty()) {
             webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null or empty";
             return false;
