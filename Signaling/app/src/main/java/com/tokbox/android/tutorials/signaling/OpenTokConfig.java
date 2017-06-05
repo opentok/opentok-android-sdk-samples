@@ -14,10 +14,10 @@ public class OpenTokConfig {
     public static final String TOKEN = "";
 
     /*                           ***** OPTIONAL *****
-     If you have set up a server to provide session information replace the null value
-     in CHAT_SERVER_URL with it.
+     If you have set up one of the OpenTok server side samples to provide session information
+     replace the null value in CHAT_SERVER_URL with it.
 
-     For example (if using a heroku subdomain): "https://yoursubdomain.herokuapp.com"
+     For example (if using a heroku subdomain), enter : "https://yoursubdomain.herokuapp.com"
     */
     public static final String CHAT_SERVER_URL = null;
     public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";
@@ -36,7 +36,7 @@ public class OpenTokConfig {
             return true;
         }
         else {
-            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN cannot be null or empty.";
+            hardCodedConfigErrorMessage = "API KEY, SESSION ID, and TOKEN in OpenTokConfig.java cannot be null or empty.";
             return false;
         }
     }
