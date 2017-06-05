@@ -1,5 +1,15 @@
 package com.tokbox.android.tutorials.signaling.message;
 
+/*
+ * An instance of this class provides a model for the client's local signaling history in a given OpenTok session.
+ *
+ * This is not an OpenTok specific class. Signals are not stored by the OpenTok platform, and the decision to
+ * do so is an application specific one.
+ *
+ * This sample application stores signals in an instance of this class to then display in the text chat's UI.
+ *
+ */
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

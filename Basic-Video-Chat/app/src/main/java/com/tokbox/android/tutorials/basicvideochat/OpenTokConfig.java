@@ -35,7 +35,7 @@ public class OpenTokConfig {
             return true;
         }
         else {
-            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN cannot be null or empty.";
+            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN in OpenTokConfig.java cannot be null or empty.";
             return false;
         }
     }

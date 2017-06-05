@@ -1,5 +1,15 @@
 package com.tokbox.android.tutorials.signaling.message;
 
+/*
+ * Each instance of this class represents a signal.
+ *
+ * The class has two properties, mMessageText, which contains the String content of each signal
+ * and a boolean property, remote, that says whether the signal is one that is from the user's
+ * client, or from another remote  client.
+ *
+ * This is not an OpenTok specific class. Its purpose is to organize this sample application's code.
+ */
+
 public class SignalMessage {
 
     private String mMessageText;
