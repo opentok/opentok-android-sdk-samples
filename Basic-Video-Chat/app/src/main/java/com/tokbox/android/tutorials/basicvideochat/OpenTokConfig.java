@@ -17,7 +17,7 @@ public class OpenTokConfig {
      If you have set up a server to provide session information replace the null value
      in CHAT_SERVER_URL with it.
 
-     For example (if using a heroku subdomain): "https://yoursubdomain.herokuapp.com"
+     For example: "https://yoursubdomain.com"
     */
     public static final String CHAT_SERVER_URL = null;
     public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";

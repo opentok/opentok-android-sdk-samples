@@ -15,7 +15,6 @@ import com.opentok.android.Stream;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Subscriber;
-import com.opentok.android.SubscriberKit;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 
@@ -30,8 +29,7 @@ public class MainActivity extends AppCompatActivity
                             implements EasyPermissions.PermissionCallbacks,
                                         WebServiceCoordinator.Listener,
                                         Session.SessionListener,
-                                        PublisherKit.PublisherListener,
-                                        SubscriberKit.SubscriberListener {
+                                        PublisherKit.PublisherListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -205,10 +203,9 @@ public class MainActivity extends AppCompatActivity
 
         if (mSubscriber == null) {
             mSubscriber = new Subscriber.Builder(this, stream).build();
-            mSubscriber.setSubscriberListener(this);
-            mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-                    BaseVideoRenderer.STYLE_VIDEO_FILL);
+            mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
             mSession.subscribe(mSubscriber);
+            mSubscriberViewContainer.addView(mSubscriber.getView());
         }
     }
 
@@ -225,7 +222,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onError(Session session, OpentokError opentokError) {
-        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " + opentokError.getErrorCode() +  " - "+opentokError.getMessage() +" in session: "+session.getSessionId());
+        Log.e(LOG_TAG, "onError: "+ opentokError.getErrorDomain() + " : " +
+                opentokError.getErrorCode() + " - "+opentokError.getMessage() + " in session: "+ session.getSessionId());
 
         showOpenTokError(opentokError);
     }
@@ -248,30 +246,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
 
-        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " + opentokError.getErrorCode() +  " - "+opentokError.getMessage());
-
-        showOpenTokError(opentokError);
-    }
-
-    /* Subscriber Listener methods */
-
-    @Override
-    public void onConnected(SubscriberKit subscriberKit) {
-
-        Log.d(LOG_TAG, "onConnected: Subscriber Connected ");
-        mSubscriberViewContainer.addView(mSubscriber.getView());
-    }
-
-    @Override
-    public void onDisconnected(SubscriberKit subscriberKit) {
-
-        Log.d(LOG_TAG, "onDisconnected: Subscriber Disconnected");
-    }
-
-    @Override
-    public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-
-        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " + opentokError.getErrorCode() +  " - "+opentokError.getMessage());
+        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " +
+                opentokError.getErrorCode() +  " - "+opentokError.getMessage());
 
         showOpenTokError(opentokError);
     }
