@@ -68,32 +68,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.d(TAG, "onRestart");
-
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-
-        super.onResume();
-
-        if (mSession == null) {
-            return;
-        }
-        mSession.onResume();
-    }
-
-    @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
 
@@ -110,10 +84,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        Log.d(TAG, "onPause");
+    protected void onResume() {
+        Log.d(TAG, "onResume");
 
-        super.onStop();
+        super.onResume();
+
+        if (mSession == null) {
+            return;
+        }
+        mSession.onResume();
     }
 
     @Override
@@ -142,10 +121,11 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this, getString(R.string.rationale_ask_again))
+            new AppSettingsDialog.Builder(this)
                     .setTitle(getString(R.string.title_settings_dialog))
+                    .setRationale(getString(R.string.rationale_ask_again))
                     .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setNegativeButton(getString(R.string.cancel))
                     .setRequestCode(RC_SETTINGS_SCREEN_PERM)
                     .build()
                     .show();
@@ -161,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -288,8 +268,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber(MainActivity.this, stream);
-        mSubscriber.setRenderer(new BasicCustomVideoRenderer(this));
+        mSubscriber = new Subscriber.Builder(MainActivity.this, stream)
+                .renderer(new BasicCustomVideoRenderer(this))
+                .build();
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
     }

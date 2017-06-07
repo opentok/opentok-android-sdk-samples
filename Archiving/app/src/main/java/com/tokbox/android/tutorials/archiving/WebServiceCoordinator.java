@@ -44,9 +44,7 @@ public class WebServiceCoordinator {
                                     String sessionId = response.getString("sessionId");
                                     String token = response.getString("token");
 
-                                    Log.i(LOG_TAG, apiKey);
-                                    Log.i(LOG_TAG, sessionId);
-                                    Log.i(LOG_TAG, token);
+                                    Log.i(LOG_TAG, "WebServiceCoordinator returned session information");
 
                                     delegate.onSessionConnectionDataReady(apiKey, sessionId, token);
                                 } catch (JSONException e) {
@@ -70,8 +68,17 @@ public class WebServiceCoordinator {
     }
 
     public void startArchive(String sessionId) {
-        String requestUrl = OpenTokConfig.ARCHIVE_START_ENDPOINT.replace(":sessionId", sessionId);
-        this.reqQueue.add(new JsonObjectRequest(Request.Method.POST, requestUrl, null, new Response.Listener<JSONObject>() {
+        JSONObject postBody = null;
+        try {
+            postBody = new JSONObject("{\"sessionId\": \"" + sessionId + "\"}");
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "Parsing json body failed");
+            e.getStackTrace();
+        }
+
+        this.reqQueue.add(new JsonObjectRequest(Request.Method.POST, OpenTokConfig.ARCHIVE_START_ENDPOINT,
+                postBody,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(LOG_TAG, "archive started");
