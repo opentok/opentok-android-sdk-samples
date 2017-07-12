@@ -3,15 +3,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url  "http://tokbox.bintray.com/maven"
-        }
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://tokbox.bintray.com/maven' }
     }
 }
