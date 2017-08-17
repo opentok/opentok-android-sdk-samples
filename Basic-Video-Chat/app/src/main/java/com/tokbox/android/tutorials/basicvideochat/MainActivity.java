@@ -17,6 +17,7 @@ import com.opentok.android.PublisherKit;
 import com.opentok.android.Subscriber;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
+import com.opentok.android.SubscriberKit;
 
 import java.util.List;
 
@@ -29,7 +30,8 @@ public class MainActivity extends AppCompatActivity
                             implements EasyPermissions.PermissionCallbacks,
                                         WebServiceCoordinator.Listener,
                                         Session.SessionListener,
-                                        PublisherKit.PublisherListener {
+                                        PublisherKit.PublisherListener,
+                                        SubscriberKit.SubscriberListener{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -204,6 +206,7 @@ public class MainActivity extends AppCompatActivity
         if (mSubscriber == null) {
             mSubscriber = new Subscriber.Builder(this, stream).build();
             mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            mSubscriber.setSubscriberListener(this);
             mSession.subscribe(mSubscriber);
             mSubscriberViewContainer.addView(mSubscriber.getView());
         }
@@ -245,6 +248,27 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+
+        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " +
+                opentokError.getErrorCode() +  " - "+opentokError.getMessage());
+
+        showOpenTokError(opentokError);
+    }
+
+    @Override
+    public void onConnected(SubscriberKit subscriberKit) {
+
+        Log.d(LOG_TAG, "onConnected: Subscriber connected. Stream: "+subscriberKit.getStream().getStreamId());
+    }
+
+    @Override
+    public void onDisconnected(SubscriberKit subscriberKit) {
+
+        Log.d(LOG_TAG, "onDisconnected: Subscriber disconnected. Stream: "+subscriberKit.getStream().getStreamId());
+    }
+
+    @Override
+    public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
 
         Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " +
                 opentokError.getErrorCode() +  " - "+opentokError.getMessage());
