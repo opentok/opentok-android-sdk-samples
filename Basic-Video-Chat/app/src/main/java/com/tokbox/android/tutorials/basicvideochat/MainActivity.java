@@ -1,5 +1,6 @@
 package com.tokbox.android.tutorials.basicvideochat;
 
+import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.Manifest;
@@ -188,6 +189,9 @@ public class MainActivity extends AppCompatActivity
         mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
                 BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
+        if (mPublisher.getView() instanceof GLSurfaceView) {
+            ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
+        }
 
         mSession.publish(mPublisher);
     }
