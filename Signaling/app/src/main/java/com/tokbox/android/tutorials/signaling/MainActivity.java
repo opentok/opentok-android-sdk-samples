@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity
     public void onSignalReceived(Session session, String type, String data, Connection connection) {
 
         boolean remote = !connection.equals(mSession.getConnection());
-        if (SIGNAL_TYPE != null && type.equals(SIGNAL_TYPE)) {
+        if (type != null && type.equals(SIGNAL_TYPE)) {
             showMessage(data, remote);
         }
     }
