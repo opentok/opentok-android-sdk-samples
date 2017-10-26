@@ -35,3 +35,8 @@ This app shows how to use both a custom video capturer and redender. While most 
 ### Custom Audio Driver
 
 This app shows how to use the audio driver API to implement a custom audio capturer and player. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here.
+
+### Picture in Picture
+
+This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone.
+
