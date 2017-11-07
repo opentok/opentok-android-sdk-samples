@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.basicvideochat;
+package com.tokbox.android.tutorials.basic_video_chat;
 
 import android.webkit.URLUtil;
 
