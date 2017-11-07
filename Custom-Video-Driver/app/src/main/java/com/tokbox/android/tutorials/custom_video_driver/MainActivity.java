@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.customvideodriver;
+package com.tokbox.android.tutorials.custom_video_driver;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
@@ -18,6 +18,7 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+import com.tokbox.android.tutorials.custom_video_driver.R;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity
                                      Publisher.PublisherListener,
                                      Subscriber.VideoListener {
 
-    private static final String TAG = "custom-video-driver " + MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         mPublisher = new Publisher.Builder(MainActivity.this)
                 .name("publisher")
-                .capturer(new CustomVideoCapturer(MainActivity.this))
+                .capturer(new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
                 .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
         mPublisher.setPublisherListener(this);
 
