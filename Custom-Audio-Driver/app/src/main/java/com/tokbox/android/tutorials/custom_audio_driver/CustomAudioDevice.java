@@ -1,5 +1,9 @@
 package com.tokbox.android.tutorials.custom_audio_driver;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,431 +13,618 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder.AudioSource;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.NoiseSuppressor;
+import android.os.Build;
 import android.util.Log;
 
 import com.opentok.android.BaseAudioDevice;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CustomAudioDevice extends BaseAudioDevice {
 
-    private final static String LOG_TAG = "opentok-defaultaudiodevice";
+    private final static String LOG_TAG =  CustomAudioDevice.class.getSimpleName();;
 
-    private final static int SAMPLING_RATE = 44100;
-    private final static int NUM_CHANNELS_CAPTURING = 1;
-    private final static int NUM_CHANNELS_RENDERING = 1;
+    private static final int NUM_CHANNELS_CAPTURING = 1;
+    private static final int NUM_CHANNELS_RENDERING = 1;
+    private static final int STEREO_CHANNELS = 2;
+    private static final int DEFAULT_SAMPLE_RATE = 44100;
+    private static final int SAMPLE_SIZE_IN_BYTES = 2;
+    private static final int DEFAULT_SAMPLES_PER_BUFFER = (DEFAULT_SAMPLE_RATE / 1000) * 10; // 10ms
+    private static final int DEFAULT_BUFFER_SIZE =
+            SAMPLE_SIZE_IN_BYTES * DEFAULT_SAMPLES_PER_BUFFER * STEREO_CHANNELS;
+    // Max 10 ms @ 48 kHz - Stereo
 
-    private final static int MAX_SAMPLES = 2 * 480 * 2; // Max 10 ms @ 48 kHz
+    private Context context;
 
-    private Context m_context;
-
-    private AudioTrack m_audioTrack;
-    private AudioRecord m_audioRecord;
+    private AudioTrack audioTrack;
+    private AudioRecord audioRecord;
 
     // Capture & render buffers
-    private ByteBuffer m_playBuffer;
-    private ByteBuffer m_recBuffer;
-    private byte[] m_tempBufPlay;
-    private byte[] m_tempBufRec;
+    private ByteBuffer playBuffer;
+    private ByteBuffer recBuffer;
+    private byte[] tempBufPlay;
+    private byte[] tempBufRec;
 
-    private final ReentrantLock m_rendererLock = new ReentrantLock(true);
-    private final Condition m_renderEvent = m_rendererLock.newCondition();
-    private volatile boolean m_isRendering = false;
-    private volatile boolean m_shutdownRenderThread = false;
+    private final ReentrantLock rendererLock = new ReentrantLock(true);
+    private final Condition renderEvent = rendererLock.newCondition();
+    private volatile boolean isRendering = false;
+    private volatile boolean shutdownRenderThread = false;
 
-    private final ReentrantLock m_captureLock = new ReentrantLock(true);
-    private final Condition m_captureEvent = m_captureLock.newCondition();
-    private volatile boolean m_isCapturing = false;
-    private volatile boolean m_shutdownCaptureThread = false;
+    private final ReentrantLock captureLock = new ReentrantLock(true);
+    private final Condition captureEvent = captureLock.newCondition();
+    private volatile boolean isCapturing = false;
+    private volatile boolean shutdownCaptureThread = false;
 
-    private AudioSettings m_captureSettings;
-    private AudioSettings m_rendererSettings;
+    private AudioSettings captureSettings;
+    private AudioSettings rendererSettings;
+    private NoiseSuppressor noiseSuppressor;
+    private AcousticEchoCanceler echoCanceler;
+
+    private OutputType audioOutput = OutputType.PHONE_SPEAKERS;
 
     // Capturing delay estimation
-    private int m_estimatedCaptureDelay = 0;
+    private int estimatedCaptureDelay = 0;
 
     // Rendering delay estimation
-    private int m_bufferedPlaySamples = 0;
-    private int m_playPosition = 0;
-    private int m_estimatedRenderDelay = 0;
+    private int bufferedPlaySamples = 0;
+    private int playPosition = 0;
+    private int estimatedRenderDelay = 0;
 
-    private AudioManager m_audioManager;
+    private AudioManager audioManager;
+    private AudioManagerMode audioManagerMode = new AudioManagerMode();
+
+    private int outputSamplingRate = DEFAULT_SAMPLE_RATE;
+    private int captureSamplingRate = DEFAULT_SAMPLE_RATE;
+    private int samplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
+
+    // for headset receiver
+    private static final String HEADSET_PLUG_STATE_KEY = "state";
+
+    // for bluetooth
+    private BluetoothState bluetoothState;
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothProfile bluetoothProfile;
+    private Object bluetoothLock = new Object();
+
+    private enum BluetoothState {
+        DISCONNECTED, CONNECTED
+    }
+
+    private enum OutputType {
+        PHONE_SPEAKERS,     /* speaker-phone & ear-piece */
+        HEADPHONES,
+        BLUETOOTH
+    }
+
+    private final BroadcastReceiver btStatusReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (null != action && action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -1);
+                switch (state) {
+                    case BluetoothHeadset.STATE_CONNECTED:
+                        Log.d(LOG_TAG, "BroadcastReceiver: STATE_CONNECTED");
+                        synchronized (bluetoothLock) {
+                            if (BluetoothState.DISCONNECTED == bluetoothState) {
+                                Log.d(LOG_TAG, "Bluetooth Headset: Connecting SCO");
+                                bluetoothState = BluetoothState.CONNECTED;
+                                setOutputType(OutputType.BLUETOOTH);
+                                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                                audioManager.setBluetoothScoOn(true);
+                                startBluetoothSco();
+                                audioManager.setSpeakerphoneOn(false);
+                            }
+                        }
+                        break;
+                    case BluetoothHeadset.STATE_DISCONNECTED:
+                        Log.d(LOG_TAG, "BroadcastReceiver: STATE_DISCONNECTED");
+                        synchronized (bluetoothLock) {
+                            if (BluetoothState.CONNECTED == bluetoothState) {
+                                Log.d(LOG_TAG, "Bluetooth Headset: Disconnecting SCO");
+                                bluetoothState = BluetoothState.DISCONNECTED;
+                                audioManager.setBluetoothScoOn(false);
+                                stopBluetoothSco();
+                                if (audioManager.isWiredHeadsetOn()) {
+                                    setOutputType(OutputType.HEADPHONES);
+                                    audioManager.setSpeakerphoneOn(false);
+                                } else {
+                                    setOutputType(OutputType.PHONE_SPEAKERS);
+                                    audioManager.setSpeakerphoneOn(
+                                            getOutputMode() == OutputMode.SpeakerPhone
+                                    );
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+
+    private final BluetoothProfile.ServiceListener bluetoothProfileListener =
+            new BluetoothProfile.ServiceListener() {
+                @Override
+                public void onServiceConnected(int type, BluetoothProfile profile) {
+                    if  (BluetoothProfile.HEADSET == type) {
+                        bluetoothProfile = profile;
+                        List<BluetoothDevice> devices = profile.getConnectedDevices();
+                        Log.d(LOG_TAG, "Service Proxy Connected");
+                        if (!devices.isEmpty()
+                                && BluetoothHeadset.STATE_CONNECTED == profile.getConnectionState(devices.get(0))) {
+                    /* force a init of bluetooth: the handler will not send a connected event if a
+                       device is already connected at the time of proxy connection request. */
+                            Intent intent = new Intent(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+                            intent.putExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_CONNECTED);
+                            btStatusReceiver.onReceive(context, intent);
+                        }
+                    }
+                }
+
+                @Override
+                public void onServiceDisconnected(int type) {
+                    Log.d(LOG_TAG, "Service Proxy Disconnected");
+                }
+            };
+
+    private static class AudioManagerMode {
+        private int oldMode;
+        private int naquire;
+
+        public AudioManagerMode() {
+            oldMode = 0;
+            naquire = 0;
+        }
+
+        public void acquireMode(AudioManager audioManager) {
+            if (0 == naquire++) {
+                oldMode = audioManager.getMode();
+                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            }
+        }
+
+        public void releaseMode(AudioManager audioManager) {
+            if (0 == --naquire) {
+                audioManager.setMode(oldMode);
+            }
+        }
+    }
 
     public CustomAudioDevice(Context context) {
-        this.m_context = context;
+        this.context = context;
 
         try {
-            m_playBuffer = ByteBuffer.allocateDirect(MAX_SAMPLES);
-            m_recBuffer = ByteBuffer.allocateDirect(MAX_SAMPLES);
+            recBuffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+        tempBufRec = new byte[DEFAULT_BUFFER_SIZE];
+
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothProfile = null;
+
+        int outputBufferSize = DEFAULT_BUFFER_SIZE;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            try {
+                outputSamplingRate = Integer.parseInt(
+                        audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+            } finally {
+                if (outputSamplingRate == 0) {
+                    outputSamplingRate = DEFAULT_SAMPLE_RATE;
+                }
+            }
+            try {
+                samplesPerBuffer = Integer.parseInt(
+                        audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+                outputBufferSize = SAMPLE_SIZE_IN_BYTES
+                        * samplesPerBuffer
+                        * NUM_CHANNELS_RENDERING;
+            } finally {
+                if (outputBufferSize == 0) {
+                    outputBufferSize = DEFAULT_BUFFER_SIZE;
+                    samplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
+                }
+            }
+        }
+
+        try {
+            playBuffer = ByteBuffer.allocateDirect(outputBufferSize);
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }
 
-        m_tempBufPlay = new byte[MAX_SAMPLES];
-        m_tempBufRec = new byte[MAX_SAMPLES];
+        tempBufPlay = new byte[outputBufferSize];
 
-        m_captureSettings = new AudioSettings(SAMPLING_RATE,
+        captureSettings = new AudioSettings(captureSamplingRate,
                 NUM_CHANNELS_CAPTURING);
-        m_rendererSettings = new AudioSettings(SAMPLING_RATE,
+        rendererSettings = new AudioSettings(outputSamplingRate,
                 NUM_CHANNELS_RENDERING);
 
-        m_audioManager = (AudioManager) m_context
-                .getSystemService(Context.AUDIO_SERVICE);
-
-        m_audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
     }
 
     @Override
     public boolean initCapturer() {
+        // initalize audio mode
+        audioManagerMode.acquireMode(audioManager);
 
         // get the minimum buffer size that can be used
-        int minRecBufSize = AudioRecord.getMinBufferSize(m_captureSettings
-                        .getSampleRate(),
-                NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO
-                        : AudioFormat.CHANNEL_IN_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT);
+        int minRecBufSize = AudioRecord.getMinBufferSize(
+                captureSettings.getSampleRate(),
+                NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO : AudioFormat.CHANNEL_IN_STEREO,
+                AudioFormat.ENCODING_PCM_16BIT
+        );
 
         // double size to be more safe
         int recBufSize = minRecBufSize * 2;
 
         // release the object
-        if (m_audioRecord != null) {
-            m_audioRecord.release();
-            m_audioRecord = null;
+        if (noiseSuppressor != null) {
+            noiseSuppressor.release();
+            noiseSuppressor = null;
+        }
+        if (echoCanceler != null) {
+            echoCanceler.release();
+            echoCanceler = null;
+        }
+        if (audioRecord != null) {
+            audioRecord.release();
+            audioRecord = null;
         }
 
         try {
-            m_audioRecord = new AudioRecord(AudioSource.VOICE_COMMUNICATION,
-                    m_captureSettings.getSampleRate(),
+            audioRecord = new AudioRecord(AudioSource.VOICE_COMMUNICATION,
+                    captureSettings.getSampleRate(),
                     NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO
                             : AudioFormat.CHANNEL_IN_STEREO,
                     AudioFormat.ENCODING_PCM_16BIT, recBufSize);
+            if (NoiseSuppressor.isAvailable()) {
+                noiseSuppressor = NoiseSuppressor.create(audioRecord.getAudioSessionId());
+            }
+            if (AcousticEchoCanceler.isAvailable()) {
+                echoCanceler = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
+            }
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
-            return false;
+            throw new RuntimeException(e.getMessage());
         }
 
         // check that the audioRecord is ready to be used
-        if (m_audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
-            Log.i(LOG_TAG, "Audio capture is not initialized "
-                    + m_captureSettings.getSampleRate());
-
-            return false;
+        if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+            throw new RuntimeException("Audio capture is not initialized " + captureSettings.getSampleRate());
         }
 
-        m_shutdownCaptureThread = false;
-        new Thread(m_captureThread).start();
-
+        shutdownCaptureThread = false;
+        new Thread(captureThread).start();
         return true;
     }
 
     @Override
     public boolean destroyCapturer() {
-        m_captureLock.lock();
+        captureLock.lock();
         // release the object
-        m_audioRecord.release();
-        m_audioRecord = null;
-        m_shutdownCaptureThread = true;
-        m_captureEvent.signal();
+        if (null != echoCanceler) {
+            echoCanceler.release();
+            echoCanceler = null;
+        }
+        if (null != noiseSuppressor) {
+            noiseSuppressor.release();
+            noiseSuppressor = null;
+        }
+        audioRecord.release();
+        audioRecord = null;
+        shutdownCaptureThread = true;
+        captureEvent.signal();
 
-        m_captureLock.unlock();
+        captureLock.unlock();
+        // shutdown audio mode
+        audioManagerMode.releaseMode(audioManager);
         return true;
     }
 
     public int getEstimatedCaptureDelay() {
-        return m_estimatedCaptureDelay;
+        return estimatedCaptureDelay;
     }
 
     @Override
     public boolean startCapturer() {
         // start recording
         try {
-            m_audioRecord.startRecording();
+            audioRecord.startRecording();
 
         } catch (IllegalStateException e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException(e.getMessage());
         }
 
-        m_captureLock.lock();
-        m_isCapturing = true;
-        m_captureEvent.signal();
-        m_captureLock.unlock();
-
+        captureLock.lock();
+        isCapturing = true;
+        captureEvent.signal();
+        captureLock.unlock();
         return true;
     }
 
     @Override
     public boolean stopCapturer() {
-        m_captureLock.lock();
+        captureLock.lock();
         try {
             // only stop if we are recording
-            if (m_audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+            if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                 // stop recording
-                try {
-                    m_audioRecord.stop();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+                audioRecord.stop();
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         } finally {
             // Ensure we always unlock
-            m_isCapturing = false;
-            m_captureLock.unlock();
+            isCapturing = false;
+            captureLock.unlock();
         }
-
         return true;
     }
 
-    private Runnable m_captureThread = new Runnable() {
+    Runnable captureThread = new Runnable() {
         @Override
         public void run() {
-
-            int samplesToRec = SAMPLING_RATE / 100;
+            int samplesToRec = captureSamplingRate / 100;
             int samplesRead = 0;
 
             try {
                 android.os.Process
                         .setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
             } catch (Exception e) {
+                // thread priority isn't fatal, just not 'great' so no failure exception thrown
                 e.printStackTrace();
             }
 
-            while (!m_shutdownCaptureThread) {
-
-                m_captureLock.lock();
-
+            while (!shutdownCaptureThread) {
+                captureLock.lock();
                 try {
-
-                    if (!CustomAudioDevice.this.m_isCapturing) {
-                        m_captureEvent.await();
+                    if (!CustomAudioDevice.this.isCapturing) {
+                        captureEvent.await();
                         continue;
-
                     } else {
-
-                        if (m_audioRecord == null) {
+                        if (audioRecord == null) {
                             continue;
                         }
-
-                        int lengthInBytes = (samplesToRec << 1)
-                                * NUM_CHANNELS_CAPTURING;
-                        int readBytes = m_audioRecord.read(m_tempBufRec, 0,
-                                lengthInBytes);
-
-                        m_recBuffer.rewind();
-                        m_recBuffer.put(m_tempBufRec);
-
-                        samplesRead = (readBytes >> 1) / NUM_CHANNELS_CAPTURING;
-
+                        int lengthInBytes = (samplesToRec << 1) * NUM_CHANNELS_CAPTURING;
+                        int readBytes = audioRecord.read(tempBufRec, 0, lengthInBytes);
+                        if (readBytes >= 0) {
+                            recBuffer.rewind();
+                            recBuffer.put(tempBufRec);
+                            samplesRead = (readBytes >> 1) / NUM_CHANNELS_CAPTURING;
+                        } else {
+                            switch (readBytes) {
+                                case AudioRecord.ERROR_BAD_VALUE:
+                                    throw new RuntimeException("Audio Capture Error: Bad Value (-2)");
+                                case AudioRecord.ERROR_INVALID_OPERATION:
+                                    throw new RuntimeException("Audio Capture Error: Invalid Operation (-3)");
+                                case AudioRecord.ERROR:
+                                default:
+                                    throw new RuntimeException("Audio Capture Error(-1)");
+                            }
+                        }
                     }
                 } catch (Exception e) {
-                    Log.e(LOG_TAG, "RecordAudio try failed: " + e.getMessage());
-                    continue;
-
+                    Log.e(LOG_TAG, e.getMessage());
+                    return;
                 } finally {
                     // Ensure we always unlock
-                    m_captureLock.unlock();
+                    captureLock.unlock();
                 }
-
-                getAudioBus().writeCaptureData(m_recBuffer, samplesRead);
-                m_estimatedCaptureDelay = samplesRead * 1000 / SAMPLING_RATE;
+                getAudioBus().writeCaptureData(recBuffer, samplesRead);
+                estimatedCaptureDelay = samplesRead * 1000 / captureSamplingRate;
             }
         }
     };
 
     @Override
     public boolean initRenderer() {
-
+        // initalize default values
+        bluetoothState = BluetoothState.DISCONNECTED;
+        // initalize audio mode
+        audioManagerMode.acquireMode(audioManager);
+        // set default output routing
+        setOutputMode(getOutputMode());
+        /* register for bluetooth sco callbacks and attempt to enable it */
+        enableBluetoothEvents();
         // get the minimum buffer size that can be used
-        int minPlayBufSize = AudioTrack.getMinBufferSize(m_rendererSettings
-                        .getSampleRate(),
-                NUM_CHANNELS_RENDERING == 1 ? AudioFormat.CHANNEL_OUT_MONO
-                        : AudioFormat.CHANNEL_OUT_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT);
-
-        int playBufSize = minPlayBufSize;
-        if (playBufSize < 6000) {
-            playBufSize *= 2;
-        }
+        int minPlayBufSize = AudioTrack.getMinBufferSize(
+                rendererSettings.getSampleRate(),
+                NUM_CHANNELS_RENDERING == 1 ? AudioFormat.CHANNEL_OUT_MONO : AudioFormat.CHANNEL_OUT_STEREO,
+                AudioFormat.ENCODING_PCM_16BIT
+        );
 
         // release the object
-        if (m_audioTrack != null) {
-            m_audioTrack.release();
-            m_audioTrack = null;
+        if (audioTrack != null) {
+            audioTrack.release();
+            audioTrack = null;
         }
 
         try {
-            m_audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL,
-                    m_rendererSettings.getSampleRate(),
-                    NUM_CHANNELS_RENDERING == 1 ? AudioFormat.CHANNEL_OUT_MONO
+            audioTrack = new AudioTrack(
+                    AudioManager.STREAM_VOICE_CALL,
+                    rendererSettings.getSampleRate(),
+                    (NUM_CHANNELS_RENDERING == 1)
+                            ? AudioFormat.CHANNEL_OUT_MONO
                             : AudioFormat.CHANNEL_OUT_STEREO,
-                    AudioFormat.ENCODING_PCM_16BIT, playBufSize,
-                    AudioTrack.MODE_STREAM);
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    minPlayBufSize >= 6000 ? minPlayBufSize : minPlayBufSize * 2,
+                    AudioTrack.MODE_STREAM
+            );
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
-            return false;
+            throw new RuntimeException(e.getMessage());
         }
-
         // check that the audioRecord is ready to be used
-        if (m_audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
-            Log.i(LOG_TAG, "Audio renderer not initialized "
-                    + m_rendererSettings.getSampleRate());
-            return false;
+        if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+            throw new RuntimeException("Audio renderer not initialized " + rendererSettings.getSampleRate());
         }
 
-        m_bufferedPlaySamples = 0;
-
-        setOutputMode(OutputMode.SpeakerPhone);
-
-        m_shutdownRenderThread = false;
-        new Thread(m_renderThread).start();
-
+        bufferedPlaySamples = 0;
+        shutdownRenderThread = false;
+        new Thread(renderThread).start();
         return true;
+    }
+
+    private void destroyAudioTrack() {
+        rendererLock.lock();
+        // release the object
+        audioTrack.release();
+        audioTrack = null;
+        shutdownRenderThread = true;
+        renderEvent.signal();
+        rendererLock.unlock();
     }
 
     @Override
     public boolean destroyRenderer() {
-        m_rendererLock.lock();
-        // release the object
-        m_audioTrack.release();
-        m_audioTrack = null;
-        m_shutdownRenderThread = true;
-        m_renderEvent.signal();
-        m_rendererLock.unlock();
-
+        destroyAudioTrack();
+        disableBluetoothEvents();
         unregisterHeadsetReceiver();
-        m_audioManager.setSpeakerphoneOn(false);
-        m_audioManager.setMode(AudioManager.MODE_NORMAL);
-
+        audioManager.setSpeakerphoneOn(false);
+        audioManagerMode.releaseMode(audioManager);
         return true;
     }
 
     public int getEstimatedRenderDelay() {
-        return m_estimatedRenderDelay;
+        return estimatedRenderDelay;
     }
 
     @Override
     public boolean startRenderer() {
+        /* enable speakerphone unless headset is conencted */
+        synchronized (bluetoothLock) {
+            if (BluetoothState.CONNECTED != bluetoothState) {
+                if (audioManager.isWiredHeadsetOn()) {
+                    Log.d(LOG_TAG, "Turn off Speaker phone");
+                    audioManager.setSpeakerphoneOn(false);
+                } else {
+                    Log.d(LOG_TAG, "Turn on Speaker phone");
+                    audioManager.setSpeakerphoneOn(true);
+                }
+            }
+        }
         // start playout
         try {
-            m_audioTrack.play();
-
+            audioTrack.play();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException(e.getMessage());
         }
+        rendererLock.lock();
+        isRendering = true;
+        renderEvent.signal();
+        rendererLock.unlock();
 
-        m_rendererLock.lock();
-        m_isRendering = true;
-        m_renderEvent.signal();
-        m_rendererLock.unlock();
-
+        registerHeadsetReceiver();
         return true;
     }
 
     @Override
     public boolean stopRenderer() {
-        m_rendererLock.lock();
+        rendererLock.lock();
         try {
             // only stop if we are playing
-            if (m_audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+            if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                 // stop playout
-                try {
-                    m_audioTrack.stop();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+                audioTrack.stop();
 
-                // flush the buffers
-                m_audioTrack.flush();
             }
-
+            // flush the buffers
+            audioTrack.flush();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         } finally {
             // Ensure we always unlock, both for success, exception or error
             // return.
-            m_isRendering = false;
-
-            m_rendererLock.unlock();
+            isRendering = false;
+            rendererLock.unlock();
         }
-
+        unregisterHeadsetReceiver();
         return true;
     }
 
-    private Runnable m_renderThread = new Runnable() {
+    Runnable renderThread = new Runnable() {
 
         @Override
         public void run() {
-            int samplesToPlay = SAMPLING_RATE / 100;
-
+            int samplesToPlay = samplesPerBuffer;
             try {
                 android.os.Process
                         .setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
             } catch (Exception e) {
+                // thread priority isn't fatal, just not 'great' so no failure exception thrown
                 e.printStackTrace();
             }
 
-            while (!m_shutdownRenderThread) {
-                m_rendererLock.lock();
+            while (!shutdownRenderThread) {
+                rendererLock.lock();
                 try {
-                    if (!CustomAudioDevice.this.m_isRendering) {
-                        m_renderEvent.await();
+                    if (!CustomAudioDevice.this.isRendering) {
+                        renderEvent.await();
                         continue;
 
                     } else {
-                        m_rendererLock.unlock();
+                        rendererLock.unlock();
 
                         // Don't lock on audioBus calls
-                        m_playBuffer.clear();
-                        int samplesRead = getAudioBus().readRenderData(
-                                m_playBuffer, samplesToPlay);
+                        playBuffer.clear();
+                        int samplesRead = getAudioBus().readRenderData(playBuffer, samplesToPlay);
 
-                        // Log.d(LOG_TAG, "Samples read: " + samplesRead);
+                        // log.d("Samples read: " + samplesRead);
 
-                        m_rendererLock.lock();
+                        rendererLock.lock();
 
                         // After acquiring the lock again
                         // we must check if we are still playing
-                        if (m_audioTrack == null
-                                || !CustomAudioDevice.this.m_isRendering) {
+                        if (audioTrack == null || !CustomAudioDevice.this.isRendering) {
                             continue;
                         }
 
-                        int bytesRead = (samplesRead << 1)
-                                * NUM_CHANNELS_RENDERING;
-                        m_playBuffer.get(m_tempBufPlay, 0, bytesRead);
+                        int bytesRead = (samplesRead << 1) * NUM_CHANNELS_RENDERING;
+                        playBuffer.get(tempBufPlay, 0, bytesRead);
 
-                        int bytesWritten = m_audioTrack.write(m_tempBufPlay, 0,
-                                bytesRead);
+                        int bytesWritten = audioTrack.write(tempBufPlay, 0, bytesRead);
+                        if (bytesWritten > 0) {
+                            // increase by number of written samples
+                            bufferedPlaySamples += (bytesWritten >> 1) / NUM_CHANNELS_RENDERING;
 
-                        // increase by number of written samples
-                        m_bufferedPlaySamples += (bytesWritten >> 1)
-                                / NUM_CHANNELS_RENDERING;
+                            // decrease by number of played samples
+                            int pos = audioTrack.getPlaybackHeadPosition();
+                            if (pos < playPosition) {
+                                // wrap or reset by driver
+                                playPosition = 0;
+                            }
+                            bufferedPlaySamples -= (pos - playPosition);
+                            playPosition = pos;
 
-                        // decrease by number of played samples
-                        int pos = m_audioTrack.getPlaybackHeadPosition();
-                        if (pos < m_playPosition) {
-                            // wrap or reset by driver
-                            m_playPosition = 0;
+                            // we calculate the estimated delay based on the buffered samples
+                            estimatedRenderDelay = bufferedPlaySamples * 1000 / outputSamplingRate;
+                        } else {
+                            switch (bytesWritten) {
+                                case AudioTrack.ERROR_BAD_VALUE:
+                                    throw new RuntimeException(
+                                            "Audio Renderer Error: Bad Value (-2)");
+                                case AudioTrack.ERROR_INVALID_OPERATION:
+                                    throw new RuntimeException(
+                                            "Audio Renderer Error: Invalid Operation (-3)");
+                                case AudioTrack.ERROR:
+                                default:
+                                    throw new RuntimeException(
+                                            "Audio Renderer Error(-1)");
+                            }
                         }
-                        m_bufferedPlaySamples -= (pos - m_playPosition);
-                        m_playPosition = pos;
-
-                        // we calculate the estimated delay based on the
-                        // buffered samples
-                        m_estimatedRenderDelay = m_bufferedPlaySamples * 1000
-                                / SAMPLING_RATE;
-
                     }
                 } catch (Exception e) {
-                    Log.e(LOG_TAG, "Exception: " + e.getMessage());
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, e.getMessage());
+                    return;
                 } finally {
-                    m_rendererLock.unlock();
+                    rendererLock.unlock();
                 }
             }
         }
@@ -441,78 +632,162 @@ public class CustomAudioDevice extends BaseAudioDevice {
 
     @Override
     public AudioSettings getCaptureSettings() {
-        return this.m_captureSettings;
+        return this.captureSettings;
     }
 
     @Override
     public AudioSettings getRenderSettings() {
-        return this.m_rendererSettings;
+        return this.rendererSettings;
     }
 
     /**
-     * Communication modes handling
+     * Communication modes handling.
      */
-
     public boolean setOutputMode(OutputMode mode) {
         super.setOutputMode(mode);
-        if (mode == OutputMode.Handset) {
-            unregisterHeadsetReceiver();
-            m_audioManager.setSpeakerphoneOn(false);
-        } else {
-            m_audioManager.setSpeakerphoneOn(true);
-            registerHeadsetReceiver();
+        if (audioOutput != OutputType.BLUETOOTH && audioOutput != OutputType.HEADPHONES) {
+            audioManager.setSpeakerphoneOn(mode == OutputMode.SpeakerPhone);
+            return true;
         }
-        return true;
+        return false;
     }
 
-    private BroadcastReceiver m_headsetReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().compareTo(Intent.ACTION_HEADSET_PLUG) == 0) {
-                int state = intent.getIntExtra("state", 0);
-                if (state == 0) {
-                    m_audioManager.setSpeakerphoneOn(true);
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                if (intent.getIntExtra(HEADSET_PLUG_STATE_KEY, 0) == 1) {
+                    Log.d(LOG_TAG, "Headphones connected");
+                    setOutputType(OutputType.HEADPHONES);
+                    audioManager.setSpeakerphoneOn(false);
+                    audioManager.setBluetoothScoOn(false);
                 } else {
-                    m_audioManager.setSpeakerphoneOn(false);
+                    Log.d(LOG_TAG, "Headphones disconnected");
+                    if (BluetoothState.CONNECTED == bluetoothState) {
+                        audioManager.setBluetoothScoOn(true);
+                        setOutputType(OutputType.BLUETOOTH);
+                    } else {
+                        audioManager.setSpeakerphoneOn(getOutputMode() == OutputMode.SpeakerPhone);
+                        setOutputType(OutputType.PHONE_SPEAKERS);
+                    }
                 }
             }
         }
     };
 
-    private boolean m_receiverRegistered;
+    private boolean receiverRegistered;
+    private boolean scoReceiverRegistered;
 
     private void registerHeadsetReceiver() {
-        if (!m_receiverRegistered) {
-            IntentFilter receiverFilter = new IntentFilter(
-                    Intent.ACTION_HEADSET_PLUG);
-
-            m_context.registerReceiver(m_headsetReceiver, receiverFilter);
-            m_receiverRegistered = true;
+        if (!receiverRegistered) {
+            context.registerReceiver(headsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+            receiverRegistered = true;
         }
     }
 
     private void unregisterHeadsetReceiver() {
-        if (m_receiverRegistered) {
-            try {
-                m_context.unregisterReceiver(m_headsetReceiver);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            m_receiverRegistered = false;
+        if (receiverRegistered) {
+            context.unregisterReceiver(headsetReceiver);
+            receiverRegistered = false;
+        }
+    }
+
+    private void registerBtReceiver() {
+        if (!scoReceiverRegistered) {
+            context.registerReceiver(
+                    btStatusReceiver,
+                    new IntentFilter(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
+            );
+            scoReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterBtReceiver() {
+        if (scoReceiverRegistered) {
+            context.unregisterReceiver(btStatusReceiver);
+            scoReceiverRegistered = false;
         }
     }
 
     @Override
-    public void onPause() {
-        if (getOutputMode() == OutputMode.SpeakerPhone) {
+    public synchronized void onPause() {
+        if (isRendering && getOutputMode() == OutputMode.SpeakerPhone) {
             unregisterHeadsetReceiver();
         }
     }
 
     @Override
-    public void onResume() {
-        if (getOutputMode() == OutputMode.SpeakerPhone) {
+    public synchronized void onResume() {
+        /* register handler for phonejack notifications */
+        if (isRendering && getOutputMode() == OutputMode.SpeakerPhone) {
             registerHeadsetReceiver();
+            if (!audioManager.isWiredHeadsetOn()) {
+                audioManager.setSpeakerphoneOn(true);
+            }
         }
+        /* force reconnection of bluetooth in the event of a phone call */
+        synchronized (bluetoothLock) {
+            if (audioOutput == OutputType.BLUETOOTH) {
+                bluetoothState = BluetoothState.DISCONNECTED;
+                if (bluetoothAdapter != null) {
+                    bluetoothAdapter.getProfileProxy(
+                            context,
+                            bluetoothProfileListener,
+                            BluetoothProfile.HEADSET
+
+                    );
+                }
+            }
+        }
+    }
+
+    private void enableBluetoothEvents() {
+        if (audioManager.isBluetoothScoAvailableOffCall()) {
+            registerBtReceiver();
+            if (bluetoothAdapter != null) {
+                bluetoothAdapter.getProfileProxy(
+                        context,
+                        bluetoothProfileListener,
+                        BluetoothProfile.HEADSET
+                );
+            }
+        }
+    }
+
+    private void disableBluetoothEvents() {
+        if (null != bluetoothProfile && bluetoothAdapter != null) {
+            bluetoothAdapter.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile);
+        }
+        unregisterBtReceiver();
+        /* force a shutdown of bluetooth: when a call comes in, the handler is not invoked by system */
+        Intent intent = new Intent(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+        intent.putExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED);
+        btStatusReceiver.onReceive(context, intent);
+    }
+
+    private void startBluetoothSco() {
+        try {
+            audioManager.startBluetoothSco();
+        } catch (NullPointerException npex) {
+            Log.d(LOG_TAG,
+                    "Failed to start the BT SCO. In Android 5.0 calling "
+                            + "[start|stop]BluetoothSco produces a NPE in some devices"
+            );
+        }
+    }
+
+    private void stopBluetoothSco() {
+        try {
+            audioManager.stopBluetoothSco();
+        } catch (NullPointerException npex) {
+            Log.d(LOG_TAG,
+                    "Failed to start the BT SCO. In Android 5.0 calling "
+                            + "[start|stop]BluetoothSco produces a NPE in some devices"
+            );
+        }
+    }
+
+    private void setOutputType(OutputType type) {
+        audioOutput = type;
     }
 }

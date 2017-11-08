@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.customvideodriver;
+package com.tokbox.android.tutorials.custom_video_driver;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
