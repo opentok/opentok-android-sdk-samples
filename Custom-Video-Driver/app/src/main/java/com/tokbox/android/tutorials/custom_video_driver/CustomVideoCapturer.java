@@ -101,7 +101,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
     }
 
     public synchronized void init() {
-        Log.w(LOG_TAG, "init() enetered");
+        Log.d(LOG_TAG, "init() enetered");
         try {
             camera = Camera.open(cameraIndex);
         } catch (RuntimeException exp) {
@@ -110,12 +110,12 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
 
         currentDeviceInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraIndex, currentDeviceInfo);
-        Log.w(LOG_TAG, "init() exit");
+        Log.d(LOG_TAG, "init() exit");
     }
 
     @Override
     public synchronized int startCapture() {
-        Log.w(LOG_TAG, "started() entered");
+        Log.d(LOG_TAG, "started() entered");
         if (isCaptureStarted) {
             return -1;
         }
@@ -129,6 +129,11 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
             parameters.setPreviewSize(captureWidth, captureHeight);
             parameters.setPreviewFormat(PIXEL_FORMAT);
             parameters.setPreviewFpsRange(captureFpsRange[0], captureFpsRange[1]);
+
+            List<String> focusModes = parameters.getSupportedFocusModes();
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            }
 
             try {
                 camera.setParameters(parameters);
@@ -171,7 +176,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
 
         isCaptureRunning = true;
         isCaptureStarted = true;
-        Log.w(LOG_TAG, "started() exit");
+        Log.d(LOG_TAG, "started() exit");
         return 0;
     }
 
