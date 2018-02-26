@@ -170,9 +170,6 @@ public class MainActivity extends AppCompatActivity
     public void onStreamReceived(Session session, Stream stream) {
         Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-        if (OpenTokConfig.SUBSCRIBE_TO_SELF) {
-            return;
-        }
         if (mSubscriber != null) {
             return;
         }
@@ -184,9 +181,6 @@ public class MainActivity extends AppCompatActivity
     public void onStreamDropped(Session session, Stream stream) {
         Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
 
-        if (OpenTokConfig.SUBSCRIBE_TO_SELF) {
-            return;
-        }
         if (mSubscriber == null) {
             return;
         }
@@ -201,12 +195,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
         Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
-
-        if (!OpenTokConfig.SUBSCRIBE_TO_SELF) {
-            return;
-        }
-
-        subscribeToStream(stream);
     }
 
     @Override
