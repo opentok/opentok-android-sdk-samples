@@ -18,7 +18,8 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.tokbox.android.tutorials.custom_video_driver.R;
+
+import com.example.tokbox.custom_video_driver_lib.*;
 
 import java.util.List;
 
@@ -27,10 +28,10 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-                          implements EasyPermissions.PermissionCallbacks,
-                                     Session.SessionListener,
-                                     Publisher.PublisherListener,
-                                     Subscriber.VideoListener {
+        implements EasyPermissions.PermissionCallbacks,
+        Session.SessionListener,
+        Publisher.PublisherListener,
+        Subscriber.VideoListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
             mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
+
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity
         mPublisherViewContainer.addView(mPublisher.getView());
 
         if (mPublisher.getView() instanceof GLSurfaceView) {
-            ((GLSurfaceView)(mPublisher.getView())).setZOrderOnTop(true);
+            ((GLSurfaceView) (mPublisher.getView())).setZOrderOnTop(true);
         }
 
         mSession.publish(mPublisher);

@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.framemetadata;
+package com.example.tokbox.custom_video_driver_lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

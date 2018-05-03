@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.framemetadata;
+package com.example.tokbox.custom_video_driver_lib;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.opentok.android.BaseVideoRenderer;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
