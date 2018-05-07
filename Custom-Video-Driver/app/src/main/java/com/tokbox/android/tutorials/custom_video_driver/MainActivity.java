@@ -19,7 +19,7 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 
-import com.example.tokbox.custom_video_driver_lib.*;
+import com.example.tokbox.CustomVideoDriverLib.*;
 
 import java.util.List;
 
