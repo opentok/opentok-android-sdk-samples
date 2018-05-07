@@ -1,1 +1,2 @@
 include ':app'
+include '..:Custom-Video-Driver:custom-video-driver-lib'

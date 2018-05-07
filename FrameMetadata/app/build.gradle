@@ -21,8 +21,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'pub.devrel:easypermissions:0.4.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.14.+'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(path: ':..:Custom-Video-Driver:custom-video-driver-lib')
+    api 'pub.devrel:easypermissions:0.4.0'
+    api 'com.opentok.android:opentok-android-sdk:2.14.+'
+    api 'com.android.support:appcompat-v7:26.1.0'
 }
