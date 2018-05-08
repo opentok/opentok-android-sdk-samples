@@ -21,6 +21,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.opentok.android:opentok-android-sdk:2.13.+'
+    compile 'com.opentok.android:opentok-android-sdk:2.14.+'
 
 }

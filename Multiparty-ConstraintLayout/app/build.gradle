@@ -25,6 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'pub.devrel:easypermissions:0.4.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.13.+'
+    compile 'com.opentok.android:opentok-android-sdk:2.14.+'
     testCompile 'junit:junit:4.12'
 }
