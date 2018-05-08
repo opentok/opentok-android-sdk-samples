@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "com.tokbox.android.tutorials.custom_video_driver"
+        applicationId "com.tokbox.android.tutorials.framemetadata"
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
@@ -21,9 +21,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'pub.devrel:easypermissions:0.4.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.14.+'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    implementation project(':CustomVideoDriverLib')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(path: ':..:Custom-Video-Driver:CustomVideoDriverLib')
+    api 'pub.devrel:easypermissions:0.4.0'
+    api 'com.opentok.android:opentok-android-sdk:2.14.+'
+    api 'com.android.support:appcompat-v7:26.1.0'
 }

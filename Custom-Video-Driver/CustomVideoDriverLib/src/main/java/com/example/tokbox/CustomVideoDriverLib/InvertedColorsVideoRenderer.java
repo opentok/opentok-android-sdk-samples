@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_video_driver;
+package com.example.tokbox.CustomVideoDriverLib;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -23,6 +23,14 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
     private GLSurfaceView mView;
     private MyRenderer mRenderer;
+
+    public interface InvertedColorsVideoRendererMetadataListener {
+        public void onMetadataReady(byte[] metadata);
+    }
+
+    public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
+        this.mRenderer.metadataListener = metadataListener;
+    }
 
     static class MyRenderer implements GLSurfaceView.Renderer {
 
@@ -247,6 +255,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             mViewportHeight = height;
         }
 
+
+        private InvertedColorsVideoRendererMetadataListener metadataListener;
         @Override
         public void onDrawFrame(GL10 gl) {
             gl.glClearColor(0, 0, 0, 1);
@@ -285,6 +295,10 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                Matrix.scaleM(mScaleMatrix, 0,
                         scaleX * (mCurrentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
+
+                if (metadataListener != null) {
+                    metadataListener.onMetadataReady(mCurrentFrame.getMetadata());
+                }
 
                 int mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram,
                         "uMVPMatrix");

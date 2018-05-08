@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_video_driver;
+package com.tokbox.android.tutorials.framemetadata;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.tokbox.CustomVideoDriverLib.CustomVideoCapturer;
+import com.example.tokbox.CustomVideoDriverLib.InvertedColorsVideoRenderer;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -19,19 +21,21 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 
-import com.example.tokbox.CustomVideoDriverLib.*;
-
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.lang.String;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-        implements EasyPermissions.PermissionCallbacks,
-        Session.SessionListener,
-        Publisher.PublisherListener,
-        Subscriber.VideoListener {
+                          implements EasyPermissions.PermissionCallbacks,
+                                     Session.SessionListener,
+                                     Publisher.PublisherListener,
+                                     Subscriber.VideoListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
             mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
@@ -133,21 +137,63 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * @return yyyy-MM-dd'T'HH:mm:ssZZZZZ
+     */
+    private static String getCurrentTimeStamp(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+            String currentDateTime = dateFormat.format(new Date());
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
+        // capturer
+        CustomVideoCapturer capturer;
+        capturer = new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
+        capturer.setCustomVideoCapturerDataSource(new CustomVideoCapturer.CustomVideoCapturerDataSource() {
+            @Override
+            public byte[] retrieveMetadata() {
+                return getCurrentTimeStamp().getBytes();
+            }
+        });
+
+        // renderer
+        InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
+        renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
+            @Override
+            public void onMetadataReady(byte[] metadata) {
+                String timestamp = null;
+                try {
+                    timestamp = new String(metadata, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(timestamp);
+            }
+        });
+
         mPublisher = new Publisher.Builder(MainActivity.this)
                 .name("publisher")
-                .capturer(new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
-                .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
+                .capturer(capturer)
+                .renderer(renderer).build();
         mPublisher.setPublisherListener(this);
 
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
 
         if (mPublisher.getView() instanceof GLSurfaceView) {
-            ((GLSurfaceView) (mPublisher.getView())).setZOrderOnTop(true);
+            ((GLSurfaceView)(mPublisher.getView())).setZOrderOnTop(true);
         }
 
         mSession.publish(mPublisher);

@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_video_driver;
+package com.example.tokbox.CustomVideoDriverLib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -366,6 +366,18 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         return 0;
     }
 
+
+    /**
+     * demonstrate how to use metadata
+     */
+    public interface CustomVideoCapturerDataSource {
+        public byte[] retrieveMetadata();
+    }
+    private CustomVideoCapturerDataSource metadataSource;
+    public void setCustomVideoCapturerDataSource(CustomVideoCapturerDataSource metadataSource) {
+        this.metadataSource = metadataSource;
+    }
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         previewBufferLock.lock();
@@ -377,9 +389,17 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
 
                 int currentRotation = compensateCameraRotation(currentDisplay
                         .getRotation());
+
                 // Send buffer
-                provideByteArrayFrame(data, NV21, captureWidth,
-                        captureHeight, currentRotation, isFrontCamera());
+                if (metadataSource != null) {
+                    byte[] framemetadata = metadataSource.retrieveMetadata();
+                    provideByteArrayFrame(data, NV21, captureWidth,
+                            captureHeight, currentRotation, isFrontCamera(), framemetadata);
+                }
+                else {
+                    provideByteArrayFrame(data, NV21, captureWidth,
+                            captureHeight, currentRotation, isFrontCamera());
+                }
 
                 // Give the video buffer to the camera service again.
                 camera.addCallbackBuffer(data);
