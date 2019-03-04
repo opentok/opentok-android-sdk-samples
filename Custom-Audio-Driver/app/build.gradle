@@ -21,8 +21,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'pub.devrel:easypermissions:0.4.0'
-    compile 'com.opentok.android:opentok-android-sdk:2.15.+'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'pub.devrel:easypermissions:0.4.0'
+    implementation 'com.opentok.android:opentok-android-sdk:2.15.+'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
 }
+
