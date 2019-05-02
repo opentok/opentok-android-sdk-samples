@@ -25,6 +25,6 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'pub.devrel:easypermissions:0.4.0'
-    implementation 'com.opentok.android:opentok-android-sdk:2.15.+'
+    implementation 'com.opentok.android:opentok-android-sdk:2.16.+'
     testImplementation 'junit:junit:4.12'
 }
