@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':..:Custom-Video-Driver:CustomVideoDriverLib')
+    implementation project(path: ':CustomVideoDriverLib')
     implementation 'pub.devrel:easypermissions:0.4.0'
     implementation 'com.opentok.android:opentok-android-sdk:2.16.+'
     implementation 'com.android.support:appcompat-v7:26.1.0'
