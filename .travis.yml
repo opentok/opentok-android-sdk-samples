@@ -21,5 +21,13 @@ env:
 before_script:
   - chmod +x Basic-Video-Chat/gradlew
 script:
-  - "./Basic-Video-Chat/gradlew :assembleRelease"
-  
+  - "./Archiving/gradlew app:assembleRelease"
+  - "./Basic-Video-Chat/gradlew app:assembleRelease"
+  - "./Custom-Audio-Driver/gradlew app:assembleRelease"
+  - "./Custom-Video-Driver/gradlew app:assembleRelease"
+  - "./FrameMetadata/gradlew app:assembleRelease"
+  - "./Multiparty-ConstraintLayout/gradlew app:assembleRelease"
+  - "./PictureInPicture/gradlew app:assembleRelease"
+  - "./Screen-Sharing/gradlew app:assembleRelease"
+  - "./Signaling/gradlew app:assembleRelease"
+  - "./Simple-Multiparty/gradlew app:assembleRelease"
