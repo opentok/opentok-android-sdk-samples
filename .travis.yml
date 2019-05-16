@@ -1,0 +1,25 @@
+language: android
+sudo: required
+jdk: oraclejdk8
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-28.0.3
+    - android-28
+    - extra-google-m2repository
+  licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+
+script:
+  - "cd Archiving && ./gradlew app:assembleRelease && cd .."
+  - "cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd .."
+  - "cd Custom-Audio-Driver && ./gradlew app:assembleRelease && cd .."
+  - "cd Custom-Video-Driver && ./gradlew app:assembleRelease && cd .."
+  - "cd FrameMetadata && ./gradlew app:assembleRelease && cd .."
+  - "cd Multiparty-ConstraintLayout && ./gradlew app:assembleRelease && cd .."
+  - "cd PictureInPicture && ./gradlew app:assembleRelease && cd .."
+  - "cd Screen-Sharing && ./gradlew app:assembleRelease && cd .."
+  - "cd Signaling && ./gradlew app:assembleRelease && cd .."
+  - "cd Simple-Multiparty && ./gradlew app:assembleRelease && cd .."

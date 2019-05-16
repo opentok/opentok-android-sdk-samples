@@ -1,2 +1,2 @@
-include ':app'
-include '..:Custom-Video-Driver:CustomVideoDriverLib'
+include ':app', ':CustomVideoDriverLib'
+project(":CustomVideoDriverLib").projectDir = file("../Custom-Video-Driver/CustomVideoDriverLib")
