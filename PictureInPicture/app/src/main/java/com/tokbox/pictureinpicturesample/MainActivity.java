@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements Session.SessionListener {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isInPictureInPictureMode()) {
+        if (isInPictureInPictureMode()) {
             if (session != null) {
                 session.onResume();
             }
