@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity
 
     private RelativeLayout mPublisherViewContainer;
 
+    private boolean sessionConnected = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
@@ -202,6 +204,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
+        sessionConnected = true;
 
         mPublisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
 
@@ -216,7 +219,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDisconnected(Session session) {
         Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
-
+        sessionConnected = false;
         mSession = null;
     }
 
@@ -306,9 +309,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void disconnectSession() {
-        if (mSession == null) {
+        if (mSession == null || !sessionConnected) {
             return;
         }
+        sessionConnected = false;
 
         if (mSubscribers.size() > 0) {
             for (Subscriber subscriber : mSubscribers) {
