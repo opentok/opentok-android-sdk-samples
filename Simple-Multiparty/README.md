@@ -96,6 +96,13 @@ is invoked:
 The `swapCamera()` method of a Publisher object changes the camera used to the next available camera
 on the device (if there is one).
 
+Note: For the sake of simplicity, we have set a maximum of 4 subscribers for this application.
+
+See below: 
+```java
+    private final int MAX_NUM_SUBSCRIBERS = 4;
+```
+
 ## Next steps
 
 For details on the full OpenTok Android API, see the [reference
