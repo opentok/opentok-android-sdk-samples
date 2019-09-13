@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<Subscriber> mSubscribers = new ArrayList<Subscriber>();
     private HashMap<Stream, Subscriber> mSubscriberStreams = new HashMap<Stream, Subscriber>();
+    private HashMap<Stream, Integer> mSubscriberPosition = new HashMap<Stream, Integer>();
 
     private RelativeLayout mPublisherViewContainer;
 
@@ -244,14 +245,19 @@ public class MainActivity extends AppCompatActivity
         mSession.subscribe(subscriber);
         mSubscribers.add(subscriber);
         mSubscriberStreams.put(stream, subscriber);
-
-        int position = mSubscribers.size() - 1;
+        int position = 0;
+        for (int i = 0; i < MAX_NUM_SUBSCRIBERS; i++) {
+            if (mSubscriberPosition.containsValue(i) == false) {
+                 position = i;
+                 break;
+            }
+        }
+        mSubscriberPosition.put(stream, position);
         int id = getResources().getIdentifier("subscriberview" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
         RelativeLayout subscriberViewContainer = (RelativeLayout) findViewById(id);
 
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         subscriberViewContainer.addView(subscriber.getView());
-
         id = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
         final ToggleButton toggleAudio = (ToggleButton) findViewById(id);
         toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -275,12 +281,12 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        int position = mSubscribers.indexOf(subscriber);
+        int position = mSubscriberPosition.get(stream);
         int id = getResources().getIdentifier("subscriberview" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
 
         mSubscribers.remove(subscriber);
         mSubscriberStreams.remove(stream);
-
+        mSubscriberPosition.remove(stream);
         RelativeLayout subscriberViewContainer = (RelativeLayout) findViewById(id);
         subscriberViewContainer.removeView(subscriber.getView());
 
