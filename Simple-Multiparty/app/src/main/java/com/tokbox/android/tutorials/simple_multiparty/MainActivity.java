@@ -21,7 +21,6 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -33,6 +32,19 @@ public class MainActivity extends AppCompatActivity
                                      Publisher.PublisherListener,
                                      Session.SessionListener {
 
+    static class SubscriberContainer {
+        public RelativeLayout container;
+        public ToggleButton toggleAudio;
+        public Subscriber subscriber;
+
+        public SubscriberContainer(RelativeLayout container,
+                               ToggleButton toggleAudio,
+                               Subscriber subscriber) {
+            this.container = container;
+            this.toggleAudio = toggleAudio;
+            this.subscriber = subscriber;
+        }
+    }
     private static final String TAG = "simple-multiparty " + MainActivity.class.getSimpleName();
 
     private final int MAX_NUM_SUBSCRIBERS = 4;
@@ -43,8 +55,7 @@ public class MainActivity extends AppCompatActivity
     private Session mSession;
     private Publisher mPublisher;
 
-    private ArrayList<Subscriber> mSubscribers = new ArrayList<Subscriber>();
-    private HashMap<Stream, Subscriber> mSubscriberStreams = new HashMap<Stream, Subscriber>();
+    private List<SubscriberContainer> mSubscribers;
 
     private RelativeLayout mPublisherViewContainer;
 
@@ -96,6 +107,19 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+        mSubscribers = new ArrayList<>();
+        for (int i = 0; i < MAX_NUM_SUBSCRIBERS; i++) {
+            int containerId = getResources().getIdentifier("subscriberview" + (new Integer(i)).toString(),
+                    "id", MainActivity.this.getPackageName());
+            int toggleAudioId = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(i)).toString(),
+                    "id", MainActivity.this.getPackageName());
+            mSubscribers.add(new SubscriberContainer(
+                    findViewById(containerId),
+                    findViewById(toggleAudioId),
+                    null
+            ));
+        }
 
         requestPermissions();
     }
@@ -231,63 +255,71 @@ public class MainActivity extends AppCompatActivity
         finish();
     }
 
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
+    private SubscriberContainer findFirstEmptyContainer(Subscriber subscriber) {
+        for (SubscriberContainer c : mSubscribers) {
+            if (c.subscriber == null) {
+                return c;
+            }
+        }
+        return null;
+    }
 
-        if (mSubscribers.size() + 1 > MAX_NUM_SUBSCRIBERS) {
+    private SubscriberContainer findContainerForStream(Stream stream) {
+        for (SubscriberContainer c : mSubscribers) {
+            if (c.subscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    private void addSubscriber(Subscriber subscriber) {
+        SubscriberContainer container = findFirstEmptyContainer(subscriber);
+        if (container == null) {
             Toast.makeText(this, "New subscriber ignored. MAX_NUM_SUBSCRIBERS limit reached.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
-        mSession.subscribe(subscriber);
-        mSubscribers.add(subscriber);
-        mSubscriberStreams.put(stream, subscriber);
-
-        int position = mSubscribers.size() - 1;
-        int id = getResources().getIdentifier("subscriberview" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-        RelativeLayout subscriberViewContainer = (RelativeLayout) findViewById(id);
-
+        container.subscriber = subscriber;
+        container.container.addView(subscriber.getView());
         subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        subscriberViewContainer.addView(subscriber.getView());
 
-        id = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-        final ToggleButton toggleAudio = (ToggleButton) findViewById(id);
-        toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    subscriber.setSubscribeToAudio(true);
-                } else {
-                    subscriber.setSubscribeToAudio(false);
-                }
+        container.toggleAudio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                subscriber.setSubscribeToAudio(true);
+            } else {
+                subscriber.setSubscribeToAudio(false);
             }
         });
-        toggleAudio.setVisibility(View.VISIBLE);
+        container.toggleAudio.setVisibility(View.VISIBLE);
+    }
+
+    private void removeSubscriberWithStream(Stream stream) {
+        SubscriberContainer container = findContainerForStream(stream);
+        if (container == null) {
+            return;
+        }
+
+        container.container.removeView(container.subscriber.getView());
+        container.toggleAudio.setOnCheckedChangeListener(null);
+        container.toggleAudio.setVisibility(View.INVISIBLE);
+        container.subscriber = null;
+    }
+
+    @Override
+    public void onStreamReceived(Session session, Stream stream) {
+        Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
+
+        final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+        mSession.subscribe(subscriber);
+        addSubscriber(subscriber);
     }
 
     @Override
     public void onStreamDropped(Session session, Stream stream) {
         Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
 
-        Subscriber subscriber = mSubscriberStreams.get(stream);
-        if (subscriber == null) {
-            return;
-        }
-
-        int position = mSubscribers.indexOf(subscriber);
-        int id = getResources().getIdentifier("subscriberview" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-
-        mSubscribers.remove(subscriber);
-        mSubscriberStreams.remove(stream);
-
-        RelativeLayout subscriberViewContainer = (RelativeLayout) findViewById(id);
-        subscriberViewContainer.removeView(subscriber.getView());
-
-        id = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-        final ToggleButton toggleAudio = (ToggleButton) findViewById(id);
-        toggleAudio.setOnCheckedChangeListener(null);
-        toggleAudio.setVisibility(View.INVISIBLE);
+        removeSubscriberWithStream(stream);
     }
 
     @Override
@@ -315,10 +347,10 @@ public class MainActivity extends AppCompatActivity
         sessionConnected = false;
 
         if (mSubscribers.size() > 0) {
-            for (Subscriber subscriber : mSubscribers) {
-                if (subscriber != null) {
-                    mSession.unsubscribe(subscriber);
-                    subscriber.destroy();
+            for (SubscriberContainer c : mSubscribers) {
+                if (c.subscriber != null) {
+                    mSession.unsubscribe(c.subscriber);
+                    c.subscriber.destroy();
                 }
             }
         }
