@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity
     private Publisher mPublisher;
 
     private List<SubscriberContainer> mSubscribers;
-    //private HashMap<Stream, Subscriber> mSubscriberStreams = new HashMap<Stream, Subscriber>();
 
     private RelativeLayout mPublisherViewContainer;
 
