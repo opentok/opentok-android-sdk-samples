@@ -23,3 +23,4 @@ script:
   - "cd Screen-Sharing && ./gradlew app:assembleRelease && cd .."
   - "cd Signaling && ./gradlew app:assembleRelease && cd .."
   - "cd Simple-Multiparty && ./gradlew app:assembleRelease && cd .."
+  - "cd ARCore && ./gradlew app:assembleRelease && cd .."

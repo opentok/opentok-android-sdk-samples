@@ -112,8 +112,8 @@ public class AugmentedFaceActivity extends AppCompatActivity implements Scene.On
   @Override
   public void onConnected(Session session) {
     Log.i(LOG_TAG, "Session Connected");
-    CustomVideoCapturer mCapturer = new CustomVideoCapturer(mFragment.getArSceneView());
-    Publisher customPublisher = new Publisher.Builder(AugmentedFaceActivity.this).name("publisher-capturer").capturer(mCapturer).build();
+    CustomVideoCapturer capturer = new CustomVideoCapturer(mFragment.getArSceneView());
+    Publisher customPublisher = new Publisher.Builder(AugmentedFaceActivity.this).name("publisher-capturer").capturer(capturer).build();
     customPublisher.setPublisherListener(this);
     mPublisherViewContainer.addView(customPublisher.getView());
     mSession.publish(customPublisher);
@@ -143,16 +143,16 @@ public class AugmentedFaceActivity extends AppCompatActivity implements Scene.On
   @Override
   public void onUpdate(FrameTime frameTime) {
     if(mRenderable == null || mTexture == null) return;
-    Collection<AugmentedFace> mFaceList = mSceneView.getSession().getAllTrackables(AugmentedFace.class);
+    Collection<AugmentedFace> faceList = mSceneView.getSession().getAllTrackables(AugmentedFace.class);
 
     // Make new AugmentedFaceNodes for any new faces.
-    for(AugmentedFace mFace: mFaceList){
+    for(AugmentedFace face: faceList){
       if(!mFaceNodeMap.containsKey(mFace)){
-        AugmentedFaceNode mFaceNode = new AugmentedFaceNode(mFace);
-        mFaceNode.setParent(mScene);
-        mFaceNode.setFaceRegionsRenderable(mRenderable);
-        mFaceNode.setFaceMeshTexture(mTexture);
-        mFaceNodeMap.put(mFace, mFaceNode);
+        AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
+        faceNode.setParent(mScene);
+        faceNode.setFaceRegionsRenderable(mRenderable);
+        faceNode.setFaceMeshTexture(mTexture);
+        faceNode.put(face, faceNode);
       }
     }
 
@@ -160,10 +160,10 @@ public class AugmentedFaceActivity extends AppCompatActivity implements Scene.On
     Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iter = mFaceNodeMap.entrySet().iterator();
     while(iter.hasNext()){
       Map.Entry<AugmentedFace, AugmentedFaceNode> entry = iter.next();
-      AugmentedFace mFace = entry.getKey();
-      if(mFace.getTrackingState() == TrackingState.STOPPED){
-        AugmentedFaceNode mFaceNode = entry.getValue();
-        mFaceNode.setParent(null);
+      AugmentedFace face = entry.getKey();
+      if(face.getTrackingState() == TrackingState.STOPPED){
+        AugmentedFaceNode faceNode = entry.getValue();
+        faceNode.setParent(null);
         iter.remove();
       }
     }
