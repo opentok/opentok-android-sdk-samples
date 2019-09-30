@@ -20,7 +20,6 @@ import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.Texture;
-import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.AugmentedFaceNode;
 
 import com.opentok.android.Publisher;
@@ -147,12 +146,12 @@ public class AugmentedFaceActivity extends AppCompatActivity implements Scene.On
 
     // Make new AugmentedFaceNodes for any new faces.
     for(AugmentedFace face: faceList){
-      if(!mFaceNodeMap.containsKey(mFace)){
+      if(!mFaceNodeMap.containsKey(face)){
         AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
         faceNode.setParent(mScene);
         faceNode.setFaceRegionsRenderable(mRenderable);
         faceNode.setFaceMeshTexture(mTexture);
-        faceNode.put(face, faceNode);
+        mFaceNodeMap.put(face, faceNode);
       }
     }
 
