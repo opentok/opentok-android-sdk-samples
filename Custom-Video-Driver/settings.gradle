@@ -1,1 +1,1 @@
-include ':app', ':CustomVideoDriverLib'
+include ':app-camera2', ':app', ':CustomVideoDriverLib'
