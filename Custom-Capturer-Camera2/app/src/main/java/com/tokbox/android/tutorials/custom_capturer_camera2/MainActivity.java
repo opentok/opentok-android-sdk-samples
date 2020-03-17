@@ -138,23 +138,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Log.e("TAG", "Camera2 requires Api level 21 or above.");
+            Toast.makeText(this, "Camera2 requires Api level 21 or above.", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
             mPublisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher")
                     .capturer(new CustomVideoCapturerCamera2(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
                     .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
+            mPublisher.setPublisherListener(this);
+
+            mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            mPublisherViewContainer.addView(mPublisher.getView());
+
+            if (mPublisher.getView() instanceof GLSurfaceView) {
+                ((GLSurfaceView) (mPublisher.getView())).setZOrderOnTop(true);
+            }
+
+            mSession.publish(mPublisher);
         }
-        mPublisher.setPublisherListener(this);
-
-        mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisherViewContainer.addView(mPublisher.getView());
-
-        if (mPublisher.getView() instanceof GLSurfaceView) {
-            ((GLSurfaceView) (mPublisher.getView())).setZOrderOnTop(true);
-        }
-
-        mSession.publish(mPublisher);
     }
 
     @Override
