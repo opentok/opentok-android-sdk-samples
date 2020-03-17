@@ -143,8 +143,6 @@ public class MainActivity extends AppCompatActivity
             mPublisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher")
                     .capturer(new CustomVideoCapturerCamera2(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
-
-                    //.capturer(new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
                     .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
         }
         mPublisher.setPublisherListener(this);
