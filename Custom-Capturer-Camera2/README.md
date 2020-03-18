@@ -1,20 +1,21 @@
-# Custom Video Driver
-
-Note: Read the README.md file in the Project 1 folder before starting here.
+# Custom Video Capturer (camera2 interface)
+Sample app shows how to use the custom capturer using camera2 package. 
+Note: You need to have a minimum api level 21 to run this sample app
 
 ## Using a custom video capturer
 
 The MainActivity class shows how you can use a custom video capturer for a publisher. After
-instantiating a Publisher object, the code sets a custom video capturer by calling the
-`setCapturer(BaseVideoCapturer capturer)` method of the Publisher:
+instantiating a Publisher object, the code sets a custom video capturer as shown below.
 
 ```java
-    mPublisher = new Publisher(MainActivity.this, "publisher");
-    mPublisher.setPublisherListener(this);
-    mPublisher.setCapturer(new CustomVideoCapturer(MainActivity.this));
+     mPublisher = new Publisher.Builder(MainActivity.this)
+                    .name("publisher")
+                    .capturer(new CustomVideoCapturerCamera2(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM,                           Publisher.CameraCaptureFrameRate.FPS_30))
+                    .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
+            mPublisher.setPublisherListener(this);
 ```
 
-The CustomVideoCapturer class is defined in the `com.opentok.android.samples.custom_video_driver` package.
+The CustomVideoCapturerCamera2 class is defined in the `com.opentok.android.samples.custom_capturer_camera2` package.
 This class extends the BaseVideoCapturer class, defined in the OpenTok Android SDK.
 The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
@@ -38,17 +39,6 @@ rate, width, height, video delay, and video format for the capturer:
 
 The app calls `startCapture()` to start capturing video from the custom video capturer.
 
-The class also implements the android.hardware.Camera.PreviewCallback interface. The
-onPreviewFrame() method of this interface is called as preview frames of the camera become
-available. In this method, the app calls the provideByteArrayFrame() method of the
-CustomVideoCapturer class (inherited from the BaseVideoCapturer class). This method
-provides a video frame, defined as a byte array, to the video capturer:
-
-```java
-    provideByteArrayFrame(data, NV21, mCaptureWidth,
-            mCaptureHeight, currentRotation, isFrontCamera());
-```
-
 The publisher adds this video frame to the published stream.
 
 ## Using a custom video renderer
@@ -58,12 +48,6 @@ subscriber videos. In this sample we will use a custom video renderer which inve
 in the image.
 
 After instantiating a Publisher object, the code sets a custom video renderer by calling the 'setRenderer(BaseVideoRenderer renderer)' method of the Publisher:
-
-```java
-   mPublisher = new Publisher(MainActivity.this, "publisher");
-   mPublisher.setPublisherListener(this);
-   mPublisher.setRenderer(new InvertedColorsVideoRenderer(this));
-```
 
 The InvertedColorsVideoRenderer class is defined in the `com.opentok.android.samples.custom_video_driver`
 package. This class extends the BaseVideoRenderer class, defined in the OpenTok Android SDK.
