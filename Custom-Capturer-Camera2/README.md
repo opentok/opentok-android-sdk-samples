@@ -15,7 +15,7 @@ instantiating a Publisher object, the code sets a custom video capturer as shown
             mPublisher.setPublisherListener(this);
 ```
 
-The CustomVideoCapturerCamera2 class is defined in the `com.opentok.android.samples.custom_capturer_camera2` package.
+The CustomVideoCapturerCamera2 class is defined in the `com.example.tokbox.CustomVideoDriverLib` package.
 This class extends the BaseVideoCapturer class, defined in the OpenTok Android SDK.
 The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
