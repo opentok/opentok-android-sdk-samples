@@ -1,0 +1,2 @@
+include ':app', ':CustomVideoDriverLib'
+project(":CustomVideoDriverLib").projectDir = file("../Custom-Video-Driver/CustomVideoDriverLib")
