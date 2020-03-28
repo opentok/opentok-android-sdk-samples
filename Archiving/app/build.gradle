@@ -1,32 +1,33 @@
 apply plugin: 'com.android.application'
+apply from: '../../build.properties'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion android.compileSdkVersion
+    buildToolsVersion android.buildToolsVersion
 
     defaultConfig {
         applicationId "com.tokbox.android.tutorials.archiving"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion targetsdkversion
+        versionCode versioncode
+        versionName versionname
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility sourcecompatibility
+        targetCompatibility targetcompatibility
     }
 	
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled minifyenabled
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    implementation 'com.opentok.android:opentok-android-sdk:2.16.+'
+    implementation "com.opentok.android:opentok-android-sdk:${sdkVersion}"
     implementation 'pub.devrel:easypermissions:0.4.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
