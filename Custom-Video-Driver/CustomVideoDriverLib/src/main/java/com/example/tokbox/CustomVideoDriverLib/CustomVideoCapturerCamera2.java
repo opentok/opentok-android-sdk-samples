@@ -193,7 +193,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
                         captureRequest = captureRequestBuilder.build();
-                        captureSession.setRepeatingRequest(captureRequest, captureNotification, null);
+                        captureSession.setRepeatingRequest(captureRequest, captureNotification, cameraThreadHandler);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
@@ -350,7 +350,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
-                        null
+                        cameraThreadHandler
                 );
             } else {
                 captureRequestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -363,7 +363,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
-                        null
+                        cameraThreadHandler
                 );
             }
         } catch (CameraAccessException e) {
@@ -673,7 +673,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             );
             cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
             characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
-            cameraManager.openCamera(camId, cameraObserver, null);
+            cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);
         } catch (CameraAccessException exp) {
             throw new Camera2Exception(exp.getMessage());
         }
