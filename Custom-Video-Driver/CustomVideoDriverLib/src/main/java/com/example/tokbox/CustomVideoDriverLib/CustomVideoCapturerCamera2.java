@@ -26,9 +26,6 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.opentok.android.BaseVideoCapturer;
-import com.opentok.android.Publisher;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,14 +34,20 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.opentok.android.BaseVideoCapturer;
+import com.opentok.android.Publisher;
+
 @TargetApi(21)
 @RequiresApi(21)
-public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
+public
+class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
     private static final int PREFERRED_FACING_CAMERA = CameraMetadata.LENS_FACING_FRONT;
     private static final int PIXEL_FORMAT = ImageFormat.YUV_420_888;
+    private static final String LOG_TAG = CustomVideoCapturerCamera2.class.getSimpleName();
 
     private enum CameraState {
         CLOSED,
+        CLOSING,
         SETUP,
         OPEN,
         CAPTURE,
@@ -71,7 +74,6 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
     private Range<Integer> camFps;
     private List<RuntimeException> runtimeExceptionList;
     private boolean isPaused;
-    private static final String LOG_TAG = CustomVideoCapturerCamera2.class.getSimpleName();
 
     private Runnable executeAfterClosed;
     private Runnable executeAfterCameraOpened;
@@ -104,7 +106,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
     private CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-            Log.d(LOG_TAG,"onOpened");
+            Log.d(LOG_TAG,"CameraDevice onOpened");
             cameraState = CameraState.OPEN;
             CustomVideoCapturerCamera2.this.camera = camera;
             if (executeAfterCameraOpened != null) {
@@ -115,7 +117,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         @Override
         public void onDisconnected(CameraDevice camera) {
             try {
-                Log.d(LOG_TAG,"onDisconnected");
+                Log.d(LOG_TAG,"CameraDevice onDisconnected");
                 CustomVideoCapturerCamera2.this.camera.close();
             } catch (NullPointerException e) {
                 // does nothing
@@ -125,7 +127,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         @Override
         public void onError(CameraDevice camera, int error) {
             try {
-                Log.d(LOG_TAG, "onError");
+                Log.d(LOG_TAG,"CameraDevice onError");
                 CustomVideoCapturerCamera2.this.camera.close();
                 // wait for condition variable
             } catch (NullPointerException e) {
@@ -136,7 +138,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
 
         @Override
         public void onClosed(CameraDevice camera) {
-            Log.d(LOG_TAG,"onClosed");
+            Log.d(LOG_TAG,"CameraDevice onClosed");
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             CustomVideoCapturerCamera2.this.camera = null;
@@ -152,6 +154,15 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         @Override
         public void onImageAvailable(ImageReader reader) {
             Image frame = reader.acquireNextImage();
+            if (frame == null
+                    || (frame.getPlanes().length > 0 && frame.getPlanes()[0].getBuffer() == null)
+                    || (frame.getPlanes().length > 1 && frame.getPlanes()[1].getBuffer() == null)
+                    || (frame.getPlanes().length > 2 && frame.getPlanes()[2].getBuffer() == null))
+            {
+                Log.d(LOG_TAG,"onImageAvailable frame provided has no image data");
+                return;
+            }
+
             if (CameraState.CAPTURE == cameraState) {
                 provideBufferFramePlanar(
                         frame.getPlanes()[0].getBuffer(),
@@ -177,6 +188,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
             new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
+                    Log.d(LOG_TAG,"CaptureSession onConfigured");
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
@@ -189,13 +201,17 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
+                    Log.d(LOG_TAG,"CaptureSession onFailed");
                     cameraState = CameraState.ERROR;
                     postAsyncException(new Camera2Exception("Camera session configuration failed"));
                 }
 
                 @Override
                 public void onClosed(CameraCaptureSession session) {
-                    camera.close();
+                    Log.d(LOG_TAG,"CaptureSession onClosed");
+                    if (camera != null) {
+                        camera.close();
+                    }
                 }
             };
 
@@ -312,6 +328,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
     }
 
     private int doStartCapture() {
+        Log.d(LOG_TAG,"doStartCapture enter");
         try {
             // create camera preview request
             if (isFrontCamera()) {
@@ -352,6 +369,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         } catch (CameraAccessException e) {
             throw new Camera2Exception(e.getMessage());
         }
+        Log.d(LOG_TAG,"doStartCapture exit");
         return 0;
     }
 
@@ -360,7 +378,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
      */
     @Override
     public synchronized int startCapture() {
-        Log.d(LOG_TAG,"startCapture enter");
+        Log.d(LOG_TAG,"startCapture enter (cameraState: "+ cameraState +")");
         if (null != camera && CameraState.OPEN == cameraState) {
             return doStartCapture();
         } else if (CameraState.SETUP == cameraState) {
@@ -380,7 +398,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
     public synchronized int stopCapture() {
         Log.d(LOG_TAG,"stopCapture enter");
         if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
-            CameraState oldState = cameraState;
+            cameraState = CameraState.CLOSING;
             try {
                 captureSession.stopRepeating();
             } catch (CameraAccessException e) {
@@ -420,7 +438,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        //Log.d("getCaptureSettings enter");
+        //log.d("getCaptureSettings enter");
         CaptureSettings retObj = new CaptureSettings();
         retObj.fps = desiredFps;
         retObj.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
@@ -428,7 +446,7 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         retObj.format = BaseVideoCapturer.NV21;
         retObj.expectedDelay = 0;
         //retObj.mirrorInLocalRender = frameMirrorX;
-        //Log.d("getCaptureSettings exit");
+        //log.d("getCaptureSettings exit");
         return retObj;
     }
 
@@ -464,9 +482,18 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
     public void onResume() {
         Log.d(LOG_TAG,"onResume");
         if (isPaused) {
-            initCamera();
-            startCapture();
+            Runnable resume = () -> {
+                initCamera();
+                startCapture();
+            };
+            if (cameraState == CameraState.CLOSING) {
+                executeAfterClosed = resume;
+            } else if (cameraState == CameraState.CLOSED){
+                resume.run();
+            }
             isPaused = false;
+        } else {
+            Log.d(LOG_TAG,"Capturer was not paused when onResume was called");
         }
     }
 
@@ -503,10 +530,8 @@ public class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements Bas
         executeAfterClosed = () -> {
             switch (oldState) {
                 case CAPTURE:
-                    executeAfterCameraOpened = () -> {
-                        startCapture();
-                    };
                     initCamera();
+                    startCapture();
                     break;
                 case SETUP:
                 default:
