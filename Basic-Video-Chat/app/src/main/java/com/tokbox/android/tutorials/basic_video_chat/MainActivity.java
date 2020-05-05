@@ -1,8 +1,8 @@
 package com.tokbox.android.tutorials.basic_video_chat;
 
 import android.opengl.GLSurfaceView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;

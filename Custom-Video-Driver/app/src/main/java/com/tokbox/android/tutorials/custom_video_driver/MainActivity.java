@@ -3,8 +3,8 @@ package com.tokbox.android.tutorials.custom_video_driver;
 import android.Manifest;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,8 +18,6 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-
-import com.example.tokbox.CustomVideoDriverLib.*;
 
 import java.util.List;
 
