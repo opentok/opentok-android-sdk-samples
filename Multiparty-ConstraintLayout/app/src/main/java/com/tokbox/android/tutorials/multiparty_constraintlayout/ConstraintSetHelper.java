@@ -1,7 +1,7 @@
 package com.tokbox.android.tutorials.multiparty_constraintlayout;
 
-import androidx.constraintlayout.ConstraintLayout;
-import androidx.constraintlayout.ConstraintSet;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.transition.TransitionManager;
 
 public class ConstraintSetHelper {

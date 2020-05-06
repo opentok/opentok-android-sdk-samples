@@ -3,7 +3,7 @@ package com.tokbox.android.tutorials.multiparty_constraintlayout;
 import android.Manifest;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
-import androidx.constraintlayout.ConstraintLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
