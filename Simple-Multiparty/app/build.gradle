@@ -34,6 +34,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'pub.devrel:easypermissions:0.4.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation "androidx.appcompat:appcompat:${appcompat_ver}"
     testImplementation 'junit:junit:4.12'
 }
