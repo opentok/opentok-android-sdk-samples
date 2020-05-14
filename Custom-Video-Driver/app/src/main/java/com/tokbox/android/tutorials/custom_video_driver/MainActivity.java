@@ -3,13 +3,15 @@ package com.tokbox.android.tutorials.custom_video_driver;
 import android.Manifest;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.tokbox.CustomVideoDriverLib.CustomVideoCapturer;
+import com.example.tokbox.CustomVideoDriverLib.InvertedColorsVideoRenderer;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -18,8 +20,6 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-
-import com.example.tokbox.CustomVideoDriverLib.*;
 
 import java.util.List;
 
@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
-        mSubscriberViewContainer = (LinearLayout) findViewById(R.id.subscriberview);
+        mPublisherViewContainer = findViewById(R.id.publisherview);
+        mSubscriberViewContainer = findViewById(R.id.subscriberview);
 
         requestPermissions();
     }
