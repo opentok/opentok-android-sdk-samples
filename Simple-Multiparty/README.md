@@ -4,8 +4,8 @@ Note: Read the README.md file in the Basic-Video-Chat folder before starting her
 
 ## Subcribing to multiple streams
 
-Previous samples subscribe to only one stream. In a multiparty video audio call
-there should be multiple parties.
+Previous samples subscribed to only one stream. In a multiparty video audio call
+there are multiple streams.
 
 ```java
 @Override
@@ -18,10 +18,10 @@ public void onStreamReceived(Session session, Stream stream) {
 }
 ```
 
-This simple multiparty app is able to handle only four subsriber parties. On a
-new stream received the MainActivity class creates a new Subscriber object and
-subscribes the Session object to it. The Subscriber stream is rendered in the
-screen as we did it before.
+This simple multiparty app is able to handle a maximum of four subscribers. Once a
+new stream is received, the MainActivity class creates a new Subscriber object and
+subscribes the Session object to it. The Subscriber stream is then rendered to the
+screen (as it did before).
 
 ## Adding user interface controls
 
