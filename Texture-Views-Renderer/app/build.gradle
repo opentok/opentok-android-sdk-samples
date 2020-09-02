@@ -1,0 +1,35 @@
+apply plugin: 'com.android.application'
+apply from: '../../build.properties'
+
+android {
+    compileSdkVersion android.compileSdkVersion
+    buildToolsVersion android.buildToolsVersion
+    defaultConfig {
+        applicationId "com.tokbox.android.tutorials.texture_views_renderer"
+        minSdkVersion 19
+        targetSdkVersion targetsdkversion
+        versionCode versioncode
+        versionName versionname
+    }
+
+	compileOptions {
+		sourceCompatibility sourcecompatibility
+		targetCompatibility targetcompatibility
+	}
+
+    buildTypes {
+        release {
+            minifyEnabled minifyenabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    implementation "com.opentok.android:opentok-android-sdk:${sdkVersion}"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'pub.devrel:easypermissions:0.4.0'
+    implementation "androidx.appcompat:appcompat:${appcompat_ver}"
+}
