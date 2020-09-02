@@ -1,6 +1,6 @@
 # Multiparty using ConstraintLayout
 
-Note: Read the README.md file in the Project 1 folder before starting here.
+Note: Read the README.md file in the Basic-Video-Chat folder before starting here.
 
 Sample #6 shows a simple multiparty app which uses basic layouts to display the different video
 views of the participants.
