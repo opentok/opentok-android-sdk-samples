@@ -1,6 +1,6 @@
 # Live Photo Capture
 
-Note: Read the README.md file in the Project 1 folder before starting here.
+Note: Read the README.md file in the Basic-Video-Chat folder before starting here.
 
 ## Taking a screenshot of a subscribed video
 
