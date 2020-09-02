@@ -8,40 +8,14 @@ Previous samples subscribe to only one stream. In a multiparty video audio call
 there should be multiple parties.
 
 ```java
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
+@Override
+public void onStreamReceived(Session session, Stream stream) {
+    Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-        if (mSubscribers.size() + 1 > MAX_NUM_SUBSCRIBERS) {
-            Toast.makeText(this, "New subscriber ignored. MAX_NUM_SUBSCRIBERS limit reached.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        final Subscriber subscriber = new Subscriber(MainActivity.this, stream);
-        mSession.subscribe(subscriber);
-        mSubscribers.add(subscriber);
-        mSubscriberStreams.put(stream, subscriber);
-
-        int position = mSubscribers.size() - 1;
-        int id = getResources().getIdentifier("subscriberview" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-        RelativeLayout subscriberViewContainer = (RelativeLayout) findViewById(id);
-
-        subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        subscriberViewContainer.addView(subscriber.getView());
-
-        id = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(position)).toString(), "id", MainActivity.this.getPackageName());
-        final ToggleButton toggleAudio = (ToggleButton) findViewById(id);
-        toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    subscriber.setSubscribeToAudio(true);
-                } else {
-                    subscriber.setSubscribeToAudio(false);
-                }
-            }
-        });
-        toggleAudio.setVisibility(View.VISIBLE);
-    }
+    final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+    mSession.subscribe(subscriber);
+    addSubscriber(subscriber);
+}
 ```
 
 This simple multiparty app is able to handle only four subsriber parties. On a
