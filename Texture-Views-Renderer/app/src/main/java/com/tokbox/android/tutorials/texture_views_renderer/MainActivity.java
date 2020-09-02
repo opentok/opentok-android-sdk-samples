@@ -232,7 +232,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+        mSubscriber = new Subscriber.Builder(MainActivity.this, stream)
+                .renderer(new TextureViewRenderer(this))
+                .build();
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
     }
