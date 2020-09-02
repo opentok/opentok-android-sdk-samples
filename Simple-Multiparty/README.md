@@ -36,18 +36,18 @@ When the user taps the mute button for the publisher, the following method of th
 is invoked:
 
 ```java
-        toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mPublisher == null) {
-                    return;
-                }
-                if (isChecked) {
-                    mPublisher.setPublishAudio(true);
-                } else {
-                    mPublisher.setPublishAudio(false);
-                }
-            }
-        });
+toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (mPublisher == null) {
+            return;
+        }
+        if (isChecked) {
+            mPublisher.setPublishAudio(true);
+        } else {
+            mPublisher.setPublishAudio(false);
+        }
+    }
+});
 ```
 
 The `setPublishAudio(boolean publishAudio)` method of a Publisher object toggles its audio on or off, based on a
@@ -57,14 +57,14 @@ When the user taps the swapCamera button, the following method of the OpenTokUI 
 is invoked:
 
 ```java
-        swapCamera.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (mPublisher == null) {
-                    return;
-                }
-                mPublisher.swapCamera();
-            }
-        });
+swapCamera.setOnClickListener(new View.OnClickListener() {
+    public void onClick(View v) {
+        if (mPublisher == null) {
+            return;
+        }
+        mPublisher.swapCamera();
+    }
+});
 ```
 
 The `swapCamera()` method of a Publisher object changes the camera used to the next available camera
@@ -74,7 +74,7 @@ Note: For the sake of simplicity, we have set a maximum of 4 subscribers for thi
 
 See below: 
 ```java
-    private final int MAX_NUM_SUBSCRIBERS = 4;
+private final int MAX_NUM_SUBSCRIBERS = 4;
 ```
 
 ## Next steps
