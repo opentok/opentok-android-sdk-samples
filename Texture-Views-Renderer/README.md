@@ -8,7 +8,7 @@ The OpenTok SDK supports multiple ways of video rendering:
 2. Using a TextureView
 
 Although both GLSurfaceView and TextureView are very similar, they have some differences that make them more appropriate according to the use case.
-When using GLSurfaceView, it is more complicated to do some view compositions like applying a mask or doing animations with the views, 
+When using GLSurfaceView, it is more complicated to compose views such as  applying a mask or doing animations with the views,
 on the other hand, when using TextureViews, these kind of things are feasible.
 
 By default, OpenTok SDK uses a `GLSurfaceView` to render the video, but you can enable using a `TextureView` when creating a session:
