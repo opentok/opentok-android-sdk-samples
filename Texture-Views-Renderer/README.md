@@ -32,7 +32,7 @@ This renderer is an implementation of the OpenTok's `BaseVideoRenderer` and live
 `TextureViewRenderer` uses a `TextureView` android class in order to do the video rendering.
 
 The schema of the `TextureViewRenderer` class is quite simple:
-- When frames are received in the `BaseVideoRenderer.onFrame` method, it is saved in a local variable protected by a lock.
+- When a frame is received in the `BaseVideoRenderer.onFrame` method, it is saved in a local variable protected by a lock.
 - `TextureView` render thread, takes the frame set by the previous method, and render it using OpenGL fragment and vertex shaders.
 
 Working with OpenGL in Android can be messy given the different versions of OpenGL ES and different Operating system version support.
