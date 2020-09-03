@@ -36,7 +36,7 @@ The schema of the `TextureViewRenderer` class is quite simple:
 - `TextureView` render thread, takes the frame set by the previous method, and render it using OpenGL fragment and vertex shaders.
 
 Working with OpenGL in Android can be messy given the different versions of OpenGL ES and different Operating system version support.
-To make it easy we have imported some handy classes from Google's [grafika project](https://github.com/google/grafika). 
+To make this easier, we have imported some handy classes from Google's [grafika project](https://github.com/google/grafika). 
 Those classes live in `com.android.grafika` package.
 
 ## Using a custom video renderer
