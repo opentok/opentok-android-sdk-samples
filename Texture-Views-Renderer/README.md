@@ -23,7 +23,7 @@ Session builder = new Session.Builder(this, apiKey, sessionId)
     }).build();
 ``` 
 
-In this sample we show how a `TextureView` renderer can be done and how it can be used when rendering video.
+In this sample, we show how a `TextureView` renderer can be implemented and how it can be used when rendering video.
 
 ## TextureView based renderer
 
