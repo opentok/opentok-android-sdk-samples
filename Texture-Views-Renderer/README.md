@@ -1,6 +1,6 @@
 # Texture View Renderer
 
-In this sample we include a custom video renderer based on `android.view.TextureView` class.
+This sample application uses a custom video renderer based on `android.view.TextureView` class.
 
 When it comes to video rendering, there are different alternatives, in the OpenTok SDK, we support two ways of doing it:
 
