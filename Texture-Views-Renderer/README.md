@@ -1,5 +1,7 @@
 # Texture View Renderer
 
+Note: Read the README.md file in the Basic-Video-Chat folder before starting here.
+
 This sample application uses a custom video renderer based on `android.view.TextureView` class.
 
 The OpenTok SDK supports multiple ways of video rendering:
