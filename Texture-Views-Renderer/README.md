@@ -2,7 +2,7 @@
 
 This sample application uses a custom video renderer based on `android.view.TextureView` class.
 
-When it comes to video rendering, there are different alternatives, in the OpenTok SDK, we support two ways of doing it:
+The OpenTok SDK supports multiple ways of video rendering:
 
 1. Using a GLSurfaceView
 2. Using a TextureView
