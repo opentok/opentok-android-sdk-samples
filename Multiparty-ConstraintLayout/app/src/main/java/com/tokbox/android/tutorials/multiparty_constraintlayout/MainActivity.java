@@ -252,25 +252,32 @@ public class MainActivity extends AppCompatActivity
             set.layoutViewWithBottomBound(getResIdForSubscriberIndex(0), R.id.main_container);
             set.layoutViewAllContainerWide(R.id.publisher_view_id, R.id.main_container);
             set.layoutViewAllContainerWide(getResIdForSubscriberIndex(0), R.id.main_container);
-
+            set.layoutViewHeightPercent(R.id.publisher_view_id, .5f);
+            set.layoutViewHeightPercent(getResIdForSubscriberIndex(0), .5f);
         } else if (size > 1 && size % 2 == 0){
             //  Publisher
             // Sub1 | Sub2
             // Sub3 | Sub4
             //    .....
+            int rows = (size / 2) + 1;
+            float heightPercent = 1f / rows;
+
             set.layoutViewWithTopBound(R.id.publisher_view_id, R.id.main_container);
             set.layoutViewAllContainerWide(R.id.publisher_view_id, R.id.main_container);
+            set.layoutViewHeightPercent(R.id.publisher_view_id, heightPercent);
 
-            for (int i = 0; i < size; i+=2) {
+            for (int i = 0; i < size; i += 2) {
                 if (i == 0) {
                     set.layoutViewAboveView(R.id.publisher_view_id, getResIdForSubscriberIndex(i));
-                    set.layoutViewAboveView(R.id.publisher_view_id, getResIdForSubscriberIndex(i+1));
+                    set.layoutViewAboveView(R.id.publisher_view_id, getResIdForSubscriberIndex(i + 1));
                 } else {
-                    set.layoutViewAboveView(getResIdForSubscriberIndex(i-2), getResIdForSubscriberIndex(i));
-                    set.layoutViewAboveView(getResIdForSubscriberIndex(i-1), getResIdForSubscriberIndex(i+1));
+                    set.layoutViewAboveView(getResIdForSubscriberIndex(i - 2), getResIdForSubscriberIndex(i));
+                    set.layoutViewAboveView(getResIdForSubscriberIndex(i - 1), getResIdForSubscriberIndex(i + 1));
                 }
 
-                set.layoutTwoViewsOccupyingAllRow(getResIdForSubscriberIndex(i), getResIdForSubscriberIndex(i+1));
+                set.layoutTwoViewsOccupyingAllRow(getResIdForSubscriberIndex(i), getResIdForSubscriberIndex(i + 1));
+                set.layoutViewHeightPercent(getResIdForSubscriberIndex(i), heightPercent);
+                set.layoutViewHeightPercent(getResIdForSubscriberIndex(i + 1), heightPercent);
             }
 
             set.layoutViewWithBottomBound(getResIdForSubscriberIndex(size - 2), R.id.main_container);
@@ -280,20 +287,28 @@ public class MainActivity extends AppCompatActivity
             // Sub2 | Sub3
             // Sub3 | Sub4
             //    .....
+            int rows = ((size + 1) / 2);
+            float heightPercent = 1f / rows;
 
             set.layoutViewWithTopBound(R.id.publisher_view_id, R.id.main_container);
+            set.layoutViewHeightPercent(R.id.publisher_view_id, heightPercent);
             set.layoutViewWithTopBound(getResIdForSubscriberIndex(0), R.id.main_container);
+            set.layoutViewHeightPercent(getResIdForSubscriberIndex(0), heightPercent);
             set.layoutTwoViewsOccupyingAllRow(R.id.publisher_view_id, getResIdForSubscriberIndex(0));
 
-            for (int i = 1; i < size; i+=2) {
+            for (int i = 1; i < size; i += 2) {
                 if (i == 1) {
                     set.layoutViewAboveView(R.id.publisher_view_id, getResIdForSubscriberIndex(i));
-                    set.layoutViewAboveView(getResIdForSubscriberIndex(0), getResIdForSubscriberIndex(i+1));
+                    set.layoutViewHeightPercent(R.id.publisher_view_id, heightPercent);
+                    set.layoutViewAboveView(getResIdForSubscriberIndex(0), getResIdForSubscriberIndex(i + 1));
+                    set.layoutViewHeightPercent(getResIdForSubscriberIndex(0), heightPercent);
                 } else {
-                    set.layoutViewAboveView(getResIdForSubscriberIndex(i-2), getResIdForSubscriberIndex(i));
-                    set.layoutViewAboveView(getResIdForSubscriberIndex(i-1), getResIdForSubscriberIndex(i+1));
+                    set.layoutViewAboveView(getResIdForSubscriberIndex(i - 2), getResIdForSubscriberIndex(i));
+                    set.layoutViewHeightPercent(getResIdForSubscriberIndex(i - 2), heightPercent);
+                    set.layoutViewAboveView(getResIdForSubscriberIndex(i - 1), getResIdForSubscriberIndex(i + 1));
+                    set.layoutViewHeightPercent(getResIdForSubscriberIndex(i - 1), heightPercent);
                 }
-                set.layoutTwoViewsOccupyingAllRow(getResIdForSubscriberIndex(i), getResIdForSubscriberIndex(i+1));
+                set.layoutTwoViewsOccupyingAllRow(getResIdForSubscriberIndex(i), getResIdForSubscriberIndex(i + 1));
             }
 
             set.layoutViewWithBottomBound(getResIdForSubscriberIndex(size - 2), R.id.main_container);

@@ -2,6 +2,8 @@ package com.tokbox.android.tutorials.multiparty_constraintlayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+
+import android.os.Build;
 import android.transition.TransitionManager;
 
 public class ConstraintSetHelper {
@@ -32,7 +34,7 @@ public class ConstraintSetHelper {
     }
 
     private void layoutViewNextToView(int leftViewId, int rightViewId, int leftBoundViewId, int rightBoundViewId) {
-        // leftBound | leftView | rightView \ rightBound
+        // leftBound | leftView | rightView | rightBound
 
         set.constrainWidth(leftViewId, 0);
         set.constrainWidth(rightViewId, 0);
@@ -62,7 +64,9 @@ public class ConstraintSetHelper {
 
     public void applyToLayout(ConstraintLayout layout, boolean animated) {
         if (animated) {
-            TransitionManager.beginDelayedTransition(layout);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+              TransitionManager.beginDelayedTransition(layout);
+            }
         }
         set.applyTo(layout);
     }
@@ -71,5 +75,13 @@ public class ConstraintSetHelper {
         layoutViewAllContainerWide(viewId, container);
         layoutViewWithTopBound(viewId, container);
         layoutViewWithBottomBound(viewId, container);
+    }
+
+    public void layoutViewHeightPercent(int viewId, float value) {
+        set.constrainPercentHeight(viewId, value);
+    }
+
+    public void layoutViewWidthPercent(int viewId, float value) {
+        set.constrainPercentWidth(viewId, value);
     }
 }
