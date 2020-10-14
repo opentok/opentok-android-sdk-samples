@@ -1,6 +1,6 @@
 # OpenTok Android SDK Samples
-[![Build Status](https://travis-ci.org/opentok/opentok-android-sdk-samples.svg?branch=master)](https://travis-ci.org/opentok/opentok-android-sdk-samples)
 
+[![Build Status](https://travis-ci.org/opentok/opentok-android-sdk-samples.svg?branch=master)](https://travis-ci.org/opentok/opentok-android-sdk-samples)
 
 This repository is meant to provide some examples for you to better understand the features of the OpenTok Android SDK. The sample applications are meant to be used with the latest version of the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). Feel free to copy and modify the source code herein for your own projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
 
@@ -42,3 +42,20 @@ This app shows how to use the audio driver API to implement a custom audio captu
 
 This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone.
 
+## Development and Contributing
+
+Interested in contributing? We :heart: pull requests! See the 
+[Contribution](CONTRIBUTING.md) guidelines.
+
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
+
+- Check out the Developer Documentation at <https://tokbox.com/developer/>
