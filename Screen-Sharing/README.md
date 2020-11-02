@@ -100,4 +100,4 @@ Runnable newFrame = new Runnable() {
 ## Next steps
 
 For details on the full OpenTok Android API, see the [reference
-documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
+documentation](https://tokbox.com/developer/sdks/android/).
