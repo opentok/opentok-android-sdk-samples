@@ -654,8 +654,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                     }
                 }
             } catch (Exception e) {
-                BaseAudioDevice.publisherError(e);
-                return;
+                throw new RuntimeException(e.getMessage());
             } finally {
                 // Ensure we always unlock
                 captureLock.unlock();
@@ -882,8 +881,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                     }
                 }
             } catch (Exception e) {
-                BaseAudioDevice.publisherError(e);
-                return;
+                throw new RuntimeException(e.getMessage());
             } finally {
                 rendererLock.unlock();
             }
