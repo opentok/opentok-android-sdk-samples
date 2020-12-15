@@ -33,5 +33,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'pub.devrel:easypermissions:0.4.0'
     implementation "androidx.appcompat:appcompat:${appcompat_ver}"
+    testImplementation 'junit:junit:4.12'
 }
 
