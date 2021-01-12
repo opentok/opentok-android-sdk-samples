@@ -24,31 +24,31 @@ jobs:
       - name: Archiving
         run: cd Archiving && ./gradlew app:assembleRelease && cd..
 
-        - name: Basic-Video-Chat
-        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd..
+      - name: Basic-Video-Chat
+      run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd..
 
-        - name: Custom-Audio-Driver
-        run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && cd..
+      - name: Custom-Audio-Driver
+      run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && cd..
 
-        - name: Custom-Video-Driver
-        run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && cd..
+      - name: Custom-Video-Driver
+      run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && cd..
 
-        - name: FrameMetadata
-        run: cd FrameMetadata && ./gradlew app:assembleRelease && cd..
+      - name: FrameMetadata
+      run: cd FrameMetadata && ./gradlew app:assembleRelease && cd..
 
-        - name: Multiparty-ConstraintLayout
-        run: cd Multiparty-ConstraintLayout && ./gradlew app:assembleRelease && cd..
+      - name: Multiparty-ConstraintLayout
+      run: cd Multiparty-ConstraintLayout && ./gradlew app:assembleRelease && cd..
 
-        - name: PictureInPicture
-        run: cd PictureInPicture && ./gradlew app:assembleRelease && cd..
+      - name: PictureInPicture
+      run: cd PictureInPicture && ./gradlew app:assembleRelease && cd..
 
-        - name: Screen-Sharing
-        run: cd Screen-Sharing && ./gradlew app:assembleRelease && cd..
+      - name: Screen-Sharing
+      run: cd Screen-Sharing && ./gradlew app:assembleRelease && cd..
 
-        - name: Signaling
-        run: cd Signaling && ./gradlew app:assembleRelease && cd..
+      - name: Signaling
+      run: cd Signaling && ./gradlew app:assembleRelease && cd..
 
-        - name: Simple-Multiparty
-        run: cd Simple-Multiparty && ./gradlew app:assembleRelease && cd..
+      - name: Simple-Multiparty
+      run: cd Simple-Multiparty && ./gradlew app:assembleRelease && cd..
 
       
