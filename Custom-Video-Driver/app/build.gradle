@@ -6,7 +6,7 @@ android {
     buildToolsVersion android.buildToolsVersion
     defaultConfig {
         applicationId "com.tokbox.android.tutorials.custom_video_driver"
-        minSdkVersion 16
+        minSdkVersion extMinSdkVersion
         targetSdkVersion targetsdkversion
         versionCode versioncode
         versionName versionname

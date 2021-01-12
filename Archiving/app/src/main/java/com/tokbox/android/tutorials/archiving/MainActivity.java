@@ -1,8 +1,6 @@
 package com.tokbox.android.tutorials.archiving;
 
 import android.Manifest;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.app.AlertDialog;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Publisher;
