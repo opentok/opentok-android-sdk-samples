@@ -1,4 +1,4 @@
-name: Builds
+name: Check projects
 
 on:
   push:

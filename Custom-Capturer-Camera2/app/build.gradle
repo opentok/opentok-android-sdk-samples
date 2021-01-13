@@ -3,7 +3,7 @@ plugins {
 }
 
 apply {
-    from '../../build.properties'
+    from '../from '../commons.gradle'
 }
 
 android {
