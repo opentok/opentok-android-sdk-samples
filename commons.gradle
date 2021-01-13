@@ -14,24 +14,24 @@ ext {
 }
 
 task checkOpenTokConfig() {
-    def list = []
+    doLast {
+        def openTokConfigFound = false
 
-    def openTokConfigFound = false
+        def dir = new File(".")
+        dir.eachFileRecurse (FileType.FILES) { file ->
 
-    def dir = new File(".")
-    dir.eachFileRecurse (FileType.FILES) { file ->
+            if(file.name == "OpenTokConfig.java") {
+                openTokConfigFound = true
 
-        if(file.name == "OpenTokConfig.java") {
-            openTokConfigFound = true
-
-            checkOpenTokConfigProperty(file, "API_KEY")
-            checkOpenTokConfigProperty(file, "SESSION_ID")
-            checkOpenTokConfigProperty(file, "TOKEN")
+                checkOpenTokConfigProperty(file, "API_KEY")
+                checkOpenTokConfigProperty(file, "SESSION_ID")
+                checkOpenTokConfigProperty(file, "TOKEN")
+            }
         }
-    }
 
-    if (!openTokConfigFound) {
-        throw new Exception("OpenTokConfig.java not found")
+        if (!openTokConfigFound) {
+            throw new Exception("OpenTokConfig.java not found")
+        }
     }
 }
 
