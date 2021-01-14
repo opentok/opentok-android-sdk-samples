@@ -142,9 +142,14 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Camera2 requires Api level 21 or above.", Toast.LENGTH_LONG).show();
             finish();
         } else {
+            CustomVideoCapturerCamera2 baseVideoCapturer
+                    = new CustomVideoCapturerCamera2(MainActivity.this,
+                    Publisher.CameraCaptureResolution.MEDIUM,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
+
             mPublisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher")
-                    .capturer(new CustomVideoCapturerCamera2(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30))
+                    .capturer(baseVideoCapturer)
                     .build();
             mPublisher.setPublisherListener(this);
 

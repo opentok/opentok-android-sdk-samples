@@ -508,11 +508,14 @@ class CustomAudioDevice extends BaseAudioDevice {
         }
 
         try {
-            audioRecord = new AudioRecord(AudioSource.VOICE_COMMUNICATION,
-                captureSettings.getSampleRate(),
-                NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO
-                    : AudioFormat.CHANNEL_IN_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT, recBufSize);
+            int channelConfig = NUM_CHANNELS_CAPTURING == 1 ? AudioFormat.CHANNEL_IN_MONO : AudioFormat.CHANNEL_IN_STEREO;
+
+            audioRecord = new AudioRecord(
+                    AudioSource.VOICE_COMMUNICATION,
+                    captureSettings.getSampleRate(),
+                    channelConfig,
+                    AudioFormat.ENCODING_PCM_16BIT, recBufSize);
+
             if (NoiseSuppressor.isAvailable()) {
                 noiseSuppressor = NoiseSuppressor.create(audioRecord.getAudioSessionId());
             }
@@ -700,15 +703,15 @@ class CustomAudioDevice extends BaseAudioDevice {
         }
 
         try {
+            int channelConfig = (NUM_CHANNELS_RENDERING == 1) ? AudioFormat.CHANNEL_OUT_MONO : AudioFormat.CHANNEL_OUT_STEREO;
+
             audioTrack = new AudioTrack(
-                AudioManager.STREAM_VOICE_CALL,
-                rendererSettings.getSampleRate(),
-                (NUM_CHANNELS_RENDERING == 1)
-                    ? AudioFormat.CHANNEL_OUT_MONO
-                    : AudioFormat.CHANNEL_OUT_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                minPlayBufSize >= 6000 ? minPlayBufSize : minPlayBufSize * 2,
-                AudioTrack.MODE_STREAM
+                    AudioManager.STREAM_VOICE_CALL,
+                    rendererSettings.getSampleRate(),
+                    channelConfig,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    minPlayBufSize >= 6000 ? minPlayBufSize : minPlayBufSize * 2,
+                    AudioTrack.MODE_STREAM
             );
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
