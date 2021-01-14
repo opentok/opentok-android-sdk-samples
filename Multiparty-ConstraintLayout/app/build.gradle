@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "com.tokbox.android.tutorials.archiving"
         minSdkVersion extMinSdkVersion
-        targetSdkVersion extTargetSdVersion
+        targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
     }
