@@ -1,6 +1,8 @@
-# Project 4: Screen Sharing
+# Screen Sharing
 
-Note: Read the README.md file in the Basic-Video-Chat folder before starting here.
+This app shows how to to publish a screen-sharing video, using the device screen as the source for the stream's video.
+
+> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 ## Screen sharing
 
@@ -46,7 +48,7 @@ public void onConnected(Session session) {
 }
 ```
 
-Note that the call to the `setPublisherVideoType()` method sets the video type of the published
+> Note: that the call to the `setPublisherVideoType()` method sets the video type of the published
 stream to `PublisherKitVideoType.PublisherKitVideoTypeScreen`. This optimizes the video encoding for
 screen sharing. It is recommended to use a low frame rate (5 frames per second or lower) with this
 video type. When using the screen video type in a session that uses the [OpenTok Media
@@ -56,7 +58,7 @@ audio-only fallback feature is disabled, so that the video does not drop out in 
 The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
 configures the WebView object, loading the TokBox URL.
 
-Note that the `mWebViewContainer` object is passed into the ScreensharingCapturer() constructor,
+Note that the `mWebViewContainer` object is passed into the `ScreensharingCapturer()` constructor,
 which assigns it to the `contentView` property. The `newFrame()` method is called when the video
 capturer supplies a new frame to the video stream. It creates a canvas, draws the `contentView`
 to the canvas, and assigns the bitmap representation of `contentView` to the frame to be sent:
@@ -68,29 +70,32 @@ Runnable newFrame = new Runnable() {
         if (capturing) {
             int width = contentView.getWidth();
             int height = contentView.getHeight();
-
+            
             if (frame == null ||
                 ScreensharingCapturer.this.width != width ||
                 ScreensharingCapturer.this.height != height) {
-
+                
                 ScreensharingCapturer.this.width = width;
                 ScreensharingCapturer.this.height = height;
-
+                
                 if (bmp != null) {
                     bmp.recycle();
                     bmp = null;
                 }
-
+                
                 bmp = Bitmap.createBitmap(width,
                         height, Bitmap.Config.ARGB_8888);
-
+                
                 canvas = new Canvas(bmp);
                 frame = new int[width * height];
             }
-
+            
             contentView.draw(canvas);
+            
             bmp.getPixels(frame, 0, width, 0, 0, width, height);
+
             provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+
             mHandler.postDelayed(newFrame, 1000 / fps);
         }
     }
@@ -99,5 +104,5 @@ Runnable newFrame = new Runnable() {
 
 ## Next steps
 
-For details on the full OpenTok Android API, see the [reference
-documentation](https://tokbox.com/developer/sdks/android/).
+* Review [other sample projects](../)
+* Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
