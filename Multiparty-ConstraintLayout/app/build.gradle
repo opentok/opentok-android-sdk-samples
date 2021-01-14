@@ -1,37 +1,39 @@
-apply plugin: 'com.android.application'
-apply from: '../../build.properties'
+plugins {
+    id 'com.android.application'
+}
+
+apply {
+    from '../../build.properties'
+}
 
 android {
-    compileSdkVersion android.compileSdkVersion
-    buildToolsVersion android.buildToolsVersion
+    compileSdkVersion extCompileSdkVersion
+    buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.android.tutorials.multiparty_constraintlayout"
-        minSdkVersion 16
-        targetSdkVersion targetsdkversion
-        versionCode versioncode
-        versionName versionname
+        applicationId "com.tokbox.android.tutorials.archiving"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdVersion
+        versionCode extVersionCode
+        versionName extVersionName
     }
-	
-	compileOptions {
-		sourceCompatibility sourcecompatibility
-	    targetCompatibility targetcompatibility
-	}
-	
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
-            minifyEnabled minifyenabled
+            minifyEnabled extMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    implementation "com.opentok.android:opentok-android-sdk:${sdkVersion}"
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    implementation "androidx.appcompat:appcompat:${appcompat_ver}"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'pub.devrel:easypermissions:0.4.0'
-    testImplementation 'junit:junit:4.12'
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
 }

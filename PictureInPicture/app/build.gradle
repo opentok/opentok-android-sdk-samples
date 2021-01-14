@@ -1,32 +1,37 @@
-apply plugin: 'com.android.application'
-apply from: '../../build.properties'
+plugins {
+    id 'com.android.application'
+}
+
+apply {
+    from '../../build.properties'
+}
 
 android {
-    compileSdkVersion android.compileSdkVersion
-    buildToolsVersion android.buildToolsVersion
+    compileSdkVersion extCompileSdkVersion
+    buildToolsVersion extBuildToolsVersion
+
     defaultConfig {
-        applicationId "com.tokbox.pictureinpicturesample"
-        minSdkVersion 26
-        targetSdkVersion targetsdkversion
-        versionCode versioncode
-        versionName versionname
+        applicationId "com.tokbox.android.tutorials.archiving"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdVersion
+        versionCode extVersionCode
+        versionName extVersionName
     }
-	
-	compileOptions {
-		sourceCompatibility sourcecompatibility
-	    targetCompatibility targetcompatibility
-	}
-	
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
-            minifyEnabled minifyenabled
+            minifyEnabled extMinifyEnabled
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    implementation "com.opentok.android:opentok-android-sdk:${sdkVersion}"
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
 }

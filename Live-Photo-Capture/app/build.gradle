@@ -1,35 +1,38 @@
-apply plugin: 'com.android.application'
-apply from: '../../build.properties'
+plugins {
+    id 'com.android.application'
+}
+
+apply {
+    from '../../build.properties'
+}
 
 android {
-    compileSdkVersion android.compileSdkVersion
-    buildToolsVersion android.buildToolsVersion
+    compileSdkVersion extCompileSdkVersion
+    buildToolsVersion extBuildToolsVersion
+
     defaultConfig {
-        applicationId "com.opentok.android.samples.live_photo_capture"
-        minSdkVersion 16
-        targetSdkVersion targetsdkversion
-        versionCode versioncode
-        versionName versionname
+        applicationId "com.tokbox.android.tutorials.archiving"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdVersion
+        versionCode extVersionCode
+        versionName extVersionName
     }
-	
-	compileOptions {
-    sourceCompatibility sourcecompatibility
-    targetCompatibility targetcompatibility
-	}
-	
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
-            minifyEnabled minifyenabled
+            minifyEnabled extMinifyEnabled
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    productFlavors {
     }
 }
 
 dependencies {
-    implementation "com.opentok.android:opentok-android-sdk:${sdkVersion}"
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'pub.devrel:easypermissions:0.4.0'
-    implementation "androidx.appcompat:appcompat:${appcompat_ver}"
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 }
