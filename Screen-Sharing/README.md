@@ -83,18 +83,21 @@ Runnable newFrame = new Runnable() {
                     bmp = null;
                 }
                 
-                bmp = Bitmap.createBitmap(width,
-                        height, Bitmap.Config.ARGB_8888);
+                bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 
                 canvas = new Canvas(bmp);
                 frame = new int[width * height];
             }
             
+            canvas.saveLayer(0, 0, width, height, null);
+            canvas.translate(-contentView.getScrollX(), - contentView.getScrollY());
             contentView.draw(canvas);
-            
+
             bmp.getPixels(frame, 0, width, 0, 0, width, height);
 
             provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+
+            canvas.restore();
 
             mHandler.postDelayed(newFrame, 1000 / fps);
         }
