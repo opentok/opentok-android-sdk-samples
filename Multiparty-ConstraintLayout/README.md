@@ -1,18 +1,16 @@
 # Multiparty using ConstraintLayout
 
-Note: Read the README.md file in the Basic-Video-Chat folder before starting here.
+This sample shows a simple multiparty app which uses basic layouts to display the different video views of the participants.
 
-Sample #6 shows a simple multiparty app which uses basic layouts to display the different video
-views of the participants.
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
-However, when building a complex app, there is a better option in order to lay out the views:
+When building a complex app, there is a better option in order to lay out the views:
 the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has several benefits.
 One  is that you can use a single layout to specify all the view positions instead of having to
 nest several different layouts.
 
-To use this sample application, install the ConstraintLayout for Android. See [these
-instructions](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project)
-on adding the ConstraintLayout to your project.
+To use this sample application, [add the ConstraintLayout](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project) dependency. See [these
+instructions].
 
 ## Using Constraint Layout to display the views
 
@@ -35,13 +33,14 @@ public void layoutViewAboveView(int aboveViewId, int belowViewId) {
 }
 ```
 
-Once all constraints are added to the `ConstraintSet`, we apply them to the ConstraintLayout:
+Once all constraints are added to the `ConstraintSet`, we apply them to the `ConstraintLayout`:
 
 ```java
 public void applyToLayout(ConstraintLayout layout, boolean animated) {
     if (animated) {
         TransitionManager.beginDelayedTransition(layout);
     }
+
     set.applyTo(layout);
 }
 ```
@@ -85,6 +84,7 @@ private void calculateLayout() {
         set.layoutViewAllContainerWide(R.id.publisher_view_id, R.id.main_container);
         set.layoutViewAllContainerWide(getResIdForSubscriberIndex(0), R.id.main_container);
     }
+
     set.applyToLayout(mContainer, true);
 }
 ```
@@ -96,5 +96,4 @@ See the code itself for the other cases.
 * See the Android [developers guide](https://developer.android.com/training/constraint-layout)
 for Constraint Layout
 
-* For details on the full OpenTok Android API, see the [reference
-documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
+* Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
