@@ -41,7 +41,7 @@ task checkOpenTokConfig() {
 
 def checkOpenTokConfigProperty(file, propertyName) {
     file.eachLine { line ->
-        // If property exists withing config file it must be empty
+        // If property exists within config file it must be empty
         if (line.contains("public static final String $propertyName") && !line.contains('""')) {
             throw new Exception("Opentok config property is not empty: ${line}")
         }
