@@ -1,9 +1,11 @@
+import android.os.Build
+
 plugins {
     id 'com.android.application'
 }
 
 apply {
-    from '../../build.properties'
+    from '../../commons.gradle'
 }
 
 android {
@@ -13,7 +15,7 @@ android {
     defaultConfig {
         applicationId "com.tokbox.android.tutorials.archiving"
         minSdkVersion extMinSdkVersion
-        targetSdkVersion extTargetSdVersion
+        targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
     }

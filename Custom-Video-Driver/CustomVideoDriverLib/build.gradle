@@ -3,7 +3,7 @@ plugins {
 }
 
 apply {
-    from '../../build.properties'
+    from '../../commons.gradle'
 }
 
 android {
@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         minSdkVersion extMinSdkVersion
-        targetSdkVersion extTargetSdVersion
+        targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
     }

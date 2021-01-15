@@ -19,10 +19,6 @@ import com.opentok.android.Subscriber;
 
 public class MainActivity extends Activity implements Session.SessionListener {
 
-    public static final String API_KEY = "";
-    public static final String TOKEN = "";
-    public static final String SESSION_ID = "";
-
     Session session;
     Publisher publisher;
     Subscriber subscriber;
@@ -78,11 +74,11 @@ public class MainActivity extends Activity implements Session.SessionListener {
         Log.d(TAG, "onStart");
 
         if (session == null) {
-            session = new Session.Builder(getApplicationContext(), API_KEY, SESSION_ID)
+            session = new Session.Builder(getApplicationContext(), OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID)
                     .build();
         }
         session.setSessionListener(this);
-        session.connect(TOKEN);
+        session.connect(OpenTokConfig.TOKEN);
     }
 
     @Override

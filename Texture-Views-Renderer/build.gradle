@@ -2,7 +2,7 @@
 
 buildscript {
     apply {
-        from '../build.properties'
+        from '../commons.gradle'
     }
 
     repositories {
