@@ -1,6 +1,4 @@
 # OpenTok Android SDK Samples
-[![Build Status](https://travis-ci.org/opentok/opentok-android-sdk-samples.svg?branch=master)](https://travis-ci.org/opentok/opentok-android-sdk-samples)
-
 
 This repository is meant to provide some examples for you to better understand the features of the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
 
@@ -59,6 +57,20 @@ This app shows how to send\retrieve additional metadata associated with each vid
 
 This app shows how to use the custom capturer using `camera2` API ([More](/Custom-Capturer-Camera2)).
 
-## Next steps
+## Development and Contributing
+
+Interested in contributing? We :heart: pull requests! See the 
+[Contribution](CONTRIBUTING.md) guidelines.
+
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
 
 Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
