@@ -1,7 +1,5 @@
 # OpenTok Android SDK Samples
 
-[![Build Status](https://travis-ci.org/opentok/opentok-android-sdk-samples.svg?branch=master)](https://travis-ci.org/opentok/opentok-android-sdk-samples)
-
 This repository is meant to provide some examples for you to better understand the features of the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
 
 Feel free to copy and modify the source code herein for your own projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
