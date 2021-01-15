@@ -13,6 +13,10 @@ ext {
     extOpentokSdkVersion="2.18.+"
 }
 
+/* 
+Look for the `OpenTokConfig` file in the project and checks if 
+API_KEY, SESSION_ID and TOKEN are empty. This prevents from committing credentials.
+*/
 task checkOpenTokConfig() {
     doLast {
         def openTokConfigFound = false
