@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity
         WebSettings webSettings = mWebViewContainer.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mWebViewContainer.loadUrl("http://www.tokbox.com");
+        mWebViewContainer.loadUrl("https://www.tokbox.com");
 
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
