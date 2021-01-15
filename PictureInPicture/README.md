@@ -1,4 +1,4 @@
-# Multiparty using ConstraintLayout
+# Picture-in-Picture
 
 This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone.
 
@@ -6,7 +6,7 @@ This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to 
 
 > Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
-## Using picture in picture
+## Using picture-in-picture
 
 Update UI when Activity changes to and from picture-in-picture mode:
 
