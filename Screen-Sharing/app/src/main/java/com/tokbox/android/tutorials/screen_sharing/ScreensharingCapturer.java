@@ -44,8 +44,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
                         bmp = null;
                     }
 
-                    bmp = Bitmap.createBitmap(width,
-                            height, Bitmap.Config.ARGB_8888);
+                    bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
                     canvas = new Canvas(bmp);
                     frame = new int[width * height];
