@@ -2,7 +2,7 @@
 
 This app shows how to to publish a screen-sharing video, using the device screen as the source for the stream's video.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 ## Screen sharing
 

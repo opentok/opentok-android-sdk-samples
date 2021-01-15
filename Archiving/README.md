@@ -3,7 +3,7 @@
 
 This application provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to start, stop, and play back recordings of your sessions.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/). 
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/). 
 
 ### Quick Start
 ====================================

@@ -4,7 +4,7 @@ Sample app shows how to use the custom capturer using [camera2](https://develope
 
 > Note: You need to have a minimum API level 21 to run this sample app.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 ## Using a custom video capturer
 
 The `MainActivity` class shows how you can use a custom video capturer for a publisher. After

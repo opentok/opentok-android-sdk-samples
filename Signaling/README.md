@@ -2,7 +2,7 @@
 
 This app shows how to utilize the OpenTok signaling API to send text messages to other clients connected to the OpenTok session. You can send a signal message to a specific client, or you can send a message to every client connected to the session.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 > Note: To facilicate testing you can connect to the session using [OpenTok Playground](https://tokbox.com/developer/tools/playground/) (web client).
 

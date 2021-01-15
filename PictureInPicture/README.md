@@ -1,10 +1,10 @@
 # Picture-in-Picture
 
-This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone.
+This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of an OpenTok session while navigating between apps or browsing content on the main screen of your phone.
 
 > Note: You need to have a minimum API level 26 to run this sample app.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 ## Using picture-in-picture
 

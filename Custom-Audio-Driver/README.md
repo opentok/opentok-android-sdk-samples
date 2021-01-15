@@ -2,7 +2,7 @@
 
 This app shows how to use the audio driver API to implement a custom audio capturer and player. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 
 ## Using a custom audio driver

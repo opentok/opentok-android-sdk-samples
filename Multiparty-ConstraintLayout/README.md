@@ -2,7 +2,7 @@
 
 This sample shows a simple multiparty app which uses basic layouts to display the different video views of the participants.
 
-> Note: If you aren't familiar with how to set up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project, and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
 When building a complex app, there is a better option in order to lay out the views:
 the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has several benefits.
