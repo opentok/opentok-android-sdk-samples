@@ -1,4 +1,4 @@
-# Frame Meta Data API
+# Frame Meta Data
 
 This app shows how to send\retrieve additional metadata associated with each video frame.
 

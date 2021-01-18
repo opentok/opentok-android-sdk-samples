@@ -1,4 +1,4 @@
-# Custom Video Capturer (camera2 interface)
+# Custom Capturer Camera 2
 
 Sample app shows how to use the custom capturer using [camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) package. 
 

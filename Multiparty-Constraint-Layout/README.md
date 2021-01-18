@@ -1,4 +1,4 @@
-# Multiparty using ConstraintLayout
+# Multiparty Constraint Layout
 
 This sample shows a simple multiparty app which uses basic layouts to display the different video views of the participants.
 

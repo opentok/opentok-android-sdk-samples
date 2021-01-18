@@ -1,4 +1,4 @@
-# Picture-in-Picture
+# Picture In Picture
 
 This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of an OpenTok session while navigating between apps or browsing content on the main screen of your phone.
 
