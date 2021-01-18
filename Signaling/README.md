@@ -50,7 +50,7 @@ public void onSignalReceived(Session session, String type, String data, Connecti
 }
 ```
 
-## Next steps
+## Further Reading
 
 * Review [other sample projects](../)
 * Read Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)

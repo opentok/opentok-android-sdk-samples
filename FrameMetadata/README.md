@@ -96,7 +96,7 @@ inside the `fragmentShaderCode` String.
 "y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
 ```
 
-## Next steps
+## Further Reading
 
 * Review [other sample projects](../)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)

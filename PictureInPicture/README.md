@@ -43,7 +43,7 @@ public void pipActivity(View view) {
 }
 ```
 
-## Next steps
+## Further Reading
 
 * Review [other sample projects](../)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
