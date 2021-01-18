@@ -43,7 +43,7 @@ jobs:
         run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
       - name: Screen Sharing
-        run: cd Screen Sharing && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
       - name: Signaling
         run: cd Signaling && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
