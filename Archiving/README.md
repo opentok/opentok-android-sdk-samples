@@ -28,7 +28,7 @@ Open the `OpenTokConfig.java` file and configure the `CHAT_SERVER_URL` string to
 ##### 4. Run the app
 That's it!
 
-## Next steps
+## Further Reading
 
 * Review [other sample projects](../)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
