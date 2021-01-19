@@ -1,4 +1,4 @@
-package com.tokbox.pictureinpicturesample;
+package com.tokbox.sample.pictureinpicture;
 
 import android.Manifest;
 import android.app.Activity;

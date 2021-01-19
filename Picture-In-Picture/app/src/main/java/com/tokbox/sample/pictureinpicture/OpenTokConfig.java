@@ -1,4 +1,4 @@
-package com.tokbox.pictureinpicturesample;
+package com.tokbox.sample.pictureinpicture;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
