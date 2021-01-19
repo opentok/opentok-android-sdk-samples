@@ -1,0 +1,6 @@
+com/tokbox/sample/customcapturercamera2/OpenTokConfig.java
+ com.tokbox.android.tutorials.custom_capturer_camera2.OpenTokConfig
+com/tokbox/android/tutorials/custom_capturer_camera2/BuildConfig.java
+ com.tokbox.android.tutorials.custom_capturer_camera2.BuildConfig
+com/tokbox/sample/customcapturercamera2/MainActivity.java
+ com.tokbox.android.tutorials.custom_capturer_camera2.MainActivity

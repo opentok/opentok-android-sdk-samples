@@ -57,6 +57,10 @@ This app shows how to send\retrieve additional metadata associated with each vid
 
 This app shows how to use the custom capturer using `camera2` API ([More](/Custom-Capturer-Camera2)).
 
+### ARCore Integration
+
+This app shows how to use Google ARCore with Opentok ([More](/ARCore-Integration)).
+
 ## Development and Contributing
 
 Interested in contributing? We :heart: pull requests! See the 

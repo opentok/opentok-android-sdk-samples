@@ -51,4 +51,6 @@ jobs:
       - name: Simple-Multiparty
         run: cd Simple-Multiparty && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
+      - name: ARCore-Integration
+        run: cd ARCore-Integration && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
       

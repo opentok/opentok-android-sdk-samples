@@ -1,0 +1,4 @@
+#Tue Jan 19 11:23:51 CET 2021
+base.0=/Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

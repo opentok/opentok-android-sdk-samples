@@ -1,0 +1,196 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+MERGED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:2:1-25:12
+MERGED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:2:1-19:12
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /Users/iwojda/.gradle/caches/transforms-3/ae0d83f75553a9db1437d0245c8de741/transformed/constraintlayout-2.0.4/AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.appcompat:appcompat:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/b2b37bf7d11d584f6b352634defe28d2/transformed/appcompat-1.2.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/60b414cc3aba9f5b9cc0d20828691a72/transformed/fragment-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/69c034ef152cf9be201dddecc18c2dd1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat-resources:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/755e41b2a21d6111678cd6917780529f/transformed/appcompat-resources-1.2.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/ab59869df71146af98d6c9ee5c7fd8d7/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/cd7b26cdf0553177c81a52d247462745/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/a425d7b2689f793c368312c88ed02296/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/613f45a0b34b94bdb69001e3a036d8c8/transformed/activity-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/ad70dbf4ae8d78351bfb800950f84d6f/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/3d7581caaa882511682a598ce074a4a9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/2a1b1950559e00599bf49d87b257f577/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:17:1-26:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/d4ef2240d310711999882113575f96cb/transformed/versionedparcelable-1.1.0/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/c92ebcc1899059a016675a252c5f8c0c/transformed/lifecycle-runtime-2.1.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/6ed64e94e28190550c4d700ae382df66/transformed/lifecycle-viewmodel-2.1.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/e89c265fef9b454147cf442d5528f6a3/transformed/savedstate-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/99e8ac0ed3607655bae2d564c31048a3/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/4e994360dd0b5da45baf983240d38a20/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/6d5f280fed210b41a675cb81a74cfc67/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/0305b308749a3a352fcc6d210c4c0cbc/transformed/core-runtime-2.0.0/AndroidManifest.xml:17:1-22:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+	package
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:3:11-65
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:1-20:12
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:5:5-18:19
+MERGED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:11:5-17:19
+MERGED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:11:5-17:19
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /Users/iwojda/.gradle/caches/transforms-3/ae0d83f75553a9db1437d0245c8de741/transformed/constraintlayout-2.0.4/AndroidManifest.xml:9:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /Users/iwojda/.gradle/caches/transforms-3/ae0d83f75553a9db1437d0245c8de741/transformed/constraintlayout-2.0.4/AndroidManifest.xml:9:5-20
+MERGED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:24:5-89
+MERGED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:24:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/d4ef2240d310711999882113575f96cb/transformed/versionedparcelable-1.1.0/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/d4ef2240d310711999882113575f96cb/transformed/versionedparcelable-1.1.0/AndroidManifest.xml:24:5-25:19
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:24:18-86
+	android:supportsRtl
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:9:9-35
+	android:label
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:8:9-41
+	android:icon
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:7:9-43
+	android:allowBackup
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:6:9-35
+	android:theme
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:10:9-40
+activity#com.tokbox.sample.multipartyconstraintlayout.MainActivity
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:11:9-17:20
+	android:name
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:11:19-47
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:12:13-16:29
+action#android.intent.action.MAIN
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:13:17-68
+	android:name
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:13:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:15:17-76
+	android:name
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml:15:27-74
+uses-sdk
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+MERGED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:5:5-7:41
+MERGED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:5:5-7:41
+MERGED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:7:5-9:41
+MERGED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:7:5-9:41
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /Users/iwojda/.gradle/caches/transforms-3/ae0d83f75553a9db1437d0245c8de741/transformed/constraintlayout-2.0.4/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /Users/iwojda/.gradle/caches/transforms-3/ae0d83f75553a9db1437d0245c8de741/transformed/constraintlayout-2.0.4/AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.appcompat:appcompat:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/b2b37bf7d11d584f6b352634defe28d2/transformed/appcompat-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/b2b37bf7d11d584f6b352634defe28d2/transformed/appcompat-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/60b414cc3aba9f5b9cc0d20828691a72/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/60b414cc3aba9f5b9cc0d20828691a72/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/69c034ef152cf9be201dddecc18c2dd1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/69c034ef152cf9be201dddecc18c2dd1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/755e41b2a21d6111678cd6917780529f/transformed/appcompat-resources-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.2.0] /Users/iwojda/.gradle/caches/transforms-3/755e41b2a21d6111678cd6917780529f/transformed/appcompat-resources-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/ab59869df71146af98d6c9ee5c7fd8d7/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/ab59869df71146af98d6c9ee5c7fd8d7/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/cd7b26cdf0553177c81a52d247462745/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/cd7b26cdf0553177c81a52d247462745/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/a425d7b2689f793c368312c88ed02296/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/a425d7b2689f793c368312c88ed02296/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/613f45a0b34b94bdb69001e3a036d8c8/transformed/activity-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/613f45a0b34b94bdb69001e3a036d8c8/transformed/activity-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/ad70dbf4ae8d78351bfb800950f84d6f/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/ad70dbf4ae8d78351bfb800950f84d6f/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/3d7581caaa882511682a598ce074a4a9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/3d7581caaa882511682a598ce074a4a9/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/2a1b1950559e00599bf49d87b257f577/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/2a1b1950559e00599bf49d87b257f577/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.3.1] /Users/iwojda/.gradle/caches/transforms-3/2e5fd025dc0249a61370d13d01b7bc1c/transformed/core-1.3.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/d4ef2240d310711999882113575f96cb/transformed/versionedparcelable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/iwojda/.gradle/caches/transforms-3/d4ef2240d310711999882113575f96cb/transformed/versionedparcelable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/c92ebcc1899059a016675a252c5f8c0c/transformed/lifecycle-runtime-2.1.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/c92ebcc1899059a016675a252c5f8c0c/transformed/lifecycle-runtime-2.1.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/6ed64e94e28190550c4d700ae382df66/transformed/lifecycle-viewmodel-2.1.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.1.0] /Users/iwojda/.gradle/caches/transforms-3/6ed64e94e28190550c4d700ae382df66/transformed/lifecycle-viewmodel-2.1.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/e89c265fef9b454147cf442d5528f6a3/transformed/savedstate-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/e89c265fef9b454147cf442d5528f6a3/transformed/savedstate-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/99e8ac0ed3607655bae2d564c31048a3/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/iwojda/.gradle/caches/transforms-3/99e8ac0ed3607655bae2d564c31048a3/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/4e994360dd0b5da45baf983240d38a20/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/4e994360dd0b5da45baf983240d38a20/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/6d5f280fed210b41a675cb81a74cfc67/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/6d5f280fed210b41a675cb81a74cfc67/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/0305b308749a3a352fcc6d210c4c0cbc/transformed/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/iwojda/.gradle/caches/transforms-3/0305b308749a3a352fcc6d210c4c0cbc/transformed/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		ADDED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/iwojda/StudioProjects/opentok-android-sdk-samples/Multiparty-Constraint-Layout/app/src/main/AndroidManifest.xml
+uses-permission#android.permission.CAMERA
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:9:5-65
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:9:22-62
+uses-permission#android.permission.INTERNET
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:10:5-67
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:10:22-64
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:11:5-71
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:11:22-68
+uses-permission#android.permission.MODIFY_AUDIO_SETTINGS
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:12:5-80
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:12:22-77
+uses-permission#android.permission.BLUETOOTH
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:13:5-68
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:13:22-65
+uses-permission#android.permission.BROADCAST_STICKY
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:14:5-75
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:14:22-72
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:15:5-75
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:15:22-72
+uses-feature#android.hardware.camera
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:17:5-60
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:17:19-57
+uses-feature#android.hardware.camera.autofocus
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:18:5-20:36
+	android:required
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:20:9-33
+	android:name
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:19:9-57
+uses-feature#0x00020000
+ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:21:5-23:35
+	android:glEsVersion
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:22:9-41
+	android:required
+		ADDED from [com.opentok.android:opentok-android-sdk:2.18.1] /Users/iwojda/.gradle/caches/transforms-3/80cb73eeb4f7bf6c44a1ba759dce5927/transformed/opentok-android-sdk-2.18.1/AndroidManifest.xml:23:9-32
+activity#pub.devrel.easypermissions.AppSettingsDialogHolderActivity
+ADDED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:12:9-16:66
+	android:label
+		ADDED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:15:13-29
+	android:exported
+		ADDED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:14:13-37
+	android:theme
+		ADDED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:16:13-63
+	android:name
+		ADDED from [pub.devrel:easypermissions:3.0.0] /Users/iwojda/.gradle/caches/transforms-3/94c1d9f6a2333f84256d24a38915ad99/transformed/easypermissions-3.0.0/AndroidManifest.xml:13:13-86

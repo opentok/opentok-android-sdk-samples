@@ -1,0 +1,4 @@
+#Tue Jan 19 11:25:37 CET 2021
+base.0=/Users/iwojda/StudioProjects/opentok-android-sdk-samples/Picture-In-Picture/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
