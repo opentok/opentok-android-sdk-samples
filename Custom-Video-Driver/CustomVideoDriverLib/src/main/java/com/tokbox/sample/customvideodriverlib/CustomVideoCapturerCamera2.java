@@ -1,4 +1,4 @@
-package com.tokbox.tokbox.CustomVideoDriverLib;
+package com.tokbox.sample.customvideodriverlib;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

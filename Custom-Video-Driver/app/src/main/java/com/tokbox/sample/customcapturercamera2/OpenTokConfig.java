@@ -1,4 +1,4 @@
-package com.tokbox.sample.customvideodriver;
+package com.tokbox.sample.customcapturercamera2;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***

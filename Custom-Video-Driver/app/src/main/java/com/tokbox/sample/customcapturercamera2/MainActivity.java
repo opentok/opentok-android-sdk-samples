@@ -1,4 +1,4 @@
-package com.tokbox.sample.customvideodriver;
+package com.tokbox.sample.customcapturercamera2;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
@@ -21,6 +21,7 @@ import com.opentok.android.SubscriberKit;
 
 import java.util.List;
 
+import com.tokbox.sample.customcapturercamera2.R;
 import com.tokbox.sample.customvideodriverlib.CustomVideoCapturer;
 import com.tokbox.sample.customvideodriverlib.InvertedColorsVideoRenderer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
