@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.framemetadata;
+package com.tokbox.sample.framemetadata;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
