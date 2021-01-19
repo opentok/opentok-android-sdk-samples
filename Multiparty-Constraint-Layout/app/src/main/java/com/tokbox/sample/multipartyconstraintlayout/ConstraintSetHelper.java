@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.multiparty_constraintlayout;
+package com.tokbox.sample.multipartyconstraintlayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
