@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.archiving;
+package com.tokbox.sample.archiving;
 
 import android.Manifest;
 import android.content.DialogInterface;

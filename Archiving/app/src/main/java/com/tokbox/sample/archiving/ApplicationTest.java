@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.basicvideochat;
+package com.tokbox.sample.archiving;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
