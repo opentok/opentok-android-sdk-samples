@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.simple_multiparty;
+package com.tokbox.sample.simplemultiparty;
 
 import android.Manifest;
 import android.os.Bundle;

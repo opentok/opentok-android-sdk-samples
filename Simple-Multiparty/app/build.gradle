@@ -11,7 +11,7 @@ android {
     buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.android.tutorials.archiving"
+        applicationId "com.tokbox.sample.simplemultiparty"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
