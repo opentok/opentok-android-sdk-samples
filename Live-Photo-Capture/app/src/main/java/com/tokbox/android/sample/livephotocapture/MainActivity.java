@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.live_photo_capture;
+package com.tokbox.android.sample.livephotocapture;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
