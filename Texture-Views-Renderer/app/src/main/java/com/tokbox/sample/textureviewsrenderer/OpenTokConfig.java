@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.texture_views_renderer;
+package com.tokbox.sample.textureviewsrenderer;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***

@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.texture_views_renderer;
+package com.tokbox.sample.textureviewsrenderer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
