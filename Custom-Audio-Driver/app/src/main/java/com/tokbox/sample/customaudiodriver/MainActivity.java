@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_audio_driver;
+package com.tokbox.sample.customaudiodriver;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;

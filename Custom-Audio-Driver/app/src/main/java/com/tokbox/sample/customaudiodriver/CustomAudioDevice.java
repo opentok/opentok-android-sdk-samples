@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_audio_driver;
+package com.tokbox.sample.customaudiodriver;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
