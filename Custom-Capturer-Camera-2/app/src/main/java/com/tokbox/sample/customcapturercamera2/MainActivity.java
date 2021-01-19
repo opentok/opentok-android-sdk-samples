@@ -20,7 +20,7 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 
-import com.example.tokbox.CustomVideoDriverLib.*;
+import com.tokbox.sample.customvideodriverlib.*;
 
 import java.util.List;
 
@@ -126,9 +126,9 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(MainActivity.this, com.tokbox.android.tutorials.custom_capturer_camera2.OpenTokConfig.API_KEY, com.tokbox.android.tutorials.custom_capturer_camera2.OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
-            mSession.connect(OpenTokConfig.TOKEN);
+            mSession.connect(com.tokbox.android.tutorials.custom_capturer_camera2.OpenTokConfig.TOKEN);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
@@ -142,14 +142,20 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Camera2 requires Api level 21 or above.", Toast.LENGTH_LONG).show();
             finish();
         } else {
-            CustomVideoCapturerCamera2 baseVideoCapturer
+            CustomVideoCapturerCamera2 baseVideoCapturerCamera2
                     = new CustomVideoCapturerCamera2(MainActivity.this,
                     Publisher.CameraCaptureResolution.MEDIUM,
                     Publisher.CameraCaptureFrameRate.FPS_30);
 
+            // You can also apply
+//            CustomVideoCapturer baseVideoCapturer
+//                    = new CustomVideoCapturer(MainActivity.this,
+//                    Publisher.CameraCaptureResolution.MEDIUM,
+//                    Publisher.CameraCaptureFrameRate.FPS_30);
+
             mPublisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher")
-                    .capturer(baseVideoCapturer)
+                    .capturer(baseVideoCapturerCamera2)
                     .build();
             mPublisher.setPublisherListener(this);
 

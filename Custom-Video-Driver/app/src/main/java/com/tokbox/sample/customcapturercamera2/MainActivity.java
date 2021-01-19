@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.custom_video_driver;
+package com.tokbox.sample.customvideodriver;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.tokbox.CustomVideoDriverLib.CustomVideoCapturer;
-import com.example.tokbox.CustomVideoDriverLib.InvertedColorsVideoRenderer;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -23,6 +21,8 @@ import com.opentok.android.SubscriberKit;
 
 import java.util.List;
 
+import com.tokbox.sample.customvideodriverlib.CustomVideoCapturer;
+import com.tokbox.sample.customvideodriverlib.InvertedColorsVideoRenderer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
