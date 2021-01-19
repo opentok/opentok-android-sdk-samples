@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.screen_sharing;
+package com.tokbox.sample.screensharing;
 
 import android.content.Context;
 import android.graphics.Bitmap;

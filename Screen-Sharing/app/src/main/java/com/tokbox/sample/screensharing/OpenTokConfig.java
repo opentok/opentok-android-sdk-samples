@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.screen_sharing;
+package com.tokbox.sample.screensharing;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***

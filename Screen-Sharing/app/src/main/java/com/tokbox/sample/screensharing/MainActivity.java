@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.screen_sharing;
+package com.tokbox.sample.screensharing;
 
 import android.Manifest;
 import android.os.Bundle;
