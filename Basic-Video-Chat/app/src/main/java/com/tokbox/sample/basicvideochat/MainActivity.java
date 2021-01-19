@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.basic_video_chat;
+package com.tokbox.sample.basicvideochat;
 
 import android.opengl.GLSurfaceView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +19,6 @@ import com.opentok.android.Subscriber;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.SubscriberKit;
-import com.tokbox.android.tutorials.basicvideochat.R;
 
 import java.util.List;
 
