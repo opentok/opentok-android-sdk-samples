@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.signaling.message;
+package com.tokbox.sample.signaling.message;
 
 /*
  * An instance of this class provides a model for the client's local signaling history in a given OpenTok session.
@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.tokbox.android.tutorials.signaling.R;
+import com.tokbox.sample.signaling.R;
 
 import java.util.Collections;
 import java.util.HashMap;

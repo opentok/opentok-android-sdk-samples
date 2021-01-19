@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.signaling.message;
+package com.tokbox.sample.signaling.message;
 
 /*
  * Each instance of this class represents a signal.

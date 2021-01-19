@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.signaling;
+package com.tokbox.sample.signaling;
 
 import android.content.Context;
 import android.util.Log;

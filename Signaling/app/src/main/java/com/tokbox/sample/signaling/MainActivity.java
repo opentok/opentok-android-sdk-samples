@@ -1,4 +1,4 @@
-package com.tokbox.android.tutorials.signaling;
+package com.tokbox.sample.signaling;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,8 +18,8 @@ import com.opentok.android.Stream;
 import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
 
-import com.tokbox.android.tutorials.signaling.message.SignalMessage;
-import com.tokbox.android.tutorials.signaling.message.SignalMessageAdapter;
+import com.tokbox.sample.signaling.message.SignalMessage;
+import com.tokbox.sample.signaling.message.SignalMessageAdapter;
 
 
 public class MainActivity extends AppCompatActivity
