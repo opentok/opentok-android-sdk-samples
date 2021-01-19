@@ -11,7 +11,7 @@ android {
     buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.customcapturercamera2"
+        applicationId "com.tokbox.sample.customvideodriver"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
