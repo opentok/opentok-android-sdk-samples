@@ -2,7 +2,7 @@
 
 This app shows how to use renderer. 
 
-> Note: Check [Custom Video Driver](../Custom-Video-Driver) project. 
+> Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how custom capturer and custom renderer works together.
 
 The `MainActivity` class shows how you can use a custom video renderer for publisher and
 subscriber videos. In this sample we will use a custom video renderer which inverts all colors
