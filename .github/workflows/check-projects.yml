@@ -33,6 +33,9 @@ jobs:
       - name: Custom Video Driver
         run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
+      - name: Basic-Video-Renderer
+        run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+
       - name: Frame Metadata
         run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
