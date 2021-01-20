@@ -67,7 +67,7 @@ mPublisher.setPublisherListener(this);
 mPublisher.setRenderer(new InvertedColorsVideoRenderer(this));
 ```
 
-The `InvertedColorsVideoRenderer` class is defined in the `com.opentok.android.samples.custom_video_driver`
+The `InvertedColorsVideoRenderer` class is defined in the `com.opentok.android.samples.customvideodriver`
 package. This class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
 The `InvertedColorsVideoRenderer` class includes a `MyRenderer` subclass that implements `GLSurfaceView.Renderer`.
 This class includes a `displayFrame()` method that renders a frame of video to an Android view.
@@ -89,7 +89,7 @@ public void onFrame(Frame frame) {
 }
 ```
 
-To render the video frames the renderer class uses OpenGL shaders. In the sample we tweak the
+To render the video frames, the renderer class uses OpenGL shaders. In the sample we tweak the
 shader to produce the inverted color effect, more precisely this is achieved by this line which is
 inside the `fragmentShaderCode` String.
 
