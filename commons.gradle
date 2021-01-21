@@ -10,7 +10,7 @@ ext {
     extVersionName="1.0"
     extMinifyEnabled=false
     extAppCompatVersion="1.1.0"
-    extOpentokSdkVersion="2.18.+"
+    extOpentokSdkVersion="2.19.+"
 }
 
 /* 
