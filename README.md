@@ -61,10 +61,6 @@ This app shows how to utilize the OpenTok signaling API to send text messages to
 
 This app shows how to send\retrieve additional metadata associated with each video frame ([More](/Frame-Metadata)).
 
-### Custom Capturer Camera 2
-
-This app shows how to use the custom capturer using `camera2` API ([More](/Custom-Capturer-Camera-2)).
-
 ### ARCore Integration
 
 This app shows how to use Google ARCore with Opentok ([More](/ARCore-Integration)).

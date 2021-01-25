@@ -1,6 +1,0 @@
-com/tokbox/sample/pictureinpicture/MainActivity.java
- com.tokbox.sample.pictureinpicture.MainActivity
-com/tokbox/sample/pictureinpicture/OpenTokConfig.java
- com.tokbox.sample.pictureinpicture.OpenTokConfig
-com/tokbox/sample/pictureinpicture/BuildConfig.java
- com.tokbox.sample.pictureinpicture.BuildConfig

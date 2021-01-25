@@ -1,9 +1,0 @@
-com/tokbox/sample/multipartyconstraintlayout/BuildConfig.java
- com.tokbox.sample.multipartyconstraintlayout.BuildConfig
-com/tokbox/sample/multipartyconstraintlayout/OpenTokConfig.java
- com.tokbox.sample.multipartyconstraintlayout.OpenTokConfig
-com/tokbox/sample/multipartyconstraintlayout/ConstraintSetHelper.java
- com.tokbox.sample.multipartyconstraintlayout.ConstraintSetHelper
-com/tokbox/sample/multipartyconstraintlayout/MainActivity.java
- com.tokbox.sample.multipartyconstraintlayout.MainActivity
- com.tokbox.sample.multipartyconstraintlayout.MainActivity$1
