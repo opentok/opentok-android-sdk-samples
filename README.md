@@ -37,6 +37,14 @@ This app shows how to use a custom video redender ([More](/Basic-Video-Renderer)
 
 This app shows how to use both a custom video capturer and a custom video redender ([More](/Custom-Video-Driver)).
 
+### Basic Video Capturer
+
+This app shows how to use a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class (deprecated in API level 21). ([More](/Basic-Video-Capturer)).
+
+### Basic Video Capturer Camera 2
+
+This app shows how to use a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class (added in API level 21). ([More](/Basic-Video-Capturer-Camera-2)).
+
 ### Custom Audio Driver
 
 This app shows how to use the audio driver API to implement a custom audio capturer and player. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here ([More](/Custom-Audio-Driver)).
