@@ -4,7 +4,7 @@ Sample app shows how to use the custom capturer using the [Camera](https://devel
 
 > Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
 
-> [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) class was deprecated in API level 21. Please check [Basic Video Capturer Camera 2](../Basic-Video-Capturer-Camera-2) project for most up to date solution. 
+> [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) class was deprecated in API level 21. Please check [Basic Video Capturer Camera 2](../Basic-Video-Capturer-Camera-2) project. 
 
 > Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how custom video capturer and custom video renderer works together.
 
