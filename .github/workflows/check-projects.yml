@@ -33,6 +33,12 @@ jobs:
       - name: Custom Video Driver
         run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
+      - name: Basic-Video-Capturer
+        run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+      
+      - name: Basic-Video-Capturer-Camera-2
+        run: cd Basic-Video-Capturer-Camera-2 && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+
       - name: Basic-Video-Renderer
         run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
