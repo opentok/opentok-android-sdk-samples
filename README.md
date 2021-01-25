@@ -17,9 +17,9 @@ This app provides a completed version of the [OpenTok Archiving tutorial](https:
 
 This app shows how to implement a simple video call application with several clients ([More](/Simple-Multiparty)).
 
-### Multiparty using ConstraintLayout
+### Multiparty Constraint Layout
 
-This app shows how to use Android SDK ConstraintLayout to position all the video views of several participants in a multiparty session ([More](/Multiparty-ConstraintLayout)).
+This app shows how to use Android SDK ConstraintLayout to position all the video views of several participants in a multiparty session ([More](/Multiparty-Constraint-Layout)).
 
 ### Screen Sharing
 
@@ -39,9 +39,9 @@ This app shows how to use the audio driver API to implement a custom audio captu
 
 ### Picture in Picture
 
-This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone ([More](/PictureInPicture)).
+This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone ([More](/Picture-In-Picture)).
 
-### Texture-Views-Renderer
+### Texture Views Renderer
 
 This app shows how to use custom video renderer based on [TextureView](https://developer.android.com/reference/android/view/TextureView) class ([More](/Texture-Views-Renderer)).
 
@@ -49,13 +49,13 @@ This app shows how to use custom video renderer based on [TextureView](https://
 
 This app shows how to utilize the OpenTok signaling API to send text messages to other clients connected to the OpenTok session ([More](/Signaling)).
 
-### FrameMetadata
+### Frame-Metadata
 
-This app shows how to send\retrieve additional metadata associated with each video frame ([More](/FrameMetadata)).
+This app shows how to send\retrieve additional metadata associated with each video frame ([More](/Frame-Metadata)).
 
-### Custom-Capturer-Camera2
+### Custom Capturer Camera 2
 
-This app shows how to use the custom capturer using `camera2` API ([More](/Custom-Capturer-Camera2)).
+This app shows how to use the custom capturer using `camera2` API ([More](/Custom-Capturer-Camera-2)).
 
 ## Development and Contributing
 

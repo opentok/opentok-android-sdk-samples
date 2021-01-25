@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.tokbox.android.tutorials.custom_audio_driver.MainActivity">
+    tools:context="com.tokbox.sample.tutorials.customaudiodriver.MainActivity">
 
     <RelativeLayout
         android:layout_width="fill_parent"

@@ -24,25 +24,25 @@ jobs:
       - name: Archiving
         run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: Basic-Video-Chat
+      - name: Basic Video Chat
         run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: Custom-Audio-Driver
+      - name: Custom Audio Driver
         run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: Custom-Video-Driver
+      - name: Custom Video Driver
         run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: FrameMetadata
-        run: cd FrameMetadata && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+      - name: Frame Metadata
+        run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: Multiparty-ConstraintLayout
-        run: cd Multiparty-ConstraintLayout && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+      - name: Multiparty Constraint Layout
+        run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: PictureInPicture
-        run: cd PictureInPicture && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+      - name: Picture In Picture
+        run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
-      - name: Screen-Sharing
+      - name: Screen Sharing
         run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
 
       - name: Signaling
