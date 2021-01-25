@@ -39,11 +39,11 @@ This app shows how to use both a custom video capturer and a custom video redend
 
 ### Basic Video Capturer
 
-This app shows how to use a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class (deprecated in API level 21). ([More](/Basic-Video-Capturer)).
+This app shows how to use a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class deprecated in API level 21 ([More](/Basic-Video-Capturer)).
 
 ### Basic Video Capturer Camera 2
 
-This app shows how to use a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class (added in API level 21). ([More](/Basic-Video-Capturer-Camera-2)).
+This app shows how to use a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class. ([More](/Basic-Video-Capturer-Camera-2)).
 
 ### Custom Audio Driver
 
