@@ -29,9 +29,13 @@ This app shows how to to publish a screen-sharing video, using the device screen
 
 This app shows how to capture an image from a subscribed video stream ([More](/Live-Photo-Capture)).
 
+### Basic Video Renderer
+
+This app shows how to use a custom video redender ([More](/Basic-Video-Renderer)).
+
 ### Custom Video Driver
 
-This app shows how to use both a custom video capturer and redender. While most applications will work fine with the default capturer (and therefore won't require an understanding of how the custom video driver work), if you need to add custom effects, then this is where you should start ([More](/Custom-Video-Driver)).
+This app shows how to use both a custom video capturer and a custom video redender ([More](/Custom-Video-Driver)).
 
 ### Custom Audio Driver
 
