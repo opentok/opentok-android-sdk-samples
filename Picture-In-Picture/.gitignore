@@ -12,3 +12,4 @@
 app/build
 
 .settings/
+app/jniLibs/
