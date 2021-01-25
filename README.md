@@ -1,8 +1,10 @@
-# OpenTok Android SDK Samples
+A custom video capturer will be helpful when:# OpenTok Android SDK Samples.
 
-This repository is meant to provide some examples for you to better understand the features of the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
+This repository provides some examples for you to understand better the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
 
-Feel free to copy and modify the source code herein for your own projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
+Feel free to copy and modify the source code herein for your projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
+
+> Credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` files of each project. For the sample applications, credentials can be retrieved from [OpenTOk Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application. For a production environment server should provide the credentials. To quickly set up the server, see [server sample application] (https://github.com/opentok/learning-opentok-php) and [Basic-Video-Chat project](/Basic-Video-Chat). 
 ## What's Inside
 
 ### Basic Video Chat
@@ -11,7 +13,7 @@ This app provides a completed version of the [OpenTok Basic Video Chat tutorial]
 
 ### Archiving (recording)
 
-This app provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (with some minor validation checks added). It uses an OpenTok server to start, stop, and play back recordings of your session ([More](/Archiving)). 
+This app provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (with some minor validation checks added). It uses an OpenTok server to start, stop, and playback recordings of your session ([More](/Archiving)). 
 
 ### Simple Multiparty
 
@@ -23,7 +25,7 @@ This app shows how to use Android SDK ConstraintLayout to position all the video
 
 ### Screen Sharing
 
-This app shows how to to publish a screen-sharing video, using the device screen as the source for the stream's video ([More](/Screen-Sharing)).
+This app shows how to publish a screen-sharing video, using the device screen as the source for the stream's video ([More](/Screen-Sharing)).
 
 ### Live Photo Capture
 
@@ -52,10 +54,6 @@ This app shows how to use the audio driver API to implement a custom audio captu
 ### Picture in Picture
 
 This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone ([More](/Picture-In-Picture)).
-
-### Texture Views Renderer
-
-This app shows how to use custom video renderer based on [TextureView](https://developer.android.com/reference/android/view/TextureView) class ([More](/Texture-Views-Renderer)).
 
 ### Signaling
 
