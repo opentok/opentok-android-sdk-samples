@@ -1,8 +1,10 @@
 This repository provides some examples for you to understand better the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
 
+> OpenTok credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` files of each project. For the sample applications, credentials can be retrieved from the [Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application. For a production environment server should provide the credentials. To quickly set up the server, see the [server sample application](https://github.com/opentok/learning-opentok-php) and [Basic-Video-Chat project](/Basic-Video-Chat).
+
 Feel free to copy and modify the source code herein for your projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
 
-> Credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` files of each project. For the sample applications, credentials can be retrieved from [OpenTOk Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application. For a production environment server should provide the credentials. To quickly set up the server, see [server sample application] (https://github.com/opentok/learning-opentok-php) and [Basic-Video-Chat project](/Basic-Video-Chat). 
+
 ## What's Inside
 
 ### Basic Video Chat
