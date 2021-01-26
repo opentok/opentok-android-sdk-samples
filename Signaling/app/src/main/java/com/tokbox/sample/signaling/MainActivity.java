@@ -23,14 +23,11 @@ import com.tokbox.sample.signaling.message.SignalMessageAdapter;
 
 
 public class MainActivity extends AppCompatActivity
-                            implements  WebServiceCoordinator.Listener,
-                                        Session.SessionListener,
+                            implements  Session.SessionListener,
                                         Session.SignalListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     public static final String SIGNAL_TYPE = "text-signal";
-
-    private WebServiceCoordinator mWebServiceCoordinator;
 
     private Session mSession;
     private SignalMessageAdapter mMessageHistory;
@@ -69,26 +66,10 @@ public class MainActivity extends AppCompatActivity
         });
         mMessageEditTextView.setEnabled(false);
 
-        // initialize the session after validating configs
-
-        // if there is no server URL assiged
-        if (OpenTokConfig.CHAT_SERVER_URL == null) {
-            // use hard coded session info
-            if (OpenTokConfig.areHardCodedConfigsValid()) {
-                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
-            } else {
-                showConfigError("Configuration Error", OpenTokConfig.hardCodedConfigErrorMessage);
-            }
-        } else {
-            // otherwise initialize WebServiceCoordinator and kick off request for session data
-            // session initialization occurs once data is returned, in onSessionConnectionDataReady
-            if (OpenTokConfig.isWebServerConfigUrlValid()) {
-                mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-                mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
-            } else {
-                showConfigError("Configuration Error", OpenTokConfig.webServerConfigErrorMessage);
-            }
-        }
+        mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+        mSession.setSessionListener(this);
+        mSession.setSignalListener(this);
+        mSession.connect(OpenTokConfig.TOKEN);
     }
 
     /* Activity lifecycle methods */
@@ -116,16 +97,6 @@ public class MainActivity extends AppCompatActivity
         if (mSession != null) {
             mSession.onResume();
         }
-    }
-
-    private void initializeSession(String apiKey, String sessionId, String token) {
-
-        Log.d(LOG_TAG, "Initializing Session");
-
-        mSession = new Session.Builder(this, apiKey, sessionId).build();
-        mSession.setSessionListener(this);
-        mSession.setSignalListener(this);
-        mSession.connect(token);
     }
 
     private void sendMessage() {
@@ -190,21 +161,6 @@ public class MainActivity extends AppCompatActivity
         if (type != null && type.equals(SIGNAL_TYPE)) {
             showMessage(data, remote);
         }
-    }
-
-    /* Web Service Coordinator delegate methods */
-
-    @Override
-    public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
-
-        Log.d(LOG_TAG, "ApiKey: "+apiKey + " SessionId: "+ sessionId + " Token: "+token);
-
-        initializeSession(apiKey, sessionId, token);
-    }
-
-    @Override
-    public void onWebServiceCoordinatorError(Exception error) {
-        showConfigError("Web Service error", error.getMessage());
     }
 
     /* alert dialogue for errors */
