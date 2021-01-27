@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity
         SubscriberKit.SubscriberListener,
         Session.ArchiveListener {
 
-    private Retrofit retrofit;
-    private APIService apiService;
-
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
+
+    private Retrofit retrofit;
+    private APIService apiService;
 
     private String mSessionId;
     private Session mSession;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // Fail fast is config is invalid
-        OpenTokConfig.verify();
+        OpenTokConfig.verifyChatServerUrl();
 
         mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
         mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
@@ -120,9 +120,7 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<GetSessionResponse>() {
             @Override
             public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
-                // session initialization occurs once data is returned, in onSessionConnectionDataReady ??????
                 GetSessionResponse body = response.body();
-
                 initializeSession(body.apiKey, body.sessionId, body.token);
                 initializePublisher();
             }

@@ -40,5 +40,5 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
     implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
     implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
 }
