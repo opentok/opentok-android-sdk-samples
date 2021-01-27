@@ -1,2 +1,1 @@
 include ':app', ':ScreenSharing'
-rootProject.name='Tokbox AR'
