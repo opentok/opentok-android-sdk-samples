@@ -22,14 +22,23 @@ import com.opentok.android.SubscriberKit;
 
 import java.util.List;
 
+import com.tokbox.sample.basicvideochat.network.APIService;
+import com.tokbox.sample.basicvideochat.network.GetSessionResponse;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity
                             implements EasyPermissions.PermissionCallbacks,
-                                        WebServiceCoordinator.Listener,
                                         Session.SessionListener,
                                         PublisherKit.PublisherListener,
                                         SubscriberKit.SubscriberListener{
@@ -38,9 +47,8 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
-    // Suppressing this warning. mWebServiceCoordinator will get GarbageCollected if it is local.
-    @SuppressWarnings("FieldCanBeLocal")
-    private WebServiceCoordinator mWebServiceCoordinator;
+    private Retrofit retrofit;
+    private APIService apiService;
 
     private Session mSession;
     private Publisher mPublisher;
@@ -126,52 +134,66 @@ public class MainActivity extends AppCompatActivity
 
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            // if there is no server URL set
-            if (OpenTokConfig.CHAT_SERVER_URL == null) {
-                // use hard coded session values
-                if (OpenTokConfig.areHardCodedConfigsValid()) {
-                    initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
-                } else {
-                    showConfigError("Configuration Error", OpenTokConfig.hardCodedConfigErrorMessage);
-                }
+
+            if (OpenTokConfig.hasChatServerUrl()) {
+                // if there is a server URL
+
+                OpenTokConfig.verifyChatServerUrl();
+                initRetrofit();
+                getSession();
             } else {
-                // otherwise initialize WebServiceCoordinator and kick off request for session data
-                // session initialization occurs once data is returned, in onSessionConnectionDataReady
-                if (OpenTokConfig.isWebServerConfigUrlValid()) {
-                    mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-                    mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
-                } else {
-                    showConfigError("Configuration Error", OpenTokConfig.webServerConfigErrorMessage);
-                }
+                // use hard coded session values
+                OpenTokConfig.verifyConfig();
+                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
             }
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
 
+    // Make a request for session data
+    private void getSession() {
+        Call<GetSessionResponse> call = apiService.getSession();
+
+        call.enqueue(new Callback<GetSessionResponse>() {
+            @Override
+            public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
+                GetSessionResponse body = response.body();
+                initializeSession(body.apiKey, body.sessionId, body.token);
+            }
+
+            @Override
+            public void onFailure(Call<GetSessionResponse> call, Throwable t) {
+                throw new RuntimeException(t.getMessage());
+            }
+        });
+    }
+
     private void initializeSession(String apiKey, String sessionId, String token) {
+        Log.i(LOG_TAG, "apiKey: " + apiKey);
+        Log.i(LOG_TAG, "sessionId: " + sessionId);
+        Log.i(LOG_TAG, "token: " + token);
 
         mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
         mSession.connect(token);
     }
 
-    /* Web Service Coordinator delegate methods */
+    private void initRetrofit() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(Level.BODY);
 
-    @Override
-    public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
 
-        Log.d(LOG_TAG, "ApiKey: "+apiKey + " SessionId: "+ sessionId + " Token: "+token);
-        initializeSession(apiKey, sessionId, token);
-    }
+        retrofit = new Retrofit.Builder()
+                .baseUrl(OpenTokConfig.CHAT_SERVER_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(client)
+                .build();
 
-    @Override
-    public void onWebServiceCoordinatorError(Exception error) {
-
-        Log.e(LOG_TAG, "Web Service error: " + error.getMessage());
-        Toast.makeText(this, "Web Service error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-        finish();
-
+        apiService = retrofit.create(APIService.class);
     }
 
     /* Session Listener methods */

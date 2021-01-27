@@ -17,6 +17,7 @@ ext {
     extRetrofitVersion="2.9.0"
     extOkHttpVersion="4.8.1"
     extRetrofit2ConverterMoshi="2.8.2"
+    extOkHttpLoggingInterceptor="4.9.0"
 }
 
 /*

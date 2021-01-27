@@ -36,5 +36,9 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
-    implementation 'com.android.volley:volley:1.1.0'
+
+    implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
+    implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
 }

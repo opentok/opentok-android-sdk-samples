@@ -1,5 +1,6 @@
 package com.tokbox.sample.basicvideochat;
 
+import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 public class OpenTokConfig {
@@ -22,38 +23,38 @@ public class OpenTokConfig {
      To quickly set up server, see https://github.com/opentok/learning-opentok-php
     */
     public static final String CHAT_SERVER_URL = "";
-    public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";
 
 
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 
-    public static String webServerConfigErrorMessage;
-    public static String hardCodedConfigErrorMessage;
+    public static boolean hasChatServerUrl() {
+        return !TextUtils.isEmpty(CHAT_SERVER_URL);
+    }
 
-    public static boolean areHardCodedConfigsValid() {
-        if (OpenTokConfig.API_KEY != null && !OpenTokConfig.API_KEY.isEmpty()
-                && OpenTokConfig.SESSION_ID != null && !OpenTokConfig.SESSION_ID.isEmpty()
-                && OpenTokConfig.TOKEN != null && !OpenTokConfig.TOKEN.isEmpty()) {
-            return true;
+    public static void verifyConfig() {
+        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)) {
+            throw new RuntimeException("API_KEY in OpenTokConfig.java cannot be null or empty");
         }
-        else {
-            hardCodedConfigErrorMessage = "API KEY, SESSION ID and TOKEN in OpenTokConfig.java cannot be null or empty.";
-            return false;
+
+        if (TextUtils.isEmpty(OpenTokConfig.SESSION_ID)) {
+            throw new RuntimeException("SESSION_ID in OpenTokConfig.java cannot be null or empty");
+        }
+
+        if (TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
+            throw new RuntimeException("TOKEN in OpenTokConfig.java cannot be null or empty");
         }
     }
 
-    public static boolean isWebServerConfigUrlValid(){
-        if (OpenTokConfig.CHAT_SERVER_URL == null || OpenTokConfig.CHAT_SERVER_URL.isEmpty()) {
-            webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null or empty";
-            return false;
+    public static void verifyChatServerUrl(){
+        if (OpenTokConfig.CHAT_SERVER_URL == null) {
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
         } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
-            webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must be specified as either http or https";
-            return false;
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or " +
+                    "https");
         } else if ( !URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL) ) {
-            webServerConfigErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL";
-            return false;
-        } else {
-            return true;
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
         }
     }
+
+
 }

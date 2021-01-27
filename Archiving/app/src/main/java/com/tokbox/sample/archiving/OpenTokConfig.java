@@ -18,10 +18,9 @@ public class OpenTokConfig {
     // To quickly set up a pre-made web service, see https://github.com/opentok/learning-opentok-php
     //
 
-
     public static final String CHAT_SERVER_URL = "";
 
-    public static void verify(){
+    public static void verifyChatServerUrl(){
         if (OpenTokConfig.CHAT_SERVER_URL == null) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
         } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
