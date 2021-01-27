@@ -1,5 +1,8 @@
 import groovy.io.FileType
 
+/*
+Dependency versions
+*/
 ext {
     extAgpVersion="4.1.2"
     extCompileSdkVersion=30
@@ -11,11 +14,14 @@ ext {
     extMinifyEnabled=false
     extAppCompatVersion="1.1.0"
     extOpentokSdkVersion="2.18.+"
+    extRetrofitVersion="2.9.0"
+    extOkHttpVersion="4.8.1"
+    extRetrofit2ConverterMoshi="2.8.2"
 }
 
-/* 
-Look for the `OpenTokConfig` file in the project and checks if 
-API_KEY, SESSION_ID and TOKEN are empty. This check prevents from committing credentials.
+/*
+Look for the `OpenTokConfig` file and verify if there are no hardcoded values.
+This task prevents from merging credentials and custom server URLs.
 */
 task checkOpenTokConfig() {
     doLast {
@@ -30,6 +36,7 @@ task checkOpenTokConfig() {
                 checkOpenTokConfigProperty(file, "API_KEY")
                 checkOpenTokConfigProperty(file, "SESSION_ID")
                 checkOpenTokConfigProperty(file, "TOKEN")
+                checkOpenTokConfigProperty(file, "CHAT_SERVER_URL")
             }
         }
 
@@ -41,7 +48,7 @@ task checkOpenTokConfig() {
 
 def checkOpenTokConfigProperty(file, propertyName) {
     file.eachLine { line ->
-        // If property exists within config file it must be empty
+        // If property exists within config file it must be an empty String
         if (line.contains("public static final String $propertyName") && !line.contains('""')) {
             throw new Exception("Opentok config property is not empty: ${line}")
         }

@@ -1,7 +1,6 @@
 package com.tokbox.sample.archiving;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,45 +10,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.app.AlertDialog;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
-import com.opentok.android.Publisher;
-import com.opentok.android.PublisherKit;
-import com.opentok.android.Subscriber;
-import com.opentok.android.SubscriberKit;
-import com.opentok.android.BaseVideoRenderer;
-import com.opentok.android.OpentokError;
+import com.opentok.android.*;
+import com.tokbox.sample.archiving.network.*;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor.Level;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.util.List;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
-
-
 public class MainActivity extends AppCompatActivity
-                            implements  EasyPermissions.PermissionCallbacks,
-                                        WebServiceCoordinator.Listener,
-                                        Session.SessionListener,
-                                        PublisherKit.PublisherListener,
-                                        SubscriberKit.SubscriberListener,
-                                        Session.ArchiveListener {
+        implements EasyPermissions.PermissionCallbacks,
+        Session.SessionListener,
+        PublisherKit.PublisherListener,
+        SubscriberKit.SubscriberListener,
+        Session.ArchiveListener {
+
+    private Retrofit retrofit;
+    private APIService apiService;
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
-    // Suppressing this warning. mWebServiceCoordinator will get GarbageCollected if it is local.
-    @SuppressWarnings("FieldCanBeLocal")
-    private WebServiceCoordinator mWebServiceCoordinator;
-
-    private String mApiKey;
     private String mSessionId;
-    private String mToken;
     private Session mSession;
     private Publisher mPublisher;
     private Subscriber mSubscriber;
@@ -61,6 +53,38 @@ public class MainActivity extends AppCompatActivity
     private ImageView mArchivingIndicatorView;
 
     private Menu mMenu;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Fail fast is config is invalid
+        OpenTokConfig.verify();
+
+        mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
+        mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
+        mArchivingIndicatorView = (ImageView) findViewById(R.id.archiving_indicator_view);
+
+        requestPermissions();
+    }
+
+    private void initRetrofit() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(OpenTokConfig.CHAT_SERVER_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(client)
+                .build();
+
+        apiService = retrofit.create(APIService.class);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -76,58 +100,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this)
-                    .setTitle(getString(R.string.title_settings_dialog))
-                    .setRationale(getString(R.string.rationale_ask_again))
-                    .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel))
-                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
-                    .build()
-                    .show();
-        }
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            // initialize view objects from your layout
-            mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
-            mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
-            mArchivingIndicatorView = (ImageView) findViewById(R.id.archiving_indicator_view);
-
-            // initialize WebServiceCoordinator and kick off request for session data
-            // session initialization occurs once data is returned, in onSessionConnectionDataReady
-            mWebServiceCoordinator = new WebServiceCoordinator(this, this);
-            mWebServiceCoordinator.fetchSessionConnectionData(OpenTokConfig.SESSION_INFO_ENDPOINT);
+            initRetrofit();
+            getSession();
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    // Make a request for session data
+    private void getSession() {
+        Call<GetSessionResponse> call = apiService.getSession();
 
-        // alert the user if OpenTokConfig.java is not configured with a valid URL. Fail fast.
-        if ( !OpenTokConfig.isConfigUrlValid() ) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Configuration Error")
-                    .setMessage(OpenTokConfig.configErrorMessage)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Log.e(LOG_TAG, "Configuration Error. " + OpenTokConfig.configErrorMessage);
-                            MainActivity.this.finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        } else {
-            requestPermissions();
-        }
+        call.enqueue(new Callback<GetSessionResponse>() {
+            @Override
+            public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
+                // session initialization occurs once data is returned, in onSessionConnectionDataReady ??????
+                GetSessionResponse body = response.body();
+
+                initializeSession(body.apiKey, body.sessionId, body.token);
+                initializePublisher();
+            }
+
+            @Override
+            public void onFailure(Call<GetSessionResponse> call, Throwable t) {
+                throw new RuntimeException(t.getMessage());
+            }
+        });
     }
 
     @Override
@@ -143,7 +147,7 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_settings:
                 return true;
             case R.id.action_start_archive:
@@ -161,6 +165,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeSession(String apiKey, String sessionId, String token) {
+        Log.i(LOG_TAG, "apiKey: " + apiKey);
+        Log.i(LOG_TAG, "sessionId: " + sessionId);
+        Log.i(LOG_TAG, "token: " + token);
+
+        mSessionId = sessionId;
+
         mSession = new Session.Builder(this, apiKey, sessionId).build();
         mSession.setSessionListener(this);
         mSession.setArchiveListener(this);
@@ -185,20 +195,26 @@ public class MainActivity extends AppCompatActivity
     /* methods calling mWebServiceCoordinator to control Archiving */
 
     private void startArchive() {
-        if(mSession != null) {
-            mWebServiceCoordinator.startArchive(mSessionId);
+        if (mSession != null) {
+            StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
+            startArchiveRequest.sessionId = mSessionId;
+
             setStartArchiveEnabled(false);
+            Call call = apiService.startArchive(startArchiveRequest);
+            call.enqueue(new EmptyCallback());
         }
     }
 
     private void stopArchive() {
-        mWebServiceCoordinator.stopArchive(mCurrentArchiveId);
+        Call call = apiService.stopArchive(mCurrentArchiveId);
+        call.enqueue(new EmptyCallback());
         setStopArchiveEnabled(false);
     }
 
     private void playArchive() {
-        Uri playArchiveUri = mWebServiceCoordinator.archivePlaybackUri(mPlayableArchiveId);
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, playArchiveUri);
+        String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" +  mPlayableArchiveId + "/view";
+        Uri archiveUri = Uri.parse(archiveUrl);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
         startActivity(browserIntent);
     }
 
@@ -223,30 +239,6 @@ public class MainActivity extends AppCompatActivity
             mSession.onResume();
         }
     }
-
-    /* Web Service Coordinator delegate methods */
-
-    @Override
-    public void onSessionConnectionDataReady(String apiKey, String sessionId, String token) {
-        Log.i(LOG_TAG, apiKey);
-        Log.i(LOG_TAG, sessionId);
-        Log.i(LOG_TAG, token);
-
-        mApiKey = apiKey;
-        mSessionId = sessionId;
-        mToken = token;
-
-        initializeSession(apiKey, sessionId, token);
-        initializePublisher();
-    }
-
-    @Override
-    public void onWebServiceCoordinatorError(Exception error) {
-        Log.e(LOG_TAG, "Web Service error: " + error);
-        Log.e(LOG_TAG, "Web Service error message: " + error.getMessage());
-    }
-
-    /* Session Listener methods */
 
     @Override
     public void onConnected(Session session) {
