@@ -1,7 +1,7 @@
 import groovy.io.FileType
 
 ext {
-    extAgpVersion="4.1.1"
+    extAgpVersion="4.1.2"
     extCompileSdkVersion=30
     extBuildToolsVersion="30.0.2"
     extMinSdkVersion=16
