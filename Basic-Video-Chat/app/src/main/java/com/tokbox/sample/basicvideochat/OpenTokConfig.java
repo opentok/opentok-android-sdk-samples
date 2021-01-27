@@ -21,7 +21,7 @@ public class OpenTokConfig {
 
      To quickly set up server, see https://github.com/opentok/learning-opentok-php
     */
-    public static final String CHAT_SERVER_URL = null;
+    public static final String CHAT_SERVER_URL = "";
     public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";
 
 

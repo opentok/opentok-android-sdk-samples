@@ -19,26 +19,16 @@ public class OpenTokConfig {
     //
 
 
-    public static final String CHAT_SERVER_URL = null;
-    public static final String SESSION_INFO_ENDPOINT = CHAT_SERVER_URL + "/session";
-    public static final String ARCHIVE_START_ENDPOINT = CHAT_SERVER_URL + "/archive/start";
-    public static final String ARCHIVE_STOP_ENDPOINT = CHAT_SERVER_URL + "/archive/:archiveId/stop";
-    public static final String ARCHIVE_PLAY_ENDPOINT = CHAT_SERVER_URL + "/archive/:archiveId/view";
+    public static final String CHAT_SERVER_URL = "";
 
-    public static String configErrorMessage;
-
-    public static boolean isConfigUrlValid(){
+    public static void verify(){
         if (OpenTokConfig.CHAT_SERVER_URL == null) {
-            configErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must not be null";
-            return false;
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
         } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
-            configErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or https";
-            return false;
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or " +
+                    "https");
         } else if ( !URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL) ) {
-            configErrorMessage = "CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL";
-            return false;
-        } else {
-            return true;
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
         }
     }
 }
