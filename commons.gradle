@@ -12,8 +12,13 @@ ext {
     extVersionCode=1
     extVersionName="1.0"
     extMinifyEnabled=false
-    extAppCompatVersion="1.1.0"
     extOpentokSdkVersion="2.18.+"
+
+    extAppCompatVersion="1.2.0"
+    extEasyPermissionsVersion="3.0.0"
+    extConstraintLyoutVersion="2.0.4"
+    extArCoreVersion="1.22.0"
+    extSceneFormVersion="1.17.1"
     extRetrofitVersion="2.9.0"
     extOkHttpVersion="4.8.1"
     extRetrofit2ConverterMoshi="2.8.2"
