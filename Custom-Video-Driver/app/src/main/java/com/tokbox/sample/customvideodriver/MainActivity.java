@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        OpenTokConfig.verifyConfig();
+
         mPublisherViewContainer = findViewById(R.id.publisherview);
         mSubscriberViewContainer = findViewById(R.id.subscriberview);
 

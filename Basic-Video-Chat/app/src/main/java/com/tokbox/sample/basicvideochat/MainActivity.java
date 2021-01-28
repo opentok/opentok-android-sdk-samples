@@ -136,13 +136,12 @@ public class MainActivity extends AppCompatActivity
         if (EasyPermissions.hasPermissions(this, perms)) {
 
             if (OpenTokConfig.hasChatServerUrl()) {
-                // if there is a server URL
-
+                // Custom server URL exists - retrieve session config
                 OpenTokConfig.verifyChatServerUrl();
                 initRetrofit();
                 getSession();
             } else {
-                // use hard coded session values
+                // Use hardcoded session config
                 OpenTokConfig.verifyConfig();
                 initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
             }

@@ -20,13 +20,13 @@ public class OpenTokConfig {
 
     public static final String CHAT_SERVER_URL = "";
 
-    public static void verifyChatServerUrl(){
+    public static void verifyChatServerUrl() {
         if (OpenTokConfig.CHAT_SERVER_URL == null) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
-        } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
+        } else if (!(URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL))) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or " +
                     "https");
-        } else if ( !URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL) ) {
+        } else if (!URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL)) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
         }
     }

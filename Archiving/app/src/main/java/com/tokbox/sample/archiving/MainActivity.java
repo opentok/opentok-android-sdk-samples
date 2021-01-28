@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fail fast is config is invalid
+        // Fail fast if chat server URL is invalid
         OpenTokConfig.verifyChatServerUrl();
 
         mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);

@@ -50,18 +50,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        OpenTokConfig.verifyConfig();
+
         mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
         mSubscriberViewContainer = (LinearLayout) findViewById(R.id.subscriberview);
 
         final Button button = (Button) findViewById(R.id.screenshotButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (mSubscriber == null) {
-                    return;
-                }
-                ((BasicCustomVideoRenderer) mSubscriber.getRenderer()).saveScreenshot(true);
-                Toast.makeText(MainActivity.this, "Screenshot saved.", Toast.LENGTH_LONG).show();
+        button.setOnClickListener(v -> {
+            if (mSubscriber == null) {
+                return;
             }
+            ((BasicCustomVideoRenderer) mSubscriber.getRenderer()).saveScreenshot(true);
+            Toast.makeText(MainActivity.this, "Screenshot saved.", Toast.LENGTH_LONG).show();
         });
 
         requestPermissions();

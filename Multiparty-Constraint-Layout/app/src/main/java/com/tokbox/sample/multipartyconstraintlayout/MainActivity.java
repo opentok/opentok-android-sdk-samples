@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        OpenTokConfig.verifyConfig();
+
         mContainer = (ConstraintLayout) findViewById(R.id.main_container);
 
         requestPermissions();
