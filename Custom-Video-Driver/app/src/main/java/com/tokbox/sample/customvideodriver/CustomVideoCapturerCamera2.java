@@ -1,41 +1,26 @@
-package com.tokbox.sample.customvideodriverlib;
+package com.tokbox.sample.customvideodriver;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.*;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import androidx.annotation.RequiresApi;
-import android.util.Log;
-import android.util.Range;
-import android.util.Size;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
+import android.util.*;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
+import androidx.annotation.RequiresApi;
 import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.Publisher;
+
+import java.util.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 @TargetApi(21)
 @RequiresApi(21)
