@@ -37,11 +37,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Log.d(LOG_TAG, "onCreate");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        OpenTokConfig.verifyConfig();
 
         // inflate views
         mMessageEditTextView = (EditText)findViewById(R.id.message_edit_text);

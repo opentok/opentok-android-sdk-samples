@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        OpenTokConfig.verifyConfig();
 
         mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
 

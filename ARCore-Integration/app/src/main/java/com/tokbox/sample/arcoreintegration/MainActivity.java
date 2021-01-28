@@ -46,13 +46,12 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     private final HashMap<AugmentedFace, AugmentedFaceNode> mFaceNodeMap = new HashMap<>();
 
-    public MainActivity() {
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_augmented_face);
+
+        OpenTokConfig.verifyConfig();
 
         if (!checkIsSupportedDeviceOrFinish(this)) return;
 

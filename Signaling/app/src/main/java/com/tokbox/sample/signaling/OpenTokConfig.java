@@ -1,5 +1,6 @@
 package com.tokbox.sample.signaling;
 
+import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 public class OpenTokConfig {
@@ -12,4 +13,18 @@ public class OpenTokConfig {
     public static final String SESSION_ID = "";
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
     public static final String TOKEN = "";
+
+    public static void verifyConfig() {
+        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)) {
+            throw new RuntimeException("API_KEY in OpenTokConfig.java cannot be null or empty");
+        }
+
+        if (TextUtils.isEmpty(OpenTokConfig.SESSION_ID)) {
+            throw new RuntimeException("SESSION_ID in OpenTokConfig.java cannot be null or empty");
+        }
+
+        if (TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
+            throw new RuntimeException("TOKEN in OpenTokConfig.java cannot be null or empty");
+        }
+    }
 }

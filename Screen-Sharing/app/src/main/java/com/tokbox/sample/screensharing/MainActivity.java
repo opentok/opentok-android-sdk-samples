@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        OpenTokConfig.verifyConfig();
+
         mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
         mWebViewContainer = (WebView) findViewById(R.id.webview);
 

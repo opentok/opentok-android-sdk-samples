@@ -31,9 +31,9 @@ public class MainActivity extends Activity implements Session.SessionListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.d(TAG, "Activity Instance: " + this.toString());
         setContentView(R.layout.activity_main);
+
+        OpenTokConfig.verifyConfig();
 
         mSubscriberViewContainer = findViewById(R.id.subscriber_container);
         mPublisherViewContainer = findViewById(R.id.publisher_container);

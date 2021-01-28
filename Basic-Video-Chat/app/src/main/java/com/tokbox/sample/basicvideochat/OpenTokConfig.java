@@ -1,7 +1,9 @@
 package com.tokbox.sample.basicvideochat;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
+import android.widget.Toast;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
@@ -45,16 +47,18 @@ public class OpenTokConfig {
         }
     }
 
-    public static void verifyChatServerUrl(){
+    private static void notifyError(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        throw new RuntimeException(message);
+    }
+
+    public static void verifyChatServerUrl() {
         if (OpenTokConfig.CHAT_SERVER_URL == null) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
-        } else if ( !( URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL)) ) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or " +
-                    "https");
-        } else if ( !URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL) ) {
+        } else if (!(URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL))) {
+            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or https");
+        } else if (!URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL)) {
             throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
         }
     }
-
-
 }
