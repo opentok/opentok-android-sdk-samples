@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.lang.String;
 
-import com.tokbox.sample.customvideodriverlib.CustomVideoCapturer;
-import com.tokbox.sample.customvideodriverlib.InvertedColorsVideoRenderer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -159,9 +157,9 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
         // capturer
-        CustomVideoCapturer capturer;
-        capturer = new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
-        capturer.setCustomVideoCapturerDataSource(new CustomVideoCapturer.CustomVideoCapturerDataSource() {
+        MirrorVideoCapturer capturer = new MirrorVideoCapturer(MainActivity.this,
+                Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
+        capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
             @Override
             public byte[] retrieveMetadata() {
                 return getCurrentTimeStamp().getBytes();

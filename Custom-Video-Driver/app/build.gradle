@@ -36,5 +36,4 @@ dependencies {
     implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
-    implementation project(':CustomVideoDriverLib')
 }

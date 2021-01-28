@@ -1,21 +1,19 @@
-package com.tokbox.sample.customvideodriverlib;
+package com.tokbox.sample.customvideodriver;
 
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.view.View;
-
 import com.opentok.android.BaseVideoRenderer;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 

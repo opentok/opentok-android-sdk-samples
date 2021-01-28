@@ -1,4 +1,4 @@
-package com.tokbox.sample.customvideodriverlib;
+package com.tokbox.sample.framemetadata;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
-
 import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.Publisher;
 import com.opentok.android.VideoUtils;
@@ -25,11 +24,11 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class CustomVideoCapturer extends BaseVideoCapturer implements
+public class MirrorVideoCapturer extends BaseVideoCapturer implements
         PreviewCallback,
         BaseVideoCapturer.CaptureSwitch {
 
-    private static final String LOG_TAG = CustomVideoCapturer.class.getSimpleName();
+    private static final String LOG_TAG = MirrorVideoCapturer.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;
@@ -88,8 +87,8 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         }
     };
 
-    public CustomVideoCapturer(Context context, Publisher.CameraCaptureResolution resolution,
-                                Publisher.CameraCaptureFrameRate fps) {
+    public MirrorVideoCapturer(Context context, Publisher.CameraCaptureResolution resolution,
+                               Publisher.CameraCaptureFrameRate fps) {
         this.cameraIndex = getCameraIndexUsingFront(true);
 
         // Get current display to query UI orientation
