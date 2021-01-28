@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
                 GetSessionResponse body = response.body();
                 initializeSession(body.apiKey, body.sessionId, body.token);
-                initializePublisher();
             }
 
             @Override
@@ -173,16 +172,6 @@ public class MainActivity extends AppCompatActivity
         mSession.setSessionListener(this);
         mSession.setArchiveListener(this);
         mSession.connect(token);
-    }
-
-    private void initializePublisher() {
-        // initialize Publisher and set this object to listen to Publisher events
-        mPublisher = new Publisher.Builder(this).build();
-        mPublisher.setPublisherListener(this);
-
-        // set publisher video style to fill view
-        mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisherViewContainer.addView(mPublisher.getView(), 0);
     }
 
     private void logOpenTokError(OpentokError opentokError) {
@@ -242,9 +231,15 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.i(LOG_TAG, "Session Connected");
 
-        if (mPublisher != null) {
-            mSession.publish(mPublisher);
-        }
+        // initialize Publisher and set this object to listen to Publisher events
+        mPublisher = new Publisher.Builder(this).build();
+        mPublisher.setPublisherListener(this);
+
+        // set publisher video style to fill view
+        mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+        mPublisherViewContainer.addView(mPublisher.getView(), 0);
+
+        mSession.publish(mPublisher);
 
         setStartArchiveEnabled(true);
     }
