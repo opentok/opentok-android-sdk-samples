@@ -12,6 +12,6 @@ public interface APIService {
     @Headers("Content-Type: application/json")
     Call<Void> startArchive(@Body StartArchiveRequest startArchiveRequest);
 
-    @GET("archive/{archiveId}/stop")
+    @POST("archive/{archiveId}/stop")
     Call<Void> stopArchive(@Path("archiveId") String archiveId);
 }

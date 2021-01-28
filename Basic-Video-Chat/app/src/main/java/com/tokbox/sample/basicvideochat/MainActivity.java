@@ -208,9 +208,9 @@ public class MainActivity extends AppCompatActivity
         mPublisher.setPublisherListener(this);
 
         // set publisher video style to fill view
-        mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-                BaseVideoRenderer.STYLE_VIDEO_FILL);
+        mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         mPublisherViewContainer.addView(mPublisher.getView());
+
         if (mPublisher.getView() instanceof GLSurfaceView) {
             ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
         }
