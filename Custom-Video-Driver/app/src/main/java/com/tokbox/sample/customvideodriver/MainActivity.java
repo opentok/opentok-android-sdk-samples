@@ -21,8 +21,6 @@ import com.opentok.android.SubscriberKit;
 
 import java.util.List;
 
-import com.tokbox.sample.customvideodriverlib.CustomVideoCapturer;
-import com.tokbox.sample.customvideodriverlib.InvertedColorsVideoRenderer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
