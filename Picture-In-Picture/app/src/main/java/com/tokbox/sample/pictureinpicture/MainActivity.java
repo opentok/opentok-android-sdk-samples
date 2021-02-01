@@ -71,7 +71,6 @@ public class MainActivity extends Activity implements Session.SessionListener {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
 
         if (session == null) {
             session = new Session.Builder(getApplicationContext(), OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID)
@@ -106,7 +105,6 @@ public class MainActivity extends Activity implements Session.SessionListener {
     protected void onStop() {
         super.onStop();
 
-        Log.d(TAG, "onStop");
 
         if (subscriber != null) {
             mSubscriberViewContainer.removeView(subscriber.getView());

@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity
 
     // Make a request for session data
     private void getSession() {
+
+        Log.i(LOG_TAG, "getSession");
+
         Call<GetSessionResponse> call = apiService.getSession();
 
         call.enqueue(new Callback<GetSessionResponse>() {
@@ -182,6 +185,9 @@ public class MainActivity extends AppCompatActivity
     /* methods calling mWebServiceCoordinator to control Archiving */
 
     private void startArchive() {
+
+        Log.i(LOG_TAG, "startArchive");
+
         if (mSession != null) {
             StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
             startArchiveRequest.sessionId = mSessionId;
@@ -193,12 +199,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void stopArchive() {
+
+        Log.i(LOG_TAG, "stopArchive");
+
         Call call = apiService.stopArchive(mCurrentArchiveId);
         call.enqueue(new EmptyCallback());
         setStopArchiveEnabled(false);
     }
 
     private void playArchive() {
+
+        Log.i(LOG_TAG, "playArchive");
+
         String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" +  mPlayableArchiveId + "/view";
         Uri archiveUri = Uri.parse(archiveUrl);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
@@ -210,7 +222,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(LOG_TAG, "onPause");
 
         if (mSession != null) {
             mSession.onPause();
@@ -220,12 +231,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onResume");
 
         if (mSession != null) {
             mSession.onResume();
         }
     }
+
+    // SessionListener methods
 
     @Override
     public void onConnected(Session session) {

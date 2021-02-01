@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
-
         super.onPause();
 
         if (mSession == null) {
@@ -74,7 +72,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
 
         super.onResume();
 
@@ -86,7 +83,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
 
         disconnectSession();
 
@@ -133,6 +129,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    // SessionListener methods
     @Override
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
@@ -213,6 +210,7 @@ public class MainActivity extends AppCompatActivity
         finish();
     }
 
+    // VideoListener methods
     @Override
     public void onVideoDataReceived(SubscriberKit subscriberKit) {
         mSubscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);

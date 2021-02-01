@@ -126,22 +126,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.d(TAG, "onRestart");
-
-        super.onRestart();
-    }
-
-    @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
 
         super.onResume();
 
@@ -153,7 +138,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
 
         super.onPause();
 
@@ -168,15 +152,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        Log.d(TAG, "onPause");
-
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
 
         disconnectSession();
 
