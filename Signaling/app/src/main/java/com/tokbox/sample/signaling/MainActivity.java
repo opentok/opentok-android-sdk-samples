@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
 
-        Log.d(LOG_TAG, "onPause");
-
         super.onPause();
 
         if (mSession != null) {
@@ -88,8 +86,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
-        Log.d(LOG_TAG, "onResume");
 
         super.onResume();
 

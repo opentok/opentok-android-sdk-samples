@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(LOG_TAG, "onCreate");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -77,8 +75,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
 
-        Log.d(LOG_TAG, "onPause");
-
         super.onPause();
 
         if (mSession != null) {
@@ -89,8 +85,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
-        Log.d(LOG_TAG, "onResume");
 
         super.onResume();
 
@@ -152,6 +146,9 @@ public class MainActivity extends AppCompatActivity
 
     // Make a request for session data
     private void getSession() {
+
+        Log.i(LOG_TAG, "getSession");
+
         Call<GetSessionResponse> call = apiService.getSession();
 
         call.enqueue(new Callback<GetSessionResponse>() {
@@ -250,10 +247,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onError(Session session, OpentokError opentokError) {
-        Log.e(LOG_TAG, "onError: "+ opentokError.getErrorDomain() + " : " +
-                opentokError.getErrorCode() + " - "+opentokError.getMessage() + " in session: "+ session.getSessionId());
 
-        showOpenTokError(opentokError);
+        logOpenTokError(opentokError);
     }
 
     /* Publisher Listener methods */
@@ -274,10 +269,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onError(PublisherKit publisherKit, OpentokError opentokError) {
 
-        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " +
-                opentokError.getErrorCode() +  " - "+opentokError.getMessage());
-
-        showOpenTokError(opentokError);
+        logOpenTokError(opentokError);
     }
 
     @Override
@@ -295,16 +287,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
 
-        Log.e(LOG_TAG, "onError: "+opentokError.getErrorDomain() + " : " +
-                opentokError.getErrorCode() +  " - "+opentokError.getMessage());
-
-        showOpenTokError(opentokError);
+        logOpenTokError(opentokError);
     }
 
-    private void showOpenTokError(OpentokError opentokError) {
+    private void logOpenTokError(OpentokError opentokError) {
 
-        Toast.makeText(this, opentokError.getErrorDomain().name() +": " +opentokError.getMessage() + " Please, see the logcat.", Toast.LENGTH_LONG).show();
-        finish();
+        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
+        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
     }
 
     private void showConfigError(String alertTitle, final String errorMessage) {

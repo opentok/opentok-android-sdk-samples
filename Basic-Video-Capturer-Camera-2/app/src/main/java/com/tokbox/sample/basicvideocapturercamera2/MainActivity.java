@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
 
         super.onPause();
 
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
 
         super.onResume();
 
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
 
         disconnectSession();
 

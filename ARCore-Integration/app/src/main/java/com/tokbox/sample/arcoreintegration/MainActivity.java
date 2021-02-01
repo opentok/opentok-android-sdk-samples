@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_augmented_face);
 
@@ -98,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
     // SessionListener methods
     @Override
     public void onConnected(Session session) {
+
         Log.i(LOG_TAG, "Session Connected");
+
         CustomVideoCapturer capturer = new CustomVideoCapturer(mFragment.getArSceneView());
         Publisher customPublisher = new Publisher.Builder(MainActivity.this)
                 .name("publisher-capturer")
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         Log.e(LOG_TAG, "Session error: " + opentokError.getMessage());
     }
 
-    // Scene.OnUpdateListener modules
+    // Scene.OnUpdateListener methods
     @Override
     public void onUpdate(FrameTime frameTime) {
         if (mRenderable == null || mTexture == null) return;
