@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        mPublisher = new Publisher.Builder(MainActivity.this)
+        mPublisher = new Publisher.Builder(this)
                 .name("publisher")
                 .capturer(new MirrorVideoCapturer(this))
                 .build();
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber.Builder(MainActivity.this, stream)
+        mSubscriber = new Subscriber.Builder(this, stream)
                 .build();
 
         mSubscriber.setVideoListener(this);

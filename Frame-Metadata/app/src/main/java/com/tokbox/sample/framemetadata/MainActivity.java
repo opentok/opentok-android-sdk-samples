@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
         // capturer
-        MirrorVideoCapturer capturer = new MirrorVideoCapturer(MainActivity.this,
+        MirrorVideoCapturer capturer = new MirrorVideoCapturer(this,
                 Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
         capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
             @Override
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         // renderer
-        InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
+        InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(this);
         renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
             @Override
             public void onMetadataReady(byte[] metadata) {
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        mPublisher = new Publisher.Builder(MainActivity.this)
+        mPublisher = new Publisher.Builder(this)
                 .name("publisher")
                 .capturer(capturer)
                 .renderer(renderer).build();
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+        mSubscriber = new Subscriber.Builder(this, stream).build();
         mSubscriber.setVideoListener(this);
         mSession.subscribe(mSubscriber);
     }

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             ((BasicCustomVideoRenderer) mSubscriber.getRenderer()).saveScreenshot(true);
-            Toast.makeText(MainActivity.this, "Screenshot saved.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Screenshot saved.", Toast.LENGTH_LONG).show();
         });
 
         requestPermissions();
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        mPublisher = new Publisher.Builder(MainActivity.this)
+        mPublisher = new Publisher.Builder(this)
                 .name("publisher")
                 .renderer(new BasicCustomVideoRenderer(this))
                 .build();
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void subscribeToStream(Stream stream) {
-        mSubscriber = new Subscriber.Builder(MainActivity.this, stream)
+        mSubscriber = new Subscriber.Builder(this, stream)
                 .renderer(new BasicCustomVideoRenderer(this))
                 .build();
         mSubscriber.setVideoListener(this);

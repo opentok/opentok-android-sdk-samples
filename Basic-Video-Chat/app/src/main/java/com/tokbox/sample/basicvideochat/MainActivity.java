@@ -1,27 +1,15 @@
 package com.tokbox.sample.basicvideochat;
 
-import android.opengl.GLSurfaceView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.NonNull;
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.widget.Toast;
-
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
-import com.opentok.android.Publisher;
-import com.opentok.android.PublisherKit;
-import com.opentok.android.Subscriber;
-import com.opentok.android.BaseVideoRenderer;
-import com.opentok.android.OpentokError;
-import com.opentok.android.SubscriberKit;
-
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import com.opentok.android.*;
 import com.tokbox.sample.basicvideochat.network.APIService;
 import com.tokbox.sample.basicvideochat.network.GetSessionResponse;
 import okhttp3.OkHttpClient;
@@ -36,12 +24,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
-                            implements EasyPermissions.PermissionCallbacks,
-                                        Session.SessionListener,
-                                        PublisherKit.PublisherListener,
-                                        SubscriberKit.SubscriberListener{
+        implements EasyPermissions.PermissionCallbacks,
+        Session.SessionListener,
+        PublisherKit.PublisherListener,
+        SubscriberKit.SubscriberListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -64,28 +54,23 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // initialize view objects from your layout
-        mPublisherViewContainer = (FrameLayout)findViewById(R.id.publisher_container);
-        mSubscriberViewContainer = (FrameLayout)findViewById(R.id.subscriber_container);
+        mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
+        mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
 
         requestPermissions();
     }
 
-     /* Activity lifecycle methods */
-
     @Override
     protected void onPause() {
-
         super.onPause();
 
         if (mSession != null) {
             mSession.onPause();
         }
-
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
 
         if (mSession != null) {
@@ -95,20 +80,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-
         Log.d(LOG_TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-
         Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
@@ -125,8 +107,7 @@ public class MainActivity extends AppCompatActivity
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-
-        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
 
             if (OpenTokConfig.hasChatServerUrl()) {
@@ -146,7 +127,6 @@ public class MainActivity extends AppCompatActivity
 
     // Make a request for session data
     private void getSession() {
-
         Log.i(LOG_TAG, "getSession");
 
         Call<GetSessionResponse> call = apiService.getSession();
@@ -197,7 +177,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(Session session) {
 
-        Log.d(LOG_TAG, "onConnected: Connected to session: "+session.getSessionId());
+        Log.d(LOG_TAG, "onConnected: Connected to session: " + session.getSessionId());
 
         // initialize Publisher and set this object to listen to Publisher events
         mPublisher = new Publisher.Builder(this).build();
@@ -217,13 +197,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDisconnected(Session session) {
 
-        Log.d(LOG_TAG, "onDisconnected: Disconnected from session: "+session.getSessionId());
+        Log.d(LOG_TAG, "onDisconnected: Disconnected from session: " + session.getSessionId());
     }
 
     @Override
     public void onStreamReceived(Session session, Stream stream) {
 
-        Log.d(LOG_TAG, "onStreamReceived: New Stream Received "+stream.getStreamId() + " in session: "+session.getSessionId());
+        Log.d(LOG_TAG, "onStreamReceived: New Stream Received " + stream.getStreamId() + " in session: " + session.getSessionId());
 
         if (mSubscriber == null) {
             mSubscriber = new Subscriber.Builder(this, stream).build();
@@ -237,7 +217,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStreamDropped(Session session, Stream stream) {
 
-        Log.d(LOG_TAG, "onStreamDropped: Stream Dropped: "+stream.getStreamId() +" in session: "+session.getSessionId());
+        Log.d(LOG_TAG, "onStreamDropped: Stream Dropped: " + stream.getStreamId() + " in session: " + session.getSessionId());
 
         if (mSubscriber != null) {
             mSubscriber = null;
@@ -256,14 +236,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
 
-        Log.d(LOG_TAG, "onStreamCreated: Publisher Stream Created. Own stream "+stream.getStreamId());
+        Log.d(LOG_TAG, "onStreamCreated: Publisher Stream Created. Own stream " + stream.getStreamId());
 
     }
 
     @Override
     public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
 
-        Log.d(LOG_TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream "+stream.getStreamId());
+        Log.d(LOG_TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.getStreamId());
     }
 
     @Override
@@ -275,13 +255,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(SubscriberKit subscriberKit) {
 
-        Log.d(LOG_TAG, "onConnected: Subscriber connected. Stream: "+subscriberKit.getStream().getStreamId());
+        Log.d(LOG_TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.getStream().getStreamId());
     }
 
     @Override
     public void onDisconnected(SubscriberKit subscriberKit) {
 
-        Log.d(LOG_TAG, "onDisconnected: Subscriber disconnected. Stream: "+subscriberKit.getStream().getStreamId());
+        Log.d(LOG_TAG, "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.getStream().getStreamId());
     }
 
     @Override
@@ -294,19 +274,5 @@ public class MainActivity extends AppCompatActivity
 
         Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
         Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
-    }
-
-    private void showConfigError(String alertTitle, final String errorMessage) {
-        Log.e(LOG_TAG, "Error " + alertTitle + ": " + errorMessage);
-        new AlertDialog.Builder(this)
-                .setTitle(alertTitle)
-                .setMessage(errorMessage)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.finish();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
     }
 }

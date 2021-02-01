@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity
         mSubscribers = new ArrayList<>();
         for (int i = 0; i < MAX_NUM_SUBSCRIBERS; i++) {
             int containerId = getResources().getIdentifier("subscriberview" + (new Integer(i)).toString(),
-                    "id", MainActivity.this.getPackageName());
+                    "id", this.getPackageName());
             int toggleAudioId = getResources().getIdentifier("toggleAudioSubscriber" + (new Integer(i)).toString(),
-                    "id", MainActivity.this.getPackageName());
+                    "id", this.getPackageName());
             mSubscribers.add(new SubscriberContainer(
                     findViewById(containerId),
                     findViewById(toggleAudioId),
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.RECORD_AUDIO
         };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
         sessionConnected = true;
 
-        mPublisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
+        mPublisher = new Publisher.Builder(this).name("publisher").build();
 
         mPublisher.setPublisherListener(this);
         mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity
     public void onStreamReceived(Session session, Stream stream) {
         Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-        final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+        final Subscriber subscriber = new Subscriber.Builder(this, stream).build();
         mSession.subscribe(subscriber);
         addSubscriber(subscriber);
     }

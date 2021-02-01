@@ -27,12 +27,12 @@ class:
 public void onConnected(Session session) {
     Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-    mPublisher = new Publisher(MainActivity.this, "publisher");
+    mPublisher = new Publisher(this, "publisher");
     mPublisher.setPublisherListener(this);
     mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
     mPublisher.setAudioFallbackEnabled(false);
 
-    ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, mWebViewContainer);
+    ScreensharingCapturer screenCapturer = new ScreensharingCapturer(this, mWebViewContainer);
     mPublisher.setCapturer(screenCapturer);
 
     mWebViewContainer.setWebViewClient(new WebViewClient());

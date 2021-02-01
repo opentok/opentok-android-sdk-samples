@@ -157,21 +157,4 @@ public class MainActivity extends AppCompatActivity
             showMessage(data, remote);
         }
     }
-
-    /* alert dialogue for errors */
-
-    private void showConfigError(String alertTitle, final String errorMessage) {
-
-        Log.e(LOG_TAG, "Error " + alertTitle + ": " + errorMessage);
-        new AlertDialog.Builder(this)
-                .setTitle(alertTitle)
-                .setMessage(errorMessage)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.this.finish();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
 }

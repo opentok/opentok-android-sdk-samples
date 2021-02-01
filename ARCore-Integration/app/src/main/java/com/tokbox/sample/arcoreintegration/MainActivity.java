@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         Log.i(LOG_TAG, "Session Connected");
 
         CustomVideoCapturer capturer = new CustomVideoCapturer(mFragment.getArSceneView());
-        Publisher customPublisher = new Publisher.Builder(MainActivity.this)
+        Publisher customPublisher = new Publisher.Builder(this)
                 .name("publisher-capturer")
                 .capturer(capturer)
                 .build();

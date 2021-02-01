@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity
     public void onStreamReceived(Session session, Stream stream) {
         Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-        final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+        final Subscriber subscriber = new Subscriber.Builder(this, stream).build();
         mSession.subscribe(subscriber);
         mSubscribers.add(subscriber);
         mSubscriberStreams.put(stream, subscriber);

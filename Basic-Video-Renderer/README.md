@@ -11,7 +11,7 @@ in the image.
 After instantiating a Publisher object, the code sets a custom video renderer by calling the `setRenderer(BaseVideoRenderer renderer)` method of the Publisher:
 
 ```java
-mPublisher = new Publisher(MainActivity.this, "publisher");
+mPublisher = new Publisher(this, "publisher");
 mPublisher.setPublisherListener(this);
 mPublisher.setRenderer(new InvertedColorsVideoRenderer(this));
 ```

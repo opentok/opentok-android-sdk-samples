@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             mSession.setSessionListener(this);
             mSession.connect(OpenTokConfig.TOKEN);
         } else {
@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity
     public void onConnected(Session session) {
         Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-        ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, mWebViewContainer);
+        ScreensharingCapturer screenCapturer = new ScreensharingCapturer(this, mWebViewContainer);
 
-        mPublisher = new Publisher.Builder(MainActivity.this)
+        mPublisher = new Publisher.Builder(this)
                 .name("publisher")
                 .capturer(screenCapturer)
                 .build();

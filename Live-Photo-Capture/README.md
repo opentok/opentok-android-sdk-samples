@@ -13,7 +13,7 @@ calls the `susbscribeToStream(stream)` method, which instantiates a Subscriber o
 sets its video renderer to a `BasicCustomVideoRenderer` object:
 
 ```java
-mSubscriber = new Subscriber(MainActivity.this, stream);
+mSubscriber = new Subscriber(this, stream);
 mSubscriber.setRenderer(new BasicCustomVideoRenderer(this));
 mSubscriber.setVideoListener(this);
 mSession.subscribe(mSubscriber);
