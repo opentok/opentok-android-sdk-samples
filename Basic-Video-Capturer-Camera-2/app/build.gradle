@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.tokbox.sample.basicvideocapturercamera2"
-        minSdkVersion extMinSdkVersion
+        minSdkVersion 21
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName

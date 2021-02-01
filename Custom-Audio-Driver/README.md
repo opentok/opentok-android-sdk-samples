@@ -17,7 +17,7 @@ The `MainActivity` class instantiates a `CustomAudioDevice` instance and passes 
 CustomAudioDevice customAudioDevice = new CustomAudioDevice(this);
 AudioDeviceManager.setAudioDevice(customAudioDevice);
 
-mSession = new Session(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+session = new Session(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
 ```
 
 The `CustomAudioDevice` class extends the `BaseAudioDevice` class, defined in the 

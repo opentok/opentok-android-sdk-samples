@@ -13,7 +13,7 @@ When the app starts up, the `onCreate(Bundle savedInstanceState)` method instant
 object:
 
 ```java
-mWebViewContainer = (WebView) findViewById(R.id.webview);
+mWebViewContainer = findViewById(R.id.webview);
 ```
 
 The app will use this WebView as the source for the publisher video (instead of a camera).
@@ -27,13 +27,13 @@ class:
 public void onConnected(Session session) {
     Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-    mPublisher = new Publisher(this, "publisher");
-    mPublisher.setPublisherListener(this);
-    mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
-    mPublisher.setAudioFallbackEnabled(false);
+    publisher = new Publisher(this, "publisher");
+    publisher.setPublisherListener(publisherListener);
+    publisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
+    publisher.setAudioFallbackEnabled(false);
 
     ScreensharingCapturer screenCapturer = new ScreensharingCapturer(this, mWebViewContainer);
-    mPublisher.setCapturer(screenCapturer);
+    publisher.setCapturer(screenCapturer);
 
     mWebViewContainer.setWebViewClient(new WebViewClient());
     WebSettings webSettings = mWebViewContainer.getSettings();
@@ -41,10 +41,10 @@ public void onConnected(Session session) {
     mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     mWebViewContainer.loadUrl("http://www.tokbox.com");
 
-    mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-    mPublisherViewContainer.addView(mPublisher.getView());
+    publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+    publisherViewContainer.addView(publisher.getView());
 
-    mSession.publish(mPublisher);
+    session.publish(publisher);
 }
 ```
 

@@ -221,8 +221,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
-            frontFacing = info.get(CameraCharacteristics.LENS_FACING)
-                    == CameraCharacteristics.LENS_FACING_FRONT;
+            frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
             sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
         }
 
@@ -271,11 +270,11 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     }
 
     /* Constructors etc... */
-    public CustomVideoCapturerCamera2(Context ctx,
+    public CustomVideoCapturerCamera2(Context context,
                                 Publisher.CameraCaptureResolution resolution,
                                 Publisher.CameraCaptureFrameRate fps) {
-        cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
-        display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         camera = null;
         cameraState = CameraState.CLOSED;
         reentrantLock = new ReentrantLock();
@@ -367,10 +366,10 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         if (null != camera && CameraState.OPEN == cameraState) {
             return doStartCapture();
         } else if (CameraState.SETUP == cameraState) {
-            Log.d(LOG_TAG,"camera not yet ready, queuing the start until camera is opened.");
+            Log.d(LOG_TAG,"camera not yet ready, queuing the start until camera is opened");
             executeAfterCameraOpened = () -> doStartCapture();
         } else {
-            throw new Camera2Exception("Start Capture called before init successfully completed.");
+            throw new Camera2Exception("Start Capture called before init successfully completed");
         }
         Log.d(LOG_TAG,"startCapture exit");
         return 0;

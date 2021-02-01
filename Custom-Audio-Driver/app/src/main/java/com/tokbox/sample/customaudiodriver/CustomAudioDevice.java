@@ -580,7 +580,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     public boolean startCapturer() {
         if (audioRecord == null) {
             throw new IllegalStateException("startCapturer(): startRecording() called on an "
-                    + "uninitialized AudioRecord.");
+                    + "uninitialized AudioRecord");
         }
         try {
             audioRecord.startRecording();
@@ -600,7 +600,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     public boolean stopCapturer() {
 
         if (audioRecord == null) {
-            throw new IllegalStateException("stopCapturer(): stop() called on an uninitialized AudioRecord.");
+            throw new IllegalStateException("stopCapturer(): stop() called on an uninitialized AudioRecord");
         }
         captureLock.lock();
         try {
@@ -776,7 +776,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         }
         // Start playout.
         if (audioTrack == null) {
-            throw new IllegalStateException("startRenderer(): play() called on uninitialized AudioTrack.");
+            throw new IllegalStateException("startRenderer(): play() called on uninitialized AudioTrack");
         }
         try {
             audioTrack.play();
@@ -797,7 +797,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         Log.d("AUDIO_FOCUS", "Stop Renderer");
 
         if (audioTrack == null) {
-            throw new IllegalStateException("stopRenderer(): stop() called on uninitialized AudioTrack.");
+            throw new IllegalStateException("stopRenderer(): stop() called on uninitialized AudioTrack");
         }
         rendererLock.lock();
         try {

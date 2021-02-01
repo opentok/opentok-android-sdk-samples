@@ -17,47 +17,47 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
-    private Context mContext;
+    private Context context;
 
-    private GLSurfaceView mView;
-    private MyRenderer mRenderer;
+    private GLSurfaceView view;
+    private MyRenderer renderer;
 
     public interface InvertedColorsVideoRendererMetadataListener {
         public void onMetadataReady(byte[] metadata);
     }
 
     public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
-        this.mRenderer.metadataListener = metadataListener;
+        this.renderer.metadataListener = metadataListener;
     }
 
     static class MyRenderer implements GLSurfaceView.Renderer {
 
-        int mTextureIds[] = new int[3];
-        float[] mScaleMatrix = new float[16];
+        int textureIds[] = new int[3];
+        float[] scaleMatrix = new float[16];
 
-        private FloatBuffer mVertexBuffer;
-        private FloatBuffer mTextureBuffer;
-        private ShortBuffer mDrawListBuffer;
+        private FloatBuffer vertexBuffer;
+        private FloatBuffer textureBuffer;
+        private ShortBuffer drawListBuffer;
 
-        boolean mVideoFitEnabled = true;
-        boolean mVideoDisabled = false;
+        boolean videoFitEnabled = true;
+        boolean videoDisabled = false;
 
         // number of coordinates per vertex in this array
         static final int COORDS_PER_VERTEX = 3;
         static final int TEXTURECOORDS_PER_VERTEX = 2;
 
-        static float mXYZCoords[] = {-1.0f, 1.0f, 0.0f, // top left
+        static float xyzCoords[] = {-1.0f, 1.0f, 0.0f, // top left
                 -1.0f, -1.0f, 0.0f, // bottom left
                 1.0f, -1.0f, 0.0f, // bottom right
                 1.0f, 1.0f, 0.0f // top right
         };
 
-        static float mUVCoords[] = {0, 0, // top left
+        static float uvCoords[] = {0, 0, // top left
                 0, 1, // bottom left
                 1, 1, // bottom right
                 1, 0}; // top right
 
-        private short mVertexIndex[] = {0, 1, 2, 0, 2, 3}; // order to draw
+        private short vertexIndex[] = {0, 1, 2, 0, 2, 3}; // order to draw
         // vertices
 
         private final String vertexShaderCode = "uniform mat4 uMVPMatrix;"
@@ -87,33 +87,33 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 + "  g=y-0.39173*u-0.81290*v;\n" + "  b=y+2.017*u;\n"
                 + "  gl_FragColor=vec4(r,g,b,1.0);\n" + "}\n";
 
-        ReentrantLock mFrameLock = new ReentrantLock();
-        Frame mCurrentFrame;
+        ReentrantLock frameLock = new ReentrantLock();
+        Frame currentFrame;
 
-        private int mProgram;
-        private int mTextureWidth;
-        private int mTextureHeight;
-        private int mViewportWidth;
-        private int mViewportHeight;
+        private int program;
+        private int textureWidth;
+        private int textureHeight;
+        private int viewportWidth;
+        private int viewportHeight;
 
         public MyRenderer() {
-            ByteBuffer bb = ByteBuffer.allocateDirect(mXYZCoords.length * 4);
+            ByteBuffer bb = ByteBuffer.allocateDirect(xyzCoords.length * 4);
             bb.order(ByteOrder.nativeOrder());
-            mVertexBuffer = bb.asFloatBuffer();
-            mVertexBuffer.put(mXYZCoords);
-            mVertexBuffer.position(0);
+            vertexBuffer = bb.asFloatBuffer();
+            vertexBuffer.put(xyzCoords);
+            vertexBuffer.position(0);
 
-            ByteBuffer tb = ByteBuffer.allocateDirect(mUVCoords.length * 4);
+            ByteBuffer tb = ByteBuffer.allocateDirect(uvCoords.length * 4);
             tb.order(ByteOrder.nativeOrder());
-            mTextureBuffer = tb.asFloatBuffer();
-            mTextureBuffer.put(mUVCoords);
-            mTextureBuffer.position(0);
+            textureBuffer = tb.asFloatBuffer();
+            textureBuffer.put(uvCoords);
+            textureBuffer.position(0);
 
-            ByteBuffer dlb = ByteBuffer.allocateDirect(mVertexIndex.length * 2);
+            ByteBuffer dlb = ByteBuffer.allocateDirect(vertexIndex.length * 2);
             dlb.order(ByteOrder.nativeOrder());
-            mDrawListBuffer = dlb.asShortBuffer();
-            mDrawListBuffer.put(mVertexIndex);
-            mDrawListBuffer.position(0);
+            drawListBuffer = dlb.asShortBuffer();
+            drawListBuffer.put(vertexIndex);
+            drawListBuffer.position(0);
         }
 
         @Override
@@ -121,49 +121,49 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             gl.glClearColor(0, 0, 0, 1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER,
-                    vertexShaderCode);
-            int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER,
-                    fragmentShaderCode);
+            int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            mProgram = GLES20.glCreateProgram(); // create empty OpenGL ES
+            program = GLES20.glCreateProgram(); // create empty OpenGL ES
             // Program
-            GLES20.glAttachShader(mProgram, vertexShader); // add the vertex
+            GLES20.glAttachShader(program, vertexShader); // add the vertex
             // shader to program
-            GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment
+            GLES20.glAttachShader(program, fragmentShader); // add the fragment
             // shader to
             // program
-            GLES20.glLinkProgram(mProgram);
+            GLES20.glLinkProgram(program);
 
-            int positionHandle = GLES20.glGetAttribLocation(mProgram,
+            int positionHandle = GLES20.glGetAttribLocation(program,
                     "aPosition");
-            int textureHandle = GLES20.glGetAttribLocation(mProgram,
+
+            int textureHandle = GLES20.glGetAttribLocation(program,
                     "aTextureCoord");
 
             GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX,
                     GLES20.GL_FLOAT, false, COORDS_PER_VERTEX * 4,
-                    mVertexBuffer);
+                    vertexBuffer);
 
             GLES20.glEnableVertexAttribArray(positionHandle);
 
             GLES20.glVertexAttribPointer(textureHandle,
                     TEXTURECOORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                    TEXTURECOORDS_PER_VERTEX * 4, mTextureBuffer);
+                    TEXTURECOORDS_PER_VERTEX * 4, textureBuffer);
 
             GLES20.glEnableVertexAttribArray(textureHandle);
 
-            GLES20.glUseProgram(mProgram);
-            int i = GLES20.glGetUniformLocation(mProgram, "Ytex");
+            GLES20.glUseProgram(program);
+
+            int i = GLES20.glGetUniformLocation(program, "Ytex");
             GLES20.glUniform1i(i, 0); /* Bind Ytex to texture unit 0 */
 
-            i = GLES20.glGetUniformLocation(mProgram, "Utex");
+            i = GLES20.glGetUniformLocation(program, "Utex");
             GLES20.glUniform1i(i, 1); /* Bind Utex to texture unit 1 */
 
-            i = GLES20.glGetUniformLocation(mProgram, "Vtex");
+            i = GLES20.glGetUniformLocation(program, "Vtex");
             GLES20.glUniform1i(i, 2); /* Bind Vtex to texture unit 2 */
 
-            mTextureWidth = 0;
-            mTextureHeight = 0;
+            textureWidth = 0;
+            textureHeight = 0;
         }
 
         static void initializeTexture(int name, int id, int width, int height) {
@@ -183,22 +183,22 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         }
 
         void setupTextures(Frame frame) {
-            if (mTextureIds[0] != 0) {
-                GLES20.glDeleteTextures(3, mTextureIds, 0);
+            if (textureIds[0] != 0) {
+                GLES20.glDeleteTextures(3, textureIds, 0);
             }
-            GLES20.glGenTextures(3, mTextureIds, 0);
+            GLES20.glGenTextures(3, textureIds, 0);
 
             int w = frame.getWidth();
             int h = frame.getHeight();
             int hw = (w + 1) >> 1;
             int hh = (h + 1) >> 1;
 
-            initializeTexture(GLES20.GL_TEXTURE0, mTextureIds[0], w, h);
-            initializeTexture(GLES20.GL_TEXTURE1, mTextureIds[1], hw, hh);
-            initializeTexture(GLES20.GL_TEXTURE2, mTextureIds[2], hw, hh);
+            initializeTexture(GLES20.GL_TEXTURE0, textureIds[0], w, h);
+            initializeTexture(GLES20.GL_TEXTURE1, textureIds[1], hw, hh);
+            initializeTexture(GLES20.GL_TEXTURE2, textureIds[2], hw, hh);
 
-            mTextureWidth = frame.getWidth();
-            mTextureHeight = frame.getHeight();
+            textureWidth = frame.getWidth();
+            textureHeight = frame.getHeight();
         }
 
         void updateTextures(Frame frame) {
@@ -221,27 +221,27 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
 
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
                 GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
                         height, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
                         bb);
 
                 bb.position(y_size);
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[1]);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1]);
                 GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0,
                         half_width, half_height, GLES20.GL_LUMINANCE,
                         GLES20.GL_UNSIGNED_BYTE, bb);
 
                 bb.position(y_size + uv_size);
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[2]);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
                 GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0,
                         half_width, half_height, GLES20.GL_LUMINANCE,
                         GLES20.GL_UNSIGNED_BYTE, bb);
             } else {
-                mTextureWidth = 0;
-                mTextureHeight = 0;
+                textureWidth = 0;
+                textureHeight = 0;
             }
 
         }
@@ -249,10 +249,9 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
-            mViewportWidth = width;
-            mViewportHeight = height;
+            viewportWidth = width;
+            viewportHeight = height;
         }
-
 
         private InvertedColorsVideoRendererMetadataListener metadataListener;
         @Override
@@ -260,23 +259,23 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             gl.glClearColor(0, 0, 0, 1);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            mFrameLock.lock();
-            if (mCurrentFrame != null && !mVideoDisabled) {
-                GLES20.glUseProgram(mProgram);
+            frameLock.lock();
+            if (currentFrame != null && !videoDisabled) {
+                GLES20.glUseProgram(program);
 
-                if (mTextureWidth != mCurrentFrame.getWidth()
-                        || mTextureHeight != mCurrentFrame.getHeight()) {
-                    setupTextures(mCurrentFrame);
+                if (textureWidth != currentFrame.getWidth() || textureHeight != currentFrame.getHeight()) {
+                    setupTextures(currentFrame);
                 }
-                updateTextures(mCurrentFrame);
 
-                Matrix.setIdentityM(mScaleMatrix, 0);
+                updateTextures(currentFrame);
+
+                Matrix.setIdentityM(scaleMatrix, 0);
                 float scaleX = 1.0f, scaleY = 1.0f;
-                float ratio = (float) mCurrentFrame.getWidth()
-                        / mCurrentFrame.getHeight();
-                float vratio = (float) mViewportWidth / mViewportHeight;
+                float ratio = (float) currentFrame.getWidth()
+                        / currentFrame.getHeight();
+                float vratio = (float) viewportWidth / viewportHeight;
 
-                if (mVideoFitEnabled) {
+                if (videoFitEnabled) {
                     if (ratio > vratio) {
                         scaleY = vratio / ratio;
                     } else {
@@ -290,36 +289,36 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                     }
                 }
 
-               Matrix.scaleM(mScaleMatrix, 0,
-                        scaleX * (mCurrentFrame.isMirroredX() ? -1.0f : 1.0f),
+               Matrix.scaleM(scaleMatrix, 0,
+                        scaleX * (currentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
 
                 if (metadataListener != null) {
-                    metadataListener.onMetadataReady(mCurrentFrame.getMetadata());
+                    metadataListener.onMetadataReady(currentFrame.getMetadata());
                 }
 
-                int mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram,
+                int mMVPMatrixHandle = GLES20.glGetUniformLocation(program,
                         "uMVPMatrix");
                 GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false,
-                        mScaleMatrix, 0);
+                        scaleMatrix, 0);
 
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES, mVertexIndex.length,
-                        GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+                GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length,
+                        GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
             } else {
                 //black frame when video is disabled
                 gl.glClearColor(0, 0, 0, 1);
                 GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             }
-            mFrameLock.unlock();
+            frameLock.unlock();
         }
 
         public void displayFrame(Frame frame) {
-            mFrameLock.lock();
-            if (this.mCurrentFrame != null) {
-                this.mCurrentFrame.recycle();
+            frameLock.lock();
+            if (this.currentFrame != null) {
+                this.currentFrame.recycle();
             }
-            this.mCurrentFrame = frame;
-            mFrameLock.unlock();
+            this.currentFrame = frame;
+            frameLock.unlock();
         }
 
         public static int loadShader(int type, String shaderCode) {
@@ -332,72 +331,72 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         }
 
         public void disableVideo(boolean b) {
-            mFrameLock.lock();
+            frameLock.lock();
 
-            mVideoDisabled = b;
+            videoDisabled = b;
 
-            if (mVideoDisabled) {
-                if (this.mCurrentFrame != null) {
-                    this.mCurrentFrame.recycle();
+            if (videoDisabled) {
+                if (this.currentFrame != null) {
+                    this.currentFrame.recycle();
                 }
-                this.mCurrentFrame = null;
+                this.currentFrame = null;
             }
 
-            mFrameLock.unlock();
+            frameLock.unlock();
         }
 
         public void enableVideoFit(boolean enableVideoFit) {
-            mVideoFitEnabled = enableVideoFit;
+            videoFitEnabled = enableVideoFit;
         }
     }
 
     public InvertedColorsVideoRenderer(Context context) {
-        this.mContext = context;
+        this.context = context;
 
-        mView = new GLSurfaceView(context);
-        mView.setEGLContextClientVersion(2);
+        view = new GLSurfaceView(context);
+        view.setEGLContextClientVersion(2);
 
-        mRenderer = new MyRenderer();
-        mView.setRenderer(mRenderer);
+        renderer = new MyRenderer();
+        view.setRenderer(renderer);
 
-        mView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 
     @Override
     public void onFrame(Frame frame) {
-        mRenderer.displayFrame(frame);
-        mView.requestRender();
+        renderer.displayFrame(frame);
+        view.requestRender();
     }
 
     @Override
     public void setStyle(String key, String value) {
         if (BaseVideoRenderer.STYLE_VIDEO_SCALE.equals(key)) {
             if (BaseVideoRenderer.STYLE_VIDEO_FIT.equals(value)) {
-                mRenderer.enableVideoFit(true);
+                renderer.enableVideoFit(true);
             } else if (BaseVideoRenderer.STYLE_VIDEO_FILL.equals(value)) {
-                mRenderer.enableVideoFit(false);
+                renderer.enableVideoFit(false);
             }
         }
     }
 
     @Override
     public void onVideoPropertiesChanged(boolean videoEnabled) {
-        mRenderer.disableVideo(!videoEnabled);
+        renderer.disableVideo(!videoEnabled);
     }
 
     @Override
     public View getView() {
-        return mView;
+        return view;
     }
 
     @Override
     public void onPause() {
-        mView.onPause();
+        view.onPause();
     }
 
     @Override
     public void onResume() {
-        mView.onResume();
+        view.onResume();
     }
 
 }

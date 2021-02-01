@@ -19,11 +19,11 @@ instantiating a Publisher object, the code sets a custom video capturer by calli
 `capturer(BaseVideoCapturer capturer)` method of the Publisher:
 
 ```java
-mPublisher = new Publisher(this, "publisher")
+publisher = new Publisher(this, "publisher")
     .capturer(new MirrorVideoCapturer(this))
     .build();
 
-mPublisher.setPublisherListener(this);
+publisher.setPublisherListener(publisherListener);
 
 ```
 

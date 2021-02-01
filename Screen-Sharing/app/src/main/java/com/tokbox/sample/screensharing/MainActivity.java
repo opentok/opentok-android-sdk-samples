@@ -2,44 +2,105 @@ package com.tokbox.sample.screensharing;
 
 import android.Manifest;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
-
-import java.util.List;
-
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity
-                                  implements EasyPermissions.PermissionCallbacks,
-                                             Session.SessionListener,
-                                             Publisher.PublisherListener {
+import java.util.List;
 
-    private static final String TAG = "screen-sharing " + MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
-    private Session mSession;
-    private Publisher mPublisher;
+    private Session session;
+    private Publisher publisher;
 
-    private RelativeLayout mPublisherViewContainer;
-    private WebView mWebViewContainer;
+    private RelativeLayout publisherViewContainer;
+    private WebView webViewContainer;
+
+    private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
+        @Override
+        public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
+            Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
+        }
+
+        @Override
+        public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
+            Log.d(TAG, "onStreamDestroyed: Own stream " + stream.getStreamId() + " destroyed");
+        }
+
+        @Override
+        public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+            Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in publisher");
+        }
+    };
+
+    private Session.SessionListener sessionListener = new Session.SessionListener() {
+        @Override
+        public void onConnected(Session session) {
+            Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
+
+            ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, webViewContainer);
+
+            publisher = new Publisher.Builder(MainActivity.this)
+                    .name("publisher")
+                    .capturer(screenCapturer)
+                    .build();
+            publisher.setPublisherListener(publisherListener);
+            publisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
+            publisher.setAudioFallbackEnabled(false);
+
+            webViewContainer.setWebViewClient(new WebViewClient());
+            WebSettings webSettings = webViewContainer.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            webViewContainer.loadUrl("https://www.tokbox.com");
+
+            publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            publisherViewContainer.addView(publisher.getView());
+
+            session.publish(publisher);
+        }
+
+        @Override
+        public void onDisconnected(Session session) {
+            Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
+
+            session = null;
+        }
+
+        @Override
+        public void onError(Session session, OpentokError opentokError) {
+            Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in session " + session.getSessionId());
+        }
+
+        @Override
+        public void onStreamReceived(Session session, Stream stream) {
+            Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
+        }
+
+        @Override
+        public void onStreamDropped(Session session, Stream stream) {
+            Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +109,8 @@ public class MainActivity extends AppCompatActivity
 
         OpenTokConfig.verifyConfig();
 
-        mPublisherViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
-        mWebViewContainer = (WebView) findViewById(R.id.webview);
+        publisherViewContainer = findViewById(R.id.publisherview);
+        webViewContainer = findViewById(R.id.webview);
 
         requestPermissions();
     }
@@ -59,10 +120,10 @@ public class MainActivity extends AppCompatActivity
 
         super.onPause();
 
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
-        mSession.onPause();
+        session.onPause();
 
         if (isFinishing()) {
             disconnectSession();
@@ -71,18 +132,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
         super.onResume();
 
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
-        mSession.onResume();
+        session.onResume();
     }
 
     @Override
     protected void onDestroy() {
-
         disconnectSession();
 
         super.onDestroy();
@@ -117,95 +176,26 @@ public class MainActivity extends AppCompatActivity
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
-            mSession.setSessionListener(this);
-            mSession.connect(OpenTokConfig.TOKEN);
+            session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+            session.setSessionListener(sessionListener);
+            session.connect(OpenTokConfig.TOKEN);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
         }
     }
-    @Override
-    public void onConnected(Session session) {
-        Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
-        ScreensharingCapturer screenCapturer = new ScreensharingCapturer(this, mWebViewContainer);
-
-        mPublisher = new Publisher.Builder(this)
-                .name("publisher")
-                .capturer(screenCapturer)
-                .build();
-        mPublisher.setPublisherListener(this);
-        mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
-        mPublisher.setAudioFallbackEnabled(false);
-
-        mWebViewContainer.setWebViewClient(new WebViewClient());
-        WebSettings webSettings = mWebViewContainer.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mWebViewContainer.loadUrl("https://www.tokbox.com");
-
-        mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisherViewContainer.addView(mPublisher.getView());
-
-        mSession.publish(mPublisher);
-    }
-
-    @Override
-    public void onDisconnected(Session session) {
-        Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
-
-        mSession = null;
-    }
-
-    @Override
-    public void onError(Session session, OpentokError opentokError) {
-        Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in session " + session.getSessionId());
-
-        Toast.makeText(this, "Session error. See the logcat please.", Toast.LENGTH_LONG).show();
-        finish();
-    }
-
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
-    }
-
-    @Override
-    public void onStreamDropped(Session session, Stream stream) {
-        Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
-    }
-
-    @Override
-    public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-        Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
-    }
-
-    @Override
-    public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-        Log.d(TAG, "onStreamDestroyed: Own stream " + stream.getStreamId() + " destroyed");
-    }
-
-    @Override
-    public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-        Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in publisher");
-
-        Toast.makeText(this, "Session error. See the logcat please.", Toast.LENGTH_LONG).show();
-        finish();
-    }
 
     private void disconnectSession() {
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
 
-        if (mPublisher != null) {
-            mPublisherViewContainer.removeView(mPublisher.getView());
-            mSession.unpublish(mPublisher);
-            mPublisher.destroy();
-            mPublisher = null;
+        if (publisher != null) {
+            publisherViewContainer.removeView(publisher.getView());
+            session.unpublish(publisher);
+            publisher = null;
         }
-        mSession.disconnect();
+        session.disconnect();
     }
 }

@@ -271,9 +271,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     }
 
     /* Constructors etc... */
-    public MirrorVideoCapturer(Context ctx) {
-        cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
-        display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    public MirrorVideoCapturer(Context context) {
+        cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         camera = null;
         cameraState = CameraState.CLOSED;
         reentrantLock = new ReentrantLock();
@@ -365,10 +365,10 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         if (null != camera && CameraState.OPEN == cameraState) {
             return startCameraCapture();
         } else if (CameraState.SETUP == cameraState) {
-            Log.d(LOG_TAG,"camera not yet ready, queuing the start until camera is opened.");
+            Log.d(LOG_TAG,"camera not yet ready, queuing the start until camera is opened");
             executeAfterCameraOpened = () -> startCameraCapture();
         } else {
-            throw new Camera2Exception("Start Capture called before init successfully completed.");
+            throw new Camera2Exception("Start Capture called before init successfully completed");
         }
         Log.d(LOG_TAG,"startCapture exit");
         return 0;

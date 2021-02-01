@@ -33,7 +33,7 @@ task checkOpenTokConfig() {
     doLast {
         def openTokConfigFound = false
 
-        def dir = new File(".")
+        def dir = new File("")
         dir.eachFileRecurse (FileType.FILES) { file ->
 
             if(file.name == "OpenTokConfig.java") {

@@ -10,14 +10,13 @@ import android.util.Log;
 import android.util.Rational;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 
-public class MainActivity extends Activity implements Session.SessionListener {
+public class MainActivity extends Activity {
 
     Session session;
     Publisher publisher;
@@ -25,8 +24,51 @@ public class MainActivity extends Activity implements Session.SessionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private FrameLayout mSubscriberViewContainer;
-    private FrameLayout mPublisherViewContainer;
+    private FrameLayout subscriberViewContainer;
+    private FrameLayout publisherViewContainer;
+
+    private Session.SessionListener sessionListener = new Session.SessionListener() {
+        @Override
+        public void onConnected(Session session) {
+            Log.d(TAG, "Session connected");
+
+            if (publisher == null) {
+                publisher = new Publisher.Builder(getApplicationContext()).build();
+                session.publish(publisher);
+
+                publisherViewContainer.addView(publisher.getView());
+
+                if (publisher.getView() instanceof GLSurfaceView) {
+                    ((GLSurfaceView) publisher.getView()).setZOrderOnTop(true);
+                }
+            }
+        }
+
+        @Override
+        public void onDisconnected(Session session) {
+        }
+
+        @Override
+        public void onStreamReceived(Session session, Stream stream) {
+            if (subscriber == null) {
+                subscriber = new Subscriber.Builder(getApplicationContext(), stream).build();
+                session.subscribe(subscriber);
+                subscriberViewContainer.addView(subscriber.getView());
+            } else {
+                Log.d(TAG, "This sample supports just one subscriber");
+            }
+        }
+
+        @Override
+        public void onStreamDropped(Session session, Stream stream) {
+            subscriberViewContainer.removeAllViews();
+            subscriber = null;
+        }
+
+        @Override
+        public void onError(Session session, OpentokError opentokError) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +77,8 @@ public class MainActivity extends Activity implements Session.SessionListener {
 
         OpenTokConfig.verifyConfig();
 
-        mSubscriberViewContainer = findViewById(R.id.subscriber_container);
-        mPublisherViewContainer = findViewById(R.id.publisher_container);
+        subscriberViewContainer = findViewById(R.id.subscriber_container);
+        publisherViewContainer = findViewById(R.id.publisher_container);
 
         requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 1000);
     }
@@ -47,15 +89,15 @@ public class MainActivity extends Activity implements Session.SessionListener {
 
         if (isInPictureInPictureMode) {
             findViewById(R.id.button).setVisibility(View.GONE);
-            mPublisherViewContainer.setVisibility(View.GONE);
+            publisherViewContainer.setVisibility(View.GONE);
             publisher.getView().setVisibility(View.GONE);
             getActionBar().hide();
         } else {
             findViewById(R.id.button).setVisibility(View.VISIBLE);
-            mPublisherViewContainer.setVisibility(View.VISIBLE);
+            publisherViewContainer.setVisibility(View.VISIBLE);
             publisher.getView().setVisibility(View.VISIBLE);
             if (publisher.getView() instanceof GLSurfaceView) {
-                ((GLSurfaceView)publisher.getView()).setZOrderOnTop(true);
+                ((GLSurfaceView) publisher.getView()).setZOrderOnTop(true);
             }
             getActionBar().show();
         }
@@ -63,7 +105,7 @@ public class MainActivity extends Activity implements Session.SessionListener {
 
     public void pipActivity(View view) {
         PictureInPictureParams params = new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(9,16)) // Portrait Aspect Ratio
+                .setAspectRatio(new Rational(9, 16)) // Portrait Aspect Ratio
                 .build();
         enterPictureInPictureMode(params);
     }
@@ -76,7 +118,7 @@ public class MainActivity extends Activity implements Session.SessionListener {
             session = new Session.Builder(getApplicationContext(), OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID)
                     .build();
         }
-        session.setSessionListener(this);
+        session.setSessionListener(sessionListener);
         session.connect(OpenTokConfig.TOKEN);
     }
 
@@ -105,56 +147,12 @@ public class MainActivity extends Activity implements Session.SessionListener {
     protected void onStop() {
         super.onStop();
 
-
         if (subscriber != null) {
-            mSubscriberViewContainer.removeView(subscriber.getView());
+            subscriberViewContainer.removeView(subscriber.getView());
         }
 
         if (publisher != null) {
-            mPublisherViewContainer.removeView(publisher.getView());
+            publisherViewContainer.removeView(publisher.getView());
         }
-    }
-
-    // Session Listener
-    @Override
-    public void onConnected(Session session) {
-        Log.d(TAG, "Session connected");
-
-        if (publisher == null) {
-            publisher = new Publisher.Builder(getApplicationContext()).build();
-            session.publish(publisher);
-
-            mPublisherViewContainer.addView(publisher.getView());
-
-            if (publisher.getView() instanceof GLSurfaceView) {
-                ((GLSurfaceView)publisher.getView()).setZOrderOnTop(true);
-            }
-        }
-
-    }
-
-    @Override
-    public void onDisconnected(Session session) {
-    }
-
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        if (subscriber == null) {
-            subscriber = new Subscriber.Builder(getApplicationContext(), stream).build();
-            session.subscribe(subscriber);
-            mSubscriberViewContainer.addView(subscriber.getView());
-        } else {
-            Log.d(TAG, "This sample supports just one subscriber");
-        }
-    }
-
-    @Override
-    public void onStreamDropped(Session session, Stream stream) {
-        mSubscriberViewContainer.removeAllViews();
-        subscriber = null;
-    }
-
-    @Override
-    public void onError(Session session, OpentokError opentokError) {
     }
 }

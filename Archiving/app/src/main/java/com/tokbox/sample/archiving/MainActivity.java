@@ -12,8 +12,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.opentok.android.*;
-import com.tokbox.sample.archiving.network.*;
+import com.opentok.android.BaseVideoRenderer;
+import com.opentok.android.OpentokError;
+import com.opentok.android.Publisher;
+import com.opentok.android.PublisherKit;
+import com.opentok.android.Session;
+import com.opentok.android.Stream;
+import com.opentok.android.Subscriber;
+import com.opentok.android.SubscriberKit;
+import com.tokbox.sample.archiving.network.APIService;
+import com.tokbox.sample.archiving.network.EmptyCallback;
+import com.tokbox.sample.archiving.network.GetSessionResponse;
+import com.tokbox.sample.archiving.network.StartArchiveRequest;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
@@ -27,12 +37,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements EasyPermissions.PermissionCallbacks,
-        Session.SessionListener,
-        PublisherKit.PublisherListener,
-        SubscriberKit.SubscriberListener,
-        Session.ArchiveListener {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
@@ -41,18 +46,127 @@ public class MainActivity extends AppCompatActivity
     private Retrofit retrofit;
     private APIService apiService;
 
-    private String mSessionId;
-    private Session mSession;
-    private Publisher mPublisher;
-    private Subscriber mSubscriber;
-    private String mCurrentArchiveId;
-    private String mPlayableArchiveId;
+    private String sessionId;
+    private Session session;
+    private Publisher publisher;
+    private Subscriber subscriber;
+    private String currentArchiveId;
+    private String playableArchiveId;
 
-    private FrameLayout mPublisherViewContainer;
-    private FrameLayout mSubscriberViewContainer;
-    private ImageView mArchivingIndicatorView;
+    private FrameLayout publisherViewContainer;
+    private FrameLayout subscriberViewContainer;
+    private ImageView archivingIndicatorView;
 
-    private Menu mMenu;
+    private Menu menu;
+
+    private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
+        @Override
+        public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
+            Log.i(LOG_TAG, "Publisher Stream Created");
+        }
+
+        @Override
+        public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
+            Log.i(LOG_TAG, "Publisher Stream Destroyed");
+        }
+
+        @Override
+        public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+            logOpenTokError(opentokError);
+        }
+    };
+    private Session.SessionListener sessionListener = new Session.SessionListener() {
+
+        @Override
+        public void onConnected(Session session) {
+            Log.i(LOG_TAG, "Session Connected");
+
+            // initialize Publisher and set this object to listen to Publisher events
+            publisher = new Publisher.Builder(MainActivity.this).build();
+            publisher.setPublisherListener(publisherListener);
+
+            // set publisher video style to fill view
+            publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            publisherViewContainer.addView(publisher.getView(), 0);
+
+            session.publish(publisher);
+
+            setStartArchiveEnabled(true);
+        }
+
+        @Override
+        public void onDisconnected(Session session) {
+            Log.i(LOG_TAG, "Session Disconnected");
+
+            setStartArchiveEnabled(false);
+            setStopArchiveEnabled(false);
+        }
+
+        @Override
+        public void onStreamReceived(Session session, Stream stream) {
+            Log.i(LOG_TAG, "Stream Received");
+
+            if (subscriber == null) {
+                subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+                subscriber.setSubscriberListener(subscriberListener);
+                subscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
+                        BaseVideoRenderer.STYLE_VIDEO_FILL);
+                session.subscribe(subscriber);
+            }
+        }
+
+        @Override
+        public void onStreamDropped(Session session, Stream stream) {
+            Log.i(LOG_TAG, "Stream Dropped");
+
+            if (subscriber != null) {
+                subscriber = null;
+                subscriberViewContainer.removeAllViews();
+            }
+        }
+
+        @Override
+        public void onError(Session session, OpentokError opentokError) {
+            logOpenTokError(opentokError);
+        }
+    };
+
+    private SubscriberKit.SubscriberListener subscriberListener = new SubscriberKit.SubscriberListener() {
+        @Override
+        public void onConnected(SubscriberKit subscriberKit) {
+            Log.i(LOG_TAG, "Subscriber Connected");
+
+            subscriberViewContainer.addView(subscriber.getView());
+        }
+
+        @Override
+        public void onDisconnected(SubscriberKit subscriberKit) {
+            Log.i(LOG_TAG, "Subscriber Disconnected");
+        }
+
+        @Override
+        public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
+            logOpenTokError(opentokError);
+        }
+    };
+
+    private Session.ArchiveListener archiveListener = new Session.ArchiveListener() {
+        @Override
+        public void onArchiveStarted(Session session, String archiveId, String archiveName) {
+            currentArchiveId = archiveId;
+            setStopArchiveEnabled(true);
+            archivingIndicatorView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onArchiveStopped(Session session, String archiveId) {
+            playableArchiveId = archiveId;
+            currentArchiveId = null;
+            setPlayArchiveEnabled(true);
+            setStartArchiveEnabled(true);
+            archivingIndicatorView.setVisibility(View.INVISIBLE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +176,9 @@ public class MainActivity extends AppCompatActivity
         // Fail fast if chat server URL is invalid
         OpenTokConfig.verifyChatServerUrl();
 
-        mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
-        mSubscriberViewContainer = (FrameLayout) findViewById(R.id.subscriber_container);
-        mArchivingIndicatorView = (ImageView) findViewById(R.id.archiving_indicator_view);
+        publisherViewContainer = findViewById(R.id.publisher_container);
+        subscriberViewContainer = findViewById(R.id.subscriber_container);
+        archivingIndicatorView = findViewById(R.id.archiving_indicator_view);
 
         requestPermissions();
     }
@@ -84,6 +198,24 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         apiService = retrofit.create(APIService.class);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (session != null) {
+            session.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (session != null) {
+            session.onResume();
+        }
     }
 
     @Override
@@ -115,7 +247,6 @@ public class MainActivity extends AppCompatActivity
 
     // Make a request for session data
     private void getSession() {
-
         Log.i(LOG_TAG, "getSession");
 
         Call<GetSessionResponse> call = apiService.getSession();
@@ -134,11 +265,57 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void initializeSession(String apiKey, String sessionId, String token) {
+        Log.i(LOG_TAG, "apiKey: " + apiKey);
+        Log.i(LOG_TAG, "sessionId: " + sessionId);
+        Log.i(LOG_TAG, "token: " + token);
+
+        sessionId = sessionId;
+
+        session = new Session.Builder(this, apiKey, sessionId).build();
+        session.setSessionListener(sessionListener);
+        session.setArchiveListener(archiveListener);
+        session.connect(token);
+    }
+
+    private void startArchive() {
+        Log.i(LOG_TAG, "startArchive");
+
+        if (session != null) {
+            StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
+            startArchiveRequest.sessionId = sessionId;
+
+            setStartArchiveEnabled(false);
+            Call call = apiService.startArchive(startArchiveRequest);
+            call.enqueue(new EmptyCallback());
+        }
+    }
+
+    private void stopArchive() {
+        Log.i(LOG_TAG, "stopArchive");
+
+        Call call = apiService.stopArchive(currentArchiveId);
+        call.enqueue(new EmptyCallback());
+        setStopArchiveEnabled(false);
+    }
+
+    private void playArchive() {
+
+        Log.i(LOG_TAG, "playArchive");
+
+        String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
+        Uri archiveUri = Uri.parse(archiveUrl);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
+        startActivity(browserIntent);
+    }
+
+    /* Activity lifecycle methods */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat, menu);
-        mMenu = menu;
+        this.menu = menu;
         return true;
     }
 
@@ -164,205 +341,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void initializeSession(String apiKey, String sessionId, String token) {
-        Log.i(LOG_TAG, "apiKey: " + apiKey);
-        Log.i(LOG_TAG, "sessionId: " + sessionId);
-        Log.i(LOG_TAG, "token: " + token);
-
-        mSessionId = sessionId;
-
-        mSession = new Session.Builder(this, apiKey, sessionId).build();
-        mSession.setSessionListener(this);
-        mSession.setArchiveListener(this);
-        mSession.connect(token);
-    }
-
-    private void logOpenTokError(OpentokError opentokError) {
-        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
-    }
-
-    /* methods calling mWebServiceCoordinator to control Archiving */
-
-    private void startArchive() {
-
-        Log.i(LOG_TAG, "startArchive");
-
-        if (mSession != null) {
-            StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
-            startArchiveRequest.sessionId = mSessionId;
-
-            setStartArchiveEnabled(false);
-            Call call = apiService.startArchive(startArchiveRequest);
-            call.enqueue(new EmptyCallback());
-        }
-    }
-
-    private void stopArchive() {
-
-        Log.i(LOG_TAG, "stopArchive");
-
-        Call call = apiService.stopArchive(mCurrentArchiveId);
-        call.enqueue(new EmptyCallback());
-        setStopArchiveEnabled(false);
-    }
-
-    private void playArchive() {
-
-        Log.i(LOG_TAG, "playArchive");
-
-        String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" +  mPlayableArchiveId + "/view";
-        Uri archiveUri = Uri.parse(archiveUrl);
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
-        startActivity(browserIntent);
-    }
-
-    /* Activity lifecycle methods */
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mSession != null) {
-            mSession.onPause();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mSession != null) {
-            mSession.onResume();
-        }
-    }
-
-    // SessionListener methods
-
-    @Override
-    public void onConnected(Session session) {
-        Log.i(LOG_TAG, "Session Connected");
-
-        // initialize Publisher and set this object to listen to Publisher events
-        mPublisher = new Publisher.Builder(this).build();
-        mPublisher.setPublisherListener(this);
-
-        // set publisher video style to fill view
-        mPublisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisherViewContainer.addView(mPublisher.getView(), 0);
-
-        mSession.publish(mPublisher);
-
-        setStartArchiveEnabled(true);
-    }
-
-    @Override
-    public void onDisconnected(Session session) {
-        Log.i(LOG_TAG, "Session Disconnected");
-
-        setStartArchiveEnabled(false);
-        setStopArchiveEnabled(false);
-    }
-
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        Log.i(LOG_TAG, "Stream Received");
-
-        if (mSubscriber == null) {
-            mSubscriber = new Subscriber.Builder(this, stream).build();
-            mSubscriber.setSubscriberListener(this);
-            mSubscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE,
-                    BaseVideoRenderer.STYLE_VIDEO_FILL);
-            mSession.subscribe(mSubscriber);
-        }
-    }
-
-    @Override
-    public void onStreamDropped(Session session, Stream stream) {
-        Log.i(LOG_TAG, "Stream Dropped");
-
-        if (mSubscriber != null) {
-            mSubscriber = null;
-            mSubscriberViewContainer.removeAllViews();
-        }
-    }
-
-    @Override
-    public void onError(Session session, OpentokError opentokError) {
-        logOpenTokError(opentokError);
-    }
-
-    /* Publisher Listener methods */
-
-    @Override
-    public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-        Log.i(LOG_TAG, "Publisher Stream Created");
-    }
-
-    @Override
-    public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-        Log.i(LOG_TAG, "Publisher Stream Destroyed");
-    }
-
-    @Override
-    public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-        logOpenTokError(opentokError);
-    }
-
-    /* Subscriber Listener methods */
-
-    @Override
-    public void onConnected(SubscriberKit subscriberKit) {
-        Log.i(LOG_TAG, "Subscriber Connected");
-
-        mSubscriberViewContainer.addView(mSubscriber.getView());
-    }
-
-    @Override
-    public void onDisconnected(SubscriberKit subscriberKit) {
-        Log.i(LOG_TAG, "Subscriber Disconnected");
-    }
-
-    @Override
-    public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-        logOpenTokError(opentokError);
-    }
-
-    /* Archive Listener methods */
-
-    @Override
-    public void onArchiveStarted(Session session, String archiveId, String archiveName) {
-        mCurrentArchiveId = archiveId;
-        setStopArchiveEnabled(true);
-        mArchivingIndicatorView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onArchiveStopped(Session session, String archiveId) {
-        mPlayableArchiveId = archiveId;
-        mCurrentArchiveId = null;
-        setPlayArchiveEnabled(true);
-        setStartArchiveEnabled(true);
-        mArchivingIndicatorView.setVisibility(View.INVISIBLE);
-    }
-
-    /* Options menu helpers */
-
     private void setStartArchiveEnabled(boolean enabled) {
-        mMenu.findItem(R.id.action_start_archive)
+        menu.findItem(R.id.action_start_archive)
                 .setEnabled(enabled)
                 .setVisible(enabled);
     }
 
     private void setStopArchiveEnabled(boolean enabled) {
-        mMenu.findItem(R.id.action_stop_archive)
+        menu.findItem(R.id.action_stop_archive)
                 .setEnabled(enabled)
                 .setVisible(enabled);
     }
 
     private void setPlayArchiveEnabled(boolean enabled) {
-        mMenu.findItem(R.id.action_play_archive)
+        menu.findItem(R.id.action_play_archive)
                 .setEnabled(enabled)
                 .setVisible(enabled);
+    }
+
+    private void logOpenTokError(OpentokError opentokError) {
+        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
+        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
     }
 }
