@@ -70,12 +70,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
 
-            // initialize Publisher and set this object to listen to Publisher events
             publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
-
-            // set publisher video style to fill view
             publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            
             publisherViewContainer.addView(publisher.getView());
 
             if (publisher.getView() instanceof GLSurfaceView) {

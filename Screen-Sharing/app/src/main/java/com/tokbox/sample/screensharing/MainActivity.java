@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Session session;
@@ -64,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     .name("publisher")
                     .capturer(screenCapturer)
                     .build();
+                    
             publisher.setPublisherListener(publisherListener);
             publisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
             publisher.setAudioFallbackEnabled(false);

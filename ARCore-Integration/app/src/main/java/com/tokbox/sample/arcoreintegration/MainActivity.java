@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  implements EasyPermissions.PermissionCallbacks {
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPEN_GL_VERSION = 3.0;
 
@@ -75,14 +76,15 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
             Log.i(TAG, "Session Connected");
 
             CustomVideoCapturer capturer = new CustomVideoCapturer(faceFragment.getArSceneView());
-            Publisher custopublisher = new Publisher.Builder(MainActivity.this)
+            Publisher publisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher-capturer")
                     .capturer(capturer)
                     .build();
 
-            custopublisher.setPublisherListener(publisherListener);
-            publisherViewContainer.addView(custopublisher.getView());
-            session.publish(custopublisher);
+            publisher.setPublisherListener(publisherListener);
+
+            publisherViewContainer.addView(publisher.getView());
+            session.publish(publisher);
         }
 
         @Override
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
         OpenTokConfig.isValid();
 
         if (!isSupportedDevice()) {
-            finishWithMessage("Augmented Faces requires ARCore");
+            finishWithMessage("Unsupported device");
             return;
         }
 
@@ -174,8 +176,6 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
 
     private boolean isSupportedDevice() {
         if (ArCoreApk.getInstance().checkAvailability(this) == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE) {
-            Log.e(TAG, "Augmented Faces requires ARCore");
-            Toast.makeText(this, "Augmented Faces requires ARCore", Toast.LENGTH_LONG).show();
             return false;
         }
         String openGlVersionString = ((ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE))
@@ -183,8 +183,6 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
                 .getGlEsVersion();
 
         if (Double.parseDouble(openGlVersionString) < MIN_OPEN_GL_VERSION) {
-            Log.e(TAG, "Sceneform requires OpenGL ES 3.0 later");
-            Toast.makeText(this, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -218,12 +216,6 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
         scene.addOnUpdateListener(onUpdateListener);
     }
 
-    private void finishWithMessage(String message) {
-        Log.e(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        this.finish();
-    }
-
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
@@ -232,5 +224,11 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
+    }
+
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

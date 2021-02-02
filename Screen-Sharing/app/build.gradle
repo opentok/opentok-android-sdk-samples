@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.tokbox.sample.screensharing"
-        minSdkVersion extMinSdkVersion
+        minSdkVersion 21
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName

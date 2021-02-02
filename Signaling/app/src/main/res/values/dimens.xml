@@ -3,7 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="message_history_height">120dp</dimen>
     <dimen name="message_history_vertical_margin">8dp</dimen>
     <dimen name="message_vertical_margin">1dp</dimen>
     <dimen name="message_horizontal_margin">2dp</dimen>

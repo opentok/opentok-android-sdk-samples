@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Session session;
@@ -66,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            
             publisherViewContainer.addView(publisher.getView());
 
             if (publisher.getView() instanceof GLSurfaceView) {
@@ -121,24 +121,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         @Override
-        public void onVideoDisabled(SubscriberKit subscriberKit, String s) {
-
-        }
+        public void onVideoDisabled(SubscriberKit subscriberKit, String s) { }
 
         @Override
-        public void onVideoEnabled(SubscriberKit subscriberKit, String s) {
-
-        }
+        public void onVideoEnabled(SubscriberKit subscriberKit, String s) { }
 
         @Override
-        public void onVideoDisableWarning(SubscriberKit subscriberKit) {
-
-        }
+        public void onVideoDisableWarning(SubscriberKit subscriberKit) { }
 
         @Override
-        public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) {
-
-        }
+        public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
     };
 
     @Override

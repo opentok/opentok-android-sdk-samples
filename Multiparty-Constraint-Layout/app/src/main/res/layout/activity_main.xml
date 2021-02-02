@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main_container"
-    tools:context="com.tokbox.sample.multipartyconstraintlayout.MainActivity"
+    tools:context=".MainActivity"
     android:background="#000">
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,7 +41,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Retrofit retrofit;
@@ -82,12 +82,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.i(TAG, "Session Connected");
 
-            // initialize Publisher and set this object to listen to Publisher events
             publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
-
-            // set publisher video style to fill view
             publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            
             publisherViewContainer.addView(publisher.getView(), 0);
 
             session.publish(publisher);

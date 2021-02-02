@@ -123,6 +123,7 @@ public class MainActivity extends Activity {
             session = new Session.Builder(getApplicationContext(), OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID)
                     .build();
         }
+
         session.setSessionListener(sessionListener);
         session.connect(OpenTokConfig.TOKEN);
     }

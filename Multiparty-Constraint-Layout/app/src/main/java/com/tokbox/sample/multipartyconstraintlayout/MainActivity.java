@@ -29,7 +29,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
+    
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Session session;
@@ -98,12 +98,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
 
             Subscriber subscriber = subscriberStreams.get(stream);
+
             if (subscriber == null) {
                 return;
             }
 
             subscribers.remove(subscriber);
             subscriberStreams.remove(stream);
+            
             container.removeView(subscriber.getView());
 
             // Recalculate view Ids
@@ -187,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void startPublisherPreview() {
         publisher = new Publisher.Builder(this).name("publisher").build();
-
         publisher.setPublisherListener(publisherListener);
         publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         publisher.startPreview();

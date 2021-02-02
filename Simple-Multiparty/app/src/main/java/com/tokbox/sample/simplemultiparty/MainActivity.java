@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private final int MAX_NUM_SUBSCRIBERS = 4;
 
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Session session;
