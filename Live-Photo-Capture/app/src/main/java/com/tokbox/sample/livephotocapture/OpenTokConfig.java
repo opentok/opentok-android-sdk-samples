@@ -1,4 +1,4 @@
-package com.tokbox.android.sample.livephotocapture;
+package com.tokbox.sample.livephotocapture;
 
 import android.text.TextUtils;
 import androidx.annotation.NonNull;

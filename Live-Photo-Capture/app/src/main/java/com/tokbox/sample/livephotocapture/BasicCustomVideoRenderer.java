@@ -1,4 +1,4 @@
-package com.tokbox.android.sample.livephotocapture;
+package com.tokbox.sample.livephotocapture;
 
 import android.content.Context;
 import android.graphics.Bitmap;
