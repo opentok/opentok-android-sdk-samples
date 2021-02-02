@@ -257,18 +257,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private SubscriberContainer findFirstEmptyContainer(Subscriber subscriber) {
-        for (SubscriberContainer c : subscribers) {
-            if (c.subscriber == null) {
-                return c;
+        for (SubscriberContainer subscriberContainer : subscribers) {
+            if (subscriberContainer.subscriber == null) {
+                return subscriberContainer;
             }
         }
         return null;
     }
 
     private SubscriberContainer findContainerForStream(Stream stream) {
-        for (SubscriberContainer c : subscribers) {
-            if (c.subscriber.getStream().getStreamId().equals(stream.getStreamId())) {
-                return c;
+        for (SubscriberContainer subscriberContainer : subscribers) {
+            if (subscriberContainer.subscriber.getStream().getStreamId().equals(stream.getStreamId())) {
+                return subscriberContainer;
             }
         }
         return null;
@@ -314,9 +314,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         sessionConnected = false;
 
         if (subscribers.size() > 0) {
-            for (SubscriberContainer c : subscribers) {
-                if (c.subscriber != null) {
-                    session.unsubscribe(c.subscriber);
+            for (SubscriberContainer subscriberContainer : subscribers) {
+                if (subscriberContainer.subscriber != null) {
+                    session.unsubscribe(subscriberContainer.subscriber);
                 }
             }
         }
