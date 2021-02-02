@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <FrameLayout
             android:id="@+id/subscriber_container"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
+    <FrameLayout
             android:id="@+id/publisher_container"
             android:layout_width="@dimen/publisher_layout_width"
             android:layout_height="@dimen/publisher_layout_height"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="@dimen/publisher_bottom_margin"
-            android:layout_marginEnd="@dimen/publisher_right_margin"
-            android:layout_marginRight="@dimen/publisher_right_margin"
+            android:background="@color/publisher_border_color"
             android:padding="@dimen/publisher_padding"
-            android:background="@color/publisher_border_color">
+            android:layout_marginRight="@dimen/publisher_right_margin"
+            android:layout_marginBottom="@dimen/publisher_bottom_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageView
+        <ImageView
                 android:id="@+id/archiving_indicator_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
-                android:src="@drawable/archiving_indicator"
                 android:layout_marginTop="@dimen/archiving_indicator_top_margin"
                 android:layout_marginEnd="@dimen/archiving_indicator_right_margin"
                 android:layout_marginRight="@dimen/archiving_indicator_end_margin"
+                android:src="@drawable/archiving_indicator"
                 android:visibility="invisible" />
-        </FrameLayout>
-
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
