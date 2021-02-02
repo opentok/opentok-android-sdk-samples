@@ -2,7 +2,6 @@ package com.tokbox.sample.signaling;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -10,12 +9,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
+import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
-
+import com.opentok.android.Session;
+import com.opentok.android.Stream;
 import com.tokbox.sample.signaling.message.SignalMessage;
 import com.tokbox.sample.signaling.message.SignalMessageAdapter;
 

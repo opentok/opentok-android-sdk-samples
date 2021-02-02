@@ -10,7 +10,7 @@ import com.opentok.android.BaseVideoCapturer;
 
 public class ScreensharingCapturer extends BaseVideoCapturer {
 
-  private Context mContext;
+  private Context context;
 
     private boolean capturing = false;
     private View contentView;
@@ -23,7 +23,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
     private Bitmap bmp;
     private Canvas canvas;
 
-    private Handler mHandler = new Handler();
+    private Handler handler = new Handler();
 
     private Runnable newFrame = new Runnable() {
         @Override
@@ -59,14 +59,14 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
 
                 canvas.restore();
 
-                mHandler.postDelayed(newFrame, 1000 / fps);
+                handler.postDelayed(newFrame, 1000 / fps);
 
             }
         }
     };
 
     public ScreensharingCapturer(Context context, View view) {
-        this.mContext = context;
+        this.context = context;
         this.contentView = view;
     }
 
@@ -79,14 +79,14 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
     public int startCapture() {
         capturing = true;
 
-        mHandler.postDelayed(newFrame, 1000 / fps);
+        handler.postDelayed(newFrame, 1000 / fps);
         return 0;
     }
 
     @Override
     public int stopCapture() {
         capturing = false;
-        mHandler.removeCallbacks(newFrame);
+        handler.removeCallbacks(newFrame);
         return 0;
     }
 

@@ -297,10 +297,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                     metadataListener.onMetadataReady(currentFrame.getMetadata());
                 }
 
-                int mMVPMatrixHandle = GLES20.glGetUniformLocation(program,
-                        "uMVPMatrix");
-                GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false,
-                        scaleMatrix, 0);
+                int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
+                GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, scaleMatrix, 0);
 
                 GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length,
                         GLES20.GL_UNSIGNED_SHORT, drawListBuffer);

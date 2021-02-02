@@ -1,7 +1,6 @@
 package com.tokbox.sample.signaling;
 
 import android.text.TextUtils;
-import android.webkit.URLUtil;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***

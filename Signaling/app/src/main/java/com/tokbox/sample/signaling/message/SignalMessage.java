@@ -12,28 +12,28 @@ package com.tokbox.sample.signaling.message;
 
 public class SignalMessage {
 
-    private String mMessageText;
+    private String messageText;
 
     private Boolean remote;
 
     public SignalMessage(String messageText) {
 
-        this.mMessageText = messageText;
+        this.messageText = messageText;
         this.remote = false;
     }
 
     public SignalMessage(String messageText, Boolean remote) {
 
-        this.mMessageText = messageText;
+        this.messageText = messageText;
         this.remote = remote;
     }
 
     public String getMessageText() {
-        return this.mMessageText;
+        return this.messageText;
     }
 
     public void setMessageText(String mMessageText) {
-        this.mMessageText = mMessageText;
+        this.messageText = mMessageText;
     }
 
     public Boolean isRemote() {

@@ -7,7 +7,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private ArrayList<Subscriber> subscribers = new ArrayList<>();
     private HashMap<Stream, Subscriber> subscriberStreams = new HashMap<>();
 
-    private ConstraintLayout mContainer;
+    private ConstraintLayout container;
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             int subId = getResIdForSubscriberIndex(subscribers.size() - 1);
             subscriber.getView().setId(subId);
-            mContainer.addView(subscriber.getView());
+            container.addView(subscriber.getView());
 
             calculateLayout();
         }
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             subscribers.remove(subscriber);
             subscriberStreams.remove(stream);
-            mContainer.removeView(subscriber.getView());
+            container.removeView(subscriber.getView());
 
             // Recalculate view Ids
             for (int i = 0; i < subscribers.size(); i++) {
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         OpenTokConfig.verifyConfig();
 
-        mContainer = findViewById(R.id.main_container);
+        container = findViewById(R.id.main_container);
 
         requestPermissions();
     }
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             startPublisherPreview();
             publisher.getView().setId(R.id.publisher_view_id);
-            mContainer.addView(publisher.getView());
+            container.addView(publisher.getView());
             calculateLayout();
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
@@ -305,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             set.layoutViewWithBottomBound(getResIdForSubscriberIndex(size - 1), R.id.main_container);
         }
 
-        set.applyToLayout(mContainer, true);
+        set.applyToLayout(container, true);
     }
 
     private void disconnectSession() {
@@ -323,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         if (publisher != null) {
             session.unpublish(publisher);
-            mContainer.removeView(publisher.getView());
+            container.removeView(publisher.getView());
             publisher = null;
         }
         session.disconnect();

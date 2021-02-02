@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Scene scene;
     private ArSceneView arSceneView;
 
-    private final HashMap<AugmentedFace, AugmentedFaceNode> mFaceNodeMap = new HashMap<>();
+    private final HashMap<AugmentedFace, AugmentedFaceNode> faceNodeMap = new HashMap<>();
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -112,17 +112,17 @@ public class MainActivity extends AppCompatActivity {
 
             // Make new AugmentedFaceNodes for any new faces.
             for (AugmentedFace face : faceList) {
-                if (!mFaceNodeMap.containsKey(face)) {
+                if (!faceNodeMap.containsKey(face)) {
                     AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                     faceNode.setParent(scene);
                     faceNode.setFaceRegionsRenderable(modelRenderable);
                     faceNode.setFaceMeshTexture(texture);
-                    mFaceNodeMap.put(face, faceNode);
+                    faceNodeMap.put(face, faceNode);
                 }
             }
 
             // Remove any AugmentedFaceNodes associated with an AugmentedFace that stopped tracking.
-            Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iter = mFaceNodeMap.entrySet().iterator();
+            Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iter = faceNodeMap.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry<AugmentedFace, AugmentedFaceNode> entry = iter.next();
                 AugmentedFace face = entry.getKey();
