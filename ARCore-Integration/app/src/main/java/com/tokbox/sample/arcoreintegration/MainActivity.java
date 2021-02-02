@@ -52,17 +52,17 @@ public class MainActivity extends AppCompatActivity {
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
         public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-            Log.i(LOG_TAG, "Publisher onStreamCreated");
+            Log.i(TAG, "Publisher onStreamCreated");
         }
 
         @Override
         public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-            Log.i(LOG_TAG, "Publisher onStreamDestroyed");
+            Log.i(TAG, "Publisher onStreamDestroyed");
         }
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            Log.e(LOG_TAG, "Publisher error: " + opentokError.getMessage());
+            Log.e(TAG, "Publisher error: " + opentokError.getMessage());
         }
     };
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onConnected(Session session) {
 
-            Log.i(LOG_TAG, "Session Connected");
+            Log.i(TAG, "Session Connected");
 
             CustomVideoCapturer capturer = new CustomVideoCapturer(faceFragment.getArSceneView());
             Publisher custopublisher = new Publisher.Builder(MainActivity.this)
@@ -85,22 +85,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onDisconnected(Session session) {
-            Log.i(LOG_TAG, "Session Disconnected");
+            Log.i(TAG, "Session Disconnected");
         }
 
         @Override
         public void onStreamReceived(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Received");
+            Log.i(TAG, "Stream Received");
         }
 
         @Override
         public void onStreamDropped(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Dropped");
+            Log.i(TAG, "Stream Dropped");
         }
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            Log.e(LOG_TAG, "Session error: " + opentokError.getMessage());
+            Log.e(TAG, "Session error: " + opentokError.getMessage());
         }
     };
 
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         if (!checkIsSupportedDevice()) {
             String message = "Augmented Faces requires ARCore";
 
-            Log.e(LOG_TAG, message);
+            Log.e(TAG, message);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
             this.finish();
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkIsSupportedDevice() {
         if (ArCoreApk.getInstance().checkAvailability(this) == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE) {
-            Log.e(LOG_TAG, "Augmented Faces requires ARCore");
+            Log.e(TAG, "Augmented Faces requires ARCore");
             Toast.makeText(this, "Augmented Faces requires ARCore", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                 .getGlEsVersion();
 
         if (Double.parseDouble(openGlVersionString) < MIN_OPEN_GL_VERSION) {
-            Log.e(LOG_TAG, "Sceneform requires OpenGL ES 3.0 later");
+            Log.e(TAG, "Sceneform requires OpenGL ES 3.0 later");
             Toast.makeText(this, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG).show();
             return false;
         }

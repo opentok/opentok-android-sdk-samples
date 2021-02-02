@@ -311,7 +311,7 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
             frameLock.unlock();
 
             if (customVideoRenderer.saveScreenshot) {
-                Log.d(LOG_TAG, "Screenshot capture");
+                Log.d(TAG, "Screenshot capture");
 
                 ByteBuffer bb = frame.getBuffer();
                 bb.clear();

@@ -32,23 +32,23 @@ public class MainActivity extends AppCompatActivity {
     private Session.SessionListener sessionListener = new Session.SessionListener() {
         @Override
         public void onConnected(Session session) {
-            Log.i(LOG_TAG, "Session Connected");
+            Log.i(TAG, "Session Connected");
             messageEditTextView.setEnabled(true);
         }
 
         @Override
         public void onDisconnected(Session session) {
-            Log.i(LOG_TAG, "Session Disconnected");
+            Log.i(TAG, "Session Disconnected");
         }
 
         @Override
         public void onStreamReceived(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Received");
+            Log.i(TAG, "Stream Received");
         }
 
         @Override
         public void onStreamDropped(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Dropped");
+            Log.i(TAG, "Stream Dropped");
         }
 
         @Override
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        Log.d(LOG_TAG, "Send Message");
+        Log.d(TAG, "Send Message");
 
         SignalMessage signal = new SignalMessage(messageEditTextView.getText().toString());
         session.sendSignal(SIGNAL_TYPE, signal.getMessageText());
@@ -135,14 +135,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMessage(String messageData, boolean remote) {
-        Log.d(LOG_TAG, "Show Message");
+        Log.d(TAG, "Show Message");
 
         SignalMessage message = new SignalMessage(messageData, remote);
         messageHistory.add(message);
     }
 
     private void logOpenTokError(OpentokError opentokError) {
-        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
+        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
+        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
     }
 }

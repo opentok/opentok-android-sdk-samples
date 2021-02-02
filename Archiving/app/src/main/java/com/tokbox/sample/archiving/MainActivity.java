@@ -62,12 +62,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
         public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-            Log.i(LOG_TAG, "Publisher Stream Created");
+            Log.i(TAG, "Publisher Stream Created");
         }
 
         @Override
         public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-            Log.i(LOG_TAG, "Publisher Stream Destroyed");
+            Log.i(TAG, "Publisher Stream Destroyed");
         }
 
         @Override
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onConnected(Session session) {
-            Log.i(LOG_TAG, "Session Connected");
+            Log.i(TAG, "Session Connected");
 
             // initialize Publisher and set this object to listen to Publisher events
             publisher = new Publisher.Builder(MainActivity.this).build();
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onDisconnected(Session session) {
-            Log.i(LOG_TAG, "Session Disconnected");
+            Log.i(TAG, "Session Disconnected");
 
             setStartArchiveEnabled(false);
             setStopArchiveEnabled(false);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onStreamReceived(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Received");
+            Log.i(TAG, "Stream Received");
 
             if (subscriber == null) {
                 subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onStreamDropped(Session session, Stream stream) {
-            Log.i(LOG_TAG, "Stream Dropped");
+            Log.i(TAG, "Stream Dropped");
 
             if (subscriber != null) {
                 subscriber = null;
@@ -134,14 +134,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private SubscriberKit.SubscriberListener subscriberListener = new SubscriberKit.SubscriberListener() {
         @Override
         public void onConnected(SubscriberKit subscriberKit) {
-            Log.i(LOG_TAG, "Subscriber Connected");
+            Log.i(TAG, "Subscriber Connected");
 
             subscriberViewContainer.addView(subscriber.getView());
         }
 
         @Override
         public void onDisconnected(SubscriberKit subscriberKit) {
-            Log.i(LOG_TAG, "Subscriber Disconnected");
+            Log.i(TAG, "Subscriber Disconnected");
         }
 
         @Override
@@ -226,12 +226,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(LOG_TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     // Make a request for session data
     private void getSession() {
-        Log.i(LOG_TAG, "getSession");
+        Log.i(TAG, "getSession");
 
         Call<GetSessionResponse> call = apiService.getSession();
 
@@ -266,9 +266,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void initializeSession(String apiKey, String sessionId, String token) {
-        Log.i(LOG_TAG, "apiKey: " + apiKey);
-        Log.i(LOG_TAG, "sessionId: " + sessionId);
-        Log.i(LOG_TAG, "token: " + token);
+        Log.i(TAG, "apiKey: " + apiKey);
+        Log.i(TAG, "sessionId: " + sessionId);
+        Log.i(TAG, "token: " + token);
 
         sessionId = sessionId;
 
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void startArchive() {
-        Log.i(LOG_TAG, "startArchive");
+        Log.i(TAG, "startArchive");
 
         if (session != null) {
             StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void stopArchive() {
-        Log.i(LOG_TAG, "stopArchive");
+        Log.i(TAG, "stopArchive");
 
         Call call = apiService.stopArchive(currentArchiveId);
         call.enqueue(new EmptyCallback());
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void playArchive() {
 
-        Log.i(LOG_TAG, "playArchive");
+        Log.i(TAG, "playArchive");
 
         String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
         Uri archiveUri = Uri.parse(archiveUrl);
@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void logOpenTokError(OpentokError opentokError) {
-        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
+        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
+        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
     }
 }

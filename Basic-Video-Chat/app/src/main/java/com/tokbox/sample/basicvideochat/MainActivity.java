@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
         public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-            Log.d(LOG_TAG, "onStreamCreated: Publisher Stream Created. Own stream " + stream.getStreamId());
+            Log.d(TAG, "onStreamCreated: Publisher Stream Created. Own stream " + stream.getStreamId());
         }
 
         @Override
         public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-            Log.d(LOG_TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.getStreamId());
+            Log.d(TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.getStreamId());
         }
 
         @Override
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Session.SessionListener sessionListener = new Session.SessionListener() {
         @Override
         public void onConnected(Session session) {
-            Log.d(LOG_TAG, "onConnected: Connected to session: " + session.getSessionId());
+            Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
 
             // initialize Publisher and set this object to listen to Publisher events
             publisher = new Publisher.Builder(MainActivity.this).build();
@@ -87,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onDisconnected(Session session) {
-            Log.d(LOG_TAG, "onDisconnected: Disconnected from session: " + session.getSessionId());
+            Log.d(TAG, "onDisconnected: Disconnected from session: " + session.getSessionId());
         }
 
         @Override
         public void onStreamReceived(Session session, Stream stream) {
-            Log.d(LOG_TAG, "onStreamReceived: New Stream Received " + stream.getStreamId() + " in session: " + session.getSessionId());
+            Log.d(TAG, "onStreamReceived: New Stream Received " + stream.getStreamId() + " in session: " + session.getSessionId());
 
             if (subscriber == null) {
                 subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onStreamDropped(Session session, Stream stream) {
-            Log.d(LOG_TAG, "onStreamDropped: Stream Dropped: " + stream.getStreamId() + " in session: " + session.getSessionId());
+            Log.d(TAG, "onStreamDropped: Stream Dropped: " + stream.getStreamId() + " in session: " + session.getSessionId());
 
             if (subscriber != null) {
                 subscriber = null;
@@ -122,12 +122,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     SubscriberKit.SubscriberListener subscriberListener = new SubscriberKit.SubscriberListener() {
         @Override
         public void onConnected(SubscriberKit subscriberKit) {
-            Log.d(LOG_TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.getStream().getStreamId());
+            Log.d(TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.getStream().getStreamId());
         }
 
         @Override
         public void onDisconnected(SubscriberKit subscriberKit) {
-            Log.d(LOG_TAG, "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.getStream().getStreamId());
+            Log.d(TAG, "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.getStream().getStreamId());
         }
 
         @Override
@@ -175,12 +175,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(LOG_TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(LOG_TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this)
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     // Make a request for session data
     private void getSession() {
-        Log.i(LOG_TAG, "getSession");
+        Log.i(TAG, "getSession");
 
         Call<GetSessionResponse> call = apiService.getSession();
 
@@ -235,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void initializeSession(String apiKey, String sessionId, String token) {
-        Log.i(LOG_TAG, "apiKey: " + apiKey);
-        Log.i(LOG_TAG, "sessionId: " + sessionId);
-        Log.i(LOG_TAG, "token: " + token);
+        Log.i(TAG, "apiKey: " + apiKey);
+        Log.i(TAG, "sessionId: " + sessionId);
+        Log.i(TAG, "token: " + token);
 
         session = new Session.Builder(this, apiKey, sessionId).build();
         session.setSessionListener(sessionListener);
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void logOpenTokError(OpentokError opentokError) {
-        Log.e(LOG_TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(LOG_TAG, "Error Code: " + opentokError.getErrorCode().name());
+        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
+        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
     }
 }
