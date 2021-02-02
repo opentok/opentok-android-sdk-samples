@@ -20,7 +20,7 @@ import com.tokbox.sample.signaling.message.SignalMessageAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final String SIGNAL_TYPE = "text-signal";
 
     private Session session;

@@ -28,7 +28,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         PreviewCallback,
         BaseVideoCapturer.CaptureSwitch {
 
-    private static final String LOG_TAG = CustomVideoCapturer.class.getSimpleName();
+    private static final String TAG = CustomVideoCapturer.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;

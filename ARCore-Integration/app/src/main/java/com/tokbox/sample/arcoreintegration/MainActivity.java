@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPEN_GL_VERSION = 3.0;
 
     // Tokbox variables

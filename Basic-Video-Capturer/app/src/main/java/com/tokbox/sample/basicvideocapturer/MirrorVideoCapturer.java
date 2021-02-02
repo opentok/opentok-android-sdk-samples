@@ -28,7 +28,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         PreviewCallback,
         BaseVideoCapturer.CaptureSwitch {
 
-    private static final String LOG_TAG = MirrorVideoCapturer.class.getSimpleName();
+    private static final String TAG = MirrorVideoCapturer.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;

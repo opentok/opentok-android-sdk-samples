@@ -28,7 +28,7 @@ public
 class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
     private static final int PREFERRED_FACING_CAMERA = CameraMetadata.LENS_FACING_FRONT;
     private static final int PIXEL_FORMAT = ImageFormat.YUV_420_888;
-    private static final String LOG_TAG = MirrorVideoCapturer.class.getSimpleName();
+    private static final String TAG = MirrorVideoCapturer.class.getSimpleName();
 
     private enum CameraState {
         CLOSED,

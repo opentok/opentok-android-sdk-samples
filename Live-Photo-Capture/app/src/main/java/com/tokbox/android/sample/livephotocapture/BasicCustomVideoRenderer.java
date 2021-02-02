@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BasicCustomVideoRenderer extends BaseVideoRenderer {
 
-    private final static String LOG_TAG = "custom-videorenderer";
+    private final static String TAG = BasicCustomVideoRenderer.class.getSimpleName();
 
     Context context;
 
