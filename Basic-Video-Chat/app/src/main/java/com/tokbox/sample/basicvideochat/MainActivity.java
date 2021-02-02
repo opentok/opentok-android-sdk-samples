@@ -36,6 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Retrofit retrofit;

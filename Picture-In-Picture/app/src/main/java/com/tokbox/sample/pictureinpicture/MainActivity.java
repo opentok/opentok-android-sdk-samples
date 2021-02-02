@@ -11,19 +11,24 @@ import android.util.Rational;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends Activity {
+import java.util.List;
 
-    Session session;
-    Publisher publisher;
-    Subscriber subscriber;
+public class MainActivity extends Activity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int RC_VIDEO_APP_PERM = 124;
+
+    private Session session;
+    private Publisher publisher;
+    private Subscriber subscriber;
 
     private FrameLayout subscriberViewContainer;
     private FrameLayout publisherViewContainer;
@@ -85,7 +90,8 @@ public class MainActivity extends Activity {
         subscriberViewContainer = findViewById(R.id.subscriber_container);
         publisherViewContainer = findViewById(R.id.publisher_container);
 
-        requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 1000);
+        String[] perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
     }
 
     @Override
@@ -166,5 +172,15 @@ public class MainActivity extends Activity {
         Log.e(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         this.finish();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 }
