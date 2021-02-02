@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int RC_VIDEO_APP_PERM = 124;
+    private static final int PERMISSIONS_REQUEST_CODE = 124;
 
     private Retrofit retrofit;
     private APIService apiService;
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 
-    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
             }
         } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
+            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
     }
 

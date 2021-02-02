@@ -24,7 +24,7 @@ import java.util.List;
 public class MainActivity extends Activity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_VIDEO_APP_PERM = 124;
+    private static final int PERMISSIONS_REQUEST_CODE = 124;
 
     private Session session;
     private Publisher publisher;
@@ -91,7 +91,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
         publisherViewContainer = findViewById(R.id.publisher_container);
 
         String[] perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
+        EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
     }
 
     @Override

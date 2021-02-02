@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
     private static final double MIN_OPEN_GL_VERSION = 3.0;
 
     // Tokbox variables
-    private static final int RC_VIDEO_APP_PERM = 124;
+    private static final int PERMISSIONS_REQUEST_CODE = 124;
     private Session session;
     private FrameLayout publisherViewContainer;
 
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
         return true;
     }
 
-    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
         String[] permissions = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
             initArCore();
             initTokBox();
         } else {
-            EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make a video calls", RC_VIDEO_APP_PERM, permissions);
+            EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make a video calls", PERMISSIONS_REQUEST_CODE, permissions);
         }
     }
 
