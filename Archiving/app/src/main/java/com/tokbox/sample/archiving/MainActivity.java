@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-    // Make a request for session data
+    /* Make a request for session data */
     private void getSession() {
         Log.i(TAG, "getSession");
 
@@ -304,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void playArchive() {
-
         Log.i(TAG, "playArchive");
 
         String archiveUrl = ServerConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
@@ -312,8 +311,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
         startActivity(browserIntent);
     }
-
-    /* Activity lifecycle methods */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
