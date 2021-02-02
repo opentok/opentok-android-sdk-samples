@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.BaseVideoRenderer;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
         }
     };
     private Session.SessionListener sessionListener = new Session.SessionListener() {
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
     };
 
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("SubscriberKit error: " + opentokError.getMessage());
         }
     };
 
@@ -173,8 +174,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fail fast if chat server URL is invalid
-        OpenTokConfig.verifyChatServerUrl();
+        if(!ServerConfig.isValid()) {
+            finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
+            return;
+        }
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(OpenTokConfig.CHAT_SERVER_URL)
+                .baseUrl(ServerConfig.CHAT_SERVER_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .client(client)
                 .build();
@@ -231,12 +234,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        
         if (EasyPermissions.hasPermissions(this, perms)) {
             initRetrofit();
             getSession();
@@ -303,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         Log.i(TAG, "playArchive");
 
-        String archiveUrl = OpenTokConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
+        String archiveUrl = ServerConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
         Uri archiveUri = Uri.parse(archiveUrl);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
         startActivity(browserIntent);
@@ -359,8 +363,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .setVisible(enabled);
     }
 
-    private void logOpenTokError(OpentokError opentokError) {
-        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

@@ -366,7 +366,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     }
 
 
-    /**
+    /*
      * demonstrate how to use metadata
      */
     public interface CustomVideoCapturerDataSource {

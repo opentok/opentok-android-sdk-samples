@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.BaseVideoRenderer;
@@ -35,7 +36,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private Retrofit retrofit;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
         }
     };
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
     };
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("SubscriberKit error: " + opentokError.getMessage());
         }
     };
 
@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // initialize view objects from your layout
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
 
@@ -180,33 +179,31 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this)
-                    .setTitle(getString(R.string.title_settings_dialog))
-                    .setRationale(getString(R.string.rationale_ask_again))
-                    .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel))
-                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
-                    .build()
-                    .show();
-        }
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+
         if (EasyPermissions.hasPermissions(this, perms)) {
 
-            if (OpenTokConfig.hasChatServerUrl()) {
+            if (ServerConfig.hasChatServerUrl()) {
                 // Custom server URL exists - retrieve session config
-                OpenTokConfig.verifyChatServerUrl();
+                if(!ServerConfig.isValid()) {
+                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
+                    return;
+                }
+
                 initRetrofit();
                 getSession();
             } else {
                 // Use hardcoded session config
-                OpenTokConfig.verifyConfig();
+                if(!OpenTokConfig.isValid()) {
+                    finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+                    return;
+                }
+
                 initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
             }
         } else {
@@ -214,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-    // Make a request for session data
+    /* Make a request for session data */
     private void getSession() {
         Log.i(TAG, "getSession");
 
@@ -253,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(OpenTokConfig.CHAT_SERVER_URL)
+                .baseUrl(ServerConfig.CHAT_SERVER_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .client(client)
                 .build();
@@ -261,8 +258,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         apiService = retrofit.create(APIService.class);
     }
 
-    private void logOpenTokError(OpentokError opentokError) {
-        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

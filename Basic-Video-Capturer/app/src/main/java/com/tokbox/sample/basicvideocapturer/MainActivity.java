@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.BaseVideoRenderer;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in publisher");
+            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
         }
     };
 
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in session " + session.getSessionId());
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
 
         @Override
@@ -146,7 +147,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OpenTokConfig.verifyConfig();
+        if(!OpenTokConfig.isValid()) {
+            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+            return;
+        }
 
         publisherViewContainer = findViewById(R.id.publisherview);
         subscriberViewContainer = findViewById(R.id.subscriberview);
@@ -199,23 +203,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this)
-                    .setTitle(getString(R.string.title_settings_dialog))
-                    .setRationale(getString(R.string.rationale_ask_again))
-                    .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel))
-                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
-                    .build()
-                    .show();
-        }
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        
         if (EasyPermissions.hasPermissions(this, perms)) {
             session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             session.setSessionListener(sessionListener);
@@ -250,5 +244,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             publisher = null;
         }
         session.disconnect();
+    }
+
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

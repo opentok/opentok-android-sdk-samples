@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.AugmentedFace;
@@ -29,9 +30,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements EasyPermissions.PermissionCallbacks {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPEN_GL_VERSION = 3.0;
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            Log.e(TAG, "Publisher error: " + opentokError.getMessage());
+            finishWithMessage("Publisher error: " + opentokError.getMessage());
         }
     };
 
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            Log.e(TAG, "Session error: " + opentokError.getMessage());
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
     };
 
@@ -140,15 +142,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_augmented_face);
 
-        OpenTokConfig.verifyConfig();
+        if(!OpenTokConfig.isValid()) {
+            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+            return;
+        }
+        OpenTokConfig.isValid();
 
-        if (!checkIsSupportedDevice()) {
-            String message = "Augmented Faces requires ARCore";
-
-            Log.e(TAG, message);
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-            this.finish();
+        if (!isSupportedDevice()) {
+            finishWithMessage("Augmented Faces requires ARCore");
             return;
         }
 
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    private boolean checkIsSupportedDevice() {
+    private boolean isSupportedDevice() {
         if (ArCoreApk.getInstance().checkAvailability(this) == ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE) {
             Log.e(TAG, "Augmented Faces requires ARCore");
             Toast.makeText(this, "Augmented Faces requires ARCore", Toast.LENGTH_LONG).show();
@@ -193,21 +194,43 @@ public class MainActivity extends AppCompatActivity {
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
         String[] permissions = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        
         if (EasyPermissions.hasPermissions(this, permissions)) {
-            // ARCore Initialisation
-            faceFragment = (FaceArFragment) getSupportFragmentManager().findFragmentById(R.id.publisher_ar);
-            arSceneView = faceFragment.getArSceneView();
-            arSceneView.setCameraStreamRenderPriority(Renderable.RENDER_PRIORITY_FIRST);
-            scene = arSceneView.getScene();
-            scene.addOnUpdateListener(onUpdateListener);
-
-            // TokBox Initialisation
-            publisherViewContainer = findViewById(R.id.publisher_container);
-            session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
-            session.setSessionListener(sessionListener);
-            session.connect(OpenTokConfig.TOKEN);
+            initArCore();
+            initTokBox();
         } else {
             EasyPermissions.requestPermissions(this, "This app needs access to your camera and mic to make a video calls", RC_VIDEO_APP_PERM, permissions);
         }
+    }
+
+    private void initTokBox() {
+        publisherViewContainer = findViewById(R.id.publisher_container);
+        session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+        session.setSessionListener(sessionListener);
+        session.connect(OpenTokConfig.TOKEN);
+    }
+
+    private void initArCore() {
+        faceFragment = (FaceArFragment) getSupportFragmentManager().findFragmentById(R.id.publisher_ar);
+        arSceneView = faceFragment.getArSceneView();
+        arSceneView.setCameraStreamRenderPriority(Renderable.RENDER_PRIORITY_FIRST);
+        scene = arSceneView.getScene();
+        scene.addOnUpdateListener(onUpdateListener);
+    }
+
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 }

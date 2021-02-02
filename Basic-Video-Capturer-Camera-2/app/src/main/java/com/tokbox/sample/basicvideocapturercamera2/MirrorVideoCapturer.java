@@ -294,7 +294,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    /**
+    /*
      * Initializes the video capturer.
      */
     @Override
@@ -356,7 +356,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return 0;
     }
 
-    /**
+    /*
      * Starts capturing video.
      */
     @Override
@@ -374,7 +374,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return 0;
     }
 
-    /**
+    /*
      * Stops capturing video.
      */
     @Override
@@ -395,7 +395,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return 0;
     }
 
-    /**
+    /*
      * Destroys the BaseVideoCapturer object.
      */
     @Override
@@ -408,7 +408,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         Log.d(TAG,"destroy exit");
     }
 
-    /**
+    /*
      * Whether video is being captured (true) or not (false).
      */
     @Override
@@ -416,7 +416,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return (cameraState == CameraState.CAPTURE);
     }
 
-    /**
+    /*
      * Returns the settings for the video capturer.
      */
     @Override
@@ -433,7 +433,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return retObj;
     }
 
-    /**
+    /*
      * Call this method when the activity pauses. When you override this method, implement code
      * to respond to the activity being paused. For example, you may pause capturing audio or video.
      *
@@ -454,7 +454,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    /**
+    /*
      * Call this method when the activity resumes. When you override this method, implement code
      * to respond to the activity being resumed. For example, you may resume capturing audio
      * or video.

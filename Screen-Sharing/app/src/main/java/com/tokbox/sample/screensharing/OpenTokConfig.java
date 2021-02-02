@@ -1,6 +1,7 @@
 package com.tokbox.sample.screensharing;
 
 import android.text.TextUtils;
+import androidx.annotation.NonNull;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
@@ -13,17 +14,21 @@ public class OpenTokConfig {
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
     public static final String TOKEN = "";
 
-    public static void verifyConfig() {
-        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)) {
-            throw new RuntimeException("API_KEY in OpenTokConfig.java cannot be null or empty");
+    public static boolean isValid() {
+        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)
+                || TextUtils.isEmpty(OpenTokConfig.SESSION_ID)
+                || TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
+            return false;
         }
 
-        if (TextUtils.isEmpty(OpenTokConfig.SESSION_ID)) {
-            throw new RuntimeException("SESSION_ID in OpenTokConfig.java cannot be null or empty");
-        }
+        return true;
+    }
 
-        if (TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
-            throw new RuntimeException("TOKEN in OpenTokConfig.java cannot be null or empty");
-        }
+    @NonNull
+    public static String getDescription() {
+        return "OpenTokConfig:" + "\n"
+                + "API_KEY: " + OpenTokConfig.API_KEY + "\n"
+                + "SESSION_ID: " + OpenTokConfig.SESSION_ID + "\n"
+                + "TOKEN: " + OpenTokConfig.TOKEN + "\n";
     }
 }

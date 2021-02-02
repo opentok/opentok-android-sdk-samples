@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            logOpenTokError(opentokError);
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
     };
 
@@ -73,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OpenTokConfig.verifyConfig();
+        if(!OpenTokConfig.isValid()) {
+            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+            return;
+        }
 
         // inflate views
         messageEditTextView = findViewById(R.id.message_edit_text);
@@ -141,8 +145,9 @@ public class MainActivity extends AppCompatActivity {
         messageHistory.add(message);
     }
 
-    private void logOpenTokError(OpentokError opentokError) {
-        Log.e(TAG, "Error Domain: " + opentokError.getErrorDomain().name());
-        Log.e(TAG, "Error Code: " + opentokError.getErrorCode().name());
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

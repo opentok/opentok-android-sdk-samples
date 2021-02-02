@@ -366,7 +366,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
     }
 
 
-    /**
+    /*
      * demonstrate how to use metadata
      */
     public interface CustomVideoCapturerDataSource {

@@ -295,7 +295,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     }
 
-    /**
+    /*
      * Initializes the video capturer.
      */
     @Override
@@ -357,7 +357,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return 0;
     }
 
-    /**
+    /*
      * Starts capturing video.
      */
     @Override
@@ -375,7 +375,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return 0;
     }
 
-    /**
+    /*
      * Stops capturing video.
      */
     @Override
@@ -396,7 +396,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return 0;
     }
 
-    /**
+    /*
      * Destroys the BaseVideoCapturer object.
      */
     @Override
@@ -409,7 +409,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         Log.d(TAG,"destroy exit");
     }
 
-    /**
+    /*
      * Whether video is being captured (true) or not (false).
      */
     @Override
@@ -417,7 +417,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return (cameraState == CameraState.CAPTURE);
     }
 
-    /**
+    /*
      * Returns the settings for the video capturer.
      */
     @Override
@@ -434,7 +434,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return retObj;
     }
 
-    /**
+    /*
      * Call this method when the activity pauses. When you override this method, implement code
      * to respond to the activity being paused. For example, you may pause capturing audio or video.
      *
@@ -455,7 +455,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     }
 
-    /**
+    /*
      * Call this method when the activity resumes. When you override this method, implement code
      * to respond to the activity being resumed. For example, you may resume capturing audio
      * or video.

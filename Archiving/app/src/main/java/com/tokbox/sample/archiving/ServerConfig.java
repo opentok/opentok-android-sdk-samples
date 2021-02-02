@@ -1,8 +1,9 @@
 package com.tokbox.sample.archiving;
 
 import android.webkit.URLUtil;
+import androidx.annotation.NonNull;
 
-public class OpenTokConfig {
+public class ServerConfig {
 
     // ********  Enter the server URLs containing session and archiving resources below   ********
     //     For example (if using a heroku subdomain): "https://yoursubdomain.herokuapp.com"
@@ -20,14 +21,20 @@ public class OpenTokConfig {
 
     public static final String CHAT_SERVER_URL = "";
 
-    public static void verifyChatServerUrl() {
-        if (OpenTokConfig.CHAT_SERVER_URL == null) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
-        } else if (!(URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL))) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or " +
-                    "https");
-        } else if (!URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL)) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
+    public static boolean isValid() {
+        if (ServerConfig.CHAT_SERVER_URL == null) {
+            return false;
+        } else if (!(URLUtil.isHttpsUrl(ServerConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(ServerConfig.CHAT_SERVER_URL))) {
+            return false;
+        } else if (!URLUtil.isValidUrl(ServerConfig.CHAT_SERVER_URL)) {
+            return false;
         }
+
+        return true;
+    }
+
+    @NonNull
+    public static String getDescription() {
+        return "ServerConfig. CHAT_SERVER_URL: " + CHAT_SERVER_URL;
     }
 }

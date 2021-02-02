@@ -10,6 +10,7 @@ import android.util.Log;
 import android.util.Rational;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.Session;
@@ -67,6 +68,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
+            finishWithMessage("Session error: " + opentokError.getMessage());
         }
     };
 
@@ -75,7 +77,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OpenTokConfig.verifyConfig();
+        if(!OpenTokConfig.isValid()) {
+            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+            return;
+        }
 
         subscriberViewContainer = findViewById(R.id.subscriber_container);
         publisherViewContainer = findViewById(R.id.publisher_container);
@@ -154,5 +159,11 @@ public class MainActivity extends Activity {
         if (publisher != null) {
             publisherViewContainer.removeView(publisher.getView());
         }
+    }
+
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

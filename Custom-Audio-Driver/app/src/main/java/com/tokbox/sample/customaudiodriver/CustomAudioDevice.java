@@ -901,7 +901,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         return this.rendererSettings;
     }
 
-    /**
+    /*
      * Communication modes handling.
      */
     public boolean setOutputMode(OutputMode mode) {
