@@ -22,44 +22,44 @@ jobs:
           java-version: 1.8
 
       - name: Archiving
-        run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Basic Video Chat
-        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Custom Audio Driver
-        run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Custom Video Driver
-        run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Basic-Video-Capturer
-        run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
       
       - name: Basic-Video-Capturer-Camera-2
-        run: cd Basic-Video-Capturer-Camera-2 && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Basic-Video-Capturer-Camera-2 && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Basic-Video-Renderer
-        run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Frame Metadata
-        run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Multiparty Constraint Layout
-        run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Picture In Picture
-        run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Screen Sharing
-        run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Signaling
-        run: cd Signaling && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Signaling && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Simple-Multiparty
-        run: cd Simple-Multiparty && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd Simple-Multiparty && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: ARCore-Integration
-        run: cd ARCore-Integration && ./gradlew app:assembleRelease && ./gradlew checkOpenTokConfig && cd ..
+        run: cd ARCore-Integration && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
       

@@ -26,33 +26,48 @@ ext {
 }
 
 /*
+Verify corecntess of the project
+*/
+task checkProject() { 
+    dependsOn 'checkOpenTokConfig'
+    dependsOn 'checkServerConfig'
+}
+
+/*
 Look for the `OpenTokConfig` file and verify if there are no hardcoded values.
-This task prevents from merging credentials and custom server URLs.
+This task prevents from putting credentials.
 */
 task checkOpenTokConfig() {
     doLast {
-        def openTokConfigFound = false
+        def dir = new File('.')
 
-        def dir = new File("")
         dir.eachFileRecurse (FileType.FILES) { file ->
-
             if(file.name == "OpenTokConfig.java") {
-                openTokConfigFound = true
-
-                checkOpenTokConfigProperty(file, "API_KEY")
-                checkOpenTokConfigProperty(file, "SESSION_ID")
-                checkOpenTokConfigProperty(file, "TOKEN")
-                checkOpenTokConfigProperty(file, "CHAT_SERVER_URL")
+                isPropertyEmpty(file, "API_KEY")
+                isPropertyEmpty(file, "SESSION_ID")
+                isPropertyEmpty(file, "TOKEN")
             }
-        }
-
-        if (!openTokConfigFound) {
-            throw new Exception("OpenTokConfig.java not found")
         }
     }
 }
 
-def checkOpenTokConfigProperty(file, propertyName) {
+/*
+Look for the `ServerConfig` file and verify if there are no hardcoded values.
+This task prevents from putting custom server URL.
+*/
+task checkServerConfig() {
+    doLast {
+        def dir = new File('.')
+        
+        dir.eachFileRecurse (FileType.FILES) { file ->
+            if(file.name == "ServerConfig.java") {
+                isPropertyEmpty(file, "CHAT_SERVER_URL")
+            }
+        }
+    }
+}
+
+def isPropertyEmpty(file, propertyName) {
     file.eachLine { line ->
         // If property exists within config file it must be an empty String
         if (line.contains("public static final String $propertyName") && !line.contains('""')) {
