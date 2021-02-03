@@ -24,7 +24,8 @@ jobs:
       - name: Install SDKMan
         run: |
           curl -s "https://get.sdkman.io" | bash
-          source "$HOME/.sdkman/bin/sdkman-init.sh"                 
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk version            
       
       - name: Install kscript
         run: sdk install kscript
