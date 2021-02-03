@@ -1,7 +1,7 @@
 import java.io.File
 import kotlin.system.exitProcess
 
-println("Run check-consistancy")
+println("check-consistancy Start")
 
 val errors = mutableListOf<String>()
 
@@ -26,8 +26,11 @@ File(".")
     }
 
 if (errors.isNotEmpty()) {
+    println("check-consistancy ERROR:")
     errors.forEach { println(it) }
     exitProcess(1)
+} else {
+    println("check-consistancy OK")
 }
 
 /**
