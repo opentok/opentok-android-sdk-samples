@@ -25,14 +25,10 @@ jobs:
         run: |
           curl -s "https://get.sdkman.io" | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk version            
-      
-      - name: Install Kotlin
-        run: sdk install kotlin
-
-      - name: Install kscript
-        run: sdk install kscript
-      
+          sdk version     
+          sdk install kotlin      
+          sdk install kscript
+            
       - run: java --version
       
       - name: Install kscript
