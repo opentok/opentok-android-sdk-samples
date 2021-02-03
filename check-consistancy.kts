@@ -1,6 +1,8 @@
 import java.io.File
 import kotlin.system.exitProcess
 
+println("Run check-consistancy")
+
 val errors = mutableListOf<String>()
 
 File(".")
