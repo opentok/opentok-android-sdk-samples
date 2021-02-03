@@ -26,11 +26,11 @@ File(".")
     }
 
 if (errors.isNotEmpty()) {
-    println("check-consistancy ERROR:")
+    println("check-consistancy Error:")
     errors.forEach { println(it) }
     exitProcess(1)
 } else {
-    println("check-consistancy OK")
+    println("check-consistancy Ok")
 }
 
 /**
