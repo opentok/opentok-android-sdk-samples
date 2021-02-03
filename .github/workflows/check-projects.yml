@@ -16,17 +16,19 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - uses: sdkman/sdkman-action@master
-        id: sdkman
-        with:
-          candidate: java
-          version: 15.0.0
-
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 15.0.0
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+      
+      - name: Install SDKMan
+          run: |
+            chmod u+x install-sdkman
+            ./install-sdkman
+            echo ::set-env name=SDKMAN_DIR::$(echo $HOME/.sdkman)                  
+      
+      - name: Install Kotlin Scripting
+          run: sdk install kscript
       
       - run: java --version
       
