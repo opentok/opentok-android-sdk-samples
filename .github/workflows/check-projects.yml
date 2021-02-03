@@ -21,12 +21,26 @@ jobs:
         with:
           java-version: 8
       
-      - name: Install SDKMan, Kotlin, kscript and check project consistancy
+      - name: Install SDKMan
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+      - name: Install Kotlin
+        run: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install kotlin      
+      
+      - name: Install kscript
         run: |
           curl -s "https://get.sdkman.io" | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk install kotlin      
           sdk install kscript
+          kscript check-consistancy.kts
+
+      - name: Check project consistancy
+        run: |
           kscript check-consistancy.kts
 
       - name: Archiving
