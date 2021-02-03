@@ -30,7 +30,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 class CustomAudioDevice extends BaseAudioDevice {
-    private final static String LOG_TAG =  CustomAudioDevice.class.getSimpleName();
+    private final static String TAG =  CustomAudioDevice.class.getSimpleName();
 
     private static final int NUM_CHANNELS_CAPTURING = 1;
     private static final int NUM_CHANNELS_RENDERING = 1;
@@ -172,16 +172,16 @@ class CustomAudioDevice extends BaseAudioDevice {
     private BroadcastReceiver headsetBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(LOG_TAG, "headsetBroadcastReceiver.onReceive()");
+            Log.d(TAG, "headsetBroadcastReceiver.onReceive()");
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
                 if (intent.getIntExtra(HEADSET_PLUG_STATE_KEY, 0) == 1) {
-                    Log.d(LOG_TAG, "headsetBroadcastReceiver.onReceive():  Headphones connected");
+                    Log.d(TAG, "headsetBroadcastReceiver.onReceive():  Headphones connected");
                     audioState.setLastOutputType(getOutputType());
                     setOutputType(OutputType.HEAD_PHONES);
                     audioManager.setSpeakerphoneOn(false);
                     audioManager.setBluetoothScoOn(false);
                 } else {
-                    Log.d(LOG_TAG, "headsetBroadcastReceiver.onReceive():  Headphones disconnected");
+                    Log.d(TAG, "headsetBroadcastReceiver.onReceive():  Headphones disconnected");
                     if (getOutputType() == OutputType.HEAD_PHONES) {
                         if (audioState.getLastOutputType() == OutputType.BLUETOOTH &&
                                 BluetoothState.Connected == bluetoothState) {
@@ -215,15 +215,15 @@ class CustomAudioDevice extends BaseAudioDevice {
                         BluetoothHeadset.EXTRA_STATE, -1);
                 switch (state) {
                     case BluetoothHeadset.STATE_AUDIO_DISCONNECTED:
-                        Log.d(LOG_TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_DISCONNECTED");
+                        Log.d(TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_DISCONNECTED");
                         break;
 
                     case BluetoothHeadset.STATE_AUDIO_CONNECTING:
-                        Log.d(LOG_TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_CONNECTING");
+                        Log.d(TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_CONNECTING");
                         break;
 
                     case BluetoothHeadset.STATE_AUDIO_CONNECTED:
-                        Log.d(LOG_TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_CONNECTED");
+                        Log.d(TAG, "bluetoothHeadsetReceiver.onReceive(): STATE_AUDIO_CONNECTED");
                         break;
 
                     default:
@@ -257,14 +257,14 @@ class CustomAudioDevice extends BaseAudioDevice {
                 int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, -1);
                 switch (state) {
                     case BluetoothHeadset.STATE_CONNECTED:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_CONNECTED");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_CONNECTED");
                         new Handler().postDelayed(() -> connectBluetooth(), DEFAULT_BLUETOOTH_SCO_START_DELAY);
                         break;
                     case BluetoothHeadset.STATE_DISCONNECTING:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_DISCONNECTING");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_DISCONNECTING");
                         break;
                     case BluetoothHeadset.STATE_DISCONNECTED:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_DISCONNECTED");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): BluetoothHeadset.STATE_DISCONNECTED");
                         stopBluetoothSco();
                         audioManager.setBluetoothScoOn(false);
                         break;
@@ -275,21 +275,21 @@ class CustomAudioDevice extends BaseAudioDevice {
                 int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
                 switch (state) {
                     case AudioManager.SCO_AUDIO_STATE_CONNECTED:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_CONNECTED");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_CONNECTED");
                         bluetoothState = BluetoothState.Connected;
                         setOutputType(OutputType.BLUETOOTH);
                         CustomAudioDevice.super.setOutputMode(OutputMode.Handset); // When BT is connected it replaces the handset
                         break;
                     case AudioManager.SCO_AUDIO_STATE_ERROR:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_ERROR");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_ERROR");
                         break;
                     case AudioManager.SCO_AUDIO_STATE_DISCONNECTED:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_DISCONNECTED");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_DISCONNECTED");
                         restoreAudioAfterBluetoothDisconnect();
                         bluetoothState = BluetoothState.Disconnected;
                         break;
                     case AudioManager.SCO_AUDIO_STATE_CONNECTING:
-                        Log.d(LOG_TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_CONNECTING");
+                        Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_CONNECTING");
                         break;
                     default:
                         break;
@@ -300,13 +300,13 @@ class CustomAudioDevice extends BaseAudioDevice {
     private PhoneStateListener phoneStateListener = new PhoneStateListener(){
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
-            Log.d(LOG_TAG, "PhoneStateListener.onCallStateChanged()");
+            Log.d(TAG, "PhoneStateListener.onCallStateChanged()");
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
 
                 case TelephonyManager.CALL_STATE_IDLE:
                     //Initial state
-                    Log.d(LOG_TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_IDLE");
+                    Log.d(TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_IDLE");
                     // We delay a bit here the action of start capturing and rendering again because Android has to
                     // finish routing audio to the earpiece. It is an Android behaviour we have to deal with.
                     new Handler().postDelayed(() -> startRendererAndCapturer(), DEFAULT_START_RENDERER_AND_CAPTURER_DELAY);
@@ -314,18 +314,18 @@ class CustomAudioDevice extends BaseAudioDevice {
 
                 case TelephonyManager.CALL_STATE_RINGING:
                     // Incoming call Ringing
-                    Log.d(LOG_TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_RINGING");
+                    Log.d(TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_RINGING");
                     stopRendererAndCapturer();
                     break;
 
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     // Outgoing Call | Accepted incoming call
-                    Log.d(LOG_TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_OFFHOOK");
+                    Log.d(TAG, "PhoneStateListener.onCallStateChanged(): TelephonyManager.CALL_STATE_OFFHOOK");
                     stopRendererAndCapturer();
                     break;
 
                 default:
-                    Log.d(LOG_TAG, "PhoneStateListener.onCallStateChanged() default");
+                    Log.d(TAG, "PhoneStateListener.onCallStateChanged() default");
                     break;
             }
         }
@@ -359,10 +359,10 @@ class CustomAudioDevice extends BaseAudioDevice {
     private AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
-            Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + ")");
+            Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + ")");
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): ");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): ");
                     //Check if coming back from a complete loss or a transient loss
                     switch (audioState.getLastKnownFocusState()) {
                         case AudioManager.AUDIOFOCUS_LOSS:
@@ -374,7 +374,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                                 audioState.getLastStreamVolume(), 0);
                             break;
                         default:
-                            Log.d(LOG_TAG, "focusChange = " + focusChange);
+                            Log.d(TAG, "focusChange = " + focusChange);
                             break;
                     }
                     setOutputType(audioState.getLastOutputType());
@@ -384,23 +384,23 @@ class CustomAudioDevice extends BaseAudioDevice {
 
                 case AudioManager.AUDIOFOCUS_LOSS:
                     // -1 Loss for indefinite time
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     // -2 Loss for short duration
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS_TRANSIENT");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS_TRANSIENT");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                     // -3 stay quite in background
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                     audioState.setLastStreamVolume(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL));
                     audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 0, 0);
                     break;
                 case AudioManager.AUDIOFOCUS_NONE:
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_NONE");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): AudioManager.AUDIOFOCUS_NONE");
                     break;
                 default:
-                    Log.d(LOG_TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): default");
+                    Log.d(TAG, "AudioManager.OnAudioFocusChangeListener.onAudioFocusChange(" + focusChange + "): default");
                     break;
             }
             audioState.setLastOutputType(getOutputType());
@@ -409,7 +409,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     };
 
     private void connectBluetooth() {
-        Log.d(LOG_TAG, "connectBluetooth() called");
+        Log.d(TAG, "connectBluetooth() called");
         audioManager.setBluetoothScoOn(true);
         startBluetoothSco();
     }
@@ -420,7 +420,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             recBuffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE);
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         tempBufRec = new byte[DEFAULT_BUFFER_SIZE];
 
@@ -446,7 +446,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                     * samplesPerBuffer
                     * NUM_CHANNELS_RENDERING;
             } catch(NumberFormatException numberFormatException) {
-                Log.e(LOG_TAG, "DefaultAudioDevice(): " + numberFormatException.getMessage());
+                Log.e(TAG, "DefaultAudioDevice(): " + numberFormatException.getMessage());
             } finally {
                 if (outputBufferSize == 0) {
                     outputBufferSize = DEFAULT_BUFFER_SIZE;
@@ -458,7 +458,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             playBuffer = ByteBuffer.allocateDirect(outputBufferSize);
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
 
         tempBufPlay = new byte[outputBufferSize];
@@ -477,7 +477,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         wasCapturing = false;
         wasRendering = false;
         isPaused = false;
-        Log.d(LOG_TAG, "DefaultAudioDevice() exit  " + this);
+        Log.d(TAG, "DefaultAudioDevice() exit  " + this);
 
     }
 
@@ -537,7 +537,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                     captureSettings.getSampleRate(),
                     captureSettings.getNumChannels(),
                     minRecBufSize);
-            Log.e(LOG_TAG, errorDescription);
+            Log.e(TAG, errorDescription);
             throw new RuntimeException(errorDescription);
         }
 
@@ -580,7 +580,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     public boolean startCapturer() {
         if (audioRecord == null) {
             throw new IllegalStateException("startCapturer(): startRecording() called on an "
-                    + "uninitialized AudioRecord.");
+                    + "uninitialized AudioRecord");
         }
         try {
             audioRecord.startRecording();
@@ -600,7 +600,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     public boolean stopCapturer() {
 
         if (audioRecord == null) {
-            throw new IllegalStateException("stopCapturer(): stop() called on an uninitialized AudioRecord.");
+            throw new IllegalStateException("stopCapturer(): stop() called on an uninitialized AudioRecord");
         }
         captureLock.lock();
         try {
@@ -625,7 +625,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
         } catch (Exception e) {
-            Log.e(LOG_TAG, "android.os.Process.setThreadPriority(): " + e.getMessage());
+            Log.e(TAG, "android.os.Process.setThreadPriority(): " + e.getMessage());
         }
 
         while (!shutdownCaptureThread) {
@@ -764,10 +764,10 @@ class CustomAudioDevice extends BaseAudioDevice {
         synchronized (bluetoothLock) {
             if (BluetoothState.Connected != bluetoothState) {
                 if (audioManager.isWiredHeadsetOn()) {
-                    Log.d(LOG_TAG, "Turn off Speaker phone");
+                    Log.d(TAG, "Turn off Speaker phone");
                     audioManager.setSpeakerphoneOn(false);
                 } else {
-                    Log.d(LOG_TAG, "Turn on Speaker phone");
+                    Log.d(TAG, "Turn on Speaker phone");
                     if (getOutputType() == OutputType.SPEAKER_PHONE) {
                         audioManager.setSpeakerphoneOn(true);
                     }
@@ -776,7 +776,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         }
         // Start playout.
         if (audioTrack == null) {
-            throw new IllegalStateException("startRenderer(): play() called on uninitialized AudioTrack.");
+            throw new IllegalStateException("startRenderer(): play() called on uninitialized AudioTrack");
         }
         try {
             audioTrack.play();
@@ -797,7 +797,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         Log.d("AUDIO_FOCUS", "Stop Renderer");
 
         if (audioTrack == null) {
-            throw new IllegalStateException("stopRenderer(): stop() called on uninitialized AudioTrack.");
+            throw new IllegalStateException("stopRenderer(): stop() called on uninitialized AudioTrack");
         }
         rendererLock.lock();
         try {
@@ -825,7 +825,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
         } catch (Exception e) {
-            Log.e(LOG_TAG, "android.os.Process.setThreadPriority(): " + e.getMessage());
+            Log.e(TAG, "android.os.Process.setThreadPriority(): " + e.getMessage());
         }
 
         while (!shutdownRenderThread) {
@@ -901,7 +901,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         return this.rendererSettings;
     }
 
-    /**
+    /*
      * Communication modes handling.
      */
     public boolean setOutputMode(OutputMode mode) {
@@ -931,7 +931,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     private boolean isHeadsetReceiverRegistered;
 
     private void registerHeadsetReceiver() {
-        Log.d(LOG_TAG, "registerHeadsetReceiver() called ... isHeadsetReceiverRegistered = " + isHeadsetReceiverRegistered);
+        Log.d(TAG, "registerHeadsetReceiver() called ... isHeadsetReceiverRegistered = " + isHeadsetReceiverRegistered);
 
         if (isHeadsetReceiverRegistered) {
             return;
@@ -941,7 +941,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     }
 
     private void unregisterHeadsetReceiver() {
-        Log.d(LOG_TAG, "unregisterHeadsetReceiver() called .. isHeadsetReceiverRegistered = " + isHeadsetReceiverRegistered);
+        Log.d(TAG, "unregisterHeadsetReceiver() called .. isHeadsetReceiverRegistered = " + isHeadsetReceiverRegistered);
 
         if (!isHeadsetReceiverRegistered) {
             return;
@@ -953,7 +953,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     private boolean isBluetoothHeadSetReceiverRegistered;
 
     private void registerBtReceiver() {
-        Log.d(LOG_TAG, "registerBtReceiver() called .. isBluetoothHeadSetReceiverRegistered = " + isBluetoothHeadSetReceiverRegistered);
+        Log.d(TAG, "registerBtReceiver() called .. isBluetoothHeadSetReceiverRegistered = " + isBluetoothHeadSetReceiverRegistered);
 
         if (isBluetoothHeadSetReceiverRegistered) {
             return;
@@ -970,7 +970,7 @@ class CustomAudioDevice extends BaseAudioDevice {
 
 
     private void unregisterBtReceiver() {
-        Log.d(LOG_TAG, "unregisterBtReceiver() called .. bluetoothHeadSetReceiverRegistered = " + isBluetoothHeadSetReceiverRegistered);
+        Log.d(TAG, "unregisterBtReceiver() called .. bluetoothHeadSetReceiverRegistered = " + isBluetoothHeadSetReceiverRegistered);
 
         if (!isBluetoothHeadSetReceiverRegistered) {
             return;
@@ -983,7 +983,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     private boolean isPhoneStateListenerRegistered;
 
     private void registerPhoneStateListener() {
-        Log.d(LOG_TAG, "registerPhoneStateListener() called");
+        Log.d(TAG, "registerPhoneStateListener() called");
 
         if (isPhoneStateListenerRegistered) {
             return;
@@ -995,7 +995,7 @@ class CustomAudioDevice extends BaseAudioDevice {
     }
 
     private void unRegisterPhoneStateListener() {
-        Log.d(LOG_TAG, "unRegisterPhoneStateListener() called");
+        Log.d(TAG, "unRegisterPhoneStateListener() called");
 
         if (!isPhoneStateListenerRegistered) {
             return;
@@ -1016,7 +1016,7 @@ class CustomAudioDevice extends BaseAudioDevice {
 
     @Override
     public synchronized void onResume() {
-        Log.d(LOG_TAG, "onResume() called");
+        Log.d(TAG, "onResume() called");
         if (!isPaused) {
             return;
         }
@@ -1024,7 +1024,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (bluetoothState == BluetoothState.Disconnected) {
             if (isRendering && (audioState.getLastOutputType() == OutputType.SPEAKER_PHONE)) {
                 if (!audioManager.isWiredHeadsetOn()) {
-                    Log.d(LOG_TAG, "onResume() - Set Speaker Phone ON True");
+                    Log.d(TAG, "onResume() - Set Speaker Phone ON True");
                     audioManager.setSpeakerphoneOn(true);
                 }
             }
@@ -1069,7 +1069,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             audioManager.startBluetoothSco();
         } catch (NullPointerException e) {
-            Log.d(LOG_TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
     }
 
@@ -1077,18 +1077,18 @@ class CustomAudioDevice extends BaseAudioDevice {
         try {
             audioManager.stopBluetoothSco();
         } catch (NullPointerException e) {
-            Log.d(LOG_TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
     }
 
     private final BluetoothProfile.ServiceListener bluetoothProfileServiceListener = new BluetoothProfile.ServiceListener() {
         @Override
         public void onServiceConnected(int type, BluetoothProfile profile) {
-            Log.d(LOG_TAG, "BluetoothProfile.ServiceListener.onServiceConnected()");
+            Log.d(TAG, "BluetoothProfile.ServiceListener.onServiceConnected()");
             if (BluetoothProfile.HEADSET == type) {
                 bluetoothProfile = profile;
                 List<BluetoothDevice> devices = profile.getConnectedDevices();
-                Log.d(LOG_TAG, "Service Proxy Connected");
+                Log.d(TAG, "Service Proxy Connected");
                 if (!devices.isEmpty() &&
                         BluetoothHeadset.STATE_CONNECTED == profile.getConnectionState(devices.get(0))) {
                     // Force a init of bluetooth: the handler will not send a connected event if a
@@ -1102,12 +1102,12 @@ class CustomAudioDevice extends BaseAudioDevice {
 
         @Override
         public void onServiceDisconnected(int type) {
-            Log.d(LOG_TAG, "BluetoothProfile.ServiceListener.onServiceDisconnected()");
+            Log.d(TAG, "BluetoothProfile.ServiceListener.onServiceDisconnected()");
         }
     };
 
     private void forceInvokeConnectBluetooth() {
-        Log.d(LOG_TAG, "forceConnectBluetooth() called");
+        Log.d(TAG, "forceConnectBluetooth() called");
         // Force reconnection of bluetooth in the event of a phone call.
         synchronized (bluetoothLock) {
             bluetoothState = BluetoothState.Disconnected;

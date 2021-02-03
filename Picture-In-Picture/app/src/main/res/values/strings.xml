@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">OpenTok Picture In Picture</string>
+    <string name="app_name">Picture-In-Picture</string>
+
+    <string name="rationale_video_app">This app needs access to your mic</string>
 </resources>

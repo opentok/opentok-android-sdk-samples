@@ -17,12 +17,12 @@ public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Conf
 
     if (isInPictureInPictureMode) {
         findViewById(R.id.button).setVisibility(View.GONE);
-        mPublisherViewContainer.setVisibility(View.GONE);
+        publisherViewContainer.setVisibility(View.GONE);
         publisher.getView().setVisibility(View.GONE);
         getActionBar().hide();
     } else {
         findViewById(R.id.button).setVisibility(View.VISIBLE);
-        mPublisherViewContainer.setVisibility(View.VISIBLE);
+        publisherViewContainer.setVisibility(View.VISIBLE);
         publisher.getView().setVisibility(View.VISIBLE);
         if (publisher.getView() instanceof GLSurfaceView) {
             ((GLSurfaceView)publisher.getView()).setZOrderOnTop(true);

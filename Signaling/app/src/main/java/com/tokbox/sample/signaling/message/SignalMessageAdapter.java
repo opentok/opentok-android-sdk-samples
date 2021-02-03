@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.tokbox.sample.signaling.R;
 
 import java.util.Collections;
@@ -28,8 +27,9 @@ public class SignalMessageAdapter extends ArrayAdapter<SignalMessage> {
     public static final int VIEW_TYPE_LOCAL = 0;
     public static final int VIEW_TYPE_REMOTE = 1;
     private static final Map<Integer, Integer> viewTypes;
+
     static {
-        Map<Integer, Integer> aMap = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> aMap = new HashMap<>();
         aMap.put(VIEW_TYPE_LOCAL, R.layout.message_single_local);
         aMap.put(VIEW_TYPE_REMOTE, R.layout.message_single_remote);
         viewTypes = Collections.unmodifiableMap(aMap);
@@ -49,7 +49,7 @@ public class SignalMessageAdapter extends ArrayAdapter<SignalMessage> {
             convertView = LayoutInflater.from(getContext()).inflate(viewTypes.get(type), null);
         }
 
-        TextView messageTextView = (TextView)convertView.findViewById(R.id.message_text);
+        TextView messageTextView = (TextView) convertView.findViewById(R.id.message_text);
         if (messageTextView != null) {
             messageTextView.setText(message.getMessageText());
         }

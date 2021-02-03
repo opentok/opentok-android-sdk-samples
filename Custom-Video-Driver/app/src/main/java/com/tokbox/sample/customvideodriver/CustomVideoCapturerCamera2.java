@@ -28,7 +28,7 @@ public
 class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
     private static final int PREFERRED_FACING_CAMERA = CameraMetadata.LENS_FACING_FRONT;
     private static final int PIXEL_FORMAT = ImageFormat.YUV_420_888;
-    private static final String LOG_TAG = CustomVideoCapturerCamera2.class.getSimpleName();
+    private static final String TAG = CustomVideoCapturerCamera2.class.getSimpleName();
 
     private enum CameraState {
         CLOSED,
@@ -91,7 +91,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     private CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-            Log.d(LOG_TAG,"CameraDevice onOpened");
+            Log.d(TAG,"CameraDevice onOpened");
             cameraState = CameraState.OPEN;
             CustomVideoCapturerCamera2.this.camera = camera;
             if (executeAfterCameraOpened != null) {
@@ -102,7 +102,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         @Override
         public void onDisconnected(CameraDevice camera) {
             try {
-                Log.d(LOG_TAG,"CameraDevice onDisconnected");
+                Log.d(TAG,"CameraDevice onDisconnected");
                 CustomVideoCapturerCamera2.this.camera.close();
             } catch (NullPointerException e) {
                 // does nothing
@@ -112,7 +112,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         @Override
         public void onError(CameraDevice camera, int error) {
             try {
-                Log.d(LOG_TAG,"CameraDevice onError");
+                Log.d(TAG,"CameraDevice onError");
                 CustomVideoCapturerCamera2.this.camera.close();
                 // wait for condition variable
             } catch (NullPointerException e) {
@@ -123,7 +123,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
 
         @Override
         public void onClosed(CameraDevice camera) {
-            Log.d(LOG_TAG,"CameraDevice onClosed");
+            Log.d(TAG,"CameraDevice onClosed");
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             CustomVideoCapturerCamera2.this.camera = null;
@@ -144,7 +144,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
                     || (frame.getPlanes().length > 1 && frame.getPlanes()[1].getBuffer() == null)
                     || (frame.getPlanes().length > 2 && frame.getPlanes()[2].getBuffer() == null))
             {
-                Log.d(LOG_TAG,"onImageAvailable frame provided has no image data");
+                Log.d(TAG,"onImageAvailable frame provided has no image data");
                 return;
             }
 
@@ -173,7 +173,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
-                    Log.d(LOG_TAG,"CaptureSession onConfigured");
+                    Log.d(TAG,"CaptureSession onConfigured");
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
@@ -186,14 +186,14 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
-                    Log.d(LOG_TAG,"CaptureSession onFailed");
+                    Log.d(TAG,"CaptureSession onFailed");
                     cameraState = CameraState.ERROR;
                     postAsyncException(new Camera2Exception("Camera session configuration failed"));
                 }
 
                 @Override
                 public void onClosed(CameraCaptureSession session) {
-                    Log.d(LOG_TAG,"CaptureSession onClosed");
+                    Log.d(TAG,"CaptureSession onClosed");
                     if (camera != null) {
                         camera.close();
                     }
@@ -221,8 +221,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
-            frontFacing = info.get(CameraCharacteristics.LENS_FACING)
-                    == CameraCharacteristics.LENS_FACING_FRONT;
+            frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
             sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
         }
 
@@ -271,11 +270,11 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     }
 
     /* Constructors etc... */
-    public CustomVideoCapturerCamera2(Context ctx,
+    public CustomVideoCapturerCamera2(Context context,
                                 Publisher.CameraCaptureResolution resolution,
                                 Publisher.CameraCaptureFrameRate fps) {
-        cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
-        display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         camera = null;
         cameraState = CameraState.CLOSED;
         reentrantLock = new ReentrantLock();
@@ -296,12 +295,12 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     }
 
-    /**
+    /*
      * Initializes the video capturer.
      */
     @Override
     public synchronized void init() {
-        Log.d(LOG_TAG,"init enter");
+        Log.d(TAG,"init enter");
         characteristics = null;
         // start camera looper thread
         startCamThread();
@@ -309,11 +308,11 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         startDisplayOrientationCache();
         // open selected camera
         initCamera();
-        Log.d(LOG_TAG,"init exit");
+        Log.d(TAG,"init exit");
     }
 
     private int doStartCapture() {
-        Log.d(LOG_TAG,"doStartCapture enter");
+        Log.d(TAG,"doStartCapture enter");
         try {
             // create camera preview request
             if (isFrontCamera()) {
@@ -354,34 +353,34 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         } catch (CameraAccessException e) {
             throw new Camera2Exception(e.getMessage());
         }
-        Log.d(LOG_TAG,"doStartCapture exit");
+        Log.d(TAG,"doStartCapture exit");
         return 0;
     }
 
-    /**
+    /*
      * Starts capturing video.
      */
     @Override
     public synchronized int startCapture() {
-        Log.d(LOG_TAG,"startCapture enter (cameraState: "+ cameraState +")");
+        Log.d(TAG,"startCapture enter (cameraState: "+ cameraState +")");
         if (null != camera && CameraState.OPEN == cameraState) {
             return doStartCapture();
         } else if (CameraState.SETUP == cameraState) {
-            Log.d(LOG_TAG,"camera not yet ready, queuing the start until camera is opened.");
+            Log.d(TAG,"camera not yet ready, queuing the start until camera is opened");
             executeAfterCameraOpened = () -> doStartCapture();
         } else {
-            throw new Camera2Exception("Start Capture called before init successfully completed.");
+            throw new Camera2Exception("Start Capture called before init successfully completed");
         }
-        Log.d(LOG_TAG,"startCapture exit");
+        Log.d(TAG,"startCapture exit");
         return 0;
     }
 
-    /**
+    /*
      * Stops capturing video.
      */
     @Override
     public synchronized int stopCapture() {
-        Log.d(LOG_TAG,"stopCapture enter");
+        Log.d(TAG,"stopCapture enter");
         if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
             cameraState = CameraState.CLOSING;
             try {
@@ -393,24 +392,24 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             cameraFrame.close();
             characteristics = null;
         }
-        Log.d(LOG_TAG,"stopCapture exit");
+        Log.d(TAG,"stopCapture exit");
         return 0;
     }
 
-    /**
+    /*
      * Destroys the BaseVideoCapturer object.
      */
     @Override
     public synchronized void destroy() {
-        Log.d(LOG_TAG,"destroy enter");
+        Log.d(TAG,"destroy enter");
         /* stop display orientation polling */
         stopDisplayOrientationCache();
         /* stop camera message thread */
         stopCamThread();
-        Log.d(LOG_TAG,"destroy exit");
+        Log.d(TAG,"destroy exit");
     }
 
-    /**
+    /*
      * Whether video is being captured (true) or not (false).
      */
     @Override
@@ -418,7 +417,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return (cameraState == CameraState.CAPTURE);
     }
 
-    /**
+    /*
      * Returns the settings for the video capturer.
      */
     @Override
@@ -435,7 +434,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         return retObj;
     }
 
-    /**
+    /*
      * Call this method when the activity pauses. When you override this method, implement code
      * to respond to the activity being paused. For example, you may pause capturing audio or video.
      *
@@ -443,7 +442,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
      */
     @Override
     public synchronized void onPause() {
-        Log.d(LOG_TAG,"onPause");
+        Log.d(TAG,"onPause");
         /* shutdown old camera but not the camera-callback thread */
         switch (cameraState) {
             case CAPTURE:
@@ -456,7 +455,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     }
 
-    /**
+    /*
      * Call this method when the activity resumes. When you override this method, implement code
      * to respond to the activity being resumed. For example, you may resume capturing audio
      * or video.
@@ -465,7 +464,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
      */
     @Override
     public void onResume() {
-        Log.d(LOG_TAG,"onResume");
+        Log.d(TAG,"onResume");
         if (isPaused) {
             Runnable resume = () -> {
                 initCamera();
@@ -478,7 +477,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             }
             isPaused = false;
         } else {
-            Log.d(LOG_TAG,"Capturer was not paused when onResume was called");
+            Log.d(TAG,"Capturer was not paused when onResume was called");
         }
     }
 
@@ -555,7 +554,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
             /* discard cameras that don't face the right direction */
             if (lenseDirection == info.get(CameraCharacteristics.LENS_FACING)) {
-                Log.d(LOG_TAG,"selectCamera() Direction the camera faces relative to device screen: " + info.get(CameraCharacteristics.LENS_FACING));
+                Log.d(TAG,"selectCamera() Direction the camera faces relative to device screen: " + info.get(CameraCharacteristics.LENS_FACING));
                 return id;
             }
         }
@@ -637,7 +636,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
 
     @SuppressLint("all")
     private void initCamera() {
-        Log.d(LOG_TAG,"initCamera()");
+        Log.d(TAG,"initCamera()");
         try {
             cameraState = CameraState.SETUP;
             // find desired camera & camera ouput size

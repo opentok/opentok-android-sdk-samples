@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="pipActivity"
-            android:text="Enter PiP"/>
+            android:text="Enter Picture-In-Picture"/>
 
         <FrameLayout
             android:id="@+id/subscriber_container"

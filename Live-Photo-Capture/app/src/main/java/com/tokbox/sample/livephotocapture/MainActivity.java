@@ -1,9 +1,10 @@
-package com.tokbox.sample.basicvideocapturer;
+package com.tokbox.sample.livephotocapture;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -18,7 +19,6 @@ import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
 import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import java.util.List;
@@ -58,19 +58,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(
-                    MainActivity.this,
-                    Publisher.CameraCaptureResolution.HIGH,
-                    Publisher.CameraCaptureFrameRate.FPS_30);
-
             publisher = new Publisher.Builder(MainActivity.this)
                     .name("publisher")
-                    .capturer(mirrorVideoCapturer)
+                    .renderer(new BasicCustomVideoRenderer(MainActivity.this))
                     .build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-            
+
             publisherViewContainer.addView(publisher.getView());
 
             if (publisher.getView() instanceof GLSurfaceView) {
@@ -138,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +146,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         publisherViewContainer = findViewById(R.id.publisherview);
         subscriberViewContainer = findViewById(R.id.subscriberview);
+
+        final Button button = findViewById(R.id.screenshotButton);
+        button.setOnClickListener(v -> {
+            if (subscriber == null) {
+                return;
+            }
+            ((BasicCustomVideoRenderer) subscriber.getRenderer()).saveScreenshot(true);
+            Toast.makeText(this, "Screenshot saved", Toast.LENGTH_LONG).show();
+        });
 
         requestPermissions();
     }
@@ -204,7 +209,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        String[] perms = {
+                Manifest.permission.INTERNET,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
         
         if (EasyPermissions.hasPermissions(this, perms)) {
             session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
@@ -217,8 +227,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void subscribeToStream(Stream stream) {
         subscriber = new Subscriber.Builder(this, stream)
+                .renderer(new BasicCustomVideoRenderer(this))
                 .build();
-
+        
         subscriber.setVideoListener(videoListener);
         session.subscribe(subscriber);
     }

@@ -14,10 +14,10 @@ The `MainActivity` class instantiates a `CustomAudioDevice` instance and passes 
 `AudioDeviceManager.setAudioDevice()` method:
 
 ```java
-CustomAudioDevice customAudioDevice = new CustomAudioDevice(MainActivity.this);
+CustomAudioDevice customAudioDevice = new CustomAudioDevice(this);
 AudioDeviceManager.setAudioDevice(customAudioDevice);
 
-mSession = new Session(MainActivity.this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
+session = new Session(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID);
 ```
 
 The `CustomAudioDevice` class extends the `BaseAudioDevice` class, defined in the 
@@ -137,3 +137,8 @@ if (pos < m_playPosition) {
 m_bufferedPlaySamples -= (pos - m_playPosition);
 m_playPosition = pos;
 ```
+
+## Further Reading
+
+* Review [other sample projects](../)
+* Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)

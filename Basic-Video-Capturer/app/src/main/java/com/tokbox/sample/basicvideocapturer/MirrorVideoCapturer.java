@@ -28,7 +28,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         PreviewCallback,
         BaseVideoCapturer.CaptureSwitch {
 
-    private static final String LOG_TAG = MirrorVideoCapturer.class.getSimpleName();
+    private static final String TAG = MirrorVideoCapturer.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;
@@ -100,21 +100,21 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     }
 
     public synchronized void init() {
-        Log.d(LOG_TAG, "init() enetered");
+        Log.d(TAG, "init() enetered");
         try {
             camera = Camera.open(cameraIndex);
         } catch (RuntimeException exp) {
-            Log.e(LOG_TAG, "The camera is in use by another app");
+            Log.e(TAG, "The camera is in use by another app");
         }
 
         currentDeviceInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraIndex, currentDeviceInfo);
-        Log.d(LOG_TAG, "init() exit");
+        Log.d(TAG, "init() exit");
     }
 
     @Override
     public synchronized int startCapture() {
-        Log.d(LOG_TAG, "started() entered");
+        Log.d(TAG, "started() entered");
         if (isCaptureStarted) {
             return -1;
         }
@@ -137,7 +137,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
             try {
                 camera.setParameters(parameters);
             } catch (RuntimeException exp) {
-                Log.e(LOG_TAG, "Camera.setParameters(parameters) - failed");
+                Log.e(TAG, "Camera.setParameters(parameters) - failed");
                 return -1;
             }
 
@@ -175,7 +175,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
         isCaptureRunning = true;
         isCaptureStarted = true;
-        Log.d(LOG_TAG, "started() exit");
+        Log.d(TAG, "started() exit");
         return 0;
     }
 
@@ -189,10 +189,10 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                     camera.stopPreview();
                     camera.setPreviewCallbackWithBuffer(null);
                     camera.release();
-                    Log.d(LOG_TAG,"Camera capture is stopped");
+                    Log.d(TAG,"Camera capture is stopped");
                 }
             } catch (RuntimeException exp) {
-                Log.e(LOG_TAG, "Camera.stopPreview() - failed ");
+                Log.e(TAG, "Camera.stopPreview() - failed ");
                 return -1;
             }
             previewBufferLock.unlock();
@@ -366,7 +366,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     }
 
 
-    /**
+    /*
      * demonstrate how to use metadata
      */
     public interface CustomVideoCapturerDataSource {
@@ -483,7 +483,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                     parameters.getSupportedPreviewFpsRange());
 
         } catch (RuntimeException exp) {
-            Log.e(LOG_TAG, "Error configuring capture size");
+            Log.e(TAG, "Error configuring capture size");
         }
 
         int maxw = 0;
@@ -569,7 +569,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     private void checkRangeWithWarning(int preferredFps, int[] range) {
         if (preferredFps < range[0] || preferredFps > range[1]) {
-            Log.w(LOG_TAG,"Closest fps range found: "+ (range[0] / 1000) + (range[1] / 1000) + "for desired fps: "+ (preferredFps / 1000));
+            Log.w(TAG,"Closest fps range found: "+ (range[0] / 1000) + (range[1] / 1000) + "for desired fps: "+ (preferredFps / 1000));
         }
     }
 }

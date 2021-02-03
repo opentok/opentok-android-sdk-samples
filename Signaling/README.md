@@ -11,17 +11,17 @@ This app shows how to utilize the OpenTok signaling API to send text messages to
 Signal can be send while client is connected to the seccion (after `Session.SessionListener.onConnected(session)` has been called and before `Session.SessionListener.onDisconnected(session)` method is called), so you need to set `Session.SessionListener`:
 
 ```java
-mSession = new Session.Builder(this, apiKey, sessionId).build();
-        mSession.setSessionListener(this);
-        mSession.setSignalListener(this);
-        mSession.connect(token);
+session = new Session.Builder(this, apiKey, sessionId).build();
+        session.setSessionListener(sessionListener);
+        session.setSignalListener(this);
+        session.connect(token);
 ```
 
 Send signal to the session:
 
 ```java
 SignalMessage signal = new SignalMessage(mMessageEditTextView.getText().toString());
-mSession.sendSignal(SIGNAL_TYPE, signal.getMessageText());
+session.sendSignal(SIGNAL_TYPE, signal.getMessageText());
 ```
 
 ### Receive signal
@@ -29,10 +29,10 @@ mSession.sendSignal(SIGNAL_TYPE, signal.getMessageText());
 To listen for incomming messages set the `Session.SignalListener`:
 
 ```java
-mSession = new Session.Builder(this, apiKey, sessionId).build();
-        mSession.setSessionListener(this);
-        mSession.setSignalListener(this);
-        mSession.connect(token);
+session = new Session.Builder(this, apiKey, sessionId).build();
+        session.setSessionListener(sessionListener);
+        session.setSignalListener(this);
+        session.connect(token);
 ```
 
 Process received signal inside `onSignalReceived` method:
@@ -41,7 +41,7 @@ Process received signal inside `onSignalReceived` method:
 @Override
 public void onSignalReceived(Session session, String type, String data, Connection connection) {
 
-    boolean remote = !connection.equals(mSession.getConnection());
+    boolean remote = !connection.equals(session.getConnection());
     if (type != null && type.equals(SIGNAL_TYPE)) {
         showMessage(data, remote);
     }

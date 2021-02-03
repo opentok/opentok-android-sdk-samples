@@ -74,7 +74,7 @@ is just one subscriber), here is a simplified version of the code:
 private void calculateLayout() {
     ConstraintSetHelper set = new ConstraintSetHelper(R.id.main_container);
 
-    int size = mSubscribers.size();
+    int size = subscribers.size();
     if (size == 1) {
         // Publisher
         // Subscriber

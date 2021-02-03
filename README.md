@@ -51,7 +51,7 @@ This app shows how to use a custom video capturer using [Camera2](https://develo
 
 This app shows how to use the audio driver API to implement a custom audio capturer and player. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here ([More](/Custom-Audio-Driver)).
 
-### Picture in Picture
+### Picture In Picture
 
 This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone ([More](/Picture-In-Picture)).
 
@@ -59,7 +59,7 @@ This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to 
 
 This app shows how to utilize the OpenTok signaling API to send text messages to other clients connected to the OpenTok session ([More](/Signaling)).
 
-### Frame-Metadata
+### Frame Metadata
 
 This app shows how to send\retrieve additional metadata associated with each video frame ([More](/Frame-Metadata)).
 

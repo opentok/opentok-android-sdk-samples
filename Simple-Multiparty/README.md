@@ -14,8 +14,8 @@ there are multiple streams.
 public void onStreamReceived(Session session, Stream stream) {
     Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-    final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
-    mSession.subscribe(subscriber);
+    final Subscriber subscriber = new Subscriber.Builder(this, stream).build();
+    session.subscribe(subscriber);
     addSubscriber(subscriber);
 }
 ```
@@ -40,13 +40,13 @@ is invoked:
 ```java
 toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (mPublisher == null) {
+        if (publisher == null) {
             return;
         }
         if (isChecked) {
-            mPublisher.setPublishAudio(true);
+            publisher.setPublishAudio(true);
         } else {
-            mPublisher.setPublishAudio(false);
+            publisher.setPublishAudio(false);
         }
     }
 });
@@ -61,10 +61,10 @@ is invoked:
 ```java
 swapCamera.setOnClickListener(new View.OnClickListener() {
     public void onClick(View v) {
-        if (mPublisher == null) {
+        if (publisher == null) {
             return;
         }
-        mPublisher.swapCamera();
+        publisher.swapCamera();
     }
 });
 ```

@@ -1,9 +1,8 @@
 package com.tokbox.sample.basicvideochat;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 
 public class OpenTokConfig {
     // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
@@ -16,49 +15,23 @@ public class OpenTokConfig {
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
     public static final String TOKEN = "";
 
-    /*                           ***** OPTIONAL *****
-     If you have set up a server to provide session information replace the null value
-     in CHAT_SERVER_URL with it.
-
-     For example: "https://yoursubdomain.com"
-
-     To quickly set up server, see https://github.com/opentok/learning-opentok-php
-    */
-    public static final String CHAT_SERVER_URL = "";
-
-
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 
-    public static boolean hasChatServerUrl() {
-        return !TextUtils.isEmpty(CHAT_SERVER_URL);
+    public static boolean isValid() {
+        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)
+                || TextUtils.isEmpty(OpenTokConfig.SESSION_ID)
+                || TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
+            return false;
+        }
+
+        return true;
     }
 
-    public static void verifyConfig() {
-        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)) {
-            throw new RuntimeException("API_KEY in OpenTokConfig.java cannot be null or empty");
-        }
-
-        if (TextUtils.isEmpty(OpenTokConfig.SESSION_ID)) {
-            throw new RuntimeException("SESSION_ID in OpenTokConfig.java cannot be null or empty");
-        }
-
-        if (TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
-            throw new RuntimeException("TOKEN in OpenTokConfig.java cannot be null or empty");
-        }
-    }
-
-    private static void notifyError(String message, Context context) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-        throw new RuntimeException(message);
-    }
-
-    public static void verifyChatServerUrl() {
-        if (OpenTokConfig.CHAT_SERVER_URL == null) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must not be null");
-        } else if (!(URLUtil.isHttpsUrl(OpenTokConfig.CHAT_SERVER_URL) || URLUtil.isHttpUrl(OpenTokConfig.CHAT_SERVER_URL))) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java must be specified as either  http or https");
-        } else if (!URLUtil.isValidUrl(OpenTokConfig.CHAT_SERVER_URL)) {
-            throw new RuntimeException("CHAT_SERVER_URL in OpenTokConfig.java is not a valid URL");
-        }
+    @NonNull
+    public static String getDescription() {
+        return "OpenTokConfig:" + "\n"
+                + "API_KEY: " + OpenTokConfig.API_KEY + "\n"
+                + "SESSION_ID: " + OpenTokConfig.SESSION_ID + "\n"
+                + "TOKEN: " + OpenTokConfig.TOKEN + "\n";
     }
 }

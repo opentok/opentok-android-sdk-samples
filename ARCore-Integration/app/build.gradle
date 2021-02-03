@@ -20,7 +20,7 @@ android {
 
   defaultConfig {
     applicationId "com.tokbox.sample.arcoreintegration"
-    minSdkVersion extMinSdkVersion
+    minSdkVersion 24
     targetSdkVersion extTargetSdkVersion
     versionCode extVersionCode
     versionName extVersionName

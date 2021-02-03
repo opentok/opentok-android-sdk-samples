@@ -2,12 +2,12 @@ package com.tokbox.sample.multipartyconstraintlayout;
 
 import android.Manifest;
 import android.content.res.TypedArray;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
@@ -26,22 +26,95 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class MainActivity extends AppCompatActivity
-        implements EasyPermissions.PermissionCallbacks,
-        Publisher.PublisherListener,
-        Session.SessionListener {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_SETTINGS_SCREEN_PERM = 123;
-    private static final int RC_VIDEO_APP_PERM = 124;
+    
+    private static final int PERMISSIONS_REQUEST_CODE = 124;
 
-    private Session mSession;
-    private Publisher mPublisher;
+    private Session session;
+    private Publisher publisher;
 
-    private ArrayList<Subscriber> mSubscribers = new ArrayList<Subscriber>();
-    private HashMap<Stream, Subscriber> mSubscriberStreams = new HashMap<Stream, Subscriber>();
+    private ArrayList<Subscriber> subscribers = new ArrayList<>();
+    private HashMap<Stream, Subscriber> subscriberStreams = new HashMap<>();
 
-    private ConstraintLayout mContainer;
+    private ConstraintLayout container;
+
+    private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
+        @Override
+        public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
+            Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
+        }
+
+        @Override
+        public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
+            Log.d(TAG, "onStreamDestroyed: Own stream " + stream.getStreamId() + " destroyed");
+        }
+
+        @Override
+        public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
+        }
+    };
+
+    private Session.SessionListener sessionListener = new Session.SessionListener() {
+        @Override
+        public void onConnected(Session session) {
+            Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
+
+            session.publish(publisher);
+        }
+
+        @Override
+        public void onDisconnected(Session session) {
+            Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
+
+            session = null;
+        }
+
+        @Override
+        public void onError(Session session, OpentokError opentokError) {
+            finishWithMessage("Session error: " + opentokError.getMessage());
+        }
+
+        @Override
+        public void onStreamReceived(Session session, Stream stream) {
+            Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
+
+            final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+            session.subscribe(subscriber);
+            subscribers.add(subscriber);
+            subscriberStreams.put(stream, subscriber);
+
+            int subId = getResIdForSubscriberIndex(subscribers.size() - 1);
+            subscriber.getView().setId(subId);
+            container.addView(subscriber.getView());
+
+            calculateLayout();
+        }
+
+        @Override
+        public void onStreamDropped(Session session, Stream stream) {
+            Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
+
+            Subscriber subscriber = subscriberStreams.get(stream);
+
+            if (subscriber == null) {
+                return;
+            }
+
+            subscribers.remove(subscriber);
+            subscriberStreams.remove(stream);
+            
+            container.removeView(subscriber.getView());
+
+            // Recalculate view Ids
+            for (int i = 0; i < subscribers.size(); i++) {
+                subscribers.get(i).getView().setId(getResIdForSubscriberIndex(i));
+            }
+            calculateLayout();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,33 +122,34 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        OpenTokConfig.verifyConfig();
+        if(!OpenTokConfig.isValid()) {
+            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+            return;
+        }
 
-        mContainer = (ConstraintLayout) findViewById(R.id.main_container);
+        container = findViewById(R.id.main_container);
 
         requestPermissions();
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
 
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
-        mSession.onResume();
+        session.onResume();
     }
 
     @Override
     protected void onPause() {
-
         super.onPause();
 
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
-        mSession.onPause();
+        session.onPause();
 
         if (isFinishing()) {
             disconnectSession();
@@ -84,7 +158,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-
         disconnectSession();
 
         super.onDestroy();
@@ -104,74 +177,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this)
-                    .setTitle(getString(R.string.title_settings_dialog))
-                    .setRationale(getString(R.string.rationale_ask_again))
-                    .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel))
-                    .setRequestCode(RC_SETTINGS_SCREEN_PERM)
-                    .build()
-                    .show();
-        }
-    }
-
-    private void startPublisherPreview() {
-        mPublisher = new Publisher.Builder(this).name("publisher").build();
-
-        mPublisher.setPublisherListener(this);
-        mPublisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-        mPublisher.startPreview();
-    }
-
-    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
-    private void requestPermissions() {
-        String[] perms = {
-                Manifest.permission.INTERNET,
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-        };
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            mSession = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).sessionOptions(new Session.SessionOptions() {
-                @Override
-                public boolean useTextureViews() {
-                    return true;
-                }
-            }).build();
-            mSession.setSessionListener(this);
-            mSession.connect(OpenTokConfig.TOKEN);
-
-            startPublisherPreview();
-            mPublisher.getView().setId(R.id.publisher_view_id);
-            mContainer.addView(mPublisher.getView());
-            calculateLayout();
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), RC_VIDEO_APP_PERM, perms);
-        }
-    }
-
-    @Override
-    public void onConnected(Session session) {
-        Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
-        mSession.publish(mPublisher);
-    }
-
-    @Override
-    public void onDisconnected(Session session) {
-        Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
-
-        mSession = null;
-    }
-
-    @Override
-    public void onError(Session session, OpentokError opentokError) {
-        Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in session " + session.getSessionId());
-
-        Toast.makeText(this, "Session error. See the logcat please.", Toast.LENGTH_LONG).show();
-        finish();
+        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
     }
 
     private int getResIdForSubscriberIndex(int index) {
@@ -181,64 +187,40 @@ public class MainActivity extends AppCompatActivity
         return subId;
     }
 
-    @Override
-    public void onStreamReceived(Session session, Stream stream) {
-        Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
-
-        final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
-        mSession.subscribe(subscriber);
-        mSubscribers.add(subscriber);
-        mSubscriberStreams.put(stream, subscriber);
-
-        int subId = getResIdForSubscriberIndex(mSubscribers.size() - 1);
-        subscriber.getView().setId(subId);
-        mContainer.addView(subscriber.getView());
-
-        calculateLayout();
+    private void startPublisherPreview() {
+        publisher = new Publisher.Builder(this).name("publisher").build();
+        publisher.setPublisherListener(publisherListener);
+        publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+        publisher.startPreview();
     }
 
-    @Override
-    public void onStreamDropped(Session session, Stream stream) {
-        Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
+    @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
+    private void requestPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
 
-        Subscriber subscriber = mSubscriberStreams.get(stream);
-        if (subscriber == null) {
-            return;
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).sessionOptions(new Session.SessionOptions() {
+                @Override
+                public boolean useTextureViews() {
+                    return true;
+                }
+            }).build();
+            session.setSessionListener(sessionListener);
+            session.connect(OpenTokConfig.TOKEN);
+
+            startPublisherPreview();
+            publisher.getView().setId(R.id.publisher_view_id);
+            container.addView(publisher.getView());
+            calculateLayout();
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
-
-        mSubscribers.remove(subscriber);
-        mSubscriberStreams.remove(stream);
-        mContainer.removeView(subscriber.getView());
-
-        // Recalculate view Ids
-        for (int i = 0; i < mSubscribers.size(); i++) {
-            mSubscribers.get(i).getView().setId(getResIdForSubscriberIndex(i));
-        }
-        calculateLayout();
-    }
-
-    @Override
-    public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-        Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
-    }
-
-    @Override
-    public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-        Log.d(TAG, "onStreamDestroyed: Own stream " + stream.getStreamId() + " destroyed");
-    }
-
-    @Override
-    public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-        Log.d(TAG, "onError: Error (" + opentokError.getMessage() + ") in publisher");
-
-        Toast.makeText(this, "Session error. See the logcat please.", Toast.LENGTH_LONG).show();
-        finish();
     }
 
     private void calculateLayout() {
         ConstraintSetHelper set = new ConstraintSetHelper(R.id.main_container);
 
-        int size = mSubscribers.size();
+        int size = subscribers.size();
         if (size == 0) {
             // Publisher full screen
             set.layoutViewFullScreen(R.id.publisher_view_id);
@@ -313,29 +295,33 @@ public class MainActivity extends AppCompatActivity
             set.layoutViewWithBottomBound(getResIdForSubscriberIndex(size - 1), R.id.main_container);
         }
 
-        set.applyToLayout(mContainer, true);
+        set.applyToLayout(container, true);
     }
 
     private void disconnectSession() {
-        if (mSession == null) {
+        if (session == null) {
             return;
         }
 
-        if (mSubscribers.size() > 0) {
-            for (Subscriber subscriber : mSubscribers) {
+        if (subscribers.size() > 0) {
+            for (Subscriber subscriber : subscribers) {
                 if (subscriber != null) {
-                    mSession.unsubscribe(subscriber);
-                    subscriber.destroy();
+                    session.unsubscribe(subscriber);
                 }
             }
         }
 
-        if (mPublisher != null) {
-            mSession.unpublish(mPublisher);
-            mContainer.removeView(mPublisher.getView());
-            mPublisher.destroy();
-            mPublisher = null;
+        if (publisher != null) {
+            session.unpublish(publisher);
+            container.removeView(publisher.getView());
+            publisher = null;
         }
-        mSession.disconnect();
+        session.disconnect();
+    }
+
+    private void finishWithMessage(String message) {
+        Log.e(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        this.finish();
     }
 }

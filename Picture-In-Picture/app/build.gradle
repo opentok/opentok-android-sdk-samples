@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.tokbox.sample.pictureinpicture"
-        minSdkVersion extMinSdkVersion
+        minSdkVersion 26
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
@@ -35,4 +35,5 @@ dependencies {
     // Dependency versions are defined in the ../../commons.gradle file
     implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion="2.0.4"}"
+    implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
 }

@@ -11,9 +11,9 @@ in the image.
 After instantiating a Publisher object, the code sets a custom video renderer by calling the `setRenderer(BaseVideoRenderer renderer)` method of the Publisher:
 
 ```java
-mPublisher = new Publisher(MainActivity.this, "publisher");
-mPublisher.setPublisherListener(this);
-mPublisher.setRenderer(new InvertedColorsVideoRenderer(this));
+publisher = new Publisher(this, "publisher");
+publisher.setPublisherListener(publisherListener);
+publisher.setRenderer(new InvertedColorsVideoRenderer(this));
 ```
 
 The `InvertedColorsVideoRenderer` class is defined in the `com.opentok.android.samples.customvideodriver`

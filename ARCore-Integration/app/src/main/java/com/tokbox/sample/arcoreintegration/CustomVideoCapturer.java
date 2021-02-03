@@ -9,9 +9,9 @@ import com.google.ar.sceneform.ArSceneView;
 import com.opentok.android.BaseVideoCapturer;
 
 public class CustomVideoCapturer extends BaseVideoCapturer implements PixelCopy.OnPixelCopyFinishedListener {
-    private Bitmap mBitmap;
-    private ArSceneView mContentView;
-    private Canvas mCanvas;
+    private Bitmap bitmap;
+    private ArSceneView contentView;
+    private Canvas canvas;
     private Boolean surfaceCreated = false;
 
     private boolean capturing = false;
@@ -20,38 +20,38 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements PixelCopy.
     private int height = 0;
     private int[] frame;
 
-    private Handler mHandler = new Handler();
+    private Handler handler = new Handler();
     private Handler handlerPixelCopy = new Handler();
 
     private Runnable newFrame = new Runnable() {
         @Override
         public void run() {
             if (capturing) {
-                int width = mContentView.getWidth();
-                int height = mContentView.getHeight();
+                int width = contentView.getWidth();
+                int height = contentView.getHeight();
                 if (frame == null || CustomVideoCapturer.this.width != width || CustomVideoCapturer.this.height != height) {
                     CustomVideoCapturer.this.width = width;
                     CustomVideoCapturer.this.height = height;
 
-                    if (mBitmap != null) {
-                        mBitmap.recycle();
-                        mBitmap = null;
+                    if (bitmap != null) {
+                        bitmap.recycle();
+                        bitmap = null;
                     }
 
-                    mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                    mBitmap.eraseColor(Color.BLUE);
-                    mCanvas = new Canvas(mBitmap);
+                    bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    bitmap.eraseColor(Color.BLUE);
+                    canvas = new Canvas(bitmap);
                     frame = new int[width * height];
                 }
 
-                // Save the pixels inside mContectView to mBitmap.
-                PixelCopy.request(mContentView, mBitmap, CustomVideoCapturer.this, handlerPixelCopy);
+                // Save the pixels inside contectView to mBitmap
+                PixelCopy.request(contentView, bitmap, CustomVideoCapturer.this, handlerPixelCopy);
             }
         }
     };
 
     public CustomVideoCapturer(ArSceneView view) {
-        this.mContentView = view;
+        this.contentView = view;
     }
 
     // BaseVideoCapturer methods
@@ -63,14 +63,14 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements PixelCopy.
     @Override
     public int startCapture() {
         capturing = true;
-        mHandler.postDelayed(newFrame, 1000 / fps);
+        handler.postDelayed(newFrame, 1000 / fps);
         return 0;
     }
 
     @Override
     public int stopCapture() {
         capturing = false;
-        mHandler.removeCallbacks(newFrame);
+        handler.removeCallbacks(newFrame);
         return 0;
     }
 
@@ -107,10 +107,10 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements PixelCopy.
     // PixelCopy.onPixelCopyFinishedListener method
     @Override
     public void onPixelCopyFinished(int copyResult) {
-        mBitmap.getPixels(frame, 0, width, 0, 0, width, height);
+        bitmap.getPixels(frame, 0, width, 0, 0, width, height);
 
         // this method will send the frame directly to stream
         provideIntArrayFrame(frame, ARGB, width, height, 0, false);
-        mHandler.postDelayed(newFrame, 1000 / fps);
+        handler.postDelayed(newFrame, 1000 / fps);
     }
 }
