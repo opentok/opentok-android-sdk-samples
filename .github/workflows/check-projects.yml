@@ -16,6 +16,12 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
+      - uses: sdkman/sdkman-action@master
+        id: sdkman
+        with:
+          candidate: java
+          version: 15.0.0
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -24,12 +30,6 @@ jobs:
       
       - run: java --version
       
-      - uses: sdkman/sdkman-action@master
-        id: sdkman
-        with:
-          candidate: java
-          version: 15.0.0
-
       - name: Install kscript
         run: sdk install kscript
 
