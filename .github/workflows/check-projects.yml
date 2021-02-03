@@ -19,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 15.0.0
+          java-version: 8
       
       - name: Install SDKMan, Kotlin, kscript and check project consistancy
         run: |
