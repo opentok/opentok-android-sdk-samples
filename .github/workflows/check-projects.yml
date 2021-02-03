@@ -27,6 +27,9 @@ jobs:
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk version            
       
+      - name: Install Kotlin
+        run: sdk install kotlin
+
       - name: Install kscript
         run: sdk install kscript
       
