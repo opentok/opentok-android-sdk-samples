@@ -21,7 +21,7 @@ jobs:
         with:
           java-version: 15.0.0
       
-      - name: Install SDKMan
+      - name: Install SDKMan, Kotlin and kscript
         run: |
           curl -s "https://get.sdkman.io" | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -29,11 +29,6 @@ jobs:
           sdk install kotlin      
           sdk install kscript
             
-      - run: java --version
-      
-      - name: Install kscript
-        run: sdk install kscript
-
       - name: Check project consistancy
         run: kscript check-consistancy
 
