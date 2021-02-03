@@ -147,7 +147,7 @@ fun checkGithubWorkflowContainsProject(projectDirectoryName: String) {
  * Check if project contains readme file
  */
 fun checkReadme(projectDirectoryName: String) {
-    val filePath = "./$projectDirectoryName/README.MD"
+    val filePath = "./$projectDirectoryName/README.md"
     val file = File(filePath)
 
     if (!file.exists()) {
