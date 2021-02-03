@@ -19,13 +19,16 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 15
+          java-version: 15.0.0
+          jdkFile: ${{ steps.sdkman.outputs.file }}
+      
+      - run: java --version
       
       - uses: sdkman/sdkman-action@master
         id: sdkman
         with:
           candidate: java
-          version: 15
+          version: 15.0.0
 
       - name: Install kscript
         run: sdk install kscript
