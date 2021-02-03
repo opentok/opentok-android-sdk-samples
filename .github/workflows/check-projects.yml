@@ -24,13 +24,13 @@ jobs:
       - name: Archiving
         run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Basic Video Chat
+      - name: Basic-Video-Chat
         run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Custom Audio Driver
+      - name: Custom-Audio-Driver
         run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Custom Video Driver
+      - name: Custom-Video-Driver
         run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Basic-Video-Capturer
@@ -42,16 +42,19 @@ jobs:
       - name: Basic-Video-Renderer
         run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Frame Metadata
+      - name: Frame-Metadata
         run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+      
+      - name: Live-Photo-Capture
+        run: cd Live-Photo-Capture && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Multiparty Constraint Layout
+      - name: Multiparty-Constraint-Layout
         run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Picture In Picture
+      - name: Picture-In-Picture
         run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
-      - name: Screen Sharing
+      - name: Screen-Sharing
         run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
 
       - name: Signaling
