@@ -23,9 +23,8 @@ jobs:
       
       - name: Install SDKMan
         run: |
-          chmod u+x install-sdkman
-          ./install-sdkman
-          echo ::set-env name=SDKMAN_DIR::$(echo $HOME/.sdkman)                  
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh                 
       
       - name: Install Kotlin Scripting
         run: sdk install kscript
