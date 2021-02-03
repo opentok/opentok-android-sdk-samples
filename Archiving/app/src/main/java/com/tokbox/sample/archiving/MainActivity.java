@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.i(TAG, "sessionId: " + sessionId);
         Log.i(TAG, "token: " + token);
 
-        sessionId = sessionId;
+        this.sessionId = sessionId;
 
         session = new Session.Builder(this, apiKey, sessionId).build();
         session.setSessionListener(sessionListener);
