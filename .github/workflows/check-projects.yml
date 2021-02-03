@@ -28,7 +28,9 @@ jobs:
           sdk version     
           sdk install kotlin      
           sdk install kscript
-          kscript check-consistancy
+          pwd
+          ls
+          kscript check-consistancy.kts
 
       - name: Archiving
         run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
