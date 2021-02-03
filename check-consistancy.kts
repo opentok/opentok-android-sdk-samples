@@ -138,7 +138,7 @@ fun checkGithubWorkflowContainsProject(projectDirectoryName: String) {
         addError(projectDirectoryName, "$filePath file do not contain project name")
     }
 
-    if(!file.contains("cd $projectDirectoryName && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..")) {
+    if(!file.contains("cd $projectDirectoryName && ./gradlew app:assembleRelease && cd ..")) {
         addError(projectDirectoryName, "$filePath file do not contain project check")
     }
 }
