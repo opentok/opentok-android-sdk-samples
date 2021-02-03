@@ -21,14 +21,10 @@ jobs:
         with:
           java-version: 1.8
       
-      -name: Set up sdkman
+      - name: Set up sdkman
         uses: sdkman/sdkman-action@master
         id: sdkman
-      
-      -name: Set up sdkman
-        uses: sdkman/sdkman-action@master
-        id: sdkman
-      
+            
       - name: Install kscript
         run: sdk install kscript
 
