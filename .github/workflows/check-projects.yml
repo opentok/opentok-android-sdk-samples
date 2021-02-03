@@ -16,53 +16,63 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: Set up JDK 1.8
+      - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 15
+      
+      - name: Install SDKMan, Kotlin, kscript and check project consistancy
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install kotlin      
+          sdk install kscript
+          kscript check-consistancy.kts
 
       - name: Archiving
-        run: cd Archiving && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Archiving && ./gradlew app:assembleRelease && cd ..
 
       - name: Basic-Video-Chat
-        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd ..
 
       - name: Custom-Audio-Driver
-        run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && cd ..
 
       - name: Custom-Video-Driver
-        run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Custom-Video-Driver && ./gradlew app:assembleRelease && cd ..
 
       - name: Basic-Video-Capturer
-        run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && cd ..
       
       - name: Basic-Video-Capturer-Camera-2
-        run: cd Basic-Video-Capturer-Camera-2 && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Basic-Video-Capturer-Camera-2 && ./gradlew app:assembleRelease && cd ..
 
       - name: Basic-Video-Renderer
-        run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Basic-Video-Renderer && ./gradlew app:assembleRelease && cd ..
 
       - name: Frame-Metadata
-        run: cd Frame-Metadata && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Frame-Metadata && ./gradlew app:assembleRelease && cd ..
       
       - name: Live-Photo-Capture
-        run: cd Live-Photo-Capture && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Live-Photo-Capture && ./gradlew app:assembleRelease && cd ..
 
       - name: Multiparty-Constraint-Layout
-        run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && cd ..
 
       - name: Picture-In-Picture
-        run: cd Picture-In-Picture && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Picture-In-Picture && ./gradlew app:assembleRelease && cd ..
 
       - name: Screen-Sharing
-        run: cd Screen-Sharing && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Screen-Sharing && ./gradlew app:assembleRelease && cd ..
 
       - name: Signaling
-        run: cd Signaling && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Signaling && ./gradlew app:assembleRelease && cd ..
 
       - name: Simple-Multiparty
-        run: cd Simple-Multiparty && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd Simple-Multiparty && ./gradlew app:assembleRelease && cd ..
 
       - name: ARCore-Integration
-        run: cd ARCore-Integration && ./gradlew app:assembleRelease && ./gradlew checkProject && cd ..
+        run: cd ARCore-Integration && ./gradlew app:assembleRelease && cd ..
       
+
+
