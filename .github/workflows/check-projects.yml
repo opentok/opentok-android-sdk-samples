@@ -33,11 +33,8 @@ jobs:
       
       - name: Install kscript
         run: |
-          curl -s "https://get.sdkman.io" | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk install kotlin      
           sdk install kscript
-          kscript check-consistancy.kts
 
       - name: Check project consistancy
         run: |
