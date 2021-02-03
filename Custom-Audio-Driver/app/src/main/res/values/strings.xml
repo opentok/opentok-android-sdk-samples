@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Custom Audio Driver</string>
+    <string name="app_name">Custom-Audio-Driver</string>
     <string name="rationale_video_app">This app needs access to your camera and mic so you can perform video calls</string>
     <string name="title_settings_dialog">Permissions Required</string>
 </resources>
