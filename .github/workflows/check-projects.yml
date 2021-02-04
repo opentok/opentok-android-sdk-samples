@@ -29,11 +29,11 @@ jobs:
           sdk install kscript
           kscript check-consistancy.kts
 
-      # - name: Archiving
-      #   run: cd Archiving && ./gradlew app:assembleRelease && cd ..
+      - name: Archiving
+        run: cd Archiving && ./gradlew app:assembleRelease && cd ..
 
-      # - name: Basic-Video-Chat
-      #   run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd ..
+      - name: Basic-Video-Chat
+        run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd ..
 
       # - name: Custom-Audio-Driver
       #   run: cd Custom-Audio-Driver && ./gradlew app:assembleRelease && cd ..
