@@ -9,11 +9,11 @@ public class OpenTokConfig {
     // ***                      https://dashboard.tokbox.com/projects                           ***
 
     // Replace with your OpenTok API key
-    public static final String API_KEY = "47074394";
+    public static final String API_KEY = "";
     // Replace with a generated Session ID
-    public static final String SESSION_ID = "2_MX40NzA3NDM5NH5-MTYxMjQxNTM4NTE1MH55NmpZbUhod2htTmNGRkhhS3VjejQzS1J-fg";
+    public static final String SESSION_ID = "";
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NzA3NDM5NCZzaWc9YzdlYmY0MzRkNDIyMzQ1MTNjMWJmYTNlOWY1ZGU2MTgyYmVjOTY2NjpzZXNzaW9uX2lkPTJfTVg0ME56QTNORE01Tkg1LU1UWXhNalF4TlRNNE5URTFNSDU1Tm1wWmJVaG9kMmh0VG1OR1JraGhTM1ZqZWpRelMxSi1mZyZjcmVhdGVfdGltZT0xNjEyNDE1Mzg1JnJvbGU9bW9kZXJhdG9yJm5vbmNlPTE2MTI0MTUzODUuMTgzMzMwMzg3MTcmZXhwaXJlX3RpbWU9MTYxMzAyMDE4NSZjb25uZWN0aW9uX2RhdGE9bmFtZSUzREpvaG5ueSZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PWZvY3Vz";
+    public static final String TOKEN = "";
 
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 

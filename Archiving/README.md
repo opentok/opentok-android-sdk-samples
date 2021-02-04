@@ -21,7 +21,7 @@ public static final String CHAT_SERVER_URL = "";
 
 ## Start archiving
 
-When the user clicks stat archieve `startArchive` method is called and request if fired to the server:
+When the user clicks stat archieve `startArchive` method is called and request is fired to the server:
 
 ```java
 private void startArchive() {
@@ -52,7 +52,7 @@ public void onArchiveStarted(Session session, String archiveId, String archiveNa
 
 ## Stop archiving
 
-When the user clicks stop archieve `stopArchive` method is called and request if fired to the server:
+When the user clicks stop archieve `stopArchive` method is called and request is fired to the server:
 
 ```java
 private void stopArchive() {
