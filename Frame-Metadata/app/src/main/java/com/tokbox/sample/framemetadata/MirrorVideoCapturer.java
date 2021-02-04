@@ -56,10 +56,8 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     private boolean blackFrames = false;
     private boolean isCapturePaused = false;
 
-    private Publisher.CameraCaptureResolution preferredResolution =
-            Publisher.CameraCaptureResolution.MEDIUM;
-    private Publisher.CameraCaptureFrameRate preferredFramerate =
-            Publisher.CameraCaptureFrameRate.FPS_30;
+    private Publisher.CameraCaptureResolution preferredResolution = Publisher.CameraCaptureResolution.MEDIUM;
+    private Publisher.CameraCaptureFrameRate preferredFramerate = Publisher.CameraCaptureFrameRate.FPS_30;
 
     //default case
     int fps = 1;
@@ -75,7 +73,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                 if (frame == null) {
                     VideoUtils.Size resolution = new VideoUtils.Size();
                     resolution = getPreferredResolution();
-                    fps = getPreferredFramerate();
+                    fps = getPreferredFrameRate();
                     width = resolution.width;
                     height = resolution.height;
                     frame = new int[width * height];
@@ -87,7 +85,8 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         }
     };
 
-    public MirrorVideoCapturer(Context context, Publisher.CameraCaptureResolution resolution,
+    public MirrorVideoCapturer(Context context,
+                               Publisher.CameraCaptureResolution resolution,
                                Publisher.CameraCaptureFrameRate fps) {
         this.cameraIndex = getCameraIndexUsingFront(true);
 
@@ -101,6 +100,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     public synchronized void init() {
         Log.d(TAG, "init() enetered");
+
         try {
             camera = Camera.open(cameraIndex);
         } catch (RuntimeException exp) {
@@ -115,6 +115,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     @Override
     public synchronized int startCapture() {
         Log.d(TAG, "started() entered");
+
         if (isCaptureStarted) {
             return -1;
         }
@@ -175,7 +176,9 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
         isCaptureRunning = true;
         isCaptureStarted = true;
+
         Log.d(TAG, "started() exit");
+
         return 0;
     }
 
@@ -219,22 +222,21 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     public CaptureSettings getCaptureSettings() {
 
         CaptureSettings settings = new CaptureSettings();
-        ;
-        VideoUtils.Size resolution = new VideoUtils.Size();
-        resolution = getPreferredResolution();
 
-        int framerate = getPreferredFramerate();
+        VideoUtils.Size resolution = getPreferredResolution();
+
+        int frameRate = getPreferredFrameRate();
 
         if (camera != null) {
             settings = new CaptureSettings();
             configureCaptureSize(resolution.width, resolution.height);
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = captureWidth;
             settings.height = captureHeight;
             settings.format = NV21;
             settings.expectedDelay = 0;
         } else {
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = resolution.width;
             settings.height = resolution.height;
             settings.format = ARGB;
@@ -336,6 +338,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
         int totalCameraRotation = 0;
         boolean usingFrontCamera = this.isFrontCamera();
+
         if (usingFrontCamera) {
             // The front camera rotates in the opposite direction of the
             // device.
@@ -355,6 +358,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         for (int i = 0; i < Camera.getNumberOfCameras(); ++i) {
             Camera.CameraInfo info = new Camera.CameraInfo();
             Camera.getCameraInfo(i, info);
+
             if (front && info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 return i;
             } else if (!front
@@ -372,7 +376,9 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     public interface CustomVideoCapturerDataSource {
         public byte[] retrieveMetadata();
     }
+
     private CustomVideoCapturerDataSource metadataSource;
+
     public void setCustomVideoCapturerDataSource(CustomVideoCapturerDataSource metadataSource) {
         this.metadataSource = metadataSource;
     }
@@ -386,14 +392,19 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
             // Call the C++ layer with the captured frame
             if (data.length == expectedFrameSize) {
 
-                int currentRotation = compensateCameraRotation(currentDisplay
-                        .getRotation());
+                int currentRotation = compensateCameraRotation(currentDisplay.getRotation());
 
                 // Send buffer
                 if (metadataSource != null) {
                     byte[] framemetadata = metadataSource.retrieveMetadata();
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera(), framemetadata);
+
+                    provideByteArrayFrame(data,
+                            NV21,
+                            captureWidth,
+                            captureHeight,
+                            currentRotation,
+                            isFrontCamera(),
+                            framemetadata);
                 }
                 else {
                     provideByteArrayFrame(data, NV21, captureWidth,
@@ -413,6 +424,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     private boolean forceCameraRelease(int cameraIndex) {
         Camera camera = null;
+
         try {
             camera = Camera.open(cameraIndex);
         } catch (RuntimeException e) {
@@ -426,7 +438,6 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     }
 
     private VideoUtils.Size getPreferredResolution() {
-
         VideoUtils.Size resolution = new VideoUtils.Size();
 
         switch (this.preferredResolution) {
@@ -449,33 +460,32 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         return resolution;
     }
 
-    private int getPreferredFramerate() {
-
-        int framerate = 0;
+    private int getPreferredFrameRate() {
+        int frameRate = 0;
 
         switch (this.preferredFramerate) {
             case FPS_30:
-                framerate = 30;
+                frameRate = 30;
                 break;
             case FPS_15:
-                framerate = 15;
+                frameRate = 15;
                 break;
             case FPS_7:
-                framerate = 7;
+                frameRate = 7;
                 break;
             case FPS_1:
-                framerate = 1;
+                frameRate = 1;
                 break;
             default:
                 break;
         }
 
-        return framerate;
+        return frameRate;
     }
 
     private void configureCaptureSize(int preferredWidth, int preferredHeight) {
         List<Size> sizes = null;
-        int preferredFramerate = getPreferredFramerate();
+        int preferredFramerate = getPreferredFrameRate();
         try {
             Camera.Parameters parameters = camera.getParameters();
             sizes = parameters.getSupportedPreviewSizes();

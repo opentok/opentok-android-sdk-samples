@@ -64,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             // capturer
             MirrorVideoCapturer capturer = new MirrorVideoCapturer(
                     MainActivity.this,
-                    Publisher.CameraCaptureResolution.MEDIUM, Publisher.CameraCaptureFrameRate.FPS_30);
+                    Publisher.CameraCaptureResolution.MEDIUM,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
 
             capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
+                // metadata to be send
                 @Override
                 public byte[] retrieveMetadata() {
                     return getCurrentTimeStamp().getBytes();
@@ -75,7 +77,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             // renderer
             InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
+
             renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
+                // Retrieved metadata
                 @Override
                 public void onMetadataReady(byte[] metadata) {
                     String timestamp = null;
@@ -89,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             });
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher")
                     .capturer(capturer)
                     .renderer(renderer).build();
 

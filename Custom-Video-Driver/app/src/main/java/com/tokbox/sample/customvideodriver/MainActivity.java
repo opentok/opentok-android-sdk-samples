@@ -58,11 +58,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
+            CustomVideoCapturer customVideoCapturer = new CustomVideoCapturer(
+                    MainActivity.this,
+                    Publisher.CameraCaptureResolution.MEDIUM,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
+
             publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher")
-                    .capturer(new CustomVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.MEDIUM,
-                            Publisher.CameraCaptureFrameRate.FPS_30))
-                    .renderer(new InvertedColorsVideoRenderer(MainActivity.this)).build();
+                    .capturer(customVideoCapturer)
+                    .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+                    .build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);

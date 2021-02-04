@@ -2,24 +2,23 @@
 
 This app shows how to integrate [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/) with [ARCore](https://developers.google.com/ar) from Google. 
 
-This sample code is using a custom video capturer (`CustomVideoCapturer.java`). This code copies canvas from the view to the stream (it's like a screensharing of the ARView):
+This sample code is using a custom video capturer (`CustomVideoCapturer.java`). This code copies canvas from the view to the stream (it's like a screen sharing of the ARView):
 
 
 ```java
-PixelCopy.request((SurfaceView) mContentView, mBitmap, CustomVideoCapturer.this, handlerPixelCopy);
+PixelCopy.request(contentView, bitmap, CustomVideoCapturer.this, handlerPixelCopy);
 
 @Override
-  public void onPixelCopyFinished(int copyResult) {
-    mBitmap.getPixels(frame, 0, width, 0, 0, width, height);
+public void onPixelCopyFinished(int copyResult) {
+    bitmap.getPixels(frame, 0, width, 0, 0, width, height);
 
     // this method will send the frame directly to stream
     provideIntArrayFrame(frame, ARGB, width, height, 0, false);
-    mHandler.postDelayed(newFrame, 1000 / fps);
-  }
+    handler.postDelayed(newFrame, 1000 / fps);
+}
 ```
 
-> Note: It may be possible to retrieve ARCore camera stream directly from ARCore SDK however more research is required (this may be a better approach, because the view can 
-be clipped by the layout, so only part of the orginal camera stream wil be send)
+> Note: It may be possible to retrieve ARCore camera stream directly from ARCore SDK however more research is required (this may be a better approach because the view can be clipped by the layout, so only part of the original camera stream will be send)
 
 ## Further Reading
 

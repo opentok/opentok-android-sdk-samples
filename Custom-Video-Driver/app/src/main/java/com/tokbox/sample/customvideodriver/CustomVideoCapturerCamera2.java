@@ -87,7 +87,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     };
 
-    /* Observers/Notification callback objects */
+    // Observers/Notification callback objects
     private CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
@@ -210,7 +210,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             };
 
 
-    /* caching of camera characteristics & display orientation for performance */
+    // caching of camera characteristics & display orientation for performance
     private static class CameraInfoCache {
         private CameraCharacteristics   info;
         private boolean                 frontFacing = false;
@@ -218,9 +218,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
 
         public CameraInfoCache(CameraCharacteristics info) {
             info    = info;
-            /* its actually faster to cache these results then to always look
-               them up, and since they are queried every frame...
-             */
+            // its actually faster to cache these results then to always them up, and since they are queried every frame...
             frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
             sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
         }
@@ -239,7 +237,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     }
 
     private static class DisplayOrientationCache implements Runnable {
-        private static final int    POLL_DELAY_MS = 750; /* 750 ms */
+        private static final int    POLL_DELAY_MS = 750; // 750 ms
         private int displayRotation;
         private Display display;
         private Handler handler;
@@ -262,14 +260,14 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         }
     }
 
-    /* custom exceptions */
+    // custom exceptions
     public static class Camera2Exception extends RuntimeException {
         public Camera2Exception(String message) {
             super(message);
         }
     }
 
-    /* Constructors etc... */
+    // Constructors etc...
     public CustomVideoCapturerCamera2(Context context,
                                 Publisher.CameraCaptureResolution resolution,
                                 Publisher.CameraCaptureFrameRate fps) {
@@ -285,7 +283,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
         isPaused = false;
         try {
             String camId = selectCamera(PREFERRED_FACING_CAMERA);
-            /* if default camera facing direction is not found, use first camera */
+            // if default camera facing direction is not found, use first camera
             if (null == camId && (0 < cameraManager.getCameraIdList().length)) {
                 camId = cameraManager.getCameraIdList()[0];
             }
@@ -402,9 +400,9 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     @Override
     public synchronized void destroy() {
         Log.d(TAG,"destroy enter");
-        /* stop display orientation polling */
+        // stop display orientation polling
         stopDisplayOrientationCache();
-        /* stop camera message thread */
+        // stop camera message thread
         stopCamThread();
         Log.d(TAG,"destroy exit");
     }
@@ -422,16 +420,13 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        //log.d("getCaptureSettings enter");
-        CaptureSettings retObj = new CaptureSettings();
-        retObj.fps = desiredFps;
-        retObj.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
-        retObj.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
-        retObj.format = BaseVideoCapturer.NV21;
-        retObj.expectedDelay = 0;
-        //retObj.mirrorInLocalRender = frameMirrorX;
-        //log.d("getCaptureSettings exit");
-        return retObj;
+        CaptureSettings settings = new CaptureSettings();
+        settings.fps = desiredFps;
+        settings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
+        settings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
+        settings.format = BaseVideoCapturer.NV21;
+        settings.expectedDelay = 0;
+        return settings;
     }
 
     /*
@@ -443,7 +438,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     @Override
     public synchronized void onPause() {
         Log.d(TAG,"onPause");
-        /* shutdown old camera but not the camera-callback thread */
+        // shutdown old camera but not the camera-callback thread
         switch (cameraState) {
             case CAPTURE:
                 stopCapture();
@@ -500,7 +495,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     @Override
     public synchronized void swapCamera(int cameraId) {
         CameraState oldState = cameraState;
-        /* shutdown old camera but not the camera-callback thread */
+        // shutdown old camera but not the camera-callback thread
         switch (oldState) {
             case CAPTURE:
                 stopCapture();
@@ -509,7 +504,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             default:
                 break;
         }
-        /* set camera ID */
+        // set camera ID
         cameraIndex = cameraId;
         executeAfterClosed = () -> {
             switch (oldState) {
@@ -552,7 +547,7 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
     private String selectCamera(int lenseDirection) throws CameraAccessException {
         for (String id : cameraManager.getCameraIdList()) {
             CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
-            /* discard cameras that don't face the right direction */
+            // discard cameras that don't face the right direction
             if (lenseDirection == info.get(CameraCharacteristics.LENS_FACING)) {
                 Log.d(TAG,"selectCamera() Direction the camera faces relative to device screen: " + info.get(CameraCharacteristics.LENS_FACING));
                 return id;
@@ -566,12 +561,11 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             if (id.equals(camId)) {
                 CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
                 List<Range<Integer>> fpsLst = new ArrayList<>();
-                Collections.addAll(fpsLst,
-                        info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
-                /* sort list by error from desired fps *
-                 * Android seems to do a better job at color correction/avoid 'dark frames' issue by
-                 * selecting camera settings with the smallest lower bound on allowed frame rate
-                 * range. */
+                Collections.addAll(fpsLst, info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
+
+                // sort list by error from desired fp Android seems to do a better job at color correction/avoid
+                // 'dark frames' issue by selecting camera settings with the smallest lower bound on allowed frame
+                // rate range.
                 return Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
@@ -601,19 +595,16 @@ class CustomVideoCapturerCamera2 extends BaseVideoCapturer implements BaseVideoC
             throws CameraAccessException {
         CameraCharacteristics info = cameraManager.getCameraCharacteristics(camId);
         StreamConfigurationMap dimMap = info.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        List<Size> sizeLst = new ArrayList<Size>();
+        List<Size> sizeLst = new ArrayList<>();
         int[] formats = dimMap.getOutputFormats();
         Collections.addAll(sizeLst, dimMap.getOutputSizes(ImageFormat.YUV_420_888));
-        /* sort list by error from desired size */
-        return Collections.min(sizeLst, new Comparator<Size>() {
-            @Override
-            public int compare(Size lhs, Size rhs) {
-                int lXerror = Math.abs(lhs.getWidth() - width);
-                int lYerror = Math.abs(lhs.getHeight() - height);
-                int rXerror = Math.abs(rhs.getWidth() - width);
-                int rYerror = Math.abs(rhs.getHeight() - height);
-                return (lXerror + lYerror) - (rXerror + rYerror);
-            }
+        // sort list by error from desired size
+        return Collections.min(sizeLst, (lhs, rhs) -> {
+            int lXerror = Math.abs(lhs.getWidth() - width);
+            int lYerror = Math.abs(lhs.getHeight() - height);
+            int rXerror = Math.abs(rhs.getWidth() - width);
+            int rYerror = Math.abs(rhs.getHeight() - height);
+            return (lXerror + lYerror) - (rXerror + rYerror);
         });
     }
 

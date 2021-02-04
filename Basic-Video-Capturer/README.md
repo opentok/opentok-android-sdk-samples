@@ -1,29 +1,29 @@
 # Basic Video Capturer Camera
 
-Sample app shows how to use the custom capturer using the [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) package. 
+Sample app shows how to use the custom video capturer using the [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) package. 
 
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+> [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) class was deprecated in API level 21. Please check [Basic Video Capturer Camera 2](../Basic-Video-Capturer-Camera-2) project for more up to date implementation. 
 
-> [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) class was deprecated in API level 21. Please check [Basic Video Capturer Camera 2](../Basic-Video-Capturer-Camera-2) project. 
-
-> Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how custom video capturer and custom video renderer works together.
+> Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how to use custom video capturer and custom video renderer together.
 
 A custom video capturer will be helpful when:
 - streaming any content other than the one coming from the device camera, e.g. streaming content of a particular view's game or content.
-- modyfying the camera stream content - image composition (adding watermark logo) or image procssing (removing the background or putting a virtual hat on the user).
+- modifying the camera stream content - image composition (adding watermark logo) or image processing (removing the background or putting a virtual hat on the user).
 
 ## Using a custom video capturer
 
-The `MainActivity` class shows how you can use a custom video capturer for a publisher. After
-instantiating a Publisher object, the code sets a custom video capturer by calling the
-`capturer(BaseVideoCapturer capturer)` method of the Publisher:
+After instantiating a `Publisher` object, the code creates and sets a custom video capturer by calling the
+`capturer()` method of the Publisher:
 
 ```java
-publisher = new Publisher(this, "publisher")
-    .capturer(new MirrorVideoCapturer(this))
-    .build();
+MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(
+                    MainActivity.this,
+                    Publisher.CameraCaptureResolution.HIGH,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
 
-publisher.setPublisherListener(publisherListener);
+publisher = new Publisher.Builder(MainActivity.this)
+        .capturer(mirrorVideoCapturer)
+        .build();
 
 ```
 
@@ -35,15 +35,27 @@ rate, width, height, video delay, and video format for the capturer:
 @Override
 public CaptureSettings getCaptureSettings() {
 
-    // Set the preferred capturing size
-    configureCaptureSize(PREFERRED_CAPTURE_WIDTH, PREFERRED_CAPTURE_HEIGHT);
-
     CaptureSettings settings = new CaptureSettings();
-    settings.fps = mCaptureFPS;
-    settings.width = mCaptureWidth;
-    settings.height = mCaptureHeight;
-    settings.format = NV21;
-    settings.expectedDelay = 0;
+
+    VideoUtils.Size resolution = new VideoUtils.Size();
+    resolution = getPreferredResolution();
+
+    int frameRate = getPreferredFrameRate();
+
+    if (camera != null) {
+        settings = new CaptureSettings();
+        configureCaptureSize(resolution.width, resolution.height);
+        settings.fps = frameRate;
+        settings.width = captureWidth;
+        settings.height = captureHeight;
+        settings.format = NV21;
+        settings.expectedDelay = 0;
+    } else {
+        settings.fps = frameRate;
+        settings.width = resolution.width;
+        settings.height = resolution.height;
+        settings.format = ARGB;
+    }
 
     return settings;
 }
@@ -51,12 +63,10 @@ public CaptureSettings getCaptureSettings() {
 
 The app calls `startCapture()` to start capturing video from the custom video capturer.
 
-The class also implements the [PreviewCallback](https://developer.android.com/reference/android/hardware/Camera.PreviewCallback) interface. The `onPreviewFrame()` method of this interface is called as preview frames of the camera become available. In this method, the app calls the `provideByteArrayFrame()` method of the
-`MirrorVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method
-provides a video frame, defined as a byte array, to the video capturer:
+The class also implements the [PreviewCallback](https://developer.android.com/reference/android/hardware/Camera.PreviewCallback) interface. The `onPreviewFrame()` method of this interface is called as preview frames of the camera become available. In this method, the app calls the `provideByteArrayFrame()` method of the `MirrorVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method provides a video frame, defined as a byte array, to the video capturer:
 
 ```java
-provideByteArrayFrame(data, NV21, mCaptureWidth, mCaptureHeight, currentRotation, isFrontCamera());
+provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
 ```
 
 The publisher adds this video frame to the published stream.

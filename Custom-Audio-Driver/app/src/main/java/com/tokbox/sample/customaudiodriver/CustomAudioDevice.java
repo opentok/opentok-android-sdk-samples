@@ -463,10 +463,9 @@ class CustomAudioDevice extends BaseAudioDevice {
 
         tempBufPlay = new byte[outputBufferSize];
 
-        captureSettings = new AudioSettings(captureSamplingRate,
-            NUM_CHANNELS_CAPTURING);
-        rendererSettings = new AudioSettings(outputSamplingRate,
-            NUM_CHANNELS_RENDERING);
+        captureSettings = new AudioSettings(captureSamplingRate, NUM_CHANNELS_CAPTURING);
+        rendererSettings = new AudioSettings(outputSamplingRate, NUM_CHANNELS_RENDERING);
+
         try {
             telephonyManager = (TelephonyManager) context.getSystemService(Context
                     .TELEPHONY_SERVICE);
@@ -853,6 +852,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                     playBuffer.get(tempBufPlay, 0, bytesRead);
 
                     int bytesWritten = audioTrack.write(tempBufPlay, 0, bytesRead);
+
                     if (bytesWritten > 0) {
                         // increase by number of written samples
                         bufferedPlaySamples += (bytesWritten >> 1) / NUM_CHANNELS_RENDERING;
@@ -863,6 +863,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                             // wrap or reset by driver
                             playPosition = 0;
                         }
+
                         bufferedPlaySamples -= (pos - playPosition);
                         playPosition = pos;
 
@@ -871,11 +872,9 @@ class CustomAudioDevice extends BaseAudioDevice {
                     } else {
                         switch (bytesWritten) {
                             case AudioTrack.ERROR_BAD_VALUE:
-                                throw new RuntimeException(
-                                        "renderThread(): AudioTrack.ERROR_BAD_VALUE");
+                                throw new RuntimeException("renderThread(): AudioTrack.ERROR_BAD_VALUE");
                             case AudioTrack.ERROR_INVALID_OPERATION:
-                                throw new RuntimeException(
-                                        "renderThread(): AudioTrack.ERROR_INVALID_OPERATION");
+                                throw new RuntimeException("renderThread(): AudioTrack.ERROR_INVALID_OPERATION");
                             case AudioTrack.ERROR:
                             default:
                                 throw new RuntimeException(

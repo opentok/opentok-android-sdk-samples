@@ -1,8 +1,6 @@
 # Simple Multiparty
 
-This app shows how to implement a simple video call application with several clients.
-
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
+This app shows how to implement a simple video call application with several clients. It demonstrates how to enable/disable audio and video as well as swap the camera.
 
 ## Subcribing to multiple streams
 
@@ -14,7 +12,7 @@ there are multiple streams.
 public void onStreamReceived(Session session, Stream stream) {
     Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
 
-    final Subscriber subscriber = new Subscriber.Builder(this, stream).build();
+    final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
     session.subscribe(subscriber);
     addSubscriber(subscriber);
 }
@@ -27,14 +25,11 @@ screen (as it did before).
 
 ## Adding user interface controls
 
-The `MainActivity` class shows how you can add user interface controls for the following:
-
+This sample shows how you can add user interface controls for the following:
 * Turning a publisher's audio stream on and off
 * Swapping the publisher's camera
 
-The user interface is defined in the com.opentok.android.samples.simple_multiparty package.
-
-When the user taps the mute button for the publisher, the following method of The `MainActivity` class
+When the user taps the enable/disable audio button for the publisher, the following method of The `MainActivity` class
 is invoked:
 
 ```java
@@ -55,6 +50,27 @@ toggleAudio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListene
 The `setPublishAudio(boolean publishAudio)` method of a `Publisher` object toggles its audio on or off, based on a
 `Boolean` parameter.
 
+When the user taps the enable/disable video button for the publisher, the following method of The `MainActivity` class
+is invoked:
+
+```java
+toggleVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (publisher == null) {
+            return;
+        }
+        if (isChecked) {
+            publisher.setPublishVideo(true);
+        } else {
+            publisher.setPublishVideo(false);
+        }
+    }
+});
+```
+
+The `setPublishVideo(boolean publishAudio)` method of a `Publisher` object toggles its video on or off, based on a
+`Boolean` parameter.
+
 When the user taps the swapCamera button, the following method of the OpenTokUI class
 is invoked:
 
@@ -64,7 +80,8 @@ swapCamera.setOnClickListener(new View.OnClickListener() {
         if (publisher == null) {
             return;
         }
-        publisher.swapCamera();
+
+        publisher.cycleCamera();
     }
 });
 ```

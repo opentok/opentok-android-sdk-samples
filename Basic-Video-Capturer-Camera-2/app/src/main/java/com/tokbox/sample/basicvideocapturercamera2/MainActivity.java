@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher")
                     .capturer(new MirrorVideoCapturer(MainActivity.this))
                     .build();
 

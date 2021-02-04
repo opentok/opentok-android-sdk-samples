@@ -1,99 +1,76 @@
 # Frame Meta Data
 
 This app shows how to send\retrieve additional metadata associated with each video frame.
-
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
-
 ## Using a custom video capturer
 
-The `MainActivity` class shows how you can use a custom video capturer for a publisher. After
+You can use a custom video capturer for a publisher. After
 instantiating a Publisher object, the code sets a custom video capturer by calling the
 `setCapturer(BaseVideoCapturer capturer)` method of the Publisher:
 
 ```java
-publisher = new Publisher(this, "publisher");
-publisher.setPublisherListener(publisherListener);
-publisher.setCapturer(new CustomVideoCapturer(this));
+publisher = new Publisher.Builder(MainActivity.this)
+    .capturer(capturer)
+    .renderer(renderer).build();
 ```
 
-The `CustomVideoCapturer` class is defined in the `com.opentok.android.samples.custom_video_driver` package.
-This class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
-The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
-rate, width, height, video delay, and video format for the capturer:
+## Send frame metadata
+
+The `MirrorVideoCapturer`  class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
+The `setCustomVideoCapturerDataSource` method provided metadata to be send with each frame (frame
+rate, width, height, video delay, and video format for the capturer):
 
 ```java
-@Override
-public CaptureSettings getCaptureSettings() {
+MirrorVideoCapturer capturer = new MirrorVideoCapturer(
+                    MainActivity.this,
+                    Publisher.CameraCaptureResolution.MEDIUM,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
 
-    // Set the preferred capturing size
-    configureCaptureSize(PREFERRED_CAPTURE_WIDTH, PREFERRED_CAPTURE_HEIGHT);
+capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
+    // metadata to be send
+    @Override
+    public byte[] retrieveMetadata() {
+        return getCurrentTimeStamp().getBytes();
+    }
+});
+```
 
-    CaptureSettings settings = new CaptureSettings();
-    settings.fps = mCaptureFPS;
-    settings.width = mCaptureWidth;
-    settings.height = mCaptureHeight;
-    settings.format = NV21;
-    settings.expectedDelay = 0;
-    return settings;
+Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame()` method:
+
+```java
+if (metadataSource != null) {
+    byte[] framemetadata = metadataSource.retrieveMetadata();
+
+    provideByteArrayFrame(data,
+            NV21,
+            captureWidth,
+            captureHeight,
+            currentRotation,
+            isFrontCamera(),
+            framemetadata);
 }
 ```
 
-The app calls `startCapture()` to start capturing video from the custom video capturer.
+## Receive frame metadata
 
-The class also implements the `android.hardware.Camera.PreviewCallback` interface. The
-`onPreviewFrame()` method of this interface is called as preview frames of the camera become
-available. In this method, the app calls the `provideByteArrayFrame()` method of the
-`CustomVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method
-provides a video frame, defined as a byte array, to the video capturer:
+The `InvertedColorsVideoRenderer` class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
+The `setInvertedColorsVideoRendererMetadataListener` method allows to retrieve incomming metadata:
 
 ```java
-provideByteArrayFrame(data, NV21, mCaptureWidth, mCaptureHeight, currentRotation, isFrontCamera());
-```
+InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
 
-The publisher adds this video frame to the published stream.
-
-## Using a custom video renderer
-
-The `MainActivity` class shows how you can use a custom video renderer for publisher and
-subscriber videos. In this sample we will use a custom video renderer which inverts all colors
-in the image.
-
-After instantiating a Publisher object, the code sets a custom video renderer by calling the `setRenderer(BaseVideoRenderer renderer)` method of the Publisher:
-
-```java
-publisher = new Publisher(this, "publisher");
-publisher.setPublisherListener(publisherListener);
-publisher.setRenderer(new InvertedColorsVideoRenderer(this));
-```
-
-The InvertedColorsVideoRenderer class is defined in the `com.opentok.android.samples.custom_video_driver`
-package. This class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
-The InvertedColorsVideoRenderer class includes a MyRenderer subclass that implements `GLSurfaceView.Renderer`.
-This class includes a `displayFrame()` method that renders a frame of video to an Android view.
-
-The InvertedColorsVideoRenderer constructor sets a property to an instance of the MyRenderer class.
-
-```java
-mRenderer = new MyRenderer();
-```
-
-The `onFrame()` method of the video renderer is inherited from the `BaseVideoRenderer` class.
-This method is called at the specified frame rate. It then calls the `displayFrame()` method of
-the MyVideoRenderer instance:
-
-```java
-public void onFrame(Frame frame) {
-    mRenderer.displayFrame(frame);
-    mView.requestRender();
-}
-```
-
-To render the video frames the renderer class uses OpenGL shaders. In the sample we tweak the
-shader to produce the inverted color effect, more precisely this is achieved by this line which is
-inside the `fragmentShaderCode` String.
-
-```java
-"y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
+    // Retrieved metadata
+    @Override
+    public void onMetadataReady(byte[] metadata) {
+        String timestamp = null;
+        try {
+            timestamp = new String(metadata, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(timestamp);
+    }
+});
 ```
 
 ## Further Reading

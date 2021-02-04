@@ -1,23 +1,17 @@
 # Custom Video Renderer
 
-This app shows how to use renderer. 
+This app shows how you can use a custom video renderer for publisher and
+subscriber videos. In this sample app we will use a custom video renderer which inverts image colors.
 
-> Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how custom capturer and custom renderer works together.
-
-The `MainActivity` class shows how you can use a custom video renderer for publisher and
-subscriber videos. In this sample we will use a custom video renderer which inverts all colors
-in the image.
-
-After instantiating a Publisher object, the code sets a custom video renderer by calling the `setRenderer(BaseVideoRenderer renderer)` method of the Publisher:
+The code sets a custom video renderer by calling the `setRenderer()` method of the Publisher:
 
 ```java
-publisher = new Publisher(this, "publisher");
-publisher.setPublisherListener(publisherListener);
-publisher.setRenderer(new InvertedColorsVideoRenderer(this));
+publisher = new Publisher.Builder(MainActivity.this)
+    .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+    .build();
 ```
 
-The `InvertedColorsVideoRenderer` class is defined in the `com.opentok.android.samples.customvideodriver`
-package. This class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
+The `InvertedColorsVideoRenderer` extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
 The `InvertedColorsVideoRenderer` class includes a `MyRenderer` subclass that implements `GLSurfaceView.Renderer`.
 This class includes a `displayFrame()` method that renders a frame of video to an Android view.
 
@@ -32,9 +26,10 @@ This method is called at the specified frame rate. It then calls the `displayFra
 the M`yVideoRenderer` instance:
 
 ```java
+@Override
 public void onFrame(Frame frame) {
-    mRenderer.displayFrame(frame);
-    mView.requestRender();
+    renderer.displayFrame(frame);
+    view.requestRender();
 }
 ```
 
@@ -43,7 +38,7 @@ shader to produce the inverted color effect, more precisely this is achieved by 
 inside the `fragmentShaderCode` String:
 
 ```java
-"y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+"y=1.0-1.1643*(y-0.0625);\n"
 ```
 
 ## Further Reading
