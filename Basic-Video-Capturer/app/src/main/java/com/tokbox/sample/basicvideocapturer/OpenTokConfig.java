@@ -8,7 +8,7 @@ public class OpenTokConfig {
     // ***                      https://dashboard.tokbox.com/projects                           ***
 
     // Replace with your OpenTok API key
-    public static final String API_KEY = "";
+    public static final String API_KEY = "abc";
     // Replace with a generated Session ID
     public static final String SESSION_ID = "";
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
