@@ -26,15 +26,11 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
     private final static String TAG = BasicCustomVideoRenderer.class.getSimpleName();
 
     Context context;
-
     GLSurfaceView view;
-
     MyRenderer renderer;
-
     boolean saveScreenshot;
 
     static class MyRenderer implements GLSurfaceView.Renderer {
-
         int textureIds[] = new int[3];
         float[] scaleMatrix = new float[16];
 
@@ -101,7 +97,6 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
         private BasicCustomVideoRenderer customVideoRenderer;
 
         public MyRenderer(BasicCustomVideoRenderer parent) {
-
             this.customVideoRenderer = parent;
 
             ByteBuffer bb = ByteBuffer.allocateDirect(xyzCoords.length * 4);
@@ -141,10 +136,8 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
             // program
             GLES20.glLinkProgram(program);
 
-            int positionHandle = GLES20.glGetAttribLocation(program,
-                    "aPosition");
-            int textureHandle = GLES20.glGetAttribLocation(program,
-                    "aTextureCoord");
+            int positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
+            int textureHandle = GLES20.glGetAttribLocation(program, "aTextureCoord");
 
             GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX,
                     GLES20.GL_FLOAT, false, COORDS_PER_VERTEX * 4,
@@ -245,7 +238,6 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
                 textureWidth = 0;
                 textureHeight = 0;
             }
-
         }
 
         @Override
@@ -298,15 +290,17 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
 
                 GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
             }
-            frameLock.unlock();
 
+            frameLock.unlock();
         }
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
+
             if (this.currentFrame != null) {
                 this.currentFrame.recycle();
             }
+
             this.currentFrame = frame;
             frameLock.unlock();
 
@@ -352,7 +346,6 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
                 customVideoRenderer.saveScreenshot = false;
             }
         }
-
 
         static public void decodeYUV420(int[] rgba, byte[] yuv420, int width, int height) {
             int half_width = (width + 1) >> 1;
@@ -418,9 +411,7 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
         public void enableVideoFit(boolean enableVideoFit) {
             videoFitEnabled = enableVideoFit;
         }
-    }
-
-    ;
+    };
 
     public BasicCustomVideoRenderer(Context context) {
         this.context = context;
@@ -474,6 +465,5 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
     public void saveScreenshot(Boolean enableScreenshot) {
         saveScreenshot = enableScreenshot;
     }
-
 }
 

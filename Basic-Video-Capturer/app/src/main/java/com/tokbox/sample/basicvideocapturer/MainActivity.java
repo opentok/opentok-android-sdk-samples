@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     Publisher.CameraCaptureFrameRate.FPS_30);
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher")
                     .capturer(mirrorVideoCapturer)
                     .build();
 

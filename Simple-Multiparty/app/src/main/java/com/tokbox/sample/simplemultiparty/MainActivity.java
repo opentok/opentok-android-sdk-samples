@@ -77,8 +77,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
             sessionConnected = true;
 
-            publisher = new Publisher.Builder(MainActivity.this).name("publisher").build();
-
+            publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
@@ -134,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (publisher == null) {
                     return;
                 }
+
                 publisher.cycleCamera();
             }
         });
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (publisher == null) {
                     return;
                 }
+
                 if (isChecked) {
                     publisher.setPublishAudio(true);
                 } else {
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (publisher == null) {
                     return;
                 }
+
                 if (isChecked) {
                     publisher.setPublishVideo(true);
                 } else {
@@ -189,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onResume();
     }
 
@@ -199,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onPause();
 
         if (isFinishing()) {
@@ -285,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void removeSubscriberWithStream(Stream stream) {
         SubscriberContainer container = findContainerForStream(stream);
+
         if (container == null) {
             return;
         }
@@ -299,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null || !sessionConnected) {
             return;
         }
+
         sessionConnected = false;
 
         if (subscribers.size() > 0) {
@@ -314,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             session.unpublish(publisher);
             publisher = null;
         }
+
         session.disconnect();
     }
 

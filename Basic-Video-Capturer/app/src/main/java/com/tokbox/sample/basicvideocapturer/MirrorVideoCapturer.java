@@ -75,7 +75,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                 if (frame == null) {
                     VideoUtils.Size resolution = new VideoUtils.Size();
                     resolution = getPreferredResolution();
-                    fps = getPreferredFramerate();
+                    fps = getPreferredFrameRate();
                     width = resolution.width;
                     height = resolution.height;
                     frame = new int[width * height];
@@ -189,7 +189,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                     camera.stopPreview();
                     camera.setPreviewCallbackWithBuffer(null);
                     camera.release();
-                    Log.d(TAG,"Camera capture is stopped");
+                    Log.d(TAG, "Camera capture is stopped");
                 }
             } catch (RuntimeException exp) {
                 Log.e(TAG, "Camera.stopPreview() - failed ");
@@ -219,22 +219,22 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     public CaptureSettings getCaptureSettings() {
 
         CaptureSettings settings = new CaptureSettings();
-        ;
+
         VideoUtils.Size resolution = new VideoUtils.Size();
         resolution = getPreferredResolution();
 
-        int framerate = getPreferredFramerate();
+        int frameRate = getPreferredFrameRate();
 
         if (camera != null) {
             settings = new CaptureSettings();
             configureCaptureSize(resolution.width, resolution.height);
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = captureWidth;
             settings.height = captureHeight;
             settings.format = NV21;
             settings.expectedDelay = 0;
         } else {
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = resolution.width;
             settings.height = resolution.height;
             settings.format = ARGB;
@@ -244,7 +244,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     }
 
     @Override
-    public synchronized  void onPause() {
+    public synchronized void onPause() {
         if (isCaptureStarted) {
             isCapturePaused = true;
             stopCapture();
@@ -372,7 +372,9 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     public interface CustomVideoCapturerDataSource {
         public byte[] retrieveMetadata();
     }
+
     private CustomVideoCapturerDataSource metadataSource;
+
     public void setCustomVideoCapturerDataSource(CustomVideoCapturerDataSource metadataSource) {
         this.metadataSource = metadataSource;
     }
@@ -391,13 +393,10 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
                 // Send buffer
                 if (metadataSource != null) {
-                    byte[] framemetadata = metadataSource.retrieveMetadata();
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera(), framemetadata);
-                }
-                else {
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera());
+                    byte[] frameMetadata = metadataSource.retrieveMetadata();
+                    provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera(), frameMetadata);
+                } else {
+                    provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
                 }
 
                 // Give the video buffer to the camera service again.
@@ -449,33 +448,33 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         return resolution;
     }
 
-    private int getPreferredFramerate() {
+    private int getPreferredFrameRate() {
 
-        int framerate = 0;
+        int frameRate = 0;
 
         switch (this.preferredFramerate) {
             case FPS_30:
-                framerate = 30;
+                frameRate = 30;
                 break;
             case FPS_15:
-                framerate = 15;
+                frameRate = 15;
                 break;
             case FPS_7:
-                framerate = 7;
+                frameRate = 7;
                 break;
             case FPS_1:
-                framerate = 1;
+                frameRate = 1;
                 break;
             default:
                 break;
         }
 
-        return framerate;
+        return frameRate;
     }
 
     private void configureCaptureSize(int preferredWidth, int preferredHeight) {
         List<Size> sizes = null;
-        int preferredFramerate = getPreferredFramerate();
+        int preferredFramerate = getPreferredFrameRate();
         try {
             Camera.Parameters parameters = camera.getParameters();
             sizes = parameters.getSupportedPreviewSizes();
@@ -542,6 +541,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
             private static final int MIN_FPS_THRESHOLD = 8000;
             private static final int MIN_FPS_LOW_VALUE_WEIGHT = 1;
             private static final int MIN_FPS_HIGH_VALUE_WEIGHT = 4;
+
             // Use one weight for small |value| less than |threshold|, and another weight above.
             private int progressivePenalty(int value, int threshold, int lowWeight, int highWeight) {
                 return (value < threshold)
@@ -553,7 +553,8 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
                 final int minFpsError = progressivePenalty(range[0],
                         MIN_FPS_THRESHOLD, MIN_FPS_LOW_VALUE_WEIGHT, MIN_FPS_HIGH_VALUE_WEIGHT);
                 final int maxFpsError = progressivePenalty(Math.abs(fps * 1000 - range[1]),
-                        MAX_FPS_DIFF_THRESHOLD, MAX_FPS_LOW_DIFF_WEIGHT, MAX_FPS_HIGH_DIFF_WEIGHT);;
+                        MAX_FPS_DIFF_THRESHOLD, MAX_FPS_LOW_DIFF_WEIGHT, MAX_FPS_HIGH_DIFF_WEIGHT);
+                ;
                 return minFpsError + maxFpsError;
             }
 
@@ -569,7 +570,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     private void checkRangeWithWarning(int preferredFps, int[] range) {
         if (preferredFps < range[0] || preferredFps > range[1]) {
-            Log.w(TAG,"Closest fps range found: "+ (range[0] / 1000) + (range[1] / 1000) + "for desired fps: "+ (preferredFps / 1000));
+            Log.w(TAG, "Closest fps range found: " + (range[0] / 1000) + (range[1] / 1000) + "for desired fps: " + (preferredFps / 1000));
         }
     }
 }

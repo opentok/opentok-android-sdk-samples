@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity  implements EasyPermissions.
 
             CustomVideoCapturer capturer = new CustomVideoCapturer(faceFragment.getArSceneView());
             Publisher publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher-capturer")
                     .capturer(capturer)
                     .build();
 

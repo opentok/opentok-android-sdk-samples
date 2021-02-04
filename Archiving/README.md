@@ -1,32 +1,97 @@
 # Archiving
-===================================
 
-This application provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to start, stop, and play back recordings of your sessions.
+This application provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to start, stop, and view recordings of your sessions.
+## Deploy a sample backend web service
+Recording archives are stored on OpenTok cloud (not on the user device), so we'll need to set up a web service that communicates with OpenTok cloud to start and stop archiving.
 
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/). 
+In order to archive OpenTok sessions, you need to have a server set up. There are many ways to implement archiving with a server, but for this tutorial we'll be quick-launching a [simple PHP server](https://github.com/opentok/learning-opentok-php). To launch the server, simply click the Heroku button below, at which point you'll be sent to Heroku's website and prompted for your OpenTok API Key and API Secret — you can get these values on your project page in your [TokBox account](https://tokbox.com/account/user/signup). If you don't have a Heroku account, you'll need to sign up (it's free).
 
-### Quick Start
-====================================
+<a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-php" target="_blank">
+  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
+</a>
 
-##### 1. Deploy a sample back end web service
-Because the actual archiving is not done on the user's device, but in the OpenTok cloud, you will need to set up a web service that communicates with it to start and stop archiving.
+This sample web service provides a RESTful interface to interact with archiving controls.
 
-For the purposes of this tutorial, we'll be using a pre-built sample that we've provided. You can deploy this by going to the [learning-opentok-php](https://github.com/opentok/learning-opentok-php) repository, and clicking on the purple deploy to Heroku button.
+## Configure the app to use your web service
+Open the `ServerConfig.java` file and configure the `CHAT_SERVER_URL` string to your web service domain:
 
-You can look through the details of that tutorial at a later point. For now, you just need to know that the sample web service provides a RESTful interface to interact with Archiving controls.
+```java
+public static final String CHAT_SERVER_URL = "";
+```
 
-##### 2. Clone this repository
-Once you have the above service deployed, clone this repository using:
+## Start archiving
 
-```git clone git@github.com:opentok/opentok-android-sdk-samples.git```
+When the user clicks stat archieve `startArchive` method is called and request if fired to the server:
 
-in your terminal. Using [Android Studio](https://developer.android.com/studio/index.html), open the project in the `Archiving` folder.
+```java
+private void startArchive() {
+    Log.i(TAG, "startArchive");
 
-##### 3. Configure the app to use your web service
-Open the `OpenTokConfig.java` file and configure the `CHAT_SERVER_URL` string to your web service domain.
+    if (session != null) {
+        StartArchiveRequest startArchiveRequest = new StartArchiveRequest();
+        startArchiveRequest.sessionId = sessionId;
 
-##### 4. Run the app
-That's it!
+        setStartArchiveEnabled(false);
+        Call call = apiService.startArchive(startArchiveRequest);
+        call.enqueue(new EmptyCallback());
+    }
+}
+```
+
+SDK notifies application about recording start via `onArchiveStarted()` callback (defined in `Session.ArchiveListener` interface):
+
+```java
+@Override
+public void onArchiveStarted(Session session, String archiveId, String archiveName) {
+    currentArchiveId = archiveId;
+    setStopArchiveEnabled(true);
+    archivingIndicatorView.setVisibility(View.VISIBLE);
+}
+```
+
+
+## Stop archiving
+
+When the user clicks stop archieve `stopArchive` method is called and request if fired to the server:
+
+```java
+private void stopArchive() {
+    Log.i(TAG, "stopArchive");
+
+    Call call = apiService.stopArchive(currentArchiveId);
+    call.enqueue(new EmptyCallback());
+    setStopArchiveEnabled(false);
+}
+```
+
+SDK notifies application about recording stop via `onArchiveStopped()` callback (defined in `Session.ArchiveListener` interface):
+
+```java
+@Override
+public void onArchiveStopped(Session session, String archiveId) {
+    playableArchiveId = archiveId;
+    currentArchiveId = null;
+    setPlayArchiveEnabled(true);
+    setStartArchiveEnabled(true);
+    archivingIndicatorView.setVisibility(View.INVISIBLE);
+}
+```
+
+The method stores the archive ID (identifying the archive) to a `playableArchiveId` property.
+## View archives
+
+When the user clicks the play archive button, the `playArchive()` method opens a web page (in the device's web browser) that displays the archive recording:
+
+```java
+private void playArchive() {
+    Log.i(TAG, "playArchive");
+
+    String archiveUrl = ServerConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view";
+    Uri archiveUri = Uri.parse(archiveUrl);
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, archiveUri);
+    startActivity(browserIntent);
+}
+```
 
 ## Further Reading
 

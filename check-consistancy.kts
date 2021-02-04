@@ -34,7 +34,7 @@ if (errors.isNotEmpty()) {
 }
 
 /**
- * Check project package eg.
+ * Check project package e.g.
  * Desired format: com.tokbox.sample.projectname
  */
 fun checkPackage(projectDirectoryName: String) {
@@ -62,7 +62,7 @@ fun checkPackage(projectDirectoryName: String) {
 }
 
 /**
- * Check project application id eg.
+ * Check project application id e.g.
  * Desired format: com.tokbox.sample.projectname
  */
 fun checkApplicationId(projectDirectoryName: String) {
@@ -82,7 +82,7 @@ fun checkApplicationId(projectDirectoryName: String) {
 }
 
 /**
- * Desired format of project application name eg.
+ * Desired format of project application name e.g.
  * com.tokbox.sample.projectname
  */
 fun checkApplicationName(projectDirectoryName: String) {
@@ -209,13 +209,13 @@ fun addError(projectDirectoryName: String, message: String) {
 }
 
 /**
- * Return project package eg.
+ * Return project package e.g.
  * com.tokbox.sample.projectname
  */
 fun getProjectPackage(projectDirectoryName: String) = "com.tokbox.sample.${ getRawProjectName(projectDirectoryName) }"
 
 /**
- * Return project package path eg.
+ * Return project package path e.g.
  * ./Project-Name/app/src/main/java/com/tokbox/sample/projectname/
  */
 fun getProjectPackagePath(projectDirectoryName: String): String {
@@ -226,7 +226,7 @@ fun getProjectPackagePath(projectDirectoryName: String): String {
 
 /**
  * Converts project name
- * eg.
+ * e.g.
  * Input: Project-Name
  * Output: projectname
  */
@@ -234,7 +234,7 @@ fun getRawProjectName(projectDirectoryName: String) = projectDirectoryName.repla
 
 /**
  * Converts project name
- * eg.
+ * e.g.
  * Input: Project-Name
  * Output: Project Name
  */

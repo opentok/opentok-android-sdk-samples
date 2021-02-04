@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, webViewContainer);
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .name("publisher")
                     .capturer(screenCapturer)
                     .build();
                     

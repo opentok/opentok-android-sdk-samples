@@ -1,16 +1,13 @@
 # Multiparty Constraint Layout
 
-This sample shows a simple multiparty app which uses basic layouts to display the different video views of the participants.
+This app shows how to use basic layouts to display the different video views of the participants.
 
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
-
-When building a complex app, there is a better option in order to lay out the views:
-the relatively new `ViewGroup` called `ConstraintLayout`. Using this layout has several benefits.
-One  is that you can use a single layout to specify all the view positions instead of having to
+When building a complex app, there is a better option in order to layout the views - `ConstraintLayout`. 
+Using this layout has several benefits. One  is that you can use a single layout to specify all the view positions instead of having to
 nest several different layouts.
 
-To use this sample application, [add the ConstraintLayout](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project) dependency. See [these
-instructions].
+To use this sample application, [add the ConstraintLayout](https://developer.android.com/training/constraint-layout/index.html#add-constraintlayout-to-your-project) 
+dependency.
 
 ## Using Constraint Layout to display the views
 
@@ -38,10 +35,11 @@ Once all constraints are added to the `ConstraintSet`, we apply them to the `Con
 ```java
 public void applyToLayout(ConstraintLayout layout, boolean animated) {
     if (animated) {
-        TransitionManager.beginDelayedTransition(layout);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            TransitionManager.beginDelayedTransition(layout);
+        }
     }
-
-    set.applyTo(layout);
+set.applyTo(layout);
 }
 ```
 
@@ -49,7 +47,7 @@ See the `ConstraintSetHelper` class for more details about how to set up the con
 
 In order to actually position the views, the application calculates the constraints whenever a new
 view is added or removed, in callback methods like the `SessionsListener.onStreamReceived()` method.
-Those callback add the view to the container and call `calculateLayout()`, which includes logic for
+Those callbacks add the view to the container and call `calculateLayout()`, which includes logic for
 view positioning.
 
 In this sample we have four possible layouts:

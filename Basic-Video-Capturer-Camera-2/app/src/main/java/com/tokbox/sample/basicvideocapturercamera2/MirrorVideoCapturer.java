@@ -421,16 +421,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        //log.d("getCaptureSettings enter");
-        CaptureSettings retObj = new CaptureSettings();
-        retObj.fps = desiredFps;
-        retObj.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
-        retObj.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
-        retObj.format = BaseVideoCapturer.NV21;
-        retObj.expectedDelay = 0;
-        //retObj.mirrorInLocalRender = frameMirrorX;
-        //log.d("getCaptureSettings exit");
-        return retObj;
+        CaptureSettings settings = new CaptureSettings();
+        settings.fps = desiredFps;
+        settings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
+        settings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
+        settings.format = BaseVideoCapturer.NV21;
+        settings.expectedDelay = 0;
+        return settings;
     }
 
     /*
@@ -442,7 +439,8 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void onPause() {
         Log.d(TAG,"onPause");
-        /* shutdown old camera but not the camera-callback thread */
+
+        // shutdown old camera but not the camera-callback thread
         switch (cameraState) {
             case CAPTURE:
                 stopCapture();

@@ -118,6 +118,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
         PictureInPictureParams params = new PictureInPictureParams.Builder()
                 .setAspectRatio(new Rational(9, 16)) // Portrait Aspect Ratio
                 .build();
+
         enterPictureInPictureMode(params);
     }
 

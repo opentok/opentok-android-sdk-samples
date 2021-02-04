@@ -2,8 +2,6 @@
 
 This app shows how to utilize the OpenTok signaling API to send text messages to other clients connected to the OpenTok session. You can send a signal message to a specific client, or you can send a message to every client connected to the session.
 
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
-
 ## Using signalling
 
 ### Send signal
@@ -11,10 +9,10 @@ This app shows how to utilize the OpenTok signaling API to send text messages to
 Signal can be send while client is connected to the seccion (after `Session.SessionListener.onConnected(session)` has been called and before `Session.SessionListener.onDisconnected(session)` method is called), so you need to set `Session.SessionListener`:
 
 ```java
-session = new Session.Builder(this, apiKey, sessionId).build();
-        session.setSessionListener(sessionListener);
-        session.setSignalListener(this);
-        session.connect(token);
+session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+session.setSessionListener(sessionListener);
+session.setSignalListener(signalListener);
+session.connect(OpenTokConfig.TOKEN);
 ```
 
 Send signal to the session:
@@ -30,22 +28,24 @@ To listen for incomming messages set the `Session.SignalListener`:
 
 ```java
 session = new Session.Builder(this, apiKey, sessionId).build();
-        session.setSessionListener(sessionListener);
-        session.setSignalListener(this);
-        session.connect(token);
+session.setSessionListener(sessionListener);
+session.setSignalListener(this);
+session.connect(token);
 ```
 
 Process received signal inside `onSignalReceived` method:
 
 ```java
-@Override
-public void onSignalReceived(Session session, String type, String data, Connection connection) {
+private Session.SignalListener signalListener = new Session.SignalListener() {
+    @Override
+    public void onSignalReceived(Session session, String type, String data, Connection connection) {
 
-    boolean remote = !connection.equals(session.getConnection());
-    if (type != null && type.equals(SIGNAL_TYPE)) {
-        showMessage(data, remote);
+        boolean remote = !connection.equals(session.getConnection());
+        if (type != null && type.equals(SIGNAL_TYPE)) {
+            showMessage(data, remote);
+        }
     }
-}
+};
 ```
 
 ## Further Reading

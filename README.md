@@ -1,9 +1,10 @@
 This repository provides some examples for you to understand better the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
 
-> OpenTok credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` files of each project. For the sample applications, credentials can be retrieved from the [Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application. For a production environment server should provide the credentials. To quickly set up the server, see the [server sample application](https://github.com/opentok/learning-opentok-php) and [Basic-Video-Chat project](/Basic-Video-Chat).
+## Credentials
 
-Feel free to copy and modify the source code herein for your projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
+You will need a valid [TokBox account](https://tokbox.com/account/user/signup) for most of the samples. OpenTok credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` class. For these sample applications, credentials can be retrieved from the [Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application, however for a production environment server should provide these credentials (check [Basic-Video-Chat](/Basic-Video-Chat) project). 
 
+> Note: To facilitate testing connect to the session using [OpenTok Playground](https://tokbox.com/developer/tools/playground/) (web client).
 
 ## What's Inside
 
@@ -17,7 +18,7 @@ This app provides a completed version of the [OpenTok Archiving tutorial](https:
 
 ### Simple Multiparty
 
-This app shows how to implement a simple video call application with several clients ([More](/Simple-Multiparty)).
+This app shows how to implement a simple video call application with several clients. It demonstrates how to enable/disable audio and video as well as swap the camera. ([More](/Simple-Multiparty)).
 
 ### Multiparty Constraint Layout
 
@@ -69,12 +70,14 @@ This app shows how to use Google ARCore with Opentok ([More](/ARCore-Integration
 
 ## Development and Contributing
 
-Interested in contributing? We :heart: pull requests! See the 
+Feel free to copy and modify the source code herein for your projects. Please consider sharing your modifications with us, especially if they might benefit other developers using the OpenTok Android SDK. See the [License](LICENSE) for more information.
+
+Interested in contributing? You :heart: pull requests! See the 
 [Contribution](CONTRIBUTING.md) guidelines.
 
 ## Getting Help
 
-We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+You love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
 
 - Open an issue on this repository
 - See <https://support.tokbox.com/> for support options

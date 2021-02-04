@@ -75,7 +75,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
                 if (frame == null) {
                     VideoUtils.Size resolution = new VideoUtils.Size();
                     resolution = getPreferredResolution();
-                    fps = getPreferredFramerate();
+                    fps = getPreferredFrameRate();
                     width = resolution.width;
                     height = resolution.height;
                     frame = new int[width * height];
@@ -223,18 +223,18 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         VideoUtils.Size resolution = new VideoUtils.Size();
         resolution = getPreferredResolution();
 
-        int framerate = getPreferredFramerate();
+        int frameRate = getPreferredFrameRate();
 
         if (camera != null) {
             settings = new CaptureSettings();
             configureCaptureSize(resolution.width, resolution.height);
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = captureWidth;
             settings.height = captureHeight;
             settings.format = NV21;
             settings.expectedDelay = 0;
         } else {
-            settings.fps = framerate;
+            settings.fps = frameRate;
             settings.width = resolution.width;
             settings.height = resolution.height;
             settings.format = ARGB;
@@ -396,8 +396,7 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
                             captureHeight, currentRotation, isFrontCamera(), framemetadata);
                 }
                 else {
-                    provideByteArrayFrame(data, NV21, captureWidth,
-                            captureHeight, currentRotation, isFrontCamera());
+                    provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
                 }
 
                 // Give the video buffer to the camera service again.
@@ -449,33 +448,33 @@ public class CustomVideoCapturer extends BaseVideoCapturer implements
         return resolution;
     }
 
-    private int getPreferredFramerate() {
+    private int getPreferredFrameRate() {
 
-        int framerate = 0;
+        int frameRate = 0;
 
         switch (this.preferredFramerate) {
             case FPS_30:
-                framerate = 30;
+                frameRate = 30;
                 break;
             case FPS_15:
-                framerate = 15;
+                frameRate = 15;
                 break;
             case FPS_7:
-                framerate = 7;
+                frameRate = 7;
                 break;
             case FPS_1:
-                framerate = 1;
+                frameRate = 1;
                 break;
             default:
                 break;
         }
 
-        return framerate;
+        return frameRate;
     }
 
     private void configureCaptureSize(int preferredWidth, int preferredHeight) {
         List<Size> sizes = null;
-        int preferredFramerate = getPreferredFramerate();
+        int preferredFramerate = getPreferredFrameRate();
         try {
             Camera.Parameters parameters = camera.getParameters();
             sizes = parameters.getSupportedPreviewSizes();

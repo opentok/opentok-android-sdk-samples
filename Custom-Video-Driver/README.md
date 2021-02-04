@@ -1,40 +1,35 @@
 # Custom Video Driver
 
 This app shows how to use both a custom video capturer and redender (custom video driver). While most applications will work fine with the default capturer (and therefore won't require an understanding of how the custom video driver work), if you need to add custom effects, then this is where you should start.
-
-> Note: If you aren't familiar with setting up a basic video chat application, you should do that first. Check out the [Basic-Video-Chat](../Basic-Video-Chat) project and [accompanying tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/).
-
 ## Using a custom video capturer
 
-The `MainActivity` class shows how you can use a custom video capturer for a publisher. After
-instantiating a Publisher object, the code sets a custom video capturer by calling the
-`setCapturer(BaseVideoCapturer capturer)` method of the Publisher:
+After instantiating a Publisher object, the code sets a custom video capturer by calling the `setCapturer(BaseVideoCapturer capturer)` method of the Publisher:
 
 ```java
-publisher = new Publisher(this, "publisher");
-publisher.setPublisherListener(publisherListener);
-publisher.setCapturer(new CustomVideoCapturer(this));
+CustomVideoCapturer customVideoCapturer = new CustomVideoCapturer(
+                    MainActivity.this,
+                    Publisher.CameraCaptureResolution.MEDIUM,
+                    Publisher.CameraCaptureFrameRate.FPS_30);
+            
+publisher = new Publisher.Builder(MainActivity.this)
+        .capturer(customVideoCapturer)
+        .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+        .build();
 ```
 
-The `CustomVideoCapturer` class is defined in the `com.opentok.android.samples.custom_video_driver` package.
-This class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
+The `CustomVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
 The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
 
 ```java
 @Override
-public CaptureSettings getCaptureSettings() {
-
-    // Set the preferred capturing size
-    configureCaptureSize(PREFERRED_CAPTURE_WIDTH, PREFERRED_CAPTURE_HEIGHT);
-
+public synchronized CaptureSettings getCaptureSettings() {
     CaptureSettings settings = new CaptureSettings();
-    settings.fps = mCaptureFPS;
-    settings.width = mCaptureWidth;
-    settings.height = mCaptureHeight;
-    settings.format = NV21;
+    settings.fps = desiredFps;
+    settings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
+    settings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
+    settings.format = BaseVideoCapturer.NV21;
     settings.expectedDelay = 0;
-    
     return settings;
 }
 ```
@@ -48,27 +43,27 @@ available. In this method, the app calls the `provideByteArrayFrame()` method of
 provides a video frame, defined as a byte array, to the video capturer:
 
 ```java
-provideByteArrayFrame(data, NV21, mCaptureWidth, mCaptureHeight, currentRotation, isFrontCamera());
+provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());
 ```
 
 The publisher adds this video frame to the published stream.
 
 ## Using a custom video renderer
 
-The `MainActivity` class shows how you can use a custom video renderer for publisher and
+You can use a custom video renderer for publisher and
 subscriber videos. In this sample we will use a custom video renderer which inverts all colors
 in the image.
 
 After instantiating a Publisher object, the code sets a custom video renderer by calling the `setRenderer(BaseVideoRenderer renderer)` method of the Publisher:
 
 ```java
-publisher = new Publisher(this, "publisher");
-publisher.setPublisherListener(publisherListener);
-publisher.setRenderer(new InvertedColorsVideoRenderer(this));
+publisher = new Publisher.Builder(MainActivity.this)
+        .capturer(customVideoCapturer)
+        .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+        .build();
 ```
 
-The `InvertedColorsVideoRenderer` class is defined in the `com.opentok.android.samples.customvideodriver`
-package. This class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
+The `InvertedColorsVideoRenderer` extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
 The `InvertedColorsVideoRenderer` class includes a `MyRenderer` subclass that implements `GLSurfaceView.Renderer`.
 This class includes a `displayFrame()` method that renders a frame of video to an Android view.
 
@@ -83,9 +78,10 @@ This method is called at the specified frame rate. It then calls the `displayFra
 the M`yVideoRenderer` instance:
 
 ```java
+@Override
 public void onFrame(Frame frame) {
-    mRenderer.displayFrame(frame);
-    mView.requestRender();
+    renderer.displayFrame(frame);
+    view.requestRender();
 }
 ```
 
@@ -94,10 +90,12 @@ shader to produce the inverted color effect, more precisely this is achieved by 
 inside the `fragmentShaderCode` String.
 
 ```java
-"y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+"y=1.0-1.1643*(y-0.0625);\n"
 ```
 
 ## Further Reading
 
 * Review [other sample projects](../)
+* Review [Basic-Video-Capturer](../Basic-Video-Capturer)
+* Review [Basic-Video-Renderer](../Basic-Video-Renderer)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)

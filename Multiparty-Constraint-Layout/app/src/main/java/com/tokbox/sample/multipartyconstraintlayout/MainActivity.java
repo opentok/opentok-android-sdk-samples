@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void startPublisherPreview() {
-        publisher = new Publisher.Builder(this).name("publisher").build();
+        publisher = new Publisher.Builder(this).build();
         publisher.setPublisherListener(publisherListener);
         publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
         publisher.startPreview();

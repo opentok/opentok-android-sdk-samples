@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the app bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         this.menu = menu;
         return true;
@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
+        // Handle app bar item clicks here. The app bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
