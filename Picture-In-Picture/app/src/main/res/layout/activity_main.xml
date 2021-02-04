@@ -10,10 +10,9 @@
         android:layout_height="fill_parent">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/picture_in_picture_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="pipActivity"
             android:text="Enter Picture-In-Picture"/>
 
         <FrameLayout

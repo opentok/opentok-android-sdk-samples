@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Rational;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.Session;
@@ -32,6 +32,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
 
     private FrameLayout subscriberViewContainer;
     private FrameLayout publisherViewContainer;
+    private Button pictureInPictureButton;
 
     private Session.SessionListener sessionListener = new Session.SessionListener() {
         @Override
@@ -89,6 +90,18 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
 
         subscriberViewContainer = findViewById(R.id.subscriber_container);
         publisherViewContainer = findViewById(R.id.publisher_container);
+        pictureInPictureButton = findViewById(R.id.picture_in_picture_button);
+
+        pictureInPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PictureInPictureParams params = new PictureInPictureParams.Builder()
+                        .setAspectRatio(new Rational(9, 16)) // Portrait Aspect Ratio
+                        .build();
+
+                enterPictureInPictureMode(params);
+            }
+        });
 
         String[] perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
@@ -99,12 +112,12 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
 
         if (isInPictureInPictureMode) {
-            findViewById(R.id.button).setVisibility(View.GONE);
+            pictureInPictureButton.setVisibility(View.GONE);
             publisherViewContainer.setVisibility(View.GONE);
             publisher.getView().setVisibility(View.GONE);
             getActionBar().hide();
         } else {
-            findViewById(R.id.button).setVisibility(View.VISIBLE);
+            pictureInPictureButton.setVisibility(View.VISIBLE);
             publisherViewContainer.setVisibility(View.VISIBLE);
             publisher.getView().setVisibility(View.VISIBLE);
             if (publisher.getView() instanceof GLSurfaceView) {
@@ -112,14 +125,6 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
             }
             getActionBar().show();
         }
-    }
-
-    public void pipActivity(View view) {
-        PictureInPictureParams params = new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(9, 16)) // Portrait Aspect Ratio
-                .build();
-
-        enterPictureInPictureMode(params);
     }
 
     @Override
