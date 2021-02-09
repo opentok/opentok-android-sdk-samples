@@ -21,14 +21,14 @@
 
         <FrameLayout
                 android:id="@+id/publisher_container"
-                android:layout_width="@dimen/publisher_width"
-                android:layout_height="@dimen/publisher_height"
+                android:layout_width="90dp"
+                android:layout_height="120dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginEnd="@dimen/publisher_right_margin"
-                android:layout_marginRight="@dimen/publisher_end_margin"
-                android:layout_marginBottom="@dimen/publisher_bottom_margin"
-                android:background="@color/publisher_border_color"
-                android:padding="@dimen/publisher_padding" />
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#CCCCCC"
+                android:padding="2dp" />
 
     </FrameLayout>
 

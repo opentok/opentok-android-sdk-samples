@@ -18,9 +18,7 @@ import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {

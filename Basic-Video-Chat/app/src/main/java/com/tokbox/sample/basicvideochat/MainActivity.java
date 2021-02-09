@@ -22,7 +22,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
+            finishWithMessage("PublisherKit onError: " + opentokError.getMessage());
         }
     };
 
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            finishWithMessage("SubscriberKit error: " + opentokError.getMessage());
+            finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
         }
     };
 
