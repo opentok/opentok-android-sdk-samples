@@ -1,72 +1,36 @@
-This repository provides some examples for you to understand better the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). For details on the full OpenTok Android API, see the [reference documentation](https://tokbox.com/opentok/libraries/client/android/reference/index.html).
+# Opentok Android SDK Samples
 
-## Credentials
+_See instructions below in order to [open project](#open-project) and [set up credentials](#set-up-credentials)._
 
-You will need a valid [TokBox account](https://tokbox.com/account/user/signup) for most of the samples. OpenTok credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` class. For these sample applications, credentials can be retrieved from the [Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application, however for a production environment server should provide these credentials (check [Basic-Video-Chat](/Basic-Video-Chat) project). 
+The Android projects in this directory demonstrate typical use cases with and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). They include:
 
-> Note: To facilitate testing connect to the session using [OpenTok Playground](https://tokbox.com/developer/tools/playground/) (web client).
+- [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to startz
+- [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable stream audio/video and how to swap camera
+- [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use ConstraintLayout to position all the videos in a multiparty session
+- [Signaling](./Signaling) demonstrates how to send text messages
+- [Archiving](./Archiving) demonstrates how to OpenTok server to start, stop, and playback recordings of the session
+- [Frame-Metadata](./Frame-Metadata) demonstrates how to send\retrieve additional metadata associated with each video frame
+- [Basic-Video-Capturer](./Basic-Video-Capturer) demonstrates how to create a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class
+- [Basic-Video-Capturer-Camera-2](./Basic-Video-Capturer-Camera-2) demonstrates how to create a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class
+- [Basic-Video-Renderer](./Basic-Video-Renderer) demonstrates how to create a custom video renderer
+- [Custom-Audio-Driver](./Custom-Audio-Driver) demonstrates how to create a custom audio driver
+- [Custom-Video-Driver](./Custom-Video-Driver) demonstrates how to create a custom video driver
+- [Live-Photo-Capture](./Live-Photo-Capture) demonstrates how to capture an image from a subscribed video stream
+- [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the “Picture-in-Picture” (PiP) mode
+- [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the device screen as the source
+- [ARCore-Integration](./ARCore-Integration) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
+## Open project
 
-## What's Inside
+1. Clone this repository `git@githubx.com:opentok/opentok-android-sdk-samples.git`
+2. Start [Android Studio](https://developer.android.com/studio)
+3. In the `Quick Start` panel, click `Open an existing Android Studio Project`
+4. Navigate to the repository folder, select the desired project subfolder, and click `Choose`
 
-### Basic Video Chat
+## Set up credentials
 
-This app provides a completed version of the [OpenTok Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/basic-video-chat/) for Android (with some minor validation checks added). It shows how to publish and subscribe to streams in a session. If you're just getting started with OpenTok, this is where you should start ([More](/Basic-Video-Chat)).
+You will need a valid [TokBox account](https://tokbox.com/account/user/signup) for most of the sample projects. OpenTok credentials (`API_KEY`, `SESSION_ID`, `TOKEN`) are stored inside `OpenTokConfig` class. For these sample applications, credentials can be retrieved from the [Dashboard](https://dashboard.tokbox.com/projects) and hardcoded in the application, however for a production environment server should provide these credentials (check [Basic-Video-Chat](/Basic-Video-Chat) project). 
 
-### Archiving (recording)
-
-This app provides a completed version of the [OpenTok Archiving tutorial](https://tokbox.com/developer/tutorials/android/archiving/) for Android (with some minor validation checks added). It uses an OpenTok server to start, stop, and playback recordings of your session ([More](/Archiving)). 
-
-### Simple Multiparty
-
-This app shows how to implement a simple video call application with several clients. It demonstrates how to enable/disable audio and video as well as swap the camera. ([More](/Simple-Multiparty)).
-
-### Multiparty Constraint Layout
-
-This app shows how to use Android SDK ConstraintLayout to position all the video views of several participants in a multiparty session ([More](/Multiparty-Constraint-Layout)).
-
-### Screen Sharing
-
-This app shows how to publish a screen-sharing video, using the device screen as the source for the stream's video ([More](/Screen-Sharing)).
-
-### Live Photo Capture
-
-This app shows how to capture an image from a subscribed video stream ([More](/Live-Photo-Capture)).
-
-### Basic Video Renderer
-
-This app shows how to use a custom video redender ([More](/Basic-Video-Renderer)).
-
-### Custom Video Driver
-
-This app shows how to use both a custom video capturer and a custom video redender ([More](/Custom-Video-Driver)).
-
-### Basic Video Capturer
-
-This app shows how to use a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class deprecated in API level 21 ([More](/Basic-Video-Capturer)).
-
-### Basic Video Capturer Camera 2
-
-This app shows how to use a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class. ([More](/Basic-Video-Capturer-Camera-2)).
-
-### Custom Audio Driver
-
-This app shows how to use the audio driver API to implement a custom audio capturer and player. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here ([More](/Custom-Audio-Driver)).
-
-### Picture In Picture
-
-This app shows how to use the “Picture-in-Picture” (PiP) mode to be able to continue seeing the video of a OpenTok session while navigating between apps or browsing content on the main screen of your phone ([More](/Picture-In-Picture)).
-
-### Signaling
-
-This app shows how to utilize the OpenTok signaling API to send text messages to other clients connected to the OpenTok session ([More](/Signaling)).
-
-### Frame Metadata
-
-This app shows how to send\retrieve additional metadata associated with each video frame ([More](/Frame-Metadata)).
-
-### ARCore Integration
-
-This app shows how to use Google ARCore with Opentok ([More](/ARCore-Integration)).
+> Note: To facilitate testing connect to the same session using [OpenTok Playground](https://tokbox.com/developer/tools/playground/) (web client).
 
 ## Development and Contributing
 
@@ -84,6 +48,4 @@ You love to hear from you so if you have questions, comments or find a bug in th
 - Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
 - Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
 
-## Further Reading
 
-Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
