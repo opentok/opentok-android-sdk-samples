@@ -2,7 +2,7 @@
 
 _See instructions below in order to [open project](#open-project) and [set up credentials](#set-up-credentials)._
 
-The Android projects in this directory demonstrate typical use cases with and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). They include:
+The Android projects in this directory demonstrate typical use cases and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/):
 
 - [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to startz
 - [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable stream audio/video and how to swap camera
