@@ -119,11 +119,6 @@ fun checkMainActivity(projectDirectoryName: String) {
 fun checkTopLevelReadmeContainsProject(projectDirectoryName: String) {
     val filePath = "README.md"
     val file = File(filePath)
-    val titleCaseProjectName = getTitleCaseProjectName(projectDirectoryName)
-
-    if(!file.contains(titleCaseProjectName)) {
-        addError(projectDirectoryName, "$filePath file do not contain project title")
-    }
 
     if(!file.contains(projectDirectoryName)) {
         addError(projectDirectoryName, "$filePath file do not contain project link")
@@ -231,14 +226,6 @@ fun getProjectPackagePath(projectDirectoryName: String): String {
  * Output: projectname
  */
 fun getRawProjectName(projectDirectoryName: String) = projectDirectoryName.replace("-", "").toLowerCase();
-
-/**
- * Converts project name
- * e.g.
- * Input: Project-Name
- * Output: Project Name
- */
-fun getTitleCaseProjectName(projectDirectoryName: String) = projectDirectoryName.replace("-", " ");
 
 /**
 Check if file contains given string
