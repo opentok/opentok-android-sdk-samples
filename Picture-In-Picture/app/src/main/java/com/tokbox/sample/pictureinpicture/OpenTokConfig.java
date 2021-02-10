@@ -4,8 +4,10 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 public class OpenTokConfig {
-    // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
-    // ***                      https://dashboard.tokbox.com/projects                           ***
+    /*
+    Fill the following variables using your own Project info from the OpenTok dashboard
+    https://dashboard.tokbox.com/projects
+    */
 
     public static final String API_KEY = "";
     // Replace with a generated Session ID
