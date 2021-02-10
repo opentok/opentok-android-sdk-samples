@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            finishWithMessage("SubscriberKit error: " + opentokError.getMessage());
+            finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
         }
     };
 

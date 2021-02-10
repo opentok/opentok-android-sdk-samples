@@ -1,14 +1,16 @@
 # Opentok Android SDK Samples
 
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
+
 _See instructions below in order to [open project](#open-project) and [set up credentials](#set-up-credentials)._
 
 The Android projects in this directory demonstrate typical use cases and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/):
 
 - [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to startz
 - [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable stream audio/video and how to swap camera
-- [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use ConstraintLayout to position all the videos in a multiparty session
+- [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use [ConstraintLayout](https://developer.android.com/training/constraint-layout) to position all the videos in a multiparty session
 - [Signaling](./Signaling) demonstrates how to send text messages
-- [Archiving](./Archiving) demonstrates how to OpenTok server to start, stop, and playback recordings of the session
+- [Archiving](./Archiving) demonstrates how to utilize OpenTok server to start, stop, and playback session recordings
 - [Frame-Metadata](./Frame-Metadata) demonstrates how to send\retrieve additional metadata associated with each video frame
 - [Basic-Video-Capturer](./Basic-Video-Capturer) demonstrates how to create a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class
 - [Basic-Video-Capturer-Camera-2](./Basic-Video-Capturer-Camera-2) demonstrates how to create a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class
@@ -16,7 +18,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - [Custom-Audio-Driver](./Custom-Audio-Driver) demonstrates how to create a custom audio driver
 - [Custom-Video-Driver](./Custom-Video-Driver) demonstrates how to create a custom video driver
 - [Live-Photo-Capture](./Live-Photo-Capture) demonstrates how to capture an image from a subscribed video stream
-- [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the “Picture-in-Picture” (PiP) mode
+- [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
 - [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the device screen as the source
 - [ARCore-Integration](./ARCore-Integration) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
 ## Open project

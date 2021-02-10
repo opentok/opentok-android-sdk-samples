@@ -1,6 +1,6 @@
 plugins {
-  id 'com.android.application'
-  id 'com.google.ar.sceneform.plugin'
+    id 'com.android.application'
+    id 'com.google.ar.sceneform.plugin'
 }
 
 apply {
@@ -26,26 +26,26 @@ android {
     versionName extVersionName
   }
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-
   buildTypes {
     release {
       minifyEnabled extMinifyEnabled
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+
+  compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
   // Dependency versions are defined in the ../../commons.gradle file
-  implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
-  implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
-  implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
-  implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
-  implementation "com.google.ar:core:${extArCoreVersion}"
-  implementation "com.google.ar.sceneform.ux:sceneform-ux:${extSceneFormVersion}"
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
+    implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
+    implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
+    implementation "com.google.ar:core:${extArCoreVersion}"
+    implementation "com.google.ar.sceneform.ux:sceneform-ux:${extSceneFormVersion}"
 }
 
