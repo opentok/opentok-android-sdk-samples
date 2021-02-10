@@ -191,7 +191,7 @@ fun checkProperty(projectDirectoryName: String, file: File, propertyName: String
 
     file.readLines().forEach {
         if(it.contains(propertyLine) && !it.contains("\"\"")) {
-            addError(projectDirectoryName, "Opentok config property is not empty: $it")
+            addError(projectDirectoryName, "Config property $propertyName is not empty $file")
         }
     }
 }

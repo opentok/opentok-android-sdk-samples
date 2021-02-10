@@ -5,8 +5,13 @@ import android.webkit.URLUtil;
 import androidx.annotation.NonNull;
 
 public class OpenTokConfig {
-    // *** Fill the following variables using your own Project info from the OpenTok dashboard  ***
-    // ***                      https://dashboard.tokbox.com/projects                           ***
+    /*
+    Fill the following variables using your own Project info from the OpenTok dashboard
+    https://dashboard.tokbox.com/projects
+
+    Note that this application will ignore credentials in the `OpenTokConfig` file when `CHAT_SERVER_URL` contains a
+    valid URL.
+    */
 
     // Replace with your OpenTok API key
     public static final String API_KEY = "";

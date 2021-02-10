@@ -4,19 +4,22 @@ This application provides a completed version of the [OpenTok Archiving tutorial
 ## Deploy a sample backend web service
 Recording archives are stored on OpenTok cloud (not on the user device), so we'll need to set up a web service that communicates with OpenTok cloud to start and stop archiving.
 
-In order to archive OpenTok sessions, you need to have a server set up. There are many ways to implement archiving with a server, but for this tutorial we'll be quick-launching a [simple PHP server](https://github.com/opentok/learning-opentok-php). To launch the server, simply click the Heroku button below, at which point you'll be sent to Heroku's website and prompted for your OpenTok API Key and API Secret — you can get these values on your project page in your [TokBox account](https://tokbox.com/account/user/signup). If you don't have a Heroku account, you'll need to sign up (it's free).
+In order to archive OpenTok sessions, you need to have a server set up (hardcoded session information will not work for archiving). To quickly deploy a pre-built server click at one of the Heroku buttons below. You'll be sent to Heroku's website and prompted for your OpenTok `API Key` and `API Secret` — you can obtain these values on your project page in your [TokBox account](https://tokbox.com/account/user/signup). If you don't have a Heroku account, you'll need to sign up (it's free).
 
-<a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-php" target="_blank">
-  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
-</a>
+| PHP server  | Node.js server|
+| ------------- | ------------- |
+| <a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-php" target="_blank"> <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>  | <a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-node" target="_blank"> <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>  |
+| [Repository](https://github.com/opentok/learning-opentok-php) | [Repository](https://github.com/opentok/learning-opentok-node) |
 
-This sample web service provides a RESTful interface to interact with archiving controls.
+This sample web service provides a RESTful interface to interact with archiving controls. 
+
+> Note: You can also build your server from scratch using one of the the [server SDKs](https://tokbox.com/developer/sdks/server/).
 
 ## Configure the app to use your web service
-Open the `ServerConfig.java` file and configure the `CHAT_SERVER_URL` string to your web service domain:
+After deploying the server open the `ServerConfig` file in this project and configure the `CHAT_SERVER_URL` with your domain to fetch credentials from the server:
 
 ```java
-public static final String CHAT_SERVER_URL = "";
+public static final String CHAT_SERVER_URL = "https://YOURAPPNAME.herokuapp.com";
 ```
 
 ## Start archiving
