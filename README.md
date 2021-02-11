@@ -2,16 +2,16 @@
 
 <img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
-_See instructions below in order to [open project](#open-project) and [set up credentials](#set-up-credentials)._
+_Check documentation to understand [Video API basic concepts](https://tokbox.com/developer/guides/basics/). See instructions below in order to [open Android project](#open-project) and [set up the credentials](#set-up-credentials)._
 
 The Android projects in this directory demonstrate typical use cases and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/):
 
 - [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to startz
-- [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable stream audio/video and how to swap camera
+- [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable audio/video streams and how to swap camera
 - [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use [ConstraintLayout](https://developer.android.com/training/constraint-layout) to position all the videos in a multiparty session
 - [Signaling](./Signaling) demonstrates how to send text messages
 - [Archiving](./Archiving) demonstrates how to utilize OpenTok server to start, stop, and playback session recordings
-- [Frame-Metadata](./Frame-Metadata) demonstrates how to send\retrieve additional metadata associated with each video frame
+- [Frame-Metadata](./Frame-Metadata) demonstrates how to send and receive additional metadata associated with each video frame
 - [Basic-Video-Capturer](./Basic-Video-Capturer) demonstrates how to create a custom video capturer using [Camera](https://developer.android.com/reference/android/hardware/Camera) class
 - [Basic-Video-Capturer-Camera-2](./Basic-Video-Capturer-Camera-2) demonstrates how to create a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class
 - [Basic-Video-Renderer](./Basic-Video-Renderer) demonstrates how to create a custom video renderer

@@ -1,6 +1,6 @@
 # Frame Meta Data
 
-This app shows how to send\retrieve additional metadata associated with each video frame.
+This app shows how to send and receive additional metadata associated with each video frame.
 ## Using a custom video capturer
 
 You can use a custom video capturer for a publisher. After
