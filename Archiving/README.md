@@ -13,7 +13,7 @@ In order to archive OpenTok sessions, you need to have a server set up (hardcode
 
 This sample web service provides a RESTful interface to interact with archiving controls. 
 
-> Note: You can also build your server from scratch using one of the the [server SDKs](https://tokbox.com/developer/sdks/server/).
+> Note: You can also build your server from scratch using one of the [server SDKs](https://tokbox.com/developer/sdks/server/).
 
 ## Configure the app to use your web service
 After deploying the server open the `ServerConfig` file in this project and configure the `CHAT_SERVER_URL` with your domain to fetch credentials from the server:
@@ -22,9 +22,25 @@ After deploying the server open the `ServerConfig` file in this project and conf
 public static final String CHAT_SERVER_URL = "https://YOURAPPNAME.herokuapp.com";
 ```
 
+The endpoints of the web service the app calls to start archive recording, stop recording, and play back the recorded video are defined in `APIService` interface:
+
+```
+public interface APIService {
+    @GET("session")
+    Call<GetSessionResponse> getSession();
+
+    @POST("archive/start")
+    @Headers("Content-Type: application/json")
+    Call<Void> startArchive(@Body StartArchiveRequest startArchiveRequest);
+
+    @POST("archive/{archiveId}/stop")
+    Call<Void> stopArchive(@Path("archiveId") String archiveId);
+}
+```
+
 ## Start archiving
 
-When the user clicks stat archieve `startArchive` method is called and request is fired to the server:
+When the user clicks the `start archive` button, the app calls `archive/start` endpoint via `startArchive` method:
 
 ```java
 private void startArchive() {
@@ -41,7 +57,7 @@ private void startArchive() {
 }
 ```
 
-SDK notifies application about recording start via `onArchiveStarted()` callback (defined in `Session.ArchiveListener` interface):
+When archive recording starts, the `onArchiveStarted` callback is triggered:
 
 ```java
 @Override
@@ -52,10 +68,11 @@ public void onArchiveStarted(Session session, String archiveId, String archiveNa
 }
 ```
 
+The `onArchiveStarted` method stores the archive identifier in a `currentArchiveId` property. The method also calls the `setStopArchiveEnabled(true)` method, which causes the `stop recording` menu item to be displayed. And it causes the `archivingIndicatorView` to be displayed (red dot on the video).
 
 ## Stop archiving
 
-When the user clicks stop archieve `stopArchive` method is called and request is fired to the server:
+When the user clicks the `stop archive` button, the app calls `archive/stp` endpoint via `startArchive` method:
 
 ```java
 private void stopArchive() {
@@ -67,7 +84,7 @@ private void stopArchive() {
 }
 ```
 
-SDK notifies application about recording stop via `onArchiveStopped()` callback (defined in `Session.ArchiveListener` interface):
+When archive recording stops, the `onArchiveStopped` callback is triggered:
 
 ```java
 @Override
@@ -80,8 +97,12 @@ public void onArchiveStopped(Session session, String archiveId) {
 }
 ```
 
-The method stores the archive ID (identifying the archive) to a `playableArchiveId` property.
-## View archives
+The `onArchiveStopped` method stores the archive identifier to a `playableArchiveId` property
+and sets `currentArchiveId` to `null`. The method also calls the `setPlayArchiveEnabled(false)`
+method, which disables the Play Archive menu item, and it calls `setStartArchiveEnabled(true)` to
+enable the Start Archive menu item. And it causes the `archivingIndicatorView` to be hidden.
+
+## Viewing recorded archives
 
 When the user clicks the play archive button, the `playArchive()` method opens a web page (in the device's web browser) that displays the archive recording:
 
