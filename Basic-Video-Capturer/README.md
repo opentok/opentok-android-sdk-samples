@@ -1,14 +1,14 @@
 # Basic Video Capturer Camera
 
-Sample app shows how to use the custom video capturer using the [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) package. 
+Sample app shows how to use device camera as the video source with the custom video capturer using the [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) package. 
 
 > [Camera](https://developer.android.com/reference/android/hardware/camera/package-summary) class was deprecated in API level 21. Please check [Basic Video Capturer Camera 2](../Basic-Video-Capturer-Camera-2) project for more up to date implementation. 
 
 > Note: Check [Custom Video Driver](../Custom-Video-Driver) project to see how to use custom video capturer and custom video renderer together.
 
 A custom video capturer will be helpful when:
-- streaming any content other than the one coming from the device camera, e.g. streaming content of a particular view's game or content.
-- modifying the camera stream content - image composition (adding watermark logo) or image processing (removing the background or putting a virtual hat on the user).
+- modifying the camera stream content - image composition (adding watermark logo) or image processing (mirroring the video, removing the background or putting a virtual hat on the user).
+- streaming any content other than the one coming from the device camera, e.g. streaming content of a particular view's game or content (check [Screen-Sharing](../Screen-Sharing) project).
 
 ## Using a custom video capturer
 
@@ -26,15 +26,14 @@ publisher = new Publisher.Builder(MainActivity.this)
 
 ```
 
-The `CustomVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
-The `getCaptureSettings` method returns the settings of the video capturer, including the frame
+The `CustomVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK. The `getCaptureSettings` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
 
 ```java
 @Override
 public CaptureSettings getCaptureSettings() {
 
-    CaptureSettings settings = new CaptureSettings();
+    CaptureSettings captureSettings = new CaptureSettings();
 
     VideoUtils.Size resolution = new VideoUtils.Size();
     resolution = getPreferredResolution();
@@ -44,16 +43,16 @@ public CaptureSettings getCaptureSettings() {
     if (camera != null) {
         settings = new CaptureSettings();
         configureCaptureSize(resolution.width, resolution.height);
-        settings.fps = frameRate;
-        settings.width = captureWidth;
-        settings.height = captureHeight;
-        settings.format = NV21;
-        settings.expectedDelay = 0;
+        captureSettings.fps = frameRate;
+        captureSettings.width = captureWidth;
+        captureSettings.height = captureHeight;
+        captureSettings.format = NV21;
+        captureSettings.expectedDelay = 0;
     } else {
-        settings.fps = frameRate;
-        settings.width = resolution.width;
-        settings.height = resolution.height;
-        settings.format = ARGB;
+        captureSettings.fps = frameRate;
+        captureSettings.width = resolution.width;
+        captureSettings.height = resolution.height;
+        captureSettings.format = ARGB;
     }
 
     return settings;

@@ -6,7 +6,7 @@ _Check documentation to understand [Video API basic concepts](https://tokbox.com
 
 The Android projects in this directory demonstrate typical use cases and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/):
 
-- [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to startz
+- [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to start
 - [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable audio/video streams and how to swap camera
 - [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use [ConstraintLayout](https://developer.android.com/training/constraint-layout) to position all the videos in a multiparty session
 - [Signaling](./Signaling) demonstrates how to send text messages
@@ -19,7 +19,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - [Custom-Video-Driver](./Custom-Video-Driver) demonstrates how to create a custom video driver
 - [Live-Photo-Capture](./Live-Photo-Capture) demonstrates how to capture an image from a subscribed video stream
 - [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
-- [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the device screen as the source
+- [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the WebView as the source
 - [ARCore-Integration](./ARCore-Integration) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
 ## Open project
 

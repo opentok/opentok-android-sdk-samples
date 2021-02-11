@@ -56,10 +56,8 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
     private boolean blackFrames = false;
     private boolean isCapturePaused = false;
 
-    private Publisher.CameraCaptureResolution preferredResolution =
-            Publisher.CameraCaptureResolution.MEDIUM;
-    private Publisher.CameraCaptureFrameRate preferredFramerate =
-            Publisher.CameraCaptureFrameRate.FPS_30;
+    private Publisher.CameraCaptureResolution preferredResolution = Publisher.CameraCaptureResolution.MEDIUM;
+    private Publisher.CameraCaptureFrameRate preferredFrameRate = Publisher.CameraCaptureFrameRate.FPS_30;
 
     //default case
     int fps = 1;
@@ -92,10 +90,9 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         this.cameraIndex = getCameraIndexUsingFront(true);
 
         // Get current display to query UI orientation
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         currentDisplay = windowManager.getDefaultDisplay();
-        this.preferredFramerate = fps;
+        this.preferredFrameRate = fps;
         this.preferredResolution = resolution;
     }
 
@@ -217,8 +214,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     @Override
     public CaptureSettings getCaptureSettings() {
-
-        CaptureSettings settings = new CaptureSettings();
+        CaptureSettings captureSettings = new CaptureSettings();
 
         VideoUtils.Size resolution = new VideoUtils.Size();
         resolution = getPreferredResolution();
@@ -226,21 +222,21 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         int frameRate = getPreferredFrameRate();
 
         if (camera != null) {
-            settings = new CaptureSettings();
+            captureSettings = new CaptureSettings();
             configureCaptureSize(resolution.width, resolution.height);
-            settings.fps = frameRate;
-            settings.width = captureWidth;
-            settings.height = captureHeight;
-            settings.format = NV21;
-            settings.expectedDelay = 0;
+            captureSettings.fps = frameRate;
+            captureSettings.width = captureWidth;
+            captureSettings.height = captureHeight;
+            captureSettings.format = NV21;
+            captureSettings.expectedDelay = 0;
         } else {
-            settings.fps = frameRate;
-            settings.width = resolution.width;
-            settings.height = resolution.height;
-            settings.format = ARGB;
+            captureSettings.fps = frameRate;
+            captureSettings.width = resolution.width;
+            captureSettings.height = resolution.height;
+            captureSettings.format = ARGB;
         }
 
-        return settings;
+        return captureSettings;
     }
 
     @Override
@@ -452,7 +448,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
         int frameRate = 0;
 
-        switch (this.preferredFramerate) {
+        switch (this.preferredFrameRate) {
             case FPS_30:
                 frameRate = 30;
                 break;

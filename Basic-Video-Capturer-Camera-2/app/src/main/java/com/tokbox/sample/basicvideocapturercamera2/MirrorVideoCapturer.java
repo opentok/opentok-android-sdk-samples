@@ -219,18 +219,17 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /* caching of camera characteristics & display orientation for performance */
     private static class CameraInfoCache {
-        private CameraCharacteristics   info;
-        private boolean                 frontFacing = false;
-        private int                     sensorOrientation = 0;
+        private CameraCharacteristics info;
+        private boolean frontFacing = false;
+        private int sensorOrientation = 0;
 
         public CameraInfoCache(CameraCharacteristics info) {
             info    = info;
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
-            frontFacing = info.get(CameraCharacteristics.LENS_FACING)
-                    == CameraCharacteristics.LENS_FACING_FRONT;
-            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
+            frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
+            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION);
         }
 
         public <T> T get(CameraCharacteristics.Key<T> key) {
@@ -270,14 +269,12 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    /* custom exceptions */
     public static class Camera2Exception extends RuntimeException {
         public Camera2Exception(String message) {
             super(message);
         }
     }
 
-    /* Constructors etc... */
     public MirrorVideoCapturer(Context context) {
         cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -449,13 +446,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        CaptureSettings settings = new CaptureSettings();
-        settings.fps = desiredFps;
-        settings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
-        settings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
-        settings.format = BaseVideoCapturer.NV21;
-        settings.expectedDelay = 0;
-        return settings;
+        CaptureSettings captureSettings = new CaptureSettings();
+        captureSettings.fps = desiredFps;
+        captureSettings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
+        captureSettings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
+        captureSettings.format = BaseVideoCapturer.NV21;
+        captureSettings.expectedDelay = 0;
+        return captureSettings;
     }
 
     /*
@@ -482,8 +479,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /*
      * Call this method when the activity resumes. When you override this method, implement code
-     * to respond to the activity being resumed. For example, you may resume capturing audio
-     * or video.
+     * to respond to the activity being resumed. For example, you may resume capturing audio or video.
      *
      * @see #onPause()
      */
