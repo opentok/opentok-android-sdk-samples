@@ -72,7 +72,7 @@ The `onArchiveStarted` method stores the archive identifier in a `currentArchive
 
 ## Stop archiving
 
-When the user clicks the `stop archive` button, the app calls `archive/stp` endpoint via `startArchive` method:
+When the user clicks the `stop archive` button, the app calls `archive/stop` endpoint via `startArchive` method:
 
 ```java
 private void stopArchive() {

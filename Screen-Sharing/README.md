@@ -21,8 +21,6 @@ class:
 ```java
 @Override
 public void onConnected(Session session) {
-    Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
     ScreenSharingCapturer screenSharingCapturer = new ScreenSharingCapturer(MainActivity.this, webViewContainer);
 
     publisher = new Publisher.Builder(MainActivity.this)

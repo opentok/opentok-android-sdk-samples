@@ -121,24 +121,25 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             program = GLES20.glCreateProgram(); // create empty OpenGL ES
+            
             // Program
             GLES20.glAttachShader(program, vertexShader); // add the vertex
+
             // shader to program
             GLES20.glAttachShader(program, fragmentShader); // add the fragment
+
             // shader to
             // program
             GLES20.glLinkProgram(program);
 
-            int positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
+            int positionHandle = GLES20.glGetAttribLocation(program,
+                    "aPosition");
 
-            int textureHandle = GLES20.glGetAttribLocation(program, "aTextureCoord");
+            int textureHandle = GLES20.glGetAttribLocation(program,
+                    "aTextureCoord");
 
-            GLES20.glVertexAttribPointer(
-                    positionHandle,
-                    COORDS_PER_VERTEX,
-                    GLES20.GL_FLOAT,
-                    false,
-                    COORDS_PER_VERTEX * 4,
+            GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX,
+                    GLES20.GL_FLOAT, false, COORDS_PER_VERTEX * 4,
                     vertexBuffer);
 
             GLES20.glEnableVertexAttribArray(positionHandle);
@@ -179,8 +180,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             GLES20.glTexImage2D(
                     GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE,
                     width, height, 0, GLES20.GL_LUMINANCE,
-                    GLES20.GL_UNSIGNED_BYTE, null
-            );
+                    GLES20.GL_UNSIGNED_BYTE, null);
         }
 
         void setupTextures(Frame frame) {
@@ -291,7 +291,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                     }
                 }
 
-                Matrix.scaleM(scaleMatrix, 0,
+               Matrix.scaleM(scaleMatrix, 0,
                         scaleX * (currentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
 
@@ -392,5 +392,4 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     public void onResume() {
         view.onResume();
     }
-
 }

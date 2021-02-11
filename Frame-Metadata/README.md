@@ -25,13 +25,10 @@ MirrorVideoCapturer capturer = new MirrorVideoCapturer(
                     Publisher.CameraCaptureResolution.MEDIUM,
                     Publisher.CameraCaptureFrameRate.FPS_30);
 
-capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
-    // metadata to be send
-    @Override
-    public byte[] retrieveMetadata() {
-        return getCurrentTimeStamp().getBytes();
-    }
-});
+capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.
+
+// metadata to be send
+mirrorVideoCapturer.setCustomVideoCapturerDataSource(() -> getCurrentTimeStamp().getBytes());
 ```
 
 Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame` method:
@@ -58,18 +55,17 @@ The `setInvertedColorsVideoRendererMetadataListener` method allows to retrieve i
 ```java
 InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
 
-renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
-    // Retrieved metadata
-    @Override
-    public void onMetadataReady(byte[] metadata) {
-        String timestamp = null;
-        try {
-            timestamp = new String(metadata, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(timestamp);
+// Retrieved metadata
+renderer.setMetadataListener(metadata -> {
+    String timestamp = null;
+
+    try {
+        timestamp = new String(metadata, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
     }
+
+    System.out.println(timestamp);
 });
 ```
 

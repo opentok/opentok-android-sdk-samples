@@ -10,8 +10,6 @@ there are multiple streams.
 ```java
 @Override
 public void onStreamReceived(Session session, Stream stream) {
-    Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
-
     final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
     session.subscribe(subscriber);
     addSubscriber(subscriber);

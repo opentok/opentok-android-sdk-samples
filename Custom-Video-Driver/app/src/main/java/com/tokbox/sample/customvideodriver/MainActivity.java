@@ -57,19 +57,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            CustomVideoCapturer customVideoCapturer = new CustomVideoCapturer(
-                    MainActivity.this,
-                    Publisher.CameraCaptureResolution.MEDIUM,
-                    Publisher.CameraCaptureFrameRate.FPS_30);
+            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(MainActivity.this);
+            InvertedColorsVideoRenderer invertedColorsVideoRenderer = new InvertedColorsVideoRenderer(MainActivity.this);
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .capturer(customVideoCapturer)
-                    .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+                    .capturer(mirrorVideoCapturer)
+                    .renderer(invertedColorsVideoRenderer)
                     .build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-            
+
             publisherViewContainer.addView(publisher.getView());
 
             if (publisher.getView() instanceof GLSurfaceView) {
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onDisconnected(Session session) {
             Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
 
-            session = null;
+            MainActivity.this.session = null;
         }
 
         @Override
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(!OpenTokConfig.isValid()) {
+        if (!OpenTokConfig.isValid()) {
             finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
             return;
         }
@@ -204,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        
+
         if (EasyPermissions.hasPermissions(this, perms)) {
             session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             session.setSessionListener(sessionListener);

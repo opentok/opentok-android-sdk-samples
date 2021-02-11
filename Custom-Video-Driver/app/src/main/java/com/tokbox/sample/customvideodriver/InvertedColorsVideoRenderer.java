@@ -144,9 +144,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
             GLES20.glEnableVertexAttribArray(positionHandle);
 
-            GLES20.glVertexAttribPointer(textureHandle,
-                    TEXTURE_COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                    TEXTURE_COORDS_PER_VERTEX * 4, textureBuffer);
+            GLES20.glVertexAttribPointer(
+                    textureHandle,
+                    TEXTURE_COORDS_PER_VERTEX,
+                    GLES20.GL_FLOAT,
+                    false,
+                    TEXTURE_COORDS_PER_VERTEX * 4,
+                    textureBuffer);
 
             GLES20.glEnableVertexAttribArray(textureHandle);
 
@@ -168,15 +172,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         static void initializeTexture(int name, int id, int width, int height) {
             GLES20.glActiveTexture(name);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE,
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+            GLES20.glTexImage2D(
+                    GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE,
                     width, height, 0, GLES20.GL_LUMINANCE,
                     GLES20.GL_UNSIGNED_BYTE, null);
         }
@@ -253,6 +255,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         }
 
         private InvertedColorsVideoRendererMetadataListener metadataListener;
+
         @Override
         public void onDrawFrame(GL10 gl) {
             gl.glClearColor(0, 0, 0, 1);
@@ -299,8 +302,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
                 GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, scaleMatrix, 0);
 
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length,
-                        GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+                GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
             } else {
                 //black frame when video is disabled
                 gl.glClearColor(0, 0, 0, 1);
@@ -311,6 +313,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
+
             this.currentFrame = frame;
             frameLock.unlock();
         }
@@ -389,5 +392,4 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     public void onResume() {
         view.onResume();
     }
-
 }

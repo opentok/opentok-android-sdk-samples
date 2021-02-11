@@ -35,22 +35,17 @@ public synchronized CaptureSettings getCaptureSettings() {
 }
 ```
 
-The app calls `startCameraCapture()` to start capturing video from the custom video capturer.
+The app calls `startCameraCapture` method to start capturing video from the custom video capturer.
 
 ```java
 public synchronized int startCapture() {
-    Log.d(TAG,"startCapture enter (cameraState: "+ cameraState +")");
-
     if (null != camera && CameraState.OPEN == cameraState) {
         return startCameraCapture();
     } else if (CameraState.SETUP == cameraState) {
-        Log.d(TAG,"camera not yet ready, queuing the start until camera is opened");
         executeAfterCameraOpened = () -> startCameraCapture();
     } else {
         throw new Camera2Exception("Start Capture called before init successfully completed");
     }
-
-    Log.d(TAG,"startCapture exit");
 
     return 0;
 }
