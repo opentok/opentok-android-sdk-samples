@@ -60,24 +60,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            // sendFrameMetaDataCapturer
-            SendFrameMetaDataCapturer sendFrameMetaDataCapturer = new SendFrameMetaDataCapturer(
-                    MainActivity.this,
-                    Publisher.CameraCaptureResolution.MEDIUM,
-                    Publisher.CameraCaptureFrameRate.FPS_30);
+            SendFrameMetaDataCapturer sendFrameMetaDataCapturer = new SendFrameMetaDataCapturer(MainActivity.this);
 
             // metadata to be send
-            sendFrameMetaDataCapturer.setCustomVideoCapturerDataSource(() -> {
+            sendFrameMetaDataCapturer.setCustomMetadataSource(() -> {
                 String timestamp = getCurrentTimeStamp();
                 Log.d(TAG, "timestamp send: " + timestamp);
                 return timestamp.getBytes();
             });
 
-            // renderer
-            ReceiveFrameMetaDataRenderer renderer = new ReceiveFrameMetaDataRenderer(MainActivity.this);
+            // receiveFrameMetaDataRenderer
+            ReceiveFrameMetaDataRenderer receiveFrameMetaDataRenderer = new ReceiveFrameMetaDataRenderer(MainActivity.this);
 
             // Retrieved metadata
-            renderer.setMetadataListener(metadata -> {
+            receiveFrameMetaDataRenderer.setCustomMetadataListener(metadata -> {
                 String timestamp = null;
 
                 try {
@@ -91,7 +87,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             publisher = new Publisher.Builder(MainActivity.this)
                     .capturer(sendFrameMetaDataCapturer)
-                    .renderer(renderer).build();
+                    .renderer(receiveFrameMetaDataRenderer)
+                    .build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);

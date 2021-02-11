@@ -117,7 +117,7 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         }
 
         if (camera != null) {
-            //check preferredResolution and preferredFramerate values
+            //check preferredResolution and preferredFrameRate values
             VideoUtils.Size resolution = getPreferredResolution();
             configureCaptureSize(resolution.width, resolution.height);
 
@@ -470,11 +470,11 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
 
     private void configureCaptureSize(int preferredWidth, int preferredHeight) {
         List<Size> sizes = null;
-        int preferredFramerate = getPreferredFrameRate();
+        int preferredFrameRate = getPreferredFrameRate();
         try {
             Camera.Parameters parameters = camera.getParameters();
             sizes = parameters.getSupportedPreviewSizes();
-            captureFpsRange = findClosestEnclosingFpsRange(preferredFramerate * 1000,
+            captureFpsRange = findClosestEnclosingFpsRange(preferredFrameRate * 1000,
                     parameters.getSupportedPreviewFpsRange());
 
         } catch (RuntimeException exp) {

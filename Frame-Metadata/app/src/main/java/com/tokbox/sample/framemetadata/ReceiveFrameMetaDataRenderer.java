@@ -26,8 +26,8 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
         void onMetadataReady(byte[] metadata);
     }
 
-    public void setMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
-        this.renderer.metadataListener = metadataListener;
+    public void setCustomMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
+        this.renderer.customMetadataListener = metadataListener;
     }
 
     static class MyRenderer implements GLSurfaceView.Renderer {
@@ -79,10 +79,7 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
                 + "  y=texture2D(Ytex,vec2(nx,ny)).r;\n"
                 + "  u=texture2D(Utex,vec2(nx,ny)).r;\n"
                 + "  v=texture2D(Vtex,vec2(nx,ny)).r;\n"
-
-                + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
-                // + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
-
+                + "  y=1.1643*(y-0.0625);\n"
                 + "  u=u-0.5;\n" + "  v=v-0.5;\n" + "  r=y+1.5958*v;\n"
                 + "  g=y-0.39173*u-0.81290*v;\n" + "  b=y+2.017*u;\n"
                 + "  gl_FragColor=vec4(r,g,b,1.0);\n" + "}\n";
@@ -254,7 +251,7 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
         }
 
 
-        private InvertedColorsVideoRendererMetadataListener metadataListener;
+        private InvertedColorsVideoRendererMetadataListener customMetadataListener;
         @Override
         public void onDrawFrame(GL10 gl) {
             gl.glClearColor(0, 0, 0, 1);
@@ -294,8 +291,8 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
                         scaleX * (currentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
 
-                if (metadataListener != null) {
-                    metadataListener.onMetadataReady(currentFrame.getMetadata());
+                if (customMetadataListener != null) {
+                    customMetadataListener.onMetadataReady(currentFrame.getMetadata());
                 }
 
                 int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
