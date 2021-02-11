@@ -23,11 +23,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     private MyRenderer renderer;
 
     public interface InvertedColorsVideoRendererMetadataListener {
-        public void onMetadataReady(byte[] metadata);
-    }
-
-    public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
-        this.renderer.metadataListener = metadataListener;
+        void onMetadataReady(byte[] metadata);
     }
 
     static class MyRenderer implements GLSurfaceView.Renderer {
@@ -125,10 +121,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             program = GLES20.glCreateProgram(); // create empty OpenGL ES
+            
             // Program
             GLES20.glAttachShader(program, vertexShader); // add the vertex
+
             // shader to program
             GLES20.glAttachShader(program, fragmentShader); // add the fragment
+
             // shader to
             // program
             GLES20.glLinkProgram(program);

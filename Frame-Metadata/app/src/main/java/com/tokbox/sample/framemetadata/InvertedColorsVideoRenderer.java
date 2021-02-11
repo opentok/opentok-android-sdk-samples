@@ -23,7 +23,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     private MyRenderer renderer;
 
     public interface InvertedColorsVideoRendererMetadataListener {
-        public void onMetadataReady(byte[] metadata);
+        void onMetadataReady(byte[] metadata);
     }
 
     public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {

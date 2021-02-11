@@ -92,6 +92,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         @Override
         public void onOpened(CameraDevice camera) {
             Log.d(TAG,"CameraDevice onOpened");
+
             cameraState = CameraState.OPEN;
             MirrorVideoCapturer.this.camera = camera;
             if (executeAfterCameraOpened != null) {
@@ -103,6 +104,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         public void onDisconnected(CameraDevice camera) {
             try {
                 Log.d(TAG,"CameraDevice onDisconnected");
+
                 MirrorVideoCapturer.this.camera.close();
             } catch (NullPointerException e) {
                 // does nothing
@@ -113,6 +115,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         public void onError(CameraDevice camera, int error) {
             try {
                 Log.d(TAG,"CameraDevice onError");
+
                 MirrorVideoCapturer.this.camera.close();
                 // wait for condition variable
             } catch (NullPointerException e) {
@@ -124,6 +127,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         @Override
         public void onClosed(CameraDevice camera) {
             Log.d(TAG,"CameraDevice onClosed");
+
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             MirrorVideoCapturer.this.camera = null;
@@ -174,6 +178,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onConfigured");
+
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
@@ -187,6 +192,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onFailed");
+
                     cameraState = CameraState.ERROR;
                     postAsyncException(new Camera2Exception("Camera session configuration failed"));
                 }
@@ -194,6 +200,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onClosed(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onClosed");
+
                     if (camera != null) {
                         camera.close();
                     }
@@ -300,17 +307,22 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void init() {
         Log.d(TAG,"init enter");
+
         characteristics = null;
+
         // start camera looper thread
         startCamThread();
+
         // start display orientation polling
         startDisplayOrientationCache();
+
         // open selected camera
         initCamera();
         Log.d(TAG,"init exit");
     }
 
     private int startCameraCapture() {
+
         Log.d(TAG,"doStartCapture enter");
         try {
             // create camera preview request
@@ -322,14 +334,17 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_MODE,
                         CaptureRequest.CONTROL_MODE_USE_SCENE_MODE
                 );
+
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
+
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_SCENE_MODE,
                         CaptureRequest.CONTROL_SCENE_MODE_FACE_PRIORITY
                 );
+
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
@@ -343,6 +358,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
+
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
@@ -352,7 +368,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         } catch (CameraAccessException e) {
             throw new Camera2Exception(e.getMessage());
         }
+
         Log.d(TAG,"doStartCapture exit");
+
         return 0;
     }
 
@@ -362,6 +380,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized int startCapture() {
         Log.d(TAG,"startCapture enter (cameraState: "+ cameraState +")");
+
         if (null != camera && CameraState.OPEN == cameraState) {
             return startCameraCapture();
         } else if (CameraState.SETUP == cameraState) {
@@ -370,7 +389,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         } else {
             throw new Camera2Exception("Start Capture called before init successfully completed");
         }
+
         Log.d(TAG,"startCapture exit");
+
         return 0;
     }
 
@@ -380,6 +401,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized int stopCapture() {
         Log.d(TAG,"stopCapture enter");
+
         if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
             cameraState = CameraState.CLOSING;
             try {
@@ -387,11 +409,14 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
+
             captureSession.close();
             cameraFrame.close();
             characteristics = null;
         }
+
         Log.d(TAG,"stopCapture exit");
+
         return 0;
     }
 
@@ -401,10 +426,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void destroy() {
         Log.d(TAG,"destroy enter");
+
         /* stop display orientation polling */
         stopDisplayOrientationCache();
+
         /* stop camera message thread */
         stopCamThread();
+
         Log.d(TAG,"destroy exit");
     }
 
@@ -462,6 +490,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public void onResume() {
         Log.d(TAG,"onResume");
+
         if (isPaused) {
             Runnable resume = () -> {
                 initCamera();
@@ -497,6 +526,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void swapCamera(int cameraId) {
         CameraState oldState = cameraState;
+
         /* shutdown old camera but not the camera-callback thread */
         switch (oldState) {
             case CAPTURE:
@@ -563,12 +593,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             if (id.equals(camId)) {
                 CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
                 List<Range<Integer>> fpsLst = new ArrayList<>();
-                Collections.addAll(fpsLst,
-                        info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
-                /* sort list by error from desired fps *
-                 * Android seems to do a better job at color correction/avoid 'dark frames' issue by
-                 * selecting camera settings with the smallest lower bound on allowed frame rate
-                 * range. */
+                Collections.addAll(fpsLst, info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
+
+                /*
+                Sort list by error from desired fps
+                Android seems to do a better job at color correction/avoid 'dark frames' issue by
+                selecting camera settings with the smallest lower bound on allowed frame rate range.
+                */
                 return Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
@@ -586,6 +617,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     private int findCameraIndex(String camId) throws CameraAccessException {
         String[] idList = cameraManager.getCameraIdList();
+
         for (int ndx = 0; ndx < idList.length; ++ndx) {
             if (idList[ndx].equals(camId)) {
                 return ndx;
@@ -634,24 +666,29 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @SuppressLint("all")
     private void initCamera() {
         Log.d(TAG,"initCamera()");
+
         try {
             cameraState = CameraState.SETUP;
-            // find desired camera & camera ouput size
+
+            // find desired camera & camera output size
             String[] cameraIdList = cameraManager.getCameraIdList();
             String camId = cameraIdList[cameraIndex];
             camFps = selectCameraFpsRange(camId, desiredFps);
+
             Size preferredSize = selectPreferredSize(
                     camId,
                     frameDimensions.getWidth(),
                     frameDimensions.getHeight(),
                     PIXEL_FORMAT
             );
+
             cameraFrame = ImageReader.newInstance(
                     preferredSize.getWidth(),
                     preferredSize.getHeight(),
                     PIXEL_FORMAT,
                     3
             );
+
             cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
             characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
             cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);

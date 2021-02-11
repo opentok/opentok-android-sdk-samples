@@ -16,8 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/message_edit_text"
         android:transcriptMode="alwaysScroll"
-        android:layout_marginBottom="@dimen/message_history_vertical_margin"
-         />
+        android:layout_marginBottom="@dimen/message_history_vertical_margin" />
 
     <EditText
         android:id="@+id/message_edit_text"
