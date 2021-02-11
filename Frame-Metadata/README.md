@@ -1,6 +1,6 @@
 # Frame Meta Data
 
-This app shows how to send\retrieve additional metadata associated with each video frame.
+This app shows how to send and receive additional metadata associated with each video frame.
 ## Using a custom video capturer
 
 You can use a custom video capturer for a publisher. After
@@ -25,16 +25,13 @@ MirrorVideoCapturer capturer = new MirrorVideoCapturer(
                     Publisher.CameraCaptureResolution.MEDIUM,
                     Publisher.CameraCaptureFrameRate.FPS_30);
 
-capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
-    // metadata to be send
-    @Override
-    public byte[] retrieveMetadata() {
-        return getCurrentTimeStamp().getBytes();
-    }
-});
+capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.
+
+// metadata to be send
+mirrorVideoCapturer.setCustomVideoCapturerDataSource(() -> getCurrentTimeStamp().getBytes());
 ```
 
-Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame()` method:
+Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame` method:
 
 ```java
 if (metadataSource != null) {
@@ -58,18 +55,17 @@ The `setInvertedColorsVideoRendererMetadataListener` method allows to retrieve i
 ```java
 InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
 
-renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
-    // Retrieved metadata
-    @Override
-    public void onMetadataReady(byte[] metadata) {
-        String timestamp = null;
-        try {
-            timestamp = new String(metadata, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(timestamp);
+// Retrieved metadata
+renderer.setMetadataListener(metadata -> {
+    String timestamp = null;
+
+    try {
+        timestamp = new String(metadata, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
     }
+
+    System.out.println(timestamp);
 });
 ```
 

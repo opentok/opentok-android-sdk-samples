@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.opentok.android.BaseVideoCapturer;
 
-public class ScreensharingCapturer extends BaseVideoCapturer {
+public class ScreenSharingCapturer extends BaseVideoCapturer {
 
   private Context context;
 
@@ -33,11 +33,11 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
                 int height = contentView.getHeight();
 
                 if (frame == null ||
-                        ScreensharingCapturer.this.width != width ||
-                        ScreensharingCapturer.this.height != height) {
+                        ScreenSharingCapturer.this.width != width ||
+                        ScreenSharingCapturer.this.height != height) {
 
-                    ScreensharingCapturer.this.width = width;
-                    ScreensharingCapturer.this.height = height;
+                    ScreenSharingCapturer.this.width = width;
+                    ScreenSharingCapturer.this.height = height;
 
                     if (bmp != null) {
                         bmp.recycle();
@@ -65,7 +65,7 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
         }
     };
 
-    public ScreensharingCapturer(Context context, View view) {
+    public ScreenSharingCapturer(Context context, View view) {
         this.context = context;
         this.contentView = view;
     }
@@ -98,12 +98,12 @@ public class ScreensharingCapturer extends BaseVideoCapturer {
     @Override
     public CaptureSettings getCaptureSettings() {
 
-        CaptureSettings settings = new CaptureSettings();
-        settings.fps = fps;
-        settings.width = width;
-        settings.height = height;
-        settings.format = ARGB;
-        return settings;
+        CaptureSettings captureSettings = new CaptureSettings();
+        captureSettings.fps = fps;
+        captureSettings.width = width;
+        captureSettings.height = height;
+        captureSettings.format = ARGB;
+        return captureSettings;
     }
 
     @Override

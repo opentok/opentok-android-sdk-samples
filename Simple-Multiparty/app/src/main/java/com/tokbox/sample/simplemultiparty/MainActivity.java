@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onDisconnected(Session session) {
             Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
             sessionConnected = false;
-            session = null;
+            MainActivity.this.session = null;
         }
 
         @Override

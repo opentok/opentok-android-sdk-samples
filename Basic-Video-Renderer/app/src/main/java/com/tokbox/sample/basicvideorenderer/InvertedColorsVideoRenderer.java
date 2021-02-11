@@ -23,11 +23,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     private MyRenderer renderer;
 
     public interface InvertedColorsVideoRendererMetadataListener {
-        public void onMetadataReady(byte[] metadata);
-    }
-
-    public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
-        this.renderer.metadataListener = metadataListener;
+        void onMetadataReady(byte[] metadata);
     }
 
     static class MyRenderer implements GLSurfaceView.Renderer {
@@ -44,7 +40,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         // number of coordinates per vertex in this array
         static final int COORDS_PER_VERTEX = 3;
-        static final int TEXTURECOORDS_PER_VERTEX = 2;
+        static final int TEXTURE_COORDS_PER_VERTEX = 2;
 
         static float xyzCoords[] = {-1.0f, 1.0f, 0.0f, // top left
                 -1.0f, -1.0f, 0.0f, // bottom left
@@ -125,10 +121,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             program = GLES20.glCreateProgram(); // create empty OpenGL ES
+            
             // Program
             GLES20.glAttachShader(program, vertexShader); // add the vertex
+
             // shader to program
             GLES20.glAttachShader(program, fragmentShader); // add the fragment
+
             // shader to
             // program
             GLES20.glLinkProgram(program);
@@ -145,9 +144,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
             GLES20.glEnableVertexAttribArray(positionHandle);
 
-            GLES20.glVertexAttribPointer(textureHandle,
-                    TEXTURECOORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                    TEXTURECOORDS_PER_VERTEX * 4, textureBuffer);
+            GLES20.glVertexAttribPointer(
+                    textureHandle,
+                    TEXTURE_COORDS_PER_VERTEX,
+                    GLES20.GL_FLOAT,
+                    false,
+                    TEXTURE_COORDS_PER_VERTEX * 4,
+                    textureBuffer);
 
             GLES20.glEnableVertexAttribArray(textureHandle);
 
@@ -169,15 +172,13 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         static void initializeTexture(int name, int id, int width, int height) {
             GLES20.glActiveTexture(name);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE,
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+            GLES20.glTexImage2D(
+                    GLES20.GL_TEXTURE_2D, 0, GLES20.GL_LUMINANCE,
                     width, height, 0, GLES20.GL_LUMINANCE,
                     GLES20.GL_UNSIGNED_BYTE, null);
         }
@@ -254,6 +255,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         }
 
         private InvertedColorsVideoRendererMetadataListener metadataListener;
+
         @Override
         public void onDrawFrame(GL10 gl) {
             gl.glClearColor(0, 0, 0, 1);
@@ -289,7 +291,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                     }
                 }
 
-                Matrix.scaleM(scaleMatrix, 0,
+               Matrix.scaleM(scaleMatrix, 0,
                         scaleX * (currentFrame.isMirroredX() ? -1.0f : 1.0f),
                         scaleY, 1);
 
@@ -297,13 +299,10 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                     metadataListener.onMetadataReady(currentFrame.getMetadata());
                 }
 
-                int mvpMatrixHandle = GLES20.glGetUniformLocation(program,
-                        "uMVPMatrix");
-                GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false,
-                        scaleMatrix, 0);
+                int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
+                GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, scaleMatrix, 0);
 
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length,
-                        GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+                GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertexIndex.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
             } else {
                 //black frame when video is disabled
                 gl.glClearColor(0, 0, 0, 1);
@@ -314,9 +313,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
-            if (this.currentFrame != null) {
-                this.currentFrame.recycle();
-            }
+
             this.currentFrame = frame;
             frameLock.unlock();
         }
@@ -336,9 +333,6 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             videoDisabled = b;
 
             if (videoDisabled) {
-                if (this.currentFrame != null) {
-                    this.currentFrame.recycle();
-                }
                 this.currentFrame = null;
             }
 
@@ -398,5 +392,4 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     public void onResume() {
         view.onResume();
     }
-
 }

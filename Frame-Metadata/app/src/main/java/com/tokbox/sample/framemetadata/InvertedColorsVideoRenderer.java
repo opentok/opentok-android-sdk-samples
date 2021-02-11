@@ -23,10 +23,10 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
     private MyRenderer renderer;
 
     public interface InvertedColorsVideoRendererMetadataListener {
-        public void onMetadataReady(byte[] metadata);
+        void onMetadataReady(byte[] metadata);
     }
 
-    public void setInvertedColorsVideoRendererMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
+    public void setMetadataListener(InvertedColorsVideoRendererMetadataListener metadataListener) {
         this.renderer.metadataListener = metadataListener;
     }
 
@@ -44,7 +44,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         // number of coordinates per vertex in this array
         static final int COORDS_PER_VERTEX = 3;
-        static final int TEXTURECOORDS_PER_VERTEX = 2;
+        static final int TEXTURE_COORDS_PER_VERTEX = 2;
 
         static float xyzCoords[] = {-1.0f, 1.0f, 0.0f, // top left
                 -1.0f, -1.0f, 0.0f, // bottom left
@@ -147,8 +147,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             GLES20.glEnableVertexAttribArray(positionHandle);
 
             GLES20.glVertexAttribPointer(textureHandle,
-                    TEXTURECOORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                    TEXTURECOORDS_PER_VERTEX * 4, textureBuffer);
+                    TEXTURE_COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
+                    TEXTURE_COORDS_PER_VERTEX * 4, textureBuffer);
 
             GLES20.glEnableVertexAttribArray(textureHandle);
 
@@ -313,9 +313,6 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
-            if (this.currentFrame != null) {
-                this.currentFrame.recycle();
-            }
             this.currentFrame = frame;
             frameLock.unlock();
         }
@@ -335,9 +332,6 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             videoDisabled = b;
 
             if (videoDisabled) {
-                if (this.currentFrame != null) {
-                    this.currentFrame.recycle();
-                }
                 this.currentFrame = null;
             }
 

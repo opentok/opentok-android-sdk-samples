@@ -44,8 +44,6 @@ this.currentFrame = frame;
 frameLock.unlock();
 
 if (customVideoRenderer.saveScreenshot) {
-    Log.d(TAG, "Screenshot capture");
-
     ByteBuffer bb = frame.getBuffer();
     bb.clear();
 

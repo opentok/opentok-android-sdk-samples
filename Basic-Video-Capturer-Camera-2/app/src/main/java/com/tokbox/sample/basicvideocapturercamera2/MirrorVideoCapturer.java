@@ -4,13 +4,23 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.*;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.*;
+import android.util.Log;
+import android.util.Range;
+import android.util.Size;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -18,7 +28,11 @@ import androidx.annotation.RequiresApi;
 import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.Publisher;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -92,6 +106,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         @Override
         public void onOpened(CameraDevice camera) {
             Log.d(TAG,"CameraDevice onOpened");
+
             cameraState = CameraState.OPEN;
             MirrorVideoCapturer.this.camera = camera;
             if (executeAfterCameraOpened != null) {
@@ -103,6 +118,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         public void onDisconnected(CameraDevice camera) {
             try {
                 Log.d(TAG,"CameraDevice onDisconnected");
+
                 MirrorVideoCapturer.this.camera.close();
             } catch (NullPointerException e) {
                 // does nothing
@@ -113,6 +129,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         public void onError(CameraDevice camera, int error) {
             try {
                 Log.d(TAG,"CameraDevice onError");
+
                 MirrorVideoCapturer.this.camera.close();
                 // wait for condition variable
             } catch (NullPointerException e) {
@@ -124,6 +141,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         @Override
         public void onClosed(CameraDevice camera) {
             Log.d(TAG,"CameraDevice onClosed");
+
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             MirrorVideoCapturer.this.camera = null;
@@ -174,6 +192,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onConfigured");
+
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
@@ -187,6 +206,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onFailed");
+
                     cameraState = CameraState.ERROR;
                     postAsyncException(new Camera2Exception("Camera session configuration failed"));
                 }
@@ -194,6 +214,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onClosed(CameraCaptureSession session) {
                     Log.d(TAG,"CaptureSession onClosed");
+
                     if (camera != null) {
                         camera.close();
                     }
@@ -212,18 +233,17 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /* caching of camera characteristics & display orientation for performance */
     private static class CameraInfoCache {
-        private CameraCharacteristics   info;
-        private boolean                 frontFacing = false;
-        private int                     sensorOrientation = 0;
+        private CameraCharacteristics info;
+        private boolean frontFacing = false;
+        private int sensorOrientation = 0;
 
         public CameraInfoCache(CameraCharacteristics info) {
             info    = info;
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
-            frontFacing = info.get(CameraCharacteristics.LENS_FACING)
-                    == CameraCharacteristics.LENS_FACING_FRONT;
-            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
+            frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
+            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION);
         }
 
         public <T> T get(CameraCharacteristics.Key<T> key) {
@@ -263,14 +283,12 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    /* custom exceptions */
     public static class Camera2Exception extends RuntimeException {
         public Camera2Exception(String message) {
             super(message);
         }
     }
 
-    /* Constructors etc... */
     public MirrorVideoCapturer(Context context) {
         cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -300,17 +318,22 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void init() {
         Log.d(TAG,"init enter");
+
         characteristics = null;
+
         // start camera looper thread
         startCamThread();
+
         // start display orientation polling
         startDisplayOrientationCache();
+
         // open selected camera
         initCamera();
         Log.d(TAG,"init exit");
     }
 
     private int startCameraCapture() {
+
         Log.d(TAG,"doStartCapture enter");
         try {
             // create camera preview request
@@ -322,14 +345,17 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_MODE,
                         CaptureRequest.CONTROL_MODE_USE_SCENE_MODE
                 );
+
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
+
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_SCENE_MODE,
                         CaptureRequest.CONTROL_SCENE_MODE_FACE_PRIORITY
                 );
+
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
@@ -343,6 +369,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
+
                 camera.createCaptureSession(
                         Arrays.asList(cameraFrame.getSurface()),
                         captureSessionObserver,
@@ -352,7 +379,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         } catch (CameraAccessException e) {
             throw new Camera2Exception(e.getMessage());
         }
+
         Log.d(TAG,"doStartCapture exit");
+
         return 0;
     }
 
@@ -362,6 +391,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized int startCapture() {
         Log.d(TAG,"startCapture enter (cameraState: "+ cameraState +")");
+
         if (null != camera && CameraState.OPEN == cameraState) {
             return startCameraCapture();
         } else if (CameraState.SETUP == cameraState) {
@@ -370,7 +400,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         } else {
             throw new Camera2Exception("Start Capture called before init successfully completed");
         }
+
         Log.d(TAG,"startCapture exit");
+
         return 0;
     }
 
@@ -380,6 +412,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized int stopCapture() {
         Log.d(TAG,"stopCapture enter");
+
         if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
             cameraState = CameraState.CLOSING;
             try {
@@ -387,11 +420,14 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
+
             captureSession.close();
             cameraFrame.close();
             characteristics = null;
         }
+
         Log.d(TAG,"stopCapture exit");
+
         return 0;
     }
 
@@ -401,10 +437,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void destroy() {
         Log.d(TAG,"destroy enter");
+
         /* stop display orientation polling */
         stopDisplayOrientationCache();
+
         /* stop camera message thread */
         stopCamThread();
+
         Log.d(TAG,"destroy exit");
     }
 
@@ -421,13 +460,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        CaptureSettings settings = new CaptureSettings();
-        settings.fps = desiredFps;
-        settings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
-        settings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
-        settings.format = BaseVideoCapturer.NV21;
-        settings.expectedDelay = 0;
-        return settings;
+        CaptureSettings captureSettings = new CaptureSettings();
+        captureSettings.fps = desiredFps;
+        captureSettings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
+        captureSettings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
+        captureSettings.format = BaseVideoCapturer.NV21;
+        captureSettings.expectedDelay = 0;
+        return captureSettings;
     }
 
     /*
@@ -454,14 +493,14 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /*
      * Call this method when the activity resumes. When you override this method, implement code
-     * to respond to the activity being resumed. For example, you may resume capturing audio
-     * or video.
+     * to respond to the activity being resumed. For example, you may resume capturing audio or video.
      *
      * @see #onPause()
      */
     @Override
     public void onResume() {
         Log.d(TAG,"onResume");
+
         if (isPaused) {
             Runnable resume = () -> {
                 initCamera();
@@ -497,6 +536,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @Override
     public synchronized void swapCamera(int cameraId) {
         CameraState oldState = cameraState;
+
         /* shutdown old camera but not the camera-callback thread */
         switch (oldState) {
             case CAPTURE:
@@ -563,12 +603,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             if (id.equals(camId)) {
                 CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
                 List<Range<Integer>> fpsLst = new ArrayList<>();
-                Collections.addAll(fpsLst,
-                        info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
-                /* sort list by error from desired fps *
-                 * Android seems to do a better job at color correction/avoid 'dark frames' issue by
-                 * selecting camera settings with the smallest lower bound on allowed frame rate
-                 * range. */
+                Collections.addAll(fpsLst, info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
+
+                /*
+                Sort list by error from desired fps
+                Android seems to do a better job at color correction/avoid 'dark frames' issue by
+                selecting camera settings with the smallest lower bound on allowed frame rate range.
+                */
                 return Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
@@ -586,6 +627,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     private int findCameraIndex(String camId) throws CameraAccessException {
         String[] idList = cameraManager.getCameraIdList();
+
         for (int ndx = 0; ndx < idList.length; ++ndx) {
             if (idList[ndx].equals(camId)) {
                 return ndx;
@@ -634,24 +676,29 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     @SuppressLint("all")
     private void initCamera() {
         Log.d(TAG,"initCamera()");
+
         try {
             cameraState = CameraState.SETUP;
-            // find desired camera & camera ouput size
+
+            // find desired camera & camera output size
             String[] cameraIdList = cameraManager.getCameraIdList();
             String camId = cameraIdList[cameraIndex];
             camFps = selectCameraFpsRange(camId, desiredFps);
+
             Size preferredSize = selectPreferredSize(
                     camId,
                     frameDimensions.getWidth(),
                     frameDimensions.getHeight(),
                     PIXEL_FORMAT
             );
+
             cameraFrame = ImageReader.newInstance(
                     preferredSize.getWidth(),
                     preferredSize.getHeight(),
                     PIXEL_FORMAT,
                     3
             );
+
             cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
             characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
             cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);

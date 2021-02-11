@@ -2,7 +2,7 @@
 
 This app shows how to use the audio driver for publisher and subscriber audio. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here.
 
-`CustomAudioDevice` instance is passed into the `AudioDeviceManager.setAudioDevice()` method:
+`CustomAudioDevice` instance is passed into the `AudioDeviceManager.setAudioDevice` method:
 
 ```java
 CustomAudioDevice customAudioDevice = new CustomAudioDevice(this);
@@ -27,7 +27,7 @@ captureSettings = new AudioSettings(captureSamplingRate, NUM_CHANNELS_CAPTURING)
 rendererSettings = new AudioSettings(outputSamplingRate, NUM_CHANNELS_RENDERING);
 ```
 
-The CustomAudioDevice class overrides the `initCapturer()` method, defined in the `BaseAudioDevice`
+The CustomAudioDevice class overrides the `initCapturer` method, defined in the `BaseAudioDevice`
 class. This method initializes the app's audio capturer, instantiating a an
 `andriod.media.AudioRecord` instance to be used to capture audio from the device's audio input
 hardware:
@@ -42,13 +42,13 @@ audioRecord = new AudioRecord(
         AudioFormat.ENCODING_PCM_16BIT, recBufSize);
 ```
 
-The `initCapturer()` method also sets up a thread to capture audio from the device:
+The `initCapturer` method also sets up a thread to capture audio from the device:
 
 ```java
 new Thread(captureThread).start();
 ```
 
-The CustomAudioDevice overrides the `startCapturer()` method, which is called when the app starts
+The CustomAudioDevice overrides the `startCapturer` method, which is called when the app starts
 sampling audio to be sent to the publisher's stream. The audio capture thread reads audio samples
 from the AudioRecord object into a buffer, `m_recbuffer`:
 
@@ -62,16 +62,16 @@ recBuffer.put(tempBufRec);
 samplesRead = (readBytes >> 1) / NUM_CHANNELS_CAPTURING;
 ```
 
-The `getAudioBus()` method, defined in the `BaseAudioDevice` class, returns a `BaseAudioDevice.AudioBus`
+The `getAudioBus` method, defined in the `BaseAudioDevice` class, returns a `BaseAudioDevice.AudioBus`
 object, also defined in the OpenTok Android SDK. This audio bus object includes a
-`writeCaptureData()` method, which you call to send audio samples to be used as audio data for the
+`writeCaptureData` method, which you call to send audio samples to be used as audio data for the
 publisher's stream:
 
 ```java
 getAudioBus().writeCaptureData(recBuffer, samplesRead);
 ```
 
-The `CustomAudioDevice` class overrides the `initRenderer()` method, defined in the `BaseAudioDevice`
+The `CustomAudioDevice` class overrides the `initRenderer` method, defined in the `BaseAudioDevice`
 class. This method initializes the app's audio renderer, instantiating an `andriod.media.AudioTrack`
 instance. This object will be used to playback audio to the device's audio output hardware:
 
@@ -88,17 +88,17 @@ audioTrack = new AudioTrack(
 );
 ```
 
-The `initRenderer()` method also sets up a thread to playback audio to the device's audio output
+The `initRenderer` method also sets up a thread to playback audio to the device's audio output
 hardware:
 
 ```java
 new Thread(m_renderThread).start();
 ```
 
-The `CustomAudioDevice` overrides the `startRenderer()` method, which is called when the app starts
+The `CustomAudioDevice` overrides the `startRenderer` method, which is called when the app starts
 receiving audio from subscribed streams.
 
-The `AudioBus` object includes a `readRenderData()` method, which the audio render thread calls
+The `AudioBus` object includes a `readRenderData` method, which the audio render thread calls
 to read audio samples from the subscribed streams into a playback buffer:
 
 ```java

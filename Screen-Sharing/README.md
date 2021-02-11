@@ -1,33 +1,30 @@
 # Screen Sharing
 
-This app shows how to use `WebView` as the source for the publisher video (instead of a camera)..
+This app shows how to use `WebView` as the source for screen-sharing video.
+
+> Check [Basic-Video-Capturer-Camera-2](../Basic-Video-Capturer-Camera-2) project to see how a device camera can be used as the video source for the custom `Capturer`.
 ## Screen sharing
 
-You can use a custom video capturer to use a view from the Android application as the source of
+Custom video capturer is using `WebView` from the Android application as the source of
 a published stream.
 
-When the app starts up, the `onCreate(Bundle savedInstanceState)` method instantiates a `WebView`
-object:
+When the app starts up, the `onCreate` method instantiates a `WebView` object:
 
 ```java
 webViewContainer = findViewById(R.id.webview);
 ```
 
-The app will
-
 Upon connecting to the OpenTok session, the app instantiates a `Publisher` object, and calls its
-`setCapturer()` method to use a custom video capturer, defined by the `ScreensharingCapturer`
+`setCapturer` method to use a custom video capturer, defined by the `ScreenSharingCapturer`
 class:
 
 ```java
 @Override
 public void onConnected(Session session) {
-    Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
-    ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, webViewContainer);
+    ScreenSharingCapturer screenSharingCapturer = new ScreenSharingCapturer(MainActivity.this, webViewContainer);
 
     publisher = new Publisher.Builder(MainActivity.this)
-            .capturer(screenCapturer)
+            .capturer(screenSharingCapturer)
             .build();
             
     publisher.setPublisherListener(publisherListener);
@@ -47,20 +44,50 @@ public void onConnected(Session session) {
 }
 ```
 
-> Note: that the call to the `setPublisherVideoType()` method sets the video type of the published
+> Note: that the call to the `setPublisherVideoType` method sets the video type of the published
 stream to `PublisherKitVideoType.PublisherKitVideoTypeScreen`. This optimizes the video encoding for
-screen sharing. It is recommended to use a low frame rate (5 frames per second or lower) with this
+screen sharing. It is recommended to use a low frame rate (15 frames per second or lower) with this
 video type. When using the screen video type in a session that uses the [OpenTok Media
 Server](https://tokbox.com/opentok/tutorials/create-session/#media-mode), the
 audio-only fallback feature is disabled, so that the video does not drop out in subscribers.
 
-The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
+The `onConnected` method also calls the `loadScreenWebView` method. This method
 configures the WebView object, loading the TokBox URL.
 
-Note that the `webViewContainer` object is passed into the `ScreensharingCapturer()` constructor,
-which assigns it to the `contentView` property. The `newFrame()` method is called when the video
-capturer supplies a new frame to the video stream. It creates a canvas, draws the `contentView`
-to the canvas, and assigns the bitmap representation of `contentView` to the frame to be sent:
+Note that the `webViewContainer` object is passed into the `ScreenSharingCapturer` constructor,
+which assigns it to the `contentView` property. 
+
+The `getCaptureSettings` method initializes capture settings to be used by the custom
+video capturer:
+
+```java
+@Override
+public CaptureSettings getCaptureSettings() {
+
+    CaptureSettings captureSettings = new CaptureSettings();
+    captureSettings.fps = fps;
+    captureSettings.width = width;
+    captureSettings.height = height;
+    captureSettings.format = ARGB;
+    return captureSettings;
+}
+```
+
+The `startCapture` method starts the `frameProducer` thread after 1/15 second:
+
+```java
+@Override
+public int startCapture() {
+    capturing = true;
+
+    handler.postDelayed(newFrame, 1000 / fps);
+    return 0;
+}
+```
+
+The `frameProducer` thread gets a `Bitmap` representation of the `contentView` object
+    (the `WebView`), writes its pixels to a buffer, and then calls the `provideIntArrayFrame()`
+    method, passing in that buffer as a parameter:
 
 ```java
 private Runnable newFrame = new Runnable() {
@@ -71,11 +98,11 @@ private Runnable newFrame = new Runnable() {
             int height = contentView.getHeight();
 
             if (frame == null ||
-                    ScreensharingCapturer.this.width != width ||
-                    ScreensharingCapturer.this.height != height) {
+                    ScreenSharingCapturer.this.width != width ||
+                    ScreenSharingCapturer.this.height != height) {
 
-                ScreensharingCapturer.this.width = width;
-                ScreensharingCapturer.this.height = height;
+                ScreenSharingCapturer.this.width = width;
+                ScreenSharingCapturer.this.height = height;
 
                 if (bmp != null) {
                     bmp.recycle();
@@ -102,6 +129,12 @@ private Runnable newFrame = new Runnable() {
         }
     }
 };
+```
+
+The `provideIntArrayFrame` method, defined by the `BaseVideoCapturer` class sends an integer array of data to the publisher, to be used for the next video frame published.
+
+If the publisher is still capturing video, the thread starts again after another 1/15 of a
+second, so that the capturer continues to supply the publisher with new video frames to publish.
 ```
 
 ## Further Reading

@@ -22,7 +22,7 @@ To quickly deploy a pre-built server click at one of the Heroku buttons below. Y
 | <a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-php" target="_blank"> <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>  | <a href="https://heroku.com/deploy?template=https://github.com/opentok/learning-opentok-node" target="_blank"> <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy"></a>  |
 | [Repository](https://github.com/opentok/learning-opentok-php) | [Repository](https://github.com/opentok/learning-opentok-node) |
 
-> Note: You can also build your server from scratch using one of the the [server SDKs](https://tokbox.com/developer/sdks/server/).
+> Note: You can also build your server from scratch using one of the [server SDKs](https://tokbox.com/developer/sdks/server/).
 
 After deploying the server open the `ServerConfig` file in this project and configure the `CHAT_SERVER_URL` with your domain to fetch credentials from the server:
 
@@ -30,7 +30,7 @@ After deploying the server open the `ServerConfig` file in this project and conf
 public static final String CHAT_SERVER_URL = "https://YOURAPPNAME.herokuapp.com";
 ```
 
-> Note that this application will ignore credentials in the `OpenTokConfig` file when `CHAT_SERVER_URL` contains a valid URL:
+> Note that this application will ignore credentials in the `OpenTokConfig` file when `CHAT_SERVER_URL` contains a valid URL.
 
 This is the code reponsible for retrieving the cretentials from web server:
 

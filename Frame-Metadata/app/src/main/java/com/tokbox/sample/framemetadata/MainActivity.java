@@ -60,39 +60,33 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            // capturer
-            MirrorVideoCapturer capturer = new MirrorVideoCapturer(
+            // mirrorVideoCapturer
+            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(
                     MainActivity.this,
                     Publisher.CameraCaptureResolution.MEDIUM,
                     Publisher.CameraCaptureFrameRate.FPS_30);
 
-            capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCapturerDataSource() {
-                // metadata to be send
-                @Override
-                public byte[] retrieveMetadata() {
-                    return getCurrentTimeStamp().getBytes();
-                }
-            });
+            // metadata to be send
+            mirrorVideoCapturer.setCustomVideoCapturerDataSource(() -> getCurrentTimeStamp().getBytes());
 
             // renderer
             InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
 
-            renderer.setInvertedColorsVideoRendererMetadataListener(new InvertedColorsVideoRenderer.InvertedColorsVideoRendererMetadataListener() {
-                // Retrieved metadata
-                @Override
-                public void onMetadataReady(byte[] metadata) {
-                    String timestamp = null;
-                    try {
-                        timestamp = new String(metadata, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println(timestamp);
+            // Retrieved metadata
+            renderer.setMetadataListener(metadata -> {
+                String timestamp = null;
+
+                try {
+                    timestamp = new String(metadata, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
+
+                System.out.println(timestamp);
             });
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .capturer(capturer)
+                    .capturer(mirrorVideoCapturer)
                     .renderer(renderer).build();
 
             publisher.setPublisherListener(publisherListener);
@@ -111,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onDisconnected(Session session) {
             Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
 
-            session = null;
+            MainActivity.this.session = null;
         }
 
         @Override

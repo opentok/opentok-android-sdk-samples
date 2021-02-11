@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            ScreensharingCapturer screenCapturer = new ScreensharingCapturer(MainActivity.this, webViewContainer);
+            ScreenSharingCapturer screenSharingCapturer = new ScreenSharingCapturer(MainActivity.this, webViewContainer);
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .capturer(screenCapturer)
+                    .capturer(screenSharingCapturer)
                     .build();
                     
             publisher.setPublisherListener(publisherListener);
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onDisconnected(Session session) {
             Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
 
-            session = null;
+            MainActivity.this.session = null;
         }
 
         @Override
@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onPause();
 
         if (isFinishing()) {
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onResume();
     }
 

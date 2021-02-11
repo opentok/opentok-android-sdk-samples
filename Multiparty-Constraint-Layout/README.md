@@ -46,7 +46,7 @@ set.applyTo(layout);
 See the `ConstraintSetHelper` class for more details about how to set up the constraints for different view positions.
 
 In order to actually position the views, the application calculates the constraints whenever a new
-view is added or removed, in callback methods like the `SessionsListener.onStreamReceived()` method.
+view is added or removed, in callback methods like the `SessionsListener.onStreamReceived` method.
 Those callbacks add the view to the container and call `calculateLayout()`, which includes logic for
 view positioning.
 
@@ -65,7 +65,7 @@ In this sample we have four possible layouts:
    is like a grid and all views will be displayed two by two, with the publisher in the upper-left
    corner.
 
-The `calculateLayout()` method implements this logic. For example, for the second case (where there
+The `calculateLayout` method implements this logic. For example, for the second case (where there
 is just one subscriber), here is a simplified version of the code:
 
 ```java

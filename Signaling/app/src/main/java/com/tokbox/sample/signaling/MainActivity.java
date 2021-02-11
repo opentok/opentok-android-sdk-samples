@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // inflate views
         messageEditTextView = findViewById(R.id.message_edit_text);
         messageHistoryListView = findViewById(R.id.message_history_list_view);
 
@@ -100,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         messageEditTextView.setEnabled(false);
 
         session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
         session.setSignalListener(signalListener);
         session.connect(OpenTokConfig.TOKEN);
     }
-
-    /* Activity lifecycle methods */
 
     @Override
     protected void onPause() {
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         session.sendSignal(SIGNAL_TYPE, signal.getMessageText());
 
         messageEditTextView.setText("");
-
     }
 
     private void showMessage(String messageData, boolean remote) {

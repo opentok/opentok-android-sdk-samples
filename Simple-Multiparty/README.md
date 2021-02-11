@@ -10,8 +10,6 @@ there are multiple streams.
 ```java
 @Override
 public void onStreamReceived(Session session, Stream stream) {
-    Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
-
     final Subscriber subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
     session.subscribe(subscriber);
     addSubscriber(subscriber);
@@ -86,7 +84,7 @@ swapCamera.setOnClickListener(new View.OnClickListener() {
 });
 ```
 
-The `swapCamera()` method of a Publisher object changes the camera used to the next available camera
+The `swapCamera` method of a Publisher object changes the camera used to the next available camera
 on the device (if there is one).
 
 Note: For the sake of simplicity, we have set a maximum of 4 subscribers for this application.
