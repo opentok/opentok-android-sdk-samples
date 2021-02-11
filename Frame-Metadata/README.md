@@ -64,8 +64,6 @@ renderer.setMetadataListener(metadata -> {
     } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
     }
-
-    System.out.println(timestamp);
 });
 ```
 

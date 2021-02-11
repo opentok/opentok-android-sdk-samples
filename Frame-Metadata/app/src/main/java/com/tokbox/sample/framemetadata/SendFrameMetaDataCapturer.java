@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class MirrorVideoCapturer extends BaseVideoCapturer implements
+public class SendFrameMetaDataCapturer extends BaseVideoCapturer implements
         PreviewCallback,
         BaseVideoCapturer.CaptureSwitch {
 
-    private static final String TAG = MirrorVideoCapturer.class.getSimpleName();
+    private static final String TAG = SendFrameMetaDataCapturer.class.getSimpleName();
     private int cameraIndex = 0;
     private Camera camera;
     private Camera.CameraInfo currentDeviceInfo = null;
@@ -85,9 +85,9 @@ public class MirrorVideoCapturer extends BaseVideoCapturer implements
         }
     };
 
-    public MirrorVideoCapturer(Context context,
-                               Publisher.CameraCaptureResolution resolution,
-                               Publisher.CameraCaptureFrameRate fps) {
+    public SendFrameMetaDataCapturer(Context context,
+                                     Publisher.CameraCaptureResolution resolution,
+                                     Publisher.CameraCaptureFrameRate fps) {
         this.cameraIndex = getCameraIndexUsingFront(true);
 
         // Get current display to query UI orientation

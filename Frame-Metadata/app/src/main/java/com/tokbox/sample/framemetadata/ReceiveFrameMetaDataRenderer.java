@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
+public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
 
     private Context context;
 
@@ -343,7 +343,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         }
     }
 
-    public InvertedColorsVideoRenderer(Context context) {
+    public ReceiveFrameMetaDataRenderer(Context context) {
         this.context = context;
 
         view = new GLSurfaceView(context);
