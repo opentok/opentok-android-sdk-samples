@@ -1,41 +1,37 @@
 # Frame Meta Data
 
-This app shows how to send and receive additional metadata associated with each video frame.
+This app shows how to send and receive metadata associated with each video frame.
 ## Using a custom video capturer
 
-You can use a custom video capturer for a publisher. After
-instantiating a Publisher object, the code sets a custom video capturer by calling the
-`setCapturer(BaseVideoCapturer capturer)` method of the Publisher:
+App uses a custom video capturer to send metadata and a custom video renderer to recieve metadata:
 
 ```java
 publisher = new Publisher.Builder(MainActivity.this)
-    .capturer(capturer)
-    .renderer(renderer).build();
+    .capturer(sendFrameMetaDataCapturer)
+    .renderer(receiveFrameMetaDataRenderer)
+    .build();
 ```
 
 ## Send frame metadata
 
-The `MirrorVideoCapturer`  class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
-The `setCustomVideoCapturerDataSource` method provided metadata to be send with each frame (frame
-rate, width, height, video delay, and video format for the capturer):
+The `SendFrameMetaDataCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
+The `setCustomMetadataSource` method provides metadata to be send with each video frame:
 
 ```java
-MirrorVideoCapturer capturer = new MirrorVideoCapturer(
-                    MainActivity.this,
-                    Publisher.CameraCaptureResolution.MEDIUM,
-                    Publisher.CameraCaptureFrameRate.FPS_30);
-
-capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.
+SendFrameMetaDataCapturer sendFrameMetaDataCapturer = new SendFrameMetaDataCapturer(MainActivity.this);
 
 // metadata to be send
-mirrorVideoCapturer.setCustomVideoCapturerDataSource(() -> getCurrentTimeStamp().getBytes());
+sendFrameMetaDataCapturer.setCustomMetadataSource(() -> {
+    String timestamp = getCurrentTimeStamp();
+    return timestamp.getBytes();
+});
 ```
 
-Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame` method:
+Under the hood above metadata is added to the frame inside `SendFrameMetaDataCapturer.onPreviewFrame` method:
 
 ```java
 if (metadataSource != null) {
-    byte[] framemetadata = metadataSource.retrieveMetadata();
+    byte[] frameMetadata = customMetadataSource.retrieveMetadata();
 
     provideByteArrayFrame(data,
             NV21,
@@ -43,20 +39,20 @@ if (metadataSource != null) {
             captureHeight,
             currentRotation,
             isFrontCamera(),
-            framemetadata);
+            frameMetadata);
 }
 ```
 
 ## Receive frame metadata
 
-The `InvertedColorsVideoRenderer` class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
-The `setInvertedColorsVideoRendererMetadataListener` method allows to retrieve incomming metadata:
+The `ReceiveFrameMetaDataRenderer` class extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
+The `setCustomMetadataListener` method allows to retrieve metadata from incomming video frames:
 
 ```java
-InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
+ReceiveFrameMetaDataRenderer receiveFrameMetaDataRenderer = new ReceiveFrameMetaDataRenderer(MainActivity.this);
 
 // Retrieved metadata
-renderer.setMetadataListener(metadata -> {
+receiveFrameMetaDataRenderer.setCustomMetadataListener(metadata -> {
     String timestamp = null;
 
     try {
@@ -65,8 +61,15 @@ renderer.setMetadataListener(metadata -> {
         e.printStackTrace();
     }
 
-    System.out.println(timestamp);
 });
+```
+
+nther the hood above metadata is retrieved from the frame inside `ReceiveFrameMetaDataRenderer.MyRenderer.onDrawFrame` method:
+
+```java
+if (customMetadataListener != null) {
+    customMetadataListener.onMetadataReady(currentFrame.getMetadata());
+}
 ```
 
 ## Further Reading

@@ -60,20 +60,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            // mirrorVideoCapturer
-            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(
-                    MainActivity.this,
-                    Publisher.CameraCaptureResolution.MEDIUM,
-                    Publisher.CameraCaptureFrameRate.FPS_30);
+            SendFrameMetaDataCapturer sendFrameMetaDataCapturer = new SendFrameMetaDataCapturer(MainActivity.this);
 
             // metadata to be send
-            mirrorVideoCapturer.setCustomVideoCapturerDataSource(() -> getCurrentTimeStamp().getBytes());
+            sendFrameMetaDataCapturer.setCustomMetadataSource(() -> {
+                String timestamp = getCurrentTimeStamp();
+                Log.d(TAG, "timestamp send: " + timestamp);
+                return timestamp.getBytes();
+            });
 
-            // renderer
-            InvertedColorsVideoRenderer renderer = new InvertedColorsVideoRenderer(MainActivity.this);
+            // receiveFrameMetaDataRenderer
+            ReceiveFrameMetaDataRenderer receiveFrameMetaDataRenderer = new ReceiveFrameMetaDataRenderer(MainActivity.this);
 
             // Retrieved metadata
-            renderer.setMetadataListener(metadata -> {
+            receiveFrameMetaDataRenderer.setCustomMetadataListener(metadata -> {
                 String timestamp = null;
 
                 try {
@@ -82,12 +82,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     e.printStackTrace();
                 }
 
-                System.out.println(timestamp);
+                Log.d(TAG, "timestamp received: " + timestamp);
             });
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .capturer(mirrorVideoCapturer)
-                    .renderer(renderer).build();
+                    .capturer(sendFrameMetaDataCapturer)
+                    .renderer(receiveFrameMetaDataRenderer)
+                    .build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
