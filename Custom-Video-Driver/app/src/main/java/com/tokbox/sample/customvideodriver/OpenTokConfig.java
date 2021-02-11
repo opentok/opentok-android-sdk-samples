@@ -9,7 +9,7 @@ public class OpenTokConfig {
     https://dashboard.tokbox.com/projects
     */
 
-    // Replace with a APi key
+    // Replace with a API key
     public static final String API_KEY = "";
     
     // Replace with a generated Session ID
