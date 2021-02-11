@@ -12,8 +12,7 @@ A custom video capturer will be helpful when:
 
 ## Using a custom video capturer
 
-After instantiating a `Publisher` object, the code creates and sets a custom video capturer by calling the
-`capturer()` method of the Publisher:
+The `MirrorVideoCapturer` is a custom class that extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK. During construction of a `Publisher` object, the code sets a custom video capturer by calling the `capturer` method of the Publisher:
 
 ```java
 MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(
@@ -28,7 +27,7 @@ publisher = new Publisher.Builder(MainActivity.this)
 ```
 
 The `CustomVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
-The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
+The `getCaptureSettings` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
 
 ```java
@@ -63,7 +62,7 @@ public CaptureSettings getCaptureSettings() {
 
 The app calls `startCapture()` to start capturing video from the custom video capturer.
 
-The class also implements the [PreviewCallback](https://developer.android.com/reference/android/hardware/Camera.PreviewCallback) interface. The `onPreviewFrame()` method of this interface is called as preview frames of the camera become available. In this method, the app calls the `provideByteArrayFrame()` method of the `MirrorVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method provides a video frame, defined as a byte array, to the video capturer:
+The class also implements the [PreviewCallback](https://developer.android.com/reference/android/hardware/Camera.PreviewCallback) interface. The `onPreviewFrame` method of this interface is called as preview frames of the camera become available. In this method, the app calls the `provideByteArrayFrame` method of the `MirrorVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method provides a video frame, defined as a byte array, to the video capturer:
 
 ```java
 provideByteArrayFrame(data, NV21, captureWidth, captureHeight, currentRotation, isFrontCamera());

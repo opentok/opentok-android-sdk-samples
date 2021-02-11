@@ -86,7 +86,7 @@ swapCamera.setOnClickListener(new View.OnClickListener() {
 });
 ```
 
-The `swapCamera()` method of a Publisher object changes the camera used to the next available camera
+The `swapCamera` method of a Publisher object changes the camera used to the next available camera
 on the device (if there is one).
 
 Note: For the sake of simplicity, we have set a maximum of 4 subscribers for this application.

@@ -104,7 +104,7 @@ enable the Start Archive menu item. And it causes the `archivingIndicatorView` t
 
 ## Viewing recorded archives
 
-When the user clicks the play archive button, the `playArchive()` method opens a web page (in the device's web browser) that displays the archive recording:
+When the user clicks the play archive button, the `playArchive` method opens a web page (in the device's web browser) that displays the archive recording:
 
 ```java
 private void playArchive() {

@@ -34,7 +34,7 @@ capturer.setCustomVideoCapturerDataSource(new MirrorVideoCapturer.CustomVideoCap
 });
 ```
 
-Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame()` method:
+Above metadata is send inside `MirrorVideoCapturer.onPreviewFrame` method:
 
 ```java
 if (metadataSource != null) {

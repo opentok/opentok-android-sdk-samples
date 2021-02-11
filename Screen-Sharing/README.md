@@ -16,7 +16,7 @@ webViewContainer = findViewById(R.id.webview);
 The app will
 
 Upon connecting to the OpenTok session, the app instantiates a `Publisher` object, and calls its
-`setCapturer()` method to use a custom video capturer, defined by the `ScreensharingCapturer`
+`setCapturer` method to use a custom video capturer, defined by the `ScreensharingCapturer`
 class:
 
 ```java
@@ -47,18 +47,18 @@ public void onConnected(Session session) {
 }
 ```
 
-> Note: that the call to the `setPublisherVideoType()` method sets the video type of the published
+> Note: that the call to the `setPublisherVideoType` method sets the video type of the published
 stream to `PublisherKitVideoType.PublisherKitVideoTypeScreen`. This optimizes the video encoding for
 screen sharing. It is recommended to use a low frame rate (5 frames per second or lower) with this
 video type. When using the screen video type in a session that uses the [OpenTok Media
 Server](https://tokbox.com/opentok/tutorials/create-session/#media-mode), the
 audio-only fallback feature is disabled, so that the video does not drop out in subscribers.
 
-The `onConnected(Session session)` method also calls the `loadScreenWebView()` method. This method
+The `onConnected(Session session)` method also calls the `loadScreenWebView` method. This method
 configures the WebView object, loading the TokBox URL.
 
 Note that the `webViewContainer` object is passed into the `ScreensharingCapturer()` constructor,
-which assigns it to the `contentView` property. The `newFrame()` method is called when the video
+which assigns it to the `contentView` property. The `newFrame` method is called when the video
 capturer supplies a new frame to the video stream. It creates a canvas, draws the `contentView`
 to the canvas, and assigns the bitmap representation of `contentView` to the frame to be sent:
 

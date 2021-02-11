@@ -12,8 +12,7 @@ A custom video capturer will be helpful when:
 
 ## Using a custom video capturer
 
-After instantiating a Publisher object, the code sets a custom video capturer by calling the
-`capturer()` method of the `Publisher`:
+The `MirrorVideoCapturer` is a custom class that extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK. During construction of a `Publisher` object, the code sets a custom video capturer by calling the `capturer` method of the Publisher:
 
 ```java
 publisher = new Publisher.Builder(MainActivity.this)
@@ -21,7 +20,7 @@ publisher = new Publisher.Builder(MainActivity.this)
     .build();
 ```
 
-The `MirrorVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK. The `getCaptureSettings()` method returns the settings of the video capturer, including the frame rate, width, height, video delay, and video format for the capturer:
+The `MirrorVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK. The `getCaptureSettings` method returns the settings of the video capturer, including the frame rate, width, height, video delay, and video format for the capturer:
 
 ```java
 @Override

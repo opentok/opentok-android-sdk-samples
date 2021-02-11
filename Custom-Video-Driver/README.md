@@ -18,7 +18,7 @@ publisher = new Publisher.Builder(MainActivity.this)
 ```
 
 The `CustomVideoCapturer` class extends the `BaseVideoCapturer` class, defined in the OpenTok Android SDK.
-The `getCaptureSettings()` method returns the settings of the video capturer, including the frame
+The `getCaptureSettings` method returns the settings of the video capturer, including the frame
 rate, width, height, video delay, and video format for the capturer:
 
 ```java
@@ -37,8 +37,8 @@ public synchronized CaptureSettings getCaptureSettings() {
 The app calls `startCapture()` to start capturing video from the custom video capturer.
 
 The class also implements the `android.hardware.Camera.PreviewCallback` interface. The
-`onPreviewFrame()` method of this interface is called as preview frames of the camera become
-available. In this method, the app calls the `provideByteArrayFrame()` method of the
+`onPreviewFrame` method of this interface is called as preview frames of the camera become
+available. In this method, the app calls the `provideByteArrayFrame` method of the
 `CustomVideoCapturer` class (inherited from the `BaseVideoCapturer` class). This method
 provides a video frame, defined as a byte array, to the video capturer:
 
@@ -65,7 +65,7 @@ publisher = new Publisher.Builder(MainActivity.this)
 
 The `InvertedColorsVideoRenderer` extends the `BaseVideoRenderer` class, defined in the OpenTok Android SDK.
 The `InvertedColorsVideoRenderer` class includes a `MyRenderer` subclass that implements `GLSurfaceView.Renderer`.
-This class includes a `displayFrame()` method that renders a frame of video to an Android view.
+This class includes a `displayFrame` method that renders a frame of video to an Android view.
 
 The `InvertedColorsVideoRenderer` constructor sets a property to an instance of the `MyRenderer` class.
 
@@ -73,8 +73,8 @@ The `InvertedColorsVideoRenderer` constructor sets a property to an instance of 
 mRenderer = new MyRenderer();
 ```
 
-The `onFrame()` method of the video renderer is inherited from the `BaseVideoRenderer` class.
-This method is called at the specified frame rate. It then calls the `displayFrame()` method of
+The `onFrame` method of the video renderer is inherited from the `BaseVideoRenderer` class.
+This method is called at the specified frame rate. It then calls the `displayFrame` method of
 the M`yVideoRenderer` instance:
 
 ```java
