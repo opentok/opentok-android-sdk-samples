@@ -21,7 +21,7 @@ File(".")
         checkServerConfig(projectDirectoryName)
 
         // Check project references
-        checkTopLevelReadmeContainsProject(projectDirectoryName)
+        checkTopLevelReadmeContainsProjectLink(projectDirectoryName)
         checkGithubWorkflowContainsProject(projectDirectoryName)
     }
 
@@ -116,12 +116,13 @@ fun checkMainActivity(projectDirectoryName: String) {
 /**
  * Check if top-level readme file contains project
  */
-fun checkTopLevelReadmeContainsProject(projectDirectoryName: String) {
+fun checkTopLevelReadmeContainsProjectLink(projectDirectoryName: String) {
     val filePath = "README.md"
     val file = File(filePath)
+    val desiredProjectLink = "[$projectDirectoryName](./$projectDirectoryName)"
 
-    if(!file.contains(projectDirectoryName)) {
-        addError(projectDirectoryName, "$filePath file do not contain project link")
+    if(!file.contains(desiredProjectLink)) {
+        addError(projectDirectoryName, "$filePath file do not contain project link $desiredProjectLink")
     }
 }
 
