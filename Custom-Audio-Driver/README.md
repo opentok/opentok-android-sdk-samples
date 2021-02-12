@@ -10,7 +10,7 @@ AudioDeviceManager.setAudioDevice(customAudioDevice);
 ```
 
 The `CustomAudioDevice` class extends the `BaseAudioDevice` class, defined in the 
-[OpenTok Android SDK](https://tokbox.com/developer/sdks/android/). This class includes methods for 
+OpenTok Android SDK. This class includes methods for 
 setting up and using a custom audio driver. The audio driver contains an audio capturer -- used to get 
 audio samples from the audio source -- and an audio renderer -- used to playback audio samples from 
 the OpenTok streams the client has subscribed to.
