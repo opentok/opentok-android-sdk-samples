@@ -1,4 +1,4 @@
-package com.tokbox.sample.customaudiodriver;
+package com.tokbox.sample.advancedaudiodriver;
 
 import android.text.TextUtils;
 import androidx.annotation.NonNull;

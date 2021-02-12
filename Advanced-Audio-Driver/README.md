@@ -1,15 +1,15 @@
-# Custom Audio Driver
+# Advanced Audio Driver
 
 This app shows how to use the audio driver for publisher and subscriber audio. Just like the custom video driver, most applications will be fine using the default. If you want to add custom audio manipulation, look here.
 
-`CustomAudioDevice` instance is passed into the `AudioDeviceManager.setAudioDevice` method:
+`AdvancedAudioDevice` instance is passed into the `AudioDeviceManager.setAudioDevice` method:
 
 ```java
-CustomAudioDevice customAudioDevice = new CustomAudioDevice(this);
-AudioDeviceManager.setAudioDevice(customAudioDevice);
+AdvancedAudioDevice AdvancedAudioDevice = new AdvancedAudioDevice(this);
+AudioDeviceManager.setAudioDevice(AdvancedAudioDevice);
 ```
 
-The `CustomAudioDevice` class extends the `BaseAudioDevice` class, defined in the 
+The `AdvancedAudioDevice` class extends the `BaseAudioDevice` class, defined in the 
 OpenTok Android SDK. This class includes methods for 
 setting up and using a custom audio driver. The audio driver contains an audio capturer -- used to get 
 audio samples from the audio source -- and an audio renderer -- used to playback audio samples from 
@@ -18,7 +18,7 @@ the OpenTok streams the client has subscribed to.
 > Note: that you must call the method `AudioDeviceManager.setAudioDevice()` before you instantiate
 a Session object (and connect to the session).
 
-The constructor for the `CustomAudioDevice` class instantiates two instances of the
+The constructor for the `AdvancedAudioDevice` class instantiates two instances of the
 `BaseAudioDevice.AudioSettings` class, defined in the OpenTok Android SDK. These are settings for
 audio capturing and audio rendering:
 
@@ -27,7 +27,7 @@ captureSettings = new AudioSettings(captureSamplingRate, NUM_CHANNELS_CAPTURING)
 rendererSettings = new AudioSettings(outputSamplingRate, NUM_CHANNELS_RENDERING);
 ```
 
-The CustomAudioDevice class overrides the `initCapturer` method, defined in the `BaseAudioDevice`
+The AdvancedAudioDevice class overrides the `initCapturer` method, defined in the `BaseAudioDevice`
 class. This method initializes the app's audio capturer, instantiating a an
 `andriod.media.AudioRecord` instance to be used to capture audio from the device's audio input
 hardware:
@@ -48,7 +48,7 @@ The `initCapturer` method also sets up a thread to capture audio from the device
 new Thread(captureThread).start();
 ```
 
-The CustomAudioDevice overrides the `startCapturer` method, which is called when the app starts
+The AdvancedAudioDevice overrides the `startCapturer` method, which is called when the app starts
 sampling audio to be sent to the publisher's stream. The audio capture thread reads audio samples
 from the AudioRecord object into a buffer, `m_recbuffer`:
 
@@ -71,7 +71,7 @@ publisher's stream:
 getAudioBus().writeCaptureData(recBuffer, samplesRead);
 ```
 
-The `CustomAudioDevice` class overrides the `initRenderer` method, defined in the `BaseAudioDevice`
+The `AdvancedAudioDevice` class overrides the `initRenderer` method, defined in the `BaseAudioDevice`
 class. This method initializes the app's audio renderer, instantiating an `andriod.media.AudioTrack`
 instance. This object will be used to playback audio to the device's audio output hardware:
 
@@ -95,7 +95,7 @@ hardware:
 new Thread(m_renderThread).start();
 ```
 
-The `CustomAudioDevice` overrides the `startRenderer` method, which is called when the app starts
+The `AdvancedAudioDevice` overrides the `startRenderer` method, which is called when the app starts
 receiving audio from subscribed streams.
 
 The `AudioBus` object includes a `readRenderData` method, which the audio render thread calls

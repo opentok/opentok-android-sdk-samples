@@ -11,7 +11,7 @@ android {
     buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.customaudiodriver"
+        applicationId "com.tokbox.sample.advancedaudiodriver"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

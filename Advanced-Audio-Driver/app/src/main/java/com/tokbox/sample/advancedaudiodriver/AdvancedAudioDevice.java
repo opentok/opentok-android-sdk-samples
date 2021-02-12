@@ -1,4 +1,4 @@
-package com.tokbox.sample.customaudiodriver;
+package com.tokbox.sample.advancedaudiodriver;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -29,8 +29,8 @@ import java.util.Locale;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-class CustomAudioDevice extends BaseAudioDevice {
-    private final static String TAG =  CustomAudioDevice.class.getSimpleName();
+class AdvancedAudioDevice extends BaseAudioDevice {
+    private final static String TAG =  AdvancedAudioDevice.class.getSimpleName();
 
     private static final int NUM_CHANNELS_CAPTURING = 1;
     private static final int NUM_CHANNELS_RENDERING = 1;
@@ -278,7 +278,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                         Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_CONNECTED");
                         bluetoothState = BluetoothState.Connected;
                         setOutputType(OutputType.BLUETOOTH);
-                        CustomAudioDevice.super.setOutputMode(OutputMode.Handset); // When BT is connected it replaces the handset
+                        AdvancedAudioDevice.super.setOutputMode(OutputMode.Handset); // When BT is connected it replaces the handset
                         break;
                     case AudioManager.SCO_AUDIO_STATE_ERROR:
                         Log.d(TAG, "bluetoothBroadcastReceiver.onReceive(): AudioManager.SCO_AUDIO_STATE_ERROR");
@@ -415,7 +415,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         startBluetoothSco();
     }
 
-    public CustomAudioDevice(Context context) {
+    public AdvancedAudioDevice(Context context) {
         this.context = context;
 
         try {

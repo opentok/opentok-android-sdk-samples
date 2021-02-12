@@ -1,4 +1,4 @@
-package com.tokbox.sample.customaudiodriver;
+package com.tokbox.sample.advancedaudiodriver;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;
@@ -199,8 +199,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         
         if (EasyPermissions.hasPermissions(this, perms)) {
-            CustomAudioDevice customAudioDevice = new CustomAudioDevice(this);
-            AudioDeviceManager.setAudioDevice(customAudioDevice);
+            AdvancedAudioDevice advancedAudioDevice = new AdvancedAudioDevice(this);
+            AudioDeviceManager.setAudioDevice(advancedAudioDevice);
 
             session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
             session.setSessionListener(sessionListener);
