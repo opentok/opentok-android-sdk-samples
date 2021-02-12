@@ -301,6 +301,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             Log.d(TAG, "PhoneStateListener.onCallStateChanged()");
+
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
 
@@ -467,11 +468,11 @@ class CustomAudioDevice extends BaseAudioDevice {
         rendererSettings = new AudioSettings(outputSamplingRate, NUM_CHANNELS_RENDERING);
 
         try {
-            telephonyManager = (TelephonyManager) context.getSystemService(Context
-                    .TELEPHONY_SERVICE);
+            telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
+
         isPhoneStateListenerRegistered = false;
         wasCapturing = false;
         wasRendering = false;
@@ -497,10 +498,12 @@ class CustomAudioDevice extends BaseAudioDevice {
             noiseSuppressor.release();
             noiseSuppressor = null;
         }
+
         if (echoCanceler != null) {
             echoCanceler.release();
             echoCanceler = null;
         }
+
         if (audioRecord != null) {
             audioRecord.release();
             audioRecord = null;
@@ -518,6 +521,7 @@ class CustomAudioDevice extends BaseAudioDevice {
             if (NoiseSuppressor.isAvailable()) {
                 noiseSuppressor = NoiseSuppressor.create(audioRecord.getAudioSessionId());
             }
+
             if (AcousticEchoCanceler.isAvailable()) {
                 echoCanceler = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
             }
@@ -550,15 +554,18 @@ class CustomAudioDevice extends BaseAudioDevice {
     @Override
     public boolean destroyCapturer() {
         captureLock.lock();
+
         // release the object
         if (null != echoCanceler) {
             echoCanceler.release();
             echoCanceler = null;
         }
+
         if (null != noiseSuppressor) {
             noiseSuppressor.release();
             noiseSuppressor = null;
         }
+
         audioRecord.release();
         audioRecord = null;
         shutdownCaptureThread = true;
@@ -715,6 +722,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+
         // Check that the audioRecord is ready to be used.
         if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
             throw new RuntimeException("Audio renderer not initialized " + rendererSettings.getSampleRate());
@@ -773,6 +781,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                 }
             }
         }
+
         // Start playout.
         if (audioTrack == null) {
             throw new IllegalStateException("startRenderer(): play() called on uninitialized AudioTrack");
@@ -782,6 +791,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         } catch (IllegalStateException e) {
             throw new RuntimeException(e.getMessage());
         }
+
         rendererLock.lock();
         isRendering = true;
         renderEvent.signal();
@@ -798,7 +808,9 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (audioTrack == null) {
             throw new IllegalStateException("stopRenderer(): stop() called on uninitialized AudioTrack");
         }
+
         rendererLock.lock();
+
         try {
             // Only stop if we are playing.
             if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
@@ -859,6 +871,7 @@ class CustomAudioDevice extends BaseAudioDevice {
 
                         // decrease by number of played samples
                         int pos = audioTrack.getPlaybackHeadPosition();
+
                         if (pos < playPosition) {
                             // wrap or reset by driver
                             playPosition = 0;
@@ -907,6 +920,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         //This is public API and also called during initialization
         Log.d("AUDIO_FOCUS", "outputmode set to : " + mode);
         super.setOutputMode(mode);
+
         if(OutputMode.SpeakerPhone == mode) {
             audioState.setLastOutputType(getOutputType());
             setOutputType(OutputType.SPEAKER_PHONE);
@@ -924,6 +938,7 @@ class CustomAudioDevice extends BaseAudioDevice {
                 audioManager.setBluetoothScoOn(false);
             }
         }
+
         return true;
     }
 
@@ -935,6 +950,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (isHeadsetReceiverRegistered) {
             return;
         }
+
         context.registerReceiver(headsetBroadcastReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
         isHeadsetReceiverRegistered = true;
     }
@@ -945,6 +961,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (!isHeadsetReceiverRegistered) {
             return;
         }
+
         context.unregisterReceiver(headsetBroadcastReceiver);
         isHeadsetReceiverRegistered = false;
     }
@@ -957,6 +974,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (isBluetoothHeadSetReceiverRegistered) {
             return;
         }
+
         IntentFilter btFilter =  new IntentFilter(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
         btFilter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
         context.registerReceiver(bluetoothBroadcastReceiver, btFilter);
@@ -974,6 +992,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (!isBluetoothHeadSetReceiverRegistered) {
             return;
         }
+
         context.unregisterReceiver(bluetoothBroadcastReceiver);
         context.unregisterReceiver(bluetoothHeadsetReceiver);
         isBluetoothHeadSetReceiverRegistered = false;
@@ -987,6 +1006,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (isPhoneStateListenerRegistered) {
             return;
         }
+
         if (telephonyManager != null) {
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
             isPhoneStateListenerRegistered = true;
@@ -999,6 +1019,7 @@ class CustomAudioDevice extends BaseAudioDevice {
         if (!isPhoneStateListenerRegistered) {
             return;
         }
+
         if (telephonyManager != null) {
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
             isPhoneStateListenerRegistered = false;
@@ -1087,7 +1108,9 @@ class CustomAudioDevice extends BaseAudioDevice {
             if (BluetoothProfile.HEADSET == type) {
                 bluetoothProfile = profile;
                 List<BluetoothDevice> devices = profile.getConnectedDevices();
+
                 Log.d(TAG, "Service Proxy Connected");
+
                 if (!devices.isEmpty() &&
                         BluetoothHeadset.STATE_CONNECTED == profile.getConnectionState(devices.get(0))) {
                     // Force a init of bluetooth: the handler will not send a connected event if a
@@ -1107,6 +1130,7 @@ class CustomAudioDevice extends BaseAudioDevice {
 
     private void forceInvokeConnectBluetooth() {
         Log.d(TAG, "forceConnectBluetooth() called");
+
         // Force reconnection of bluetooth in the event of a phone call.
         synchronized (bluetoothLock) {
             bluetoothState = BluetoothState.Disconnected;
