@@ -35,6 +35,9 @@ jobs:
       - name: Basic-Video-Chat
         run: cd Basic-Video-Chat && ./gradlew app:assembleRelease && cd ..
 
+      - name: Basic-Audio-Driver
+        run: cd Basic-Audio-Driver && ./gradlew app:assembleRelease && cd ..
+
       - name: Advanced-Audio-Driver
         run: cd Advanced-Audio-Driver && ./gradlew app:assembleRelease && cd ..
 

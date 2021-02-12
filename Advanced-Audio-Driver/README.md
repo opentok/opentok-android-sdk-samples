@@ -130,4 +130,5 @@ playPosition = pos;
 ## Further Reading
 
 * Review [other sample projects](../)
+* Review [Basic-Audio-Driver](../Basic-Audio-Driver)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
