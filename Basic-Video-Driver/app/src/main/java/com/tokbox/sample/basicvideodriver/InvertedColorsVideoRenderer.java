@@ -1,4 +1,4 @@
-package com.tokbox.sample.customvideodriver;
+package com.tokbox.sample.basicvideodriver;
 
 import android.content.Context;
 import android.opengl.GLES20;

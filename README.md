@@ -16,7 +16,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - [Basic-Video-Capturer-Camera-2](./Basic-Video-Capturer-Camera-2) demonstrates how to create a custom video capturer using [Camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary) class
 - [Basic-Video-Renderer](./Basic-Video-Renderer) demonstrates how to create a custom video renderer
 - [Advanced-Audio-Driver](./Basic-Audio-Driver) demonstrates how to create a more advanced custom audio driver
-- [Custom-Video-Driver](./Custom-Video-Driver) demonstrates how to create a custom video driver
+- [Basic-Video-Driver](./Basic-Video-Driver) demonstrates how to create a custom video driver
 - [Live-Photo-Capture](./Live-Photo-Capture) demonstrates how to capture an image from a subscribed video stream
 - [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
 - [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the WebView as the source

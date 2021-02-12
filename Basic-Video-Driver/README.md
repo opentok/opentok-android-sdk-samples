@@ -1,4 +1,4 @@
-# Custom Video Driver
+# Basic Video Driver
 
 This app shows how to use both a custom video capturer and redender together (custom video driver). While most applications will work fine with the default capturer (and therefore won't require an understanding of how the custom video driver work), if you need to add custom effects, then this is where you should start.
 ## Using a custom video capturer
