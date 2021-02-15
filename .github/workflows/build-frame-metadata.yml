@@ -20,18 +20,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
-                
-      - name: Generate Gradle checksums
-        run: |
-          find buildSrc -name "*.kt" -type f | sort | xargs shasum  > gradle-checksums.txt
-          cat gradle-checksums.txt
-      
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle
-          key: gradle-${{ hashFiles('gradle-checksums.txt') }}-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ hashFiles('gradle-checksums.txt') }}-
 
       - name: Build
         run: cd Frame-Metadata && ./gradlew app:assembleRelease && cd ..
