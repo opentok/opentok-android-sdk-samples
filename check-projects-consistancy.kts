@@ -22,7 +22,7 @@ File(".")
 
         // Check project references
         checkTopLevelReadmeContainsProjectLink(projectDirectoryName)
-        checkGithubWorkflowContainsProject(projectDirectoryName)
+        checkGithubWorkflow(projectDirectoryName)
     }
 
 if (errors.isNotEmpty()) {
@@ -127,22 +127,6 @@ fun checkTopLevelReadmeContainsProjectLink(projectDirectoryName: String) {
 }
 
 /**
- * Check if top-level readme file contain project
- */
-fun checkGithubWorkflowContainsProject(projectDirectoryName: String) {
-    val filePath = "./.github/workflows/check-projects.yml"
-    val file = File(filePath)
-
-    if(!file.contains("name: $projectDirectoryName")) {
-        addError(projectDirectoryName, "$filePath file do not contain project name")
-    }
-
-    if(!file.contains("cd $projectDirectoryName && ./gradlew app:assembleRelease && cd ..")) {
-        addError(projectDirectoryName, "$filePath file do not contain project check")
-    }
-}
-
-/**
  * Check if project contains readme file
  */
 fun checkReadme(projectDirectoryName: String) {
@@ -151,6 +135,28 @@ fun checkReadme(projectDirectoryName: String) {
 
     if (!file.exists()) {
         addError(projectDirectoryName, "$filePath file not found")
+    }
+}
+
+/**
+ * Check if workflow for project is valid
+ */
+fun checkGithubWorkflow(projectDirectoryName: String) {
+    val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
+
+    val filePath = "./.github/workflows/$workflowFileName"
+    val file = File(filePath)
+
+    if (!file.exists()) {
+        addError(projectDirectoryName, "$filePath file not found")
+    } else {
+        if(!file.contains("name: $projectDirectoryName")) {
+            addError(projectDirectoryName, "$filePath file do not contain project name")
+        }
+
+        if(!file.contains("cd $projectDirectoryName && ./gradlew app:assembleRelease && cd ..")) {
+            addError(projectDirectoryName, "$filePath file do not contain project check")
+        }
     }
 }
 
