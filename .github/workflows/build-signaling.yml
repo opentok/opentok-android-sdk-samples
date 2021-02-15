@@ -1,4 +1,4 @@
-name: Signaling
+name: Build Signaling
 
 on:
   push:

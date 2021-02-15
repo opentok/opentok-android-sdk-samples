@@ -1,4 +1,4 @@
-name: ARCore-Integration
+name: Build ARCore-Integration
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Simple-Multiparty
+name: Build Simple-Multiparty
 
 on:
   push:

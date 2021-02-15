@@ -1,4 +1,4 @@
-name: Basic-Video-Driver
+name: Build Basic-Video-Driver
 
 on:
   push:

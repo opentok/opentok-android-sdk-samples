@@ -1,4 +1,4 @@
-name: Basic-Video-Chat
+name: Build Basic-Video-Chat
 
 on:
   push:

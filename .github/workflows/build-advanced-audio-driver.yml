@@ -1,4 +1,4 @@
-name: Advanced-Audio-Driver
+name: Build Advanced-Audio-Driver
 
 on:
   push:

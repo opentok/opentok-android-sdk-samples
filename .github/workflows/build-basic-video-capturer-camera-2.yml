@@ -1,4 +1,4 @@
-name: Basic-Video-Capturer-Camera-2
+name: Build Basic-Video-Capturer-Camera-2
 
 on:
   push:

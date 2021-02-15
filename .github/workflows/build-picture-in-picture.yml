@@ -1,4 +1,4 @@
-name: Picture-In-Picture
+name: Build Picture-In-Picture
 
 on:
   push:

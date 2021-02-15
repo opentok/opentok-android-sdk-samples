@@ -1,4 +1,4 @@
-name: Live-Photo-Capture
+name: Build Live-Photo-Capture
 
 on:
   push:

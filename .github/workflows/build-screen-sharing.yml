@@ -1,4 +1,4 @@
-name: Screen-Sharing
+name: Build Screen-Sharing
 
 on:
   push:

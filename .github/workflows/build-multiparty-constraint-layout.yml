@@ -1,4 +1,4 @@
-name: Multiparty-Constraint-Layout
+name: Build Multiparty-Constraint-Layout
 
 on:
   push:

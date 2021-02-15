@@ -1,4 +1,4 @@
-name: Frame-Metadata
+name: Build Frame-Metadata
 
 on:
   push:

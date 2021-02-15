@@ -1,4 +1,4 @@
-name: Basic-Audio-Driver
+name: Build Basic-Audio-Driver
 
 on:
   push:

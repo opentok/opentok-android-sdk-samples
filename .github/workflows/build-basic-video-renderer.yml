@@ -1,4 +1,4 @@
-name: Basic-Video-Renderer
+name: Build Basic-Video-Renderer
 
 on:
   push:
