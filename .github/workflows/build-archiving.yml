@@ -1,4 +1,4 @@
-name: Check projects
+name: Archiving
 
 on:
   push:
@@ -21,6 +21,6 @@ jobs:
         with:
           java-version: 15
 
-      - name: Archiving
+      - name: Build
         run: cd Archiving && ./gradlew app:assembleRelease && cd ..
         

@@ -1,4 +1,4 @@
-name: Check projects
+name: Basic-Video-Driver
 
 on:
   push:
@@ -21,6 +21,6 @@ jobs:
         with:
           java-version: 15
 
-      - name: Basic-Video-Driver
+      - name: Build
         run: cd Basic-Video-Driver && ./gradlew app:assembleRelease && cd ..
 

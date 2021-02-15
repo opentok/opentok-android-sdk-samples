@@ -1,4 +1,4 @@
-name: Check projects
+name: ARCore-Integration
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         with:
           java-version: 15
 
-      - name: ARCore-Integration
+      - name: Build
         run: cd ARCore-Integration && ./gradlew app:assembleRelease && cd ..
       
 

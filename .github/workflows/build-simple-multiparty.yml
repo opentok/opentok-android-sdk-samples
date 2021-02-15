@@ -1,4 +1,4 @@
-name: Check projects
+name: Simple-Multiparty
 
 on:
   push:
@@ -21,5 +21,5 @@ jobs:
         with:
           java-version: 15
 
-      - name: Simple-Multiparty
+      - name: Build
         run: cd Simple-Multiparty && ./gradlew app:assembleRelease && cd ..

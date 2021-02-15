@@ -1,4 +1,4 @@
-name: Check projects
+name: Screen-Sharing
 
 on:
   push:
@@ -21,5 +21,5 @@ jobs:
         with:
           java-version: 15
 
-      - name: Screen-Sharing
+      - name: Build
         run: cd Screen-Sharing && ./gradlew app:assembleRelease && cd ..

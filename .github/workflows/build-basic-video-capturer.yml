@@ -1,4 +1,4 @@
-name: Check projects
+name: Basic-Video-Capturer
 
 on:
   push:
@@ -21,6 +21,6 @@ jobs:
         with:
           java-version: 15
 
-      - name: Basic-Video-Capturer
+      - name: Build
         run: cd Basic-Video-Capturer && ./gradlew app:assembleRelease && cd ..
 

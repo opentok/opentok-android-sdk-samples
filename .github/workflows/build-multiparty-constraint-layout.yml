@@ -1,4 +1,4 @@
-name: Check projects
+name: Multiparty-Constraint-Layout
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         with:
           java-version: 15
 
-      - name: Multiparty-Constraint-Layout
+      - name: Build
         run: cd Multiparty-Constraint-Layout && ./gradlew app:assembleRelease && cd ..
 
 
