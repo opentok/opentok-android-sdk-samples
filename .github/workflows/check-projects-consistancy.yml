@@ -20,11 +20,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
-                
-      - name: Generate Gradle checksums
-        run: |
-          find buildSrc -name "*.kt" -type f | sort | xargs shasum  > gradle-checksums.txt
-          cat gradle-checksums.txt
       
       - name: Run Unit tests
         run: |
