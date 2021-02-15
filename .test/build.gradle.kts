@@ -18,7 +18,7 @@ tasks.test {
 	useJUnitPlatform()
 	
 	testLogging {
-		events("passed", "skipped", "failed")
+		events("failed")
 
 		// log full stacktrace of failed test (assertion library descriptive error)
 		exceptionFormat = TestExceptionFormat.FULL
