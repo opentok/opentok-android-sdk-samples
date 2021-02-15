@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(!OpenTokConfig.isValid()) {
+        if (!OpenTokConfig.isValid()) {
             finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
             return;
         }
@@ -196,8 +196,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        
+        String[] perms = {
+                Manifest.permission.INTERNET,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.BLUETOOTH
+        };
+
         if (EasyPermissions.hasPermissions(this, perms)) {
             AdvancedAudioDevice advancedAudioDevice = new AdvancedAudioDevice(this);
             AudioDeviceManager.setAudioDevice(advancedAudioDevice);
