@@ -1,4 +1,6 @@
+# intellij
 *.iml
+
 .gradle
 /local.properties
 /.idea/workspace.xml
@@ -7,3 +9,7 @@
 /build
 /captures
 .externalNativeBuild
+app/build
+
+.settings/
+app/jniLibs/
