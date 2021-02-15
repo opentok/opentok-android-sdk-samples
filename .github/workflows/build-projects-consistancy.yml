@@ -1,0 +1,31 @@
+name: Check projects
+
+on:
+  push:
+    branches: [master] # Just in case master was not up to date while merging PR
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  run:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      
+      - name: Install SDKMan, Kotlin, kscript and check project consistancy
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install kotlin      
+          sdk install kscript
+          kscript check-projects-consistancy.kts
+
