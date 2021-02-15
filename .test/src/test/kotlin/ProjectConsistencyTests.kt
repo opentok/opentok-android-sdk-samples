@@ -124,7 +124,7 @@ class ProjectConsistencyTests {
         val file = File(filePath)
 
         // Format: "name: Project-Name"
-        val desiredProjectName = "name: $projectDirectoryName"
+        val desiredProjectName = "name: Build $projectDirectoryName"
         file shouldContainLineContainingString desiredProjectName
     }
 
