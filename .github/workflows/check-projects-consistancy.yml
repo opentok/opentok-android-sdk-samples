@@ -1,4 +1,4 @@
-name: Check projects
+name: Check projects consistancy
 
 on:
   push:
