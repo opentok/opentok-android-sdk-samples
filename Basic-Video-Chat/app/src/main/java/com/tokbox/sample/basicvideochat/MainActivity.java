@@ -234,6 +234,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.i(TAG, "sessionId: " + sessionId);
         Log.i(TAG, "token: " + token);
 
+        /*
+        The context used depends on the specific use case, but usually, it is desired for the session to
+        live outside of the Activity e.g: live between activities. For a production applications,
+        it's convenient to use Application context instead of Activity context.
+         */
         session = new Session.Builder(this, apiKey, sessionId).build();
         session.setSessionListener(sessionListener);
         session.connect(token);
