@@ -83,4 +83,4 @@ public void displayFrame(Frame frame) {
 
 ## Further Reading
 
-Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
+- Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
