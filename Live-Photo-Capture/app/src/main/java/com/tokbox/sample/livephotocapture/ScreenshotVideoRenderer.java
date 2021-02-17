@@ -21,14 +21,13 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class BasicCustomVideoRenderer extends BaseVideoRenderer {
+public class ScreenshotVideoRenderer extends BaseVideoRenderer {
 
-    private final static String TAG = BasicCustomVideoRenderer.class.getSimpleName();
+    private final static String TAG = ScreenshotVideoRenderer.class.getSimpleName();
 
     Context context;
     GLSurfaceView view;
     MyRenderer renderer;
-    boolean saveScreenshot;
 
     static class MyRenderer implements GLSurfaceView.Renderer {
         int textureIds[] = new int[3];
@@ -94,11 +93,9 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
         private int textureHeight;
         private int viewportWidth;
         private int viewportHeight;
-        private BasicCustomVideoRenderer customVideoRenderer;
+        private boolean saveScreenshot;
 
-        public MyRenderer(BasicCustomVideoRenderer parent) {
-            this.customVideoRenderer = parent;
-
+        public MyRenderer() {
             ByteBuffer bb = ByteBuffer.allocateDirect(xyzCoords.length * 4);
             bb.order(ByteOrder.nativeOrder());
             vertexBuffer = bb.asFloatBuffer();
@@ -300,7 +297,7 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
             this.currentFrame = frame;
             frameLock.unlock();
 
-            if (customVideoRenderer.saveScreenshot) {
+            if (saveScreenshot) {
                 Log.d(TAG, "Screenshot capture");
 
                 ByteBuffer bb = frame.getBuffer();
@@ -339,7 +336,7 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
                     return;
                 }
 
-                customVideoRenderer.saveScreenshot = false;
+                saveScreenshot = false;
             }
         }
 
@@ -404,15 +401,19 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
         public void enableVideoFit(boolean enableVideoFit) {
             videoFitEnabled = enableVideoFit;
         }
+
+        public void saveScreenshot() {
+            saveScreenshot = true;
+        }
     };
 
-    public BasicCustomVideoRenderer(Context context) {
+    public ScreenshotVideoRenderer(Context context) {
         this.context = context;
 
         view = new GLSurfaceView(context);
         view.setEGLContextClientVersion(2);
 
-        renderer = new MyRenderer(this);
+        renderer = new MyRenderer();
         view.setRenderer(renderer);
 
         view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -455,8 +456,8 @@ public class BasicCustomVideoRenderer extends BaseVideoRenderer {
         view.onResume();
     }
 
-    public void saveScreenshot(Boolean enableScreenshot) {
-        saveScreenshot = enableScreenshot;
+    public void saveScreenshot() {
+        renderer.saveScreenshot();
     }
 }
 
