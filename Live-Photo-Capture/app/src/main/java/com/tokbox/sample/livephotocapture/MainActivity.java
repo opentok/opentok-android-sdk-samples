@@ -58,9 +58,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            publisher = new Publisher.Builder(MainActivity.this)
-                    .renderer(new BasicCustomVideoRenderer(MainActivity.this))
-                    .build();
+            publisher = new Publisher.Builder(MainActivity.this).build();
 
             publisher.setPublisherListener(publisherListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
@@ -94,7 +92,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 return;
             }
 
-            subscribeToStream(stream);
+            subscriber = new Subscriber.Builder(MainActivity.this, stream)
+                    .renderer(new ScreenshotVideoRenderer(MainActivity.this))
+                    .build();
+
+            subscriber.setVideoListener(videoListener);
+            session.subscribe(subscriber);
         }
 
         @Override
@@ -151,7 +154,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if (subscriber == null) {
                 return;
             }
-            ((BasicCustomVideoRenderer) subscriber.getRenderer()).saveScreenshot(true);
+
+            ((ScreenshotVideoRenderer) subscriber.getRenderer()).saveScreenshot();
             Toast.makeText(this, "Screenshot saved", Toast.LENGTH_LONG).show();
         });
 
@@ -165,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onPause();
 
         if (isFinishing()) {
@@ -179,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onResume();
     }
 
@@ -222,15 +228,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
-    }
-
-    private void subscribeToStream(Stream stream) {
-        subscriber = new Subscriber.Builder(this, stream)
-                .renderer(new BasicCustomVideoRenderer(this))
-                .build();
-        
-        subscriber.setVideoListener(videoListener);
-        session.subscribe(subscriber);
     }
 
     private void disconnectSession() {
