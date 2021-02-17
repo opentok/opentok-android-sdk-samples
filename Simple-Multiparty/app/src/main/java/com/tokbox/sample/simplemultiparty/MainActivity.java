@@ -211,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     protected void onDestroy() {
-
         disconnectSession();
 
         super.onDestroy();

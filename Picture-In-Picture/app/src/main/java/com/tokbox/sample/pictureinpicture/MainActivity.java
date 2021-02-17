@@ -120,9 +120,11 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
             pictureInPictureButton.setVisibility(View.VISIBLE);
             publisherViewContainer.setVisibility(View.VISIBLE);
             publisher.getView().setVisibility(View.VISIBLE);
+            
             if (publisher.getView() instanceof GLSurfaceView) {
                 ((GLSurfaceView) publisher.getView()).setZOrderOnTop(true);
             }
+
             getActionBar().show();
         }
     }
@@ -154,6 +156,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
     @Override
     protected void onResume() {
         super.onResume();
+
         if (isInPictureInPictureMode()) {
             if (session != null) {
                 session.onResume();

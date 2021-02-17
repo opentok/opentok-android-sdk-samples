@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     protected void onPause() {
-
         super.onPause();
 
         if (session == null) {

@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+
         session.onPause();
 
         if (isFinishing()) {
@@ -168,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
+        
         session.onResume();
     }
 
