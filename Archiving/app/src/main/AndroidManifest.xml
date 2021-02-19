@@ -10,6 +10,7 @@
         <activity
             android:name="com.tokbox.sample.archiving.MainActivity"
             android:screenOrientation="portrait"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
