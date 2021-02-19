@@ -51,6 +51,20 @@ public void onFrame(Frame frame) {
 }
 ```
 
+It is important to note that the frame that the sdk sends to the Renderer in the `onFrame` method is now property of the Renderer. It is up to this class to destroy the frame when it is not needed anymore.
+That's why we destroy previous frame when a new one comes to the Renderer
+
+```java
+public void displayFrame(Frame frame) {
+    frameLock.lock();
+    if (currentFrame != null) {
+        currentFrame.destroy(); // Disposes previous frame
+    }
+    currentFrame = frame;
+    frameLock.unlock();
+}
+```
+
 To render the video frames, the renderer class uses OpenGL shaders. In this sample
 shader produces the inverted color effect, more precisely this is achieved by this line which is
 inside the `fragmentShaderCode` String:
