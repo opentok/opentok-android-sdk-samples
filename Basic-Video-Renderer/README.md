@@ -57,9 +57,11 @@ That's why we destroy previous frame when a new one comes to the Renderer
 ```java
 public void displayFrame(Frame frame) {
     frameLock.lock();
+
     if (currentFrame != null) {
         currentFrame.destroy(); // Disposes previous frame
     }
+    
     currentFrame = frame;
     frameLock.unlock();
 }

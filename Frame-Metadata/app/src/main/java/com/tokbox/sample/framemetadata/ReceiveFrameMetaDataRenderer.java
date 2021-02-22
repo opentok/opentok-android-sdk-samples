@@ -310,7 +310,12 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
-            this.currentFrame = frame;
+
+            if (currentFrame != null) {
+                currentFrame.destroy(); // Disposes previous frame
+            }
+            
+            currentFrame = frame;
             frameLock.unlock();
         }
 

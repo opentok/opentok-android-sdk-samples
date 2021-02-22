@@ -293,9 +293,11 @@ public class ScreenshotVideoRenderer extends BaseVideoRenderer {
 
         public void displayFrame(Frame frame) {
             frameLock.lock();
+
             if (currentFrame != null) {
-                currentFrame.destroy();
+                currentFrame.destroy(); // Disposes previous frame
             }
+            
             currentFrame = frame;
             frameLock.unlock();
 

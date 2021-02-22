@@ -33,9 +33,11 @@ If property `saveScreenshot` has value `true` during `displayFrame` method call 
 ```java
 public void displayFrame(Frame frame) {
     frameLock.lock();
+
     if (currentFrame != null) {
-        currentFrame.destroy(); // Free resources from previous frame
+        currentFrame.destroy(); // Disposes previous frame
     }
+
     currentFrame = frame;
     frameLock.unlock();
 
