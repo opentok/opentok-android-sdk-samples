@@ -28,13 +28,17 @@ public void saveScreenshot() {
 }
 ```
 
-If property `saveScreenshot` has value `true` during `displayFrame` method call then image file is saved to the root of device stoage:
+If property `saveScreenshot` has value `true` during `displayFrame` method call then image file is saved to the root of device storage:
 
 ```java
 public void displayFrame(Frame frame) {
     frameLock.lock();
 
-    this.currentFrame = frame;
+    if (currentFrame != null) {
+        currentFrame.destroy(); // Disposes previous frame
+    }
+
+    currentFrame = frame;
     frameLock.unlock();
 
     if (saveScreenshot) {
