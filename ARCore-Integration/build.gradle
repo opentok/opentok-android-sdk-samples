@@ -25,8 +25,7 @@ allprojects {
         jcenter()
 
         repositories {
-            jcenter()
-            maven { url 'https://tokbox.bintray.com/maven' }
+            mavenCentral()
         }
     }
 }
