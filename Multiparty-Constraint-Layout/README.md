@@ -39,7 +39,8 @@ public void applyToLayout(ConstraintLayout layout, boolean animated) {
             TransitionManager.beginDelayedTransition(layout);
         }
     }
-set.applyTo(layout);
+    
+    set.applyTo(layout);
 }
 ```
 

@@ -68,6 +68,7 @@ public class ConstraintSetHelper {
               TransitionManager.beginDelayedTransition(layout);
             }
         }
+        
         set.applyTo(layout);
     }
 

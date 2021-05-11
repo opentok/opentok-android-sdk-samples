@@ -36,7 +36,7 @@ dependencies {
     implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
-    implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion="2.0.4"}"
+    implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion"}"
 
     implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
     implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
