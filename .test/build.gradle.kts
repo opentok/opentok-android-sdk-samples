@@ -7,6 +7,9 @@ plugins {
 
 repositories {
 	mavenCentral()
+
+	// Not all libraries are migrated to mavenCentral. We need to keep jcenter for now
+	jcenter()
 }
 
 dependencies {
@@ -28,3 +31,4 @@ tasks.test {
 tasks.withType<KotlinCompile>().configureEach {
 	kotlinOptions.jvmTarget = "1.8"
 }
+

@@ -7,7 +7,10 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        
+        // Not all libraries are migrated to mavenCentral. We need to keep jcenter for now
+	    jcenter()
     }
     dependencies {
         // Dependency versions are defined in the /../commons.gradle file
@@ -21,10 +24,9 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
 
-        repositories {
-            mavenCentral()
-        }
+        // Not all libraries are migrated to mavenCentral. We need to keep jcenter for now
+	    jcenter()
     }
 }
