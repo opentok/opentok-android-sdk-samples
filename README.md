@@ -21,6 +21,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - [Live-Photo-Capture](./Live-Photo-Capture) demonstrates how to capture an image from a subscribed video stream
 - [Picture-In-Picture](./Picture-In-Picture) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
 - [Screen-Sharing](./Screen-Sharing) demonstrates how to publish a screen-sharing video, using the WebView as the source
+- [Phone-Call-Detection](./Phone-Call-Detection) demonstrates how to detect incoming and outgoing phone calls
 - [ARCore-Integration](./ARCore-Integration) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
 ## Open project
 
