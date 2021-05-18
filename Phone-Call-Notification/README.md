@@ -8,7 +8,7 @@ Main features:
 * Connect to an OpenTok session
 * Publish an audio-video stream to the session
 * Subscribe to another client's audio-video stream
-* Subscribe notified about incoming and outgoing phone calls
+* Be notified about incoming and outgoing phone calls and idle state
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
