@@ -218,12 +218,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+        Log.d(TAG, "onPermissionsGranted:" + requestCode + ": " + perms);
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        finishWithMessage("onPermissionsDenied: " + requestCode + ":" + perms.size());
+        finishWithMessage("onPermissionsDenied: " + requestCode + ": " + perms);
     }
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
