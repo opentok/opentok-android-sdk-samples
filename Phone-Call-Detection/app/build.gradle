@@ -11,7 +11,7 @@ android {
     buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.basicvideochat"
+        applicationId "com.tokbox.sample.phonecalldetection"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

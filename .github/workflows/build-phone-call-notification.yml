@@ -1,4 +1,4 @@
-name: Build Phone Call Notification
+name: Build Phone Call Detection
 
 on:
   push:
@@ -22,6 +22,6 @@ jobs:
           java-version: 15
 
       - name: Build
-        run: cd Phone-Call-Notification && ./gradlew app:assembleRelease && cd ..
+        run: cd Phone-Call-Detection && ./gradlew app:assembleRelease && cd ..
 
 

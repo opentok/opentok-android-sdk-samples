@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat;
+package com.tokbox.sample.phonecalldetection;
 
 import android.Manifest;
 import android.content.Context;

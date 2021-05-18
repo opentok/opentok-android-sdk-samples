@@ -1,7 +1,6 @@
-package com.tokbox.sample.basicvideochat;
+package com.tokbox.sample.phonecalldetection;
 
 import android.text.TextUtils;
-import android.webkit.URLUtil;
 import androidx.annotation.NonNull;
 
 public class OpenTokConfig {

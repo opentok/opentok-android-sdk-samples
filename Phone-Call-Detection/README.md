@@ -1,4 +1,4 @@
-# Phone Call Notification
+# Phone Call Detection
 
 This application provides a Video Chat tutorial for Android. Upon deploying this sample application, you should be
 able to have two-way audio and video communication using OpenTok. You will be notified about incoming and outgoing
@@ -8,7 +8,7 @@ Main features:
 * Connect to an OpenTok session
 * Publish an audio-video stream to the session
 * Subscribe to another client's audio-video stream
-* Be notified about incoming and outgoing phone calls and idle state
+* Detect incoming and outgoing phone calls together with idle state
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
