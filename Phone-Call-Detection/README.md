@@ -5,14 +5,13 @@ able to have two-way audio and video communication using OpenTok. You will be no
 phone calls (happening during the video call).
 
 Main features:
-* Connect to an OpenTok session
-* Publish an audio-video stream to the session
-* Subscribe to another client's audio-video stream
-* Detect incoming and outgoing phone calls together with idle state
+* Create 2-way OpenTok video call
+* Detect incoming and outgoing native phone calls (while being on video call)
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
 
+# Listen fo call state changes
 This is the code responsible for listening for the call status:
 
 ```java
