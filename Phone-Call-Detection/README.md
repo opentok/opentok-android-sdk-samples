@@ -1,12 +1,13 @@
 # Phone Call Detection
 
-This application provides a Video Chat tutorial for Android. Upon deploying this sample application, you should be
-able to have two-way audio and video communication using OpenTok. You will be notified about incoming and outgoing
-phone calls (happening during the video call).
+This application provides a sample demonstrating phone calls detection.
+Upon deploying this sample application, you should be able to have two-way audio and video communication using OpenTok.
+Audio and video streams published from device to OpenTok session will be halted for the duration of ongoing phone call.
 
 Main features:
 * Create 2-way OpenTok video call
-* Detect incoming and outgoing native phone calls (while being on video call)
+* Detect incoming and outgoing native phone calls
+* Disable device video/video while being onCallStateChanged the phone call
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
