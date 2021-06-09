@@ -53,6 +53,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
 
+            startVideoPublish(session);
+            registerPhoneListener();
+        }
+
+        private void startVideoPublish(Session session) {
             publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
             publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
@@ -64,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
 
             session.publish(publisher);
+        }
+
+        private void registerPhoneListener() {
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
         @Override
@@ -125,7 +135,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE: //Initial state
-                    Log.d("onCallStateChanged", "CALL_STATE_IDLE");
+                    publisher.setPublishVideo(true);
+                    publisher.setPublishAudio(true);
                     break;
 
                 case TelephonyManager.CALL_STATE_RINGING: // Incoming call Ringing
@@ -134,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 case TelephonyManager.CALL_STATE_OFFHOOK: // Outgoing Call | Accepted incoming call
                     Log.d("onCallStateChanged", "CALL_STATE_OFFHOOK");
+                    publisher.setPublishVideo(false);
+                    publisher.setPublishAudio(false);
                     break;
 
                 default:
@@ -151,9 +164,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
-
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
         requestPermissions();
     }
