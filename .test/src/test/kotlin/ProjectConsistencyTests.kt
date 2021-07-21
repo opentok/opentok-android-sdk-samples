@@ -12,7 +12,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/$projectDirectoryName/app/src/main/AndroidManifest.xml"
         val file = File(filePath)
 
-        // ./Basic-Audio-Driver/app/src/main/AndroidManifest.xml
+        // app/src/main/AndroidManifest.xml 
         file.shouldExist()
     }
 
@@ -45,7 +45,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/$projectDirectoryName/app/build.gradle"
         val file = File(filePath)
 
-        // ./Basic-Audio-Driver/app/build.gradle
+        // app/build.gradle
         file.shouldExist()
     }
 
@@ -68,17 +68,20 @@ class ProjectConsistencyTests {
 
         file.shouldExist()
 
+        val projectName = getProjectName(projectDirectoryName)
         // format: <string name="app_name">Project-Name</string>
-        val desiredApplicationName = "<string name=\"app_name\">$projectDirectoryName</string>"
+        val desiredApplicationName = "<string name=\"app_name\">$projectName</string>"
         file shouldContainLineContainingString desiredApplicationName
     }
 
     @ParameterizedTest(name = "{0} MainActivity class exists in project")
     @MethodSource("getProjectNames")
     fun `MainActivity class exists in project`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/MainActivity.java"
+        
+        val languageExtension = getLanguageExtension(projectDirectoryName)
+        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/MainActivity.$languageExtension"
 
-        // ./Basic-Audio-Driver/app/src/main/java/com/tokbox/sample/projectname/MainActivity.java
+        // app/src/main/java/com/tokbox/sample/projectname/MainActivity.java
         val file = File(filePath)
         file.shouldExist()
     }
@@ -88,9 +91,9 @@ class ProjectConsistencyTests {
     fun `repository top-level README md file contains application name`(projectDirectoryName: String) {
         val filePath = "$repoRootDirectoryPath/README.md"
         val file = File(filePath)
-
-        // [Project-Name]/(./README.md)
-        val desiredProjectLink = "[$projectDirectoryName](./$projectDirectoryName)"
+        
+        // README.md
+        val desiredProjectLink = "[${getMainReadmeLinkName(projectDirectoryName)}](./$projectDirectoryName)"
         file shouldContainLineContainingString desiredProjectLink
     }
 
@@ -99,7 +102,7 @@ class ProjectConsistencyTests {
     fun `project directory contains README md file`(projectDirectoryName: String) {
         val filePath = "${getAbsoluteProjectPath(projectDirectoryName)}/README.md"
 
-        // Project-Name/README.md
+        // README.md
         val file = File(filePath)
         file.shouldExist()
     }
@@ -110,7 +113,7 @@ class ProjectConsistencyTests {
         val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
 
-        // .github/workflows/build-basic-audio-driver.yml
+        // .github/workflows/project-name.yml
         val file = File(filePath)
         file.shouldExist()
     }
@@ -223,8 +226,10 @@ class ProjectConsistencyTests {
          * Return project package e.g.
          * com.tokbox.sample.projectname
          */
-        private fun getProjectPackage(projectDirectoryName: String) =
-            "com.tokbox.sample.${getRawProjectName(projectDirectoryName)}"
+        private fun getProjectPackage(projectDirectoryName: String): String {
+            val rawProjectName = getRawProjectName(projectDirectoryName)
+            return "com.tokbox.sample.$rawProjectName"
+        }
 
         /**
          * Return project package path e.g.
@@ -243,13 +248,52 @@ class ProjectConsistencyTests {
         }
 
         /**
+         * Return project name without the language
+         * Java
+         */
+        private fun getProjectName(projectDirectoryName: String) = projectDirectoryName
+                .replace("-Java", "")
+                .replace("-Kotlin", "")
+
+        /**
+         * Return main readme link name
+         * Java
+         */
+        private fun getMainReadmeLinkName(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
+                "Java"
+            } else if(projectDirectoryName.endsWith("-Kotlin")) { 
+                "Kotlin"
+            } else {
+               projectDirectoryName
+            }
+
+        private fun getLanguageExtension(projectDirectoryName: String): String {
+             val language = getLanguage(projectDirectoryName)
+
+             return if(language == "Kotlin") {
+                 "kt"
+             } else {
+                 "java"
+             }
+        }
+
+        private fun getLanguage(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
+                "Java"
+            } else if(projectDirectoryName.endsWith("-Kotlin")) { 
+                "Kotlin"
+            } else {
+               null
+            }
+
+        /**
          * Converts project name
          * e.g.
          * Input: Project-Name
          * Output: projectname
          */
-        private fun getRawProjectName(projectDirectoryName: String) =
-            projectDirectoryName.replace("-", "").toLowerCase()
+        private fun getRawProjectName(projectDirectoryName: String) = getProjectName(projectDirectoryName)
+                .replace("-", "")
+                .toLowerCase()
     }
 
     private fun File.lineContains(string: String) = readLines().any { it.contains(string) }

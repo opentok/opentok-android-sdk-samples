@@ -6,7 +6,7 @@ _Check documentation to understand [Video API basic concepts](https://tokbox.com
 
 The Android projects in this directory demonstrate typical use cases and features available in the [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/):
 
-- [Basic-Video-Chat](./Basic-Video-Chat) demonstrates how to publish and subscribe to streams in a session. Best place to start
+- [Basic-Video-Chat]([Java](./Basic-Video-Chat-Java), [Kotlin](./Basic-Video-Chat-Kotlin)) demonstrates how to publish and subscribe to streams in a session. Best place to start
 - [Simple-Multiparty](./Simple-Multiparty) demonstrates how to enable/disable audio/video streams and how to swap camera
 - [Multiparty-Constraint-Layout](./Multiparty-Constraint-Layout) demonstrates how to use [ConstraintLayout](https://developer.android.com/training/constraint-layout) to position all the videos in a multiparty session
 - [Signaling](./Signaling) demonstrates how to send text messages
