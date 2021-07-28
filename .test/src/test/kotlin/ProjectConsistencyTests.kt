@@ -113,6 +113,8 @@ class ProjectConsistencyTests {
         val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
 
+        println(filePath)
+
         // .github/workflows/project-name.yml
         val file = File(filePath)
         file.shouldExist()
@@ -139,6 +141,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
         val file = File(filePath)
 
+        file.shouldExist()
         // "cd Project-Name && ./gradlew app:assembleRelease && cd .."
         val desiredBuildCommand = "cd $projectDirectoryName && ./gradlew app:assembleRelease && cd .."
         file shouldContainLineContainingString desiredBuildCommand
