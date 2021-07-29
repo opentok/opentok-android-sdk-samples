@@ -93,7 +93,7 @@ class ProjectConsistencyTests {
         val file = File(filePath)
         
         // README.md
-        val desiredProjectLink = "[${getMainReadmeLinkName(projectDirectoryName)}](./$projectDirectoryName)"
+        val desiredProjectLink = "[${getLanguage(projectDirectoryName)}](./$projectDirectoryName)"
         file shouldContainLineContainingString desiredProjectLink
     }
 
@@ -258,18 +258,6 @@ class ProjectConsistencyTests {
                 .replace("-Java", "")
                 .replace("-Kotlin", "")
 
-        /**
-         * Return main readme link name
-         * Java
-         */
-        private fun getMainReadmeLinkName(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
-                "Java"
-            } else if(projectDirectoryName.endsWith("-Kotlin")) { 
-                "Kotlin"
-            } else {
-               projectDirectoryName
-            }
-
         private fun getLanguageExtension(projectDirectoryName: String): String {
              val language = getLanguage(projectDirectoryName)
 
@@ -285,7 +273,7 @@ class ProjectConsistencyTests {
             } else if(projectDirectoryName.endsWith("-Kotlin")) { 
                 "Kotlin"
             } else {
-               null
+                throw IllegalArgumentException("Cant determine language from dirctory name: $projectDirectoryName")
             }
 
         /**
