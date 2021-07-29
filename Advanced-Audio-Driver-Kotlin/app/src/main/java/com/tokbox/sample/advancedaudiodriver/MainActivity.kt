@@ -36,21 +36,21 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
 
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
-            Log.d(TAG, "onStreamCreated: Own stream " + stream.streamId + " created")
+            Log.d(TAG, "onStreamCreated: Own stream ${stream.streamId} created")
         }
 
         override fun onStreamDestroyed(publisherKit: PublisherKit, stream: Stream) {
-            Log.d(TAG, "onStreamDestroyed: Own stream " + stream.streamId + " destroyed")
+            Log.d(TAG, "onStreamDestroyed: Own stream ${stream.streamId} destroyed")
         }
 
         override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-            finishWithMessage("PublisherKit error: " + opentokError.message)
+            finishWithMessage("PublisherKit error: ${opentokError.message}")
         }
     }
     private val sessionListener: SessionListener = object : SessionListener {
         override fun onConnected(session: Session) {
-            Log.d(TAG, "onConnected: Connected to session " + session.sessionId)
-
+            Log.d(TAG, "onConnected: Connected to session ${session.sessionId}")
+    
             publisher = Publisher.Builder(this@MainActivity).build().also {
                 it.setPublisherListener(publisherListener)
                 it.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL)
@@ -66,16 +66,16 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onDisconnected(session: Session) {
-            Log.d(TAG, "onDisconnected: disconnected from session " + session.sessionId)
+            Log.d(TAG, "onDisconnected: disconnected from session ${session.sessionId}")
             this@MainActivity.session = null
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            finishWithMessage("Session error: " + opentokError.message)
+            finishWithMessage("Session error: ${opentokError.message}")
         }
 
         override fun onStreamReceived(session: Session, stream: Stream) {
-            Log.d(TAG, "onStreamReceived: New stream " + stream.streamId + " in session " + session.sessionId)
+            Log.d(TAG, "onStreamReceived: New stream ${stream.streamId} in session ${session.sessionId}")
 
             if (subscriber != null) {
                 return
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onStreamDropped(session: Session, stream: Stream) {
-            Log.d(TAG, "onStreamDropped: Stream " + stream.streamId + " dropped from session " + session.sessionId)
+            Log.d(TAG, "onStreamDropped: Stream ${stream.streamId} dropped from session ${session.sessionId}")
 
             if (subscriber == null) {
                 return
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         setContentView(R.layout.activity_main)
         if (!isValid) {
 
-            finishWithMessage("Invalid OpenTokConfig. " + description)
+            finishWithMessage("Invalid OpenTokConfig. $description")
             return
         }
 

@@ -250,7 +250,7 @@ void main(void) {
                 try {
                     val path = Environment.getExternalStorageDirectory().toString()
                     var fOutputStream: OutputStream? = null
-                    val file = File(path, "opentok-capture-" + System.currentTimeMillis() + ".png")
+                    val file = File(path, "opentok-capture-${System.currentTimeMillis()}.png")
                     fOutputStream = FileOutputStream(file)
                     bmp.compress(Bitmap.CompressFormat.PNG, 100, fOutputStream)
                     fOutputStream.flush()

@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-            finishWithMessage("PublisherKit error: " + opentokError.message)
+            finishWithMessage("PublisherKit error: ${opentokError.message}")
         }
     }
     private val sessionListener: SessionListener = object : SessionListener {
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            finishWithMessage("Session error: " + opentokError.message)
+            finishWithMessage("Session error: ${opentokError.message}")
         }
     }
     private val subscriberListener: SubscriberListener = object : SubscriberListener {
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
-            finishWithMessage("SubscriberKit onError: " + opentokError.message)
+            finishWithMessage("SubscriberKit onError: ${opentokError.message}")
         }
     }
     private val archiveListener: ArchiveListener = object : ArchiveListener {
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         setContentView(R.layout.activity_main)
 
         if (!isValid) {
-            finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL)
+            finishWithMessage("Invalid chat server url: ${ServerConfig.CHAT_SERVER_URL}")
             return
         }
 
@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
 
     private fun playArchive() {
         Log.i(TAG, "playArchive")
-        val archiveUrl = ServerConfig.CHAT_SERVER_URL + "/archive/" + playableArchiveId + "/view"
+        val archiveUrl = ServerConfig.CHAT_SERVER_URL}/archive/${playableArchiveId}/view"
         val archiveUri = Uri.parse(archiveUrl)
         val browserIntent = Intent(Intent.ACTION_VIEW, archiveUri)
         startActivity(browserIntent)

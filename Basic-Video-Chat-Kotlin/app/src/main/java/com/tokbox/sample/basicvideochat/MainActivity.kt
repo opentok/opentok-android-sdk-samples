@@ -42,20 +42,20 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private lateinit var subscriberViewContainer: FrameLayout
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
-            Log.d(TAG, "onStreamCreated: Publisher Stream Created. Own stream " + stream.streamId)
+            Log.d(TAG, "onStreamCreated: Publisher Stream Created. Own stream ${stream.streamId}")
         }
 
         override fun onStreamDestroyed(publisherKit: PublisherKit, stream: Stream) {
-            Log.d(TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.streamId)
+            Log.d(TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream ${stream.streamId}")
         }
 
         override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-            finishWithMessage("PublisherKit onError: " + opentokError.message)
+            finishWithMessage("PublisherKit onError: ${opentokError.message}")
         }
     }
     private val sessionListener: SessionListener = object : SessionListener {
         override fun onConnected(session: Session) {
-            Log.d(TAG, "onConnected: Connected to session: " + session.sessionId)
+            Log.d(TAG, "onConnected: Connected to session: ${session.sessionId}")
             publisher = Publisher.Builder(this@MainActivity).build()
             publisher?.setPublisherListener(publisherListener)
             publisher?.renderer?.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL)
@@ -67,11 +67,11 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onDisconnected(session: Session) {
-            Log.d(TAG, "onDisconnected: Disconnected from session: " + session.sessionId)
+            Log.d(TAG, "onDisconnected: Disconnected from session: ${session.sessionId}")
         }
 
         override fun onStreamReceived(session: Session, stream: Stream) {
-            Log.d(TAG, "onStreamReceived: New Stream Received " + stream.streamId + " in session: " + session.sessionId)
+            Log.d(TAG, "onStreamReceived: New Stream Received ${stream.streamId} in session: ${session.sessionId}")
             if (subscriber == null) {
                 subscriber = Subscriber.Builder(this@MainActivity, stream).build().also {
                     it.renderer?.setStyle(
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onStreamDropped(session: Session, stream: Stream) {
-            Log.d(TAG, "onStreamDropped: Stream Dropped: " + stream.streamId + " in session: " + session.sessionId)
+            Log.d(TAG, "onStreamDropped: Stream Dropped: ${stream.streamId} in session: ${session.sessionId}")
             if (subscriber != null) {
                 subscriber = null
                 subscriberViewContainer.removeAllViews()
@@ -96,20 +96,20 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            finishWithMessage("Session error: " + opentokError.message)
+            finishWithMessage("Session error: ${opentokError.message}")
         }
     }
     var subscriberListener: SubscriberListener = object : SubscriberListener {
         override fun onConnected(subscriberKit: SubscriberKit) {
-            Log.d(TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.stream.streamId)
+            Log.d(TAG, "onConnected: Subscriber connected. Stream: ${subscriberKit.stream.streamId}")
         }
 
         override fun onDisconnected(subscriberKit: SubscriberKit) {
-            Log.d(TAG, "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.stream.streamId)
+            Log.d(TAG, "onDisconnected: Subscriber disconnected. Stream: ${subscriberKit.stream.streamId}")
         }
 
         override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
-            finishWithMessage("SubscriberKit onError: " + opentokError.message)
+            finishWithMessage("SubscriberKit onError: ${opentokError.message}")
         }
     }
 
@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             if (ServerConfig.hasChatServerUrl()) {
                 // Custom server URL exists - retrieve session config
                 if (!ServerConfig.isValid) {
-                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL)
+                    finishWithMessage("Invalid chat server url: ${ServerConfig.CHAT_SERVER_URL}")
                     return
                 }
                 initRetrofit()
@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             } else {
                 // Use hardcoded session config
                 if (!OpenTokConfig.isValid) {
-                    finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.description)
+                    finishWithMessage("Invalid OpenTokConfig. ${OpenTokConfig.description}")
                     return
                 }
                 initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN)
