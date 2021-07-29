@@ -79,7 +79,7 @@ class ProjectConsistencyTests {
     fun `MainActivity class exists in project`(projectDirectoryName: String) {
         
         val languageExtension = getLanguageExtension(projectDirectoryName)
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/MainActivity.$languageExtension"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/MainActivity.$languageExtension"
 
         // app/src/main/java/com/tokbox/sample/projectname/MainActivity.java
         val file = File(filePath)
@@ -150,7 +150,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty API_KEY")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty API_KEY`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "API_KEY"
@@ -163,7 +163,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty SESSION_ID")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty SESSION_ID`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "SESSION_ID"
@@ -176,7 +176,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty TOKEN")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty TOKEN`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "TOKEN"
@@ -189,7 +189,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} Server file has empty CHAT_URL")
     @MethodSource("getProjectNames")
     fun `Server file has empty CHAT_URL`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/Server.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/Server.java"
         val file = File(filePath)
 
         val propertyName = "CHAT_URL"
