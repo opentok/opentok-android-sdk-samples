@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             .client(client)
             .build()
 
-        apiService = retrofit?.create(APIService::class.java)
+        apiService = retrofit.create(APIService::class.java)
     }
 
     override fun onPause() {
@@ -259,13 +259,13 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private fun stopArchive() {
         Log.i(TAG, "stopArchive")
         val call = apiService.stopArchive(currentArchiveId)
-        call.enqueue(EmptyCallback<Any?>())
+        call.enqueue(EmptyCallback())
         setStopArchiveEnabled(false)
     }
 
     private fun playArchive() {
         Log.i(TAG, "playArchive")
-        val archiveUrl = ServerConfig.CHAT_SERVER_URL}/archive/${playableArchiveId}/view"
+        val archiveUrl = "ServerConfig.CHAT_SERVER_URL}/archive/${playableArchiveId}/view"
         val archiveUri = Uri.parse(archiveUrl)
         val browserIntent = Intent(Intent.ACTION_VIEW, archiveUri)
         startActivity(browserIntent)
