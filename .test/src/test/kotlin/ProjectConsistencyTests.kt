@@ -258,10 +258,7 @@ class ProjectConsistencyTests {
                 .replace("-Java", "")
                 .replace("-Kotlin", "")
 
-        /**
-         * Return main readme link name
-         * Java
-         */
+        // Return main readme link name.
         private fun getMainReadmeLinkName(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
                 "Java"
             } else if(projectDirectoryName.endsWith("-Kotlin")) { 
