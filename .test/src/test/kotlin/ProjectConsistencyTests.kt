@@ -250,10 +250,7 @@ class ProjectConsistencyTests {
             return "$repoRootDirectoryFile/$projectDirectoryName/app/src/main/java/$packagePath"
         }
 
-        /**
-         * Return project name without the language
-         * Java
-         */
+         // Return project name without the language
         private fun getProjectName(projectDirectoryName: String) = projectDirectoryName
                 .replace("-Java", "")
                 .replace("-Kotlin", "")
