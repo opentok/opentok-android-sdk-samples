@@ -6,7 +6,7 @@ This app shows how to utilize the OpenTok signaling API to send signals (text me
 
 ### Send a signal to all clients in a session
 
-Signal can be send while client is connected to the seccion (after `Session.SessionListener.onConnected(session)` has been called and before `Session.SessionListener.onDisconnected(session)` method is called), so you need to set `Session.SessionListener`:
+Signal can be send while client is connected to the Session (after `Session.SessionListener.onConnected(session)` has been called and before `Session.SessionListener.onDisconnected(session)` method is called), so you need to set `Session.SessionListener`:
 
 ```java
 session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
