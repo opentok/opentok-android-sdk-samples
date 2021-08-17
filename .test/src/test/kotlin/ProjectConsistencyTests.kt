@@ -12,7 +12,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/$projectDirectoryName/app/src/main/AndroidManifest.xml"
         val file = File(filePath)
 
-        // ./Basic-Audio-Driver/app/src/main/AndroidManifest.xml
+        // app/src/main/AndroidManifest.xml 
         file.shouldExist()
     }
 
@@ -45,7 +45,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/$projectDirectoryName/app/build.gradle"
         val file = File(filePath)
 
-        // ./Basic-Audio-Driver/app/build.gradle
+        // app/build.gradle
         file.shouldExist()
     }
 
@@ -68,17 +68,20 @@ class ProjectConsistencyTests {
 
         file.shouldExist()
 
+        val projectName = getProjectName(projectDirectoryName)
         // format: <string name="app_name">Project-Name</string>
-        val desiredApplicationName = "<string name=\"app_name\">$projectDirectoryName</string>"
+        val desiredApplicationName = "<string name=\"app_name\">$projectName</string>"
         file shouldContainLineContainingString desiredApplicationName
     }
 
     @ParameterizedTest(name = "{0} MainActivity class exists in project")
     @MethodSource("getProjectNames")
     fun `MainActivity class exists in project`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/MainActivity.java"
+        
+        val languageExtension = getLanguageExtension(projectDirectoryName)
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/MainActivity.$languageExtension"
 
-        // ./Basic-Audio-Driver/app/src/main/java/com/tokbox/sample/projectname/MainActivity.java
+        // app/src/main/java/com/tokbox/sample/projectname/MainActivity.java
         val file = File(filePath)
         file.shouldExist()
     }
@@ -88,9 +91,9 @@ class ProjectConsistencyTests {
     fun `repository top-level README md file contains application name`(projectDirectoryName: String) {
         val filePath = "$repoRootDirectoryPath/README.md"
         val file = File(filePath)
-
-        // [Project-Name]/(./README.md)
-        val desiredProjectLink = "[$projectDirectoryName](./$projectDirectoryName)"
+        
+        // README.md
+        val desiredProjectLink = "[${getLanguage(projectDirectoryName)}](./$projectDirectoryName)"
         file shouldContainLineContainingString desiredProjectLink
     }
 
@@ -99,7 +102,7 @@ class ProjectConsistencyTests {
     fun `project directory contains README md file`(projectDirectoryName: String) {
         val filePath = "${getAbsoluteProjectPath(projectDirectoryName)}/README.md"
 
-        // Project-Name/README.md
+        // README.md
         val file = File(filePath)
         file.shouldExist()
     }
@@ -110,7 +113,9 @@ class ProjectConsistencyTests {
         val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
 
-        // .github/workflows/build-basic-audio-driver.yml
+        println(filePath)
+
+        // .github/workflows/project-name.yml
         val file = File(filePath)
         file.shouldExist()
     }
@@ -136,6 +141,7 @@ class ProjectConsistencyTests {
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
         val file = File(filePath)
 
+        file.shouldExist()
         // "cd Project-Name && ./gradlew app:assembleRelease && cd .."
         val desiredBuildCommand = "cd $projectDirectoryName && ./gradlew app:assembleRelease && cd .."
         file shouldContainLineContainingString desiredBuildCommand
@@ -144,7 +150,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty API_KEY")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty API_KEY`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "API_KEY"
@@ -157,7 +163,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty SESSION_ID")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty SESSION_ID`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "SESSION_ID"
@@ -170,7 +176,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} OpenTokConfig file has empty TOKEN")
     @MethodSource("getProjectNames")
     fun `OpenTokConfig file has empty TOKEN`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/OpenTokConfig.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/OpenTokConfig.java"
         val file = File(filePath)
 
         val propertyName = "TOKEN"
@@ -183,7 +189,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} Server file has empty CHAT_URL")
     @MethodSource("getProjectNames")
     fun `Server file has empty CHAT_URL`(projectDirectoryName: String) {
-        val filePath = getAbsoluteProjectPackagePath(projectDirectoryName) + "/Server.java"
+        val filePath = "${getAbsoluteProjectPackagePath(projectDirectoryName)}/Server.java"
         val file = File(filePath)
 
         val propertyName = "CHAT_URL"
@@ -223,8 +229,10 @@ class ProjectConsistencyTests {
          * Return project package e.g.
          * com.tokbox.sample.projectname
          */
-        private fun getProjectPackage(projectDirectoryName: String) =
-            "com.tokbox.sample.${getRawProjectName(projectDirectoryName)}"
+        private fun getProjectPackage(projectDirectoryName: String): String {
+            val rawProjectName = getRawProjectName(projectDirectoryName)
+            return "com.tokbox.sample.$rawProjectName"
+        }
 
         /**
          * Return project package path e.g.
@@ -242,14 +250,38 @@ class ProjectConsistencyTests {
             return "$repoRootDirectoryFile/$projectDirectoryName/app/src/main/java/$packagePath"
         }
 
+         // Return project name without the language
+        private fun getProjectName(projectDirectoryName: String) = projectDirectoryName
+                .replace("-Java", "")
+                .replace("-Kotlin", "")
+
+        private fun getLanguageExtension(projectDirectoryName: String): String {
+             val language = getLanguage(projectDirectoryName)
+
+             return if(language == "Kotlin") {
+                 "kt"
+             } else {
+                 "java"
+             }
+        }
+
+        private fun getLanguage(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
+                "Java"
+            } else if(projectDirectoryName.endsWith("-Kotlin")) { 
+                "Kotlin"
+            } else {
+                throw IllegalArgumentException("Cant determine language from dirctory name: $projectDirectoryName")
+            }
+
         /**
          * Converts project name
          * e.g.
          * Input: Project-Name
          * Output: projectname
          */
-        private fun getRawProjectName(projectDirectoryName: String) =
-            projectDirectoryName.replace("-", "").toLowerCase()
+        private fun getRawProjectName(projectDirectoryName: String) = getProjectName(projectDirectoryName)
+                .replace("-", "")
+                .toLowerCase()
     }
 
     private fun File.lineContains(string: String) = readLines().any { it.contains(string) }
