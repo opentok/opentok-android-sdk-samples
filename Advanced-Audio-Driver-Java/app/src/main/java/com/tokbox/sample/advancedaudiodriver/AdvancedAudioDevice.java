@@ -182,22 +182,20 @@ class AdvancedAudioDevice extends BaseAudioDevice {
                     audioManager.setBluetoothScoOn(false);
                 } else {
                     Log.d(TAG, "headsetBroadcastReceiver.onReceive():  Headphones disconnected");
-                    if (getOutputType() == OutputType.HEAD_PHONES) {
-                        if (audioState.getLastOutputType() == OutputType.BLUETOOTH &&
-                                BluetoothState.Connected == bluetoothState) {
-                            audioManager.setBluetoothScoOn(true);
-                            startBluetoothSco();
-                            setOutputType(OutputType.BLUETOOTH);
-                        } else {
-                            if (audioState.getLastOutputType() == OutputType.SPEAKER_PHONE) {
-                                setOutputType(OutputType.SPEAKER_PHONE);
-                                audioManager.setSpeakerphoneOn(true);
-                            }
-                            if (audioState.getLastOutputType() == OutputType.EAR_PIECE) {
-                                setOutputType(OutputType.EAR_PIECE);
-                                audioManager.setSpeakerphoneOn(false);
-                            }
-                        }
+                    if (audioState.getLastOutputType() == OutputType.BLUETOOTH &&
+                            BluetoothState.Connected == bluetoothState) {
+                        audioManager.setBluetoothScoOn(true);
+                        startBluetoothSco();
+                        setOutputType(OutputType.BLUETOOTH);
+                    } else if (audioState.getLastOutputType() == OutputType.SPEAKER_PHONE) {
+                        setOutputType(OutputType.SPEAKER_PHONE);
+                        audioManager.setSpeakerphoneOn(true);
+                    } else if (audioState.getLastOutputType() == OutputType.EAR_PIECE) {
+                        setOutputType(OutputType.EAR_PIECE);
+                        audioManager.setSpeakerphoneOn(false);
+                    } else {
+                        setOutputType(OutputType.SPEAKER_PHONE);
+                        audioManager.setSpeakerphoneOn(true);
                     }
                 }
             }
