@@ -466,6 +466,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         captureSettings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
         captureSettings.format = BaseVideoCapturer.NV21;
         captureSettings.expectedDelay = 0;
+        captureSettings.mirrorInLocalRender = isFrontCamera();
         return captureSettings;
     }
 

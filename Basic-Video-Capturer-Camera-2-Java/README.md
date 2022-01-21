@@ -20,7 +20,7 @@ publisher = new Publisher.Builder(MainActivity.this)
     .build();
 ```
 
-The `getCaptureSettings` method returns the settings of the video capturer, including the frame rate, width, height, video delay, and video format for the capturer:
+The `getCaptureSettings` method returns the settings of the video capturer, including the frame rate, width, height, video delay, video format, and mirroring for the capturer:
 
 ```java
 @Override
@@ -31,6 +31,7 @@ public synchronized CaptureSettings getCaptureSettings() {
     captureSettings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
     captureSettings.format = BaseVideoCapturer.NV21;
     captureSettings.expectedDelay = 0;
+    captureSettings.mirrorInLocalRender = isFrontCamera();
     return captureSettings;
 }
 ```
