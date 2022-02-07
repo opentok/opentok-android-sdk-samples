@@ -148,6 +148,8 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
             if (executeAfterClosed != null) {
                 executeAfterClosed.run();
+                executeAfterClosed = null;
+
             }
 
         }
