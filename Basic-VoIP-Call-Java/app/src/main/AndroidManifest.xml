@@ -35,7 +35,7 @@
         </activity>
 
         <service
-            android:name="com.tokbox.sample.basicvoipcall."
+            android:name="com.tokbox.sample.basicvoipcall.OTConnectionService"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService" />

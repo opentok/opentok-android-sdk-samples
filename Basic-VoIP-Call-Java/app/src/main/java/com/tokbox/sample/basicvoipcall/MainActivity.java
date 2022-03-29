@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,12 +15,16 @@ import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.opentok.android.AudioDeviceManager;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
@@ -28,6 +34,7 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
+
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             publisher = new Publisher.Builder(MainActivity.this).build();
 
             publisher.setPublisherListener(publisherListener);
+            /*
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
             publisherViewContainer.addView(publisher.getView());
@@ -78,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if (publisher.getView() instanceof GLSurfaceView) {
                 ((GLSurfaceView) (publisher.getView())).setZOrderOnTop(true);
             }
+             */
 
             session.publish(publisher);
         }
@@ -113,13 +122,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 return;
             }
 
+            /*
             if (subscriber.getStream().equals(stream)) {
                 subscriberViewContainer.removeView(subscriber.getView());
                 subscriber = null;
             }
+
+             */
         }
     };
 
+    /*
     private Subscriber.VideoListener videoListener = new Subscriber.VideoListener() {
         @Override
         public void onVideoDataReceived(SubscriberKit subscriberKit) {
@@ -140,24 +153,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
     };
 
+     */
+
     private TelecomManager mTelecomManager;
     private TelephonyManager mTelephonyManager;
     private PhoneAccountHandle mPhoneAccountHandle;
 
-    //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(!OpenTokConfig.isValid()) {
+        if (!OpenTokConfig.isValid()) {
             finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
             return;
         }
 
-        publisherViewContainer = findViewById(R.id.publisherview);
-        subscriberViewContainer = findViewById(R.id.subscriberview);
+        //publisherViewContainer = findViewById(R.id.publisherview);
+        //subscriberViewContainer = findViewById(R.id.subscriberview);
 
         requestPermissions();
 
@@ -197,14 +211,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (session == null) {
             return;
         }
-        
+
         session.onResume();
     }
 
     @Override
     protected void onDestroy() {
         disconnectSession();
-
         super.onDestroy();
     }
 
@@ -228,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_PHONE_STATE};
-        
+                Manifest.permission.READ_PHONE_STATE};
+
         if (EasyPermissions.hasPermissions(this, perms)) {
             NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
             AudioDeviceManager.setAudioDevice(noiseAudioDevice);
@@ -247,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void subscribeToStream(Stream stream) {
         subscriber = new Subscriber.Builder(this, stream).build();
-        subscriber.setVideoListener(videoListener);
+        //subscriber.setVideoListener(videoListener);
         session.subscribe(subscriber);
     }
 
@@ -274,5 +287,68 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.e(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         this.finish();
+    }
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.call_button:
+                    startOutGoingCall();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    @SuppressLint("NewApi")
+    private void startOutGoingCall() {
+        Bundle extras = new Bundle();
+        extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+        ComponentName componentName = new ComponentName(this, OTConnectionService.class);
+        PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP call");
+        /*
+        val receiver = call.callReceiver as User
+        var number = receiver.statusMessage
+        if (number.isNullOrEmpty())
+            number = "09999999999"
+        extras.putString("NAME",receiver.name)
+        extras.putString("SESSIONID", call.sessionId)
+        extras.putString("RECEIVERTYPE", call.receiverType)
+        extras.putString("CALLTYPE", call.type)
+        extras.putString("RECEIVERID",receiver.uid)
+        if (call.receiverType.equals(CometChatConstants.RECEIVER_TYPE_GROUP, ignoreCase = true))
+            extras.putString(UIKitConstants.IntentStrings.NAME, (call.receiver as Group).name)
+        else
+        extras.putString(UIKitConstants.IntentStrings.NAME, (call.callInitiator as User).name)
+
+         */
+
+        Bundle test = new Bundle();
+        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandle);
+        //test.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
+        test.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, extras);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mTelecomManager.placeCall(Uri.parse("tel:+00000000000"), test);
+        /*
+        try {
+            if (callManagerContext.checkSelfPermission(Manifest.permission.MANAGE_OWN_CALLS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                telecomManager.placeCall(Uri.parse("tel:$number"), test)
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+        */
     }
 }
