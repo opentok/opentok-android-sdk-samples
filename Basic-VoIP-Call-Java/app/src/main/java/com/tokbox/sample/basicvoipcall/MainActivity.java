@@ -1,13 +1,23 @@
 package com.tokbox.sample.basicvoipcall;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Telephony;
+import android.telecom.PhoneAccount;
+import android.telecom.PhoneAccountHandle;
+import android.telecom.TelecomManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import com.opentok.android.AudioDeviceManager;
 import com.opentok.android.BaseVideoRenderer;
@@ -130,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
     };
 
+    private TelecomManager mTelecomManager;
+    private TelephonyManager mTelephonyManager;
+    private PhoneAccountHandle mPhoneAccountHandle;
+
+    //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,6 +160,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         subscriberViewContainer = findViewById(R.id.subscriberview);
 
         requestPermissions();
+
+        mTelecomManager = (TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
+        mTelephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+
+        ComponentName componentName = new ComponentName(this, OTConnectionService.class);
+        mPhoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP Calling");
+
+        PhoneAccount phoneAccount = new PhoneAccount.Builder(mPhoneAccountHandle, "VoIP calling")
+                .setCapabilities(PhoneAccount.CAPABILITY_CONNECTION_MANAGER)
+                .setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER)
+                .build();
+
+        mTelecomManager.registerPhoneAccount(phoneAccount);
     }
 
     @Override
@@ -198,18 +227,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.READ_PHONE_STATE};
         
         if (EasyPermissions.hasPermissions(this, perms)) {
             NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
             AudioDeviceManager.setAudioDevice(noiseAudioDevice);
 
-            session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
-            session.setSessionListener(sessionListener);
-            session.connect(OpenTokConfig.TOKEN);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
+    }
+
+    private void connectSession() {
+        session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
+        session.setSessionListener(sessionListener);
+        session.connect(OpenTokConfig.TOKEN);
     }
 
     private void subscribeToStream(Stream stream) {
