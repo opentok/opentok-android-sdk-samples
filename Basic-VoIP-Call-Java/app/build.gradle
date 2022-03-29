@@ -11,7 +11,7 @@ android {
     buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.basicaudiodriver"
+        applicationId "com.tokbox.sample.basicvoipcall"
         minSdkVersion 19
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

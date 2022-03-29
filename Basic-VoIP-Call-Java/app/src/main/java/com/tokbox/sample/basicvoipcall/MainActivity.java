@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicaudiodriver;
+package com.tokbox.sample.basicvoipcall;
 
 import android.Manifest;
 import android.opengl.GLSurfaceView;

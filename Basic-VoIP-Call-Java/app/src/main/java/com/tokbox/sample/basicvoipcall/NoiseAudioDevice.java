@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicaudiodriver;
+package com.tokbox.sample.basicvoipcall;
 
 import android.content.Context;
 import android.os.Environment;
