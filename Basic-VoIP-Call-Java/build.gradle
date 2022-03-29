@@ -1,0 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    apply {
+        from '../commons.gradle'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+
+        // Not all libraries are migrated to mavenCentral. We need to keep jcenter for now
+	    jcenter()
+    }
+    dependencies {
+        // Dependency versions are defined in the ../commons.gradle file
+        classpath "com.android.tools.build:gradle:${extAgpVersion}"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        // Not all libraries are migrated to mavenCentral. We need to keep jcenter for now
+	    jcenter()
+    }
+}
