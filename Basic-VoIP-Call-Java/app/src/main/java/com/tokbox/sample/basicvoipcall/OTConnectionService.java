@@ -30,6 +30,7 @@ public class OTConnectionService extends ConnectionService {
         conn.setRinging();
         conn.setInitializing();
         conn.setActive();
+        conn.setAudioModeIsVoip(true);
         return conn;
     }
 
@@ -45,6 +46,16 @@ public class OTConnectionService extends ConnectionService {
 
     @Override
     public Connection onCreateOutgoingConnection(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
-        return super.onCreateOutgoingConnection(connectionManagerPhoneAccount, request);
+        super.onCreateOutgoingConnection(connectionManagerPhoneAccount, request);
+        Log.i("CallConnectionService", "onCreateOutgoingConnection");
+        VoIPConnection conn = new VoIPConnection(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            conn.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
+        }
+        conn.setCallerDisplayName("Test Call", TelecomManager.PRESENTATION_ALLOWED);
+        conn.setAddress(Uri.parse("tel:" + "+919207619607"), TelecomManager.PRESENTATION_ALLOWED);
+        conn.setInitializing();
+        conn.setActive();
+        return conn;
     }
 }

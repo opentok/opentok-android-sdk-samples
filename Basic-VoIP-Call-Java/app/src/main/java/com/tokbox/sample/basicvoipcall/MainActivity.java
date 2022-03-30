@@ -4,12 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
@@ -21,19 +19,15 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.opentok.android.AudioDeviceManager;
-import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
-import com.opentok.android.SubscriberKit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -46,118 +40,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final int PERMISSIONS_REQUEST_CODE = 124;
 
-    private Session session;
-    private Publisher publisher;
-    private Subscriber subscriber;
-
     private RelativeLayout publisherViewContainer;
     private LinearLayout subscriberViewContainer;
 
-    private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
-        @Override
-        public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-            Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
-        }
-
-        @Override
-        public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-            Log.d(TAG, "onStreamDestroyed: Own stream " + stream.getStreamId() + " destroyed");
-        }
-
-        @Override
-        public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            finishWithMessage("PublisherKit error: " + opentokError.getMessage());
-        }
-    };
-
-    private Session.SessionListener sessionListener = new Session.SessionListener() {
-        @Override
-        public void onConnected(Session session) {
-            Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
-
-            publisher = new Publisher.Builder(MainActivity.this).build();
-
-            publisher.setPublisherListener(publisherListener);
-            /*
-            publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-
-            publisherViewContainer.addView(publisher.getView());
-
-            if (publisher.getView() instanceof GLSurfaceView) {
-                ((GLSurfaceView) (publisher.getView())).setZOrderOnTop(true);
-            }
-             */
-
-            session.publish(publisher);
-        }
-
-        @Override
-        public void onDisconnected(Session session) {
-            Log.d(TAG, "onDisconnected: disconnected from session " + session.getSessionId());
-
-            MainActivity.this.session = null;
-        }
-
-        @Override
-        public void onError(Session session, OpentokError opentokError) {
-            finishWithMessage("Session error: " + opentokError.getMessage());
-        }
-
-        @Override
-        public void onStreamReceived(Session session, Stream stream) {
-            Log.d(TAG, "onStreamReceived: New stream " + stream.getStreamId() + " in session " + session.getSessionId());
-
-            if (subscriber != null) {
-                return;
-            }
-
-            subscribeToStream(stream);
-        }
-
-        @Override
-        public void onStreamDropped(Session session, Stream stream) {
-            Log.d(TAG, "onStreamDropped: Stream " + stream.getStreamId() + " dropped from session " + session.getSessionId());
-
-            if (subscriber == null) {
-                return;
-            }
-
-            /*
-            if (subscriber.getStream().equals(stream)) {
-                subscriberViewContainer.removeView(subscriber.getView());
-                subscriber = null;
-            }
-
-             */
-        }
-    };
-
-    /*
-    private Subscriber.VideoListener videoListener = new Subscriber.VideoListener() {
-        @Override
-        public void onVideoDataReceived(SubscriberKit subscriberKit) {
-            subscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-            subscriberViewContainer.addView(subscriber.getView());
-        }
-
-        @Override
-        public void onVideoDisabled(SubscriberKit subscriberKit, String s) { }
-
-        @Override
-        public void onVideoEnabled(SubscriberKit subscriberKit, String s) { }
-
-        @Override
-        public void onVideoDisableWarning(SubscriberKit subscriberKit) { }
-
-        @Override
-        public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
-    };
-
-     */
 
     private TelecomManager mTelecomManager;
     private TelephonyManager mTelephonyManager;
     private PhoneAccountHandle mPhoneAccountHandle;
+    private PhoneAccount mPhoneAccount;
 
     @SuppressLint("NewApi")
     @Override
@@ -175,24 +65,47 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         requestPermissions();
 
+        /*
+        findViewById(R.id.call_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startOutGoingCall();
+            }
+        });
+
+         */
+
+        findViewById(R.id.outgoing_call_button).setOnClickListener(clickListener);
+        findViewById(R.id.incoming_call_button).setOnClickListener(clickListener);
+        findViewById(R.id.register_button).setOnClickListener(clickListener);
+
         mTelecomManager = (TelecomManager) this.getSystemService(Context.TELECOM_SERVICE);
         mTelephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
         ComponentName componentName = new ComponentName(this, OTConnectionService.class);
-        mPhoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP Calling");
+        mPhoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP Calling 1");
 
-        PhoneAccount phoneAccount = new PhoneAccount.Builder(mPhoneAccountHandle, "VoIP calling")
-                .setCapabilities(PhoneAccount.CAPABILITY_CONNECTION_MANAGER)
+        mPhoneAccount = new PhoneAccount.Builder(mPhoneAccountHandle, "VoIP calling 2")
+                //.setCapabilities(PhoneAccount.CAPABILITY_CONNECTION_MANAGER)
                 .setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER)
                 .build();
+    }
 
-        mTelecomManager.registerPhoneAccount(phoneAccount);
+    @SuppressLint("NewApi")
+    private void registerAccount() {
+        mTelecomManager.registerPhoneAccount(mPhoneAccount);
+
+        Intent intent=new Intent();
+        intent.setComponent(new ComponentName("com.android.server.telecom",
+                "com.android.server.telecom.settings.EnableAccountPreferenceActivity"));
+        startActivity(intent);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        /*
         if (session == null) {
             return;
         }
@@ -202,22 +115,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (isFinishing()) {
             disconnectSession();
         }
+         */
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        /*
         if (session == null) {
             return;
         }
 
         session.onResume();
+         */
     }
 
     @Override
     protected void onDestroy() {
-        disconnectSession();
+        //disconnectSession();
         super.onDestroy();
     }
 
@@ -240,47 +156,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_PHONE_STATE};
+        String[] perms = {
+                Manifest.permission.INTERNET,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                //Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.MANAGE_OWN_CALLS,
+                Manifest.permission.CALL_PHONE
+        };
 
         if (EasyPermissions.hasPermissions(this, perms)) {
-            NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
-            AudioDeviceManager.setAudioDevice(noiseAudioDevice);
+            //NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
+            //AudioDeviceManager.setAudioDevice(noiseAudioDevice);
 
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
-    }
-
-    private void connectSession() {
-        session = new Session.Builder(this, OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID).build();
-        session.setSessionListener(sessionListener);
-        session.connect(OpenTokConfig.TOKEN);
-    }
-
-    private void subscribeToStream(Stream stream) {
-        subscriber = new Subscriber.Builder(this, stream).build();
-        //subscriber.setVideoListener(videoListener);
-        session.subscribe(subscriber);
-    }
-
-    private void disconnectSession() {
-        if (session == null) {
-            return;
-        }
-
-        if (subscriber != null) {
-            subscriberViewContainer.removeView(subscriber.getView());
-            session.unsubscribe(subscriber);
-            subscriber = null;
-        }
-
-        if (publisher != null) {
-            publisherViewContainer.removeView(publisher.getView());
-            session.unpublish(publisher);
-            publisher = null;
-        }
-        session.disconnect();
     }
 
     private void finishWithMessage(String message) {
@@ -293,9 +184,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.call_button:
+                case R.id.outgoing_call_button:
                     startOutGoingCall();
                     break;
+
+                case R.id.incoming_call_button:
+                    startIncomingCall();
+                    break;
+
+                case R.id.register_button:
+                    registerAccount();
+                    break;
+
                 default:
                     break;
             }
@@ -303,11 +203,24 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     };
 
     @SuppressLint("NewApi")
+    private void startIncomingCall() {
+        Bundle callInfo = new Bundle();
+        callInfo.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+        callInfo.putString("from", "+999999999999");
+
+        Bundle test = new Bundle();
+        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, mPhoneAccountHandle);
+        test.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, callInfo);
+        mTelecomManager.addNewIncomingCall(mPhoneAccountHandle, test);
+    }
+
+    @SuppressLint("NewApi")
     private void startOutGoingCall() {
+        Log.i(TAG, "startOutGoingCall()");
         Bundle extras = new Bundle();
         extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
-        ComponentName componentName = new ComponentName(this, OTConnectionService.class);
-        PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP call");
+        //ComponentName componentName = new ComponentName(this, OTConnectionService.class);
+        //PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP call");
         /*
         val receiver = call.callReceiver as User
         var number = receiver.statusMessage
@@ -326,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
          */
 
         Bundle test = new Bundle();
-        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandle);
+        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, mPhoneAccountHandle);
         //test.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
         test.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, extras);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
