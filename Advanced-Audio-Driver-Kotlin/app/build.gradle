@@ -9,12 +9,11 @@ apply {
 
 android {
     compileSdkVersion extCompileSdkVersion
-    buildToolsVersion extBuildToolsVersion
 
     defaultConfig {
         applicationId "com.tokbox.sample.advancedaudiodriver"
-        minSdkVersion extMinSdkVersion
-        targetSdkVersion extTargetSdkVersion
+        minSdk extMinSdkVersion
+        targetSdk extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
     }
