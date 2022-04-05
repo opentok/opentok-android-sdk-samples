@@ -16,7 +16,6 @@ sceneform.asset(
 
 android {
   compileSdkVersion extCompileSdkVersion
-  buildToolsVersion extBuildToolsVersion
 
   defaultConfig {
     applicationId "com.tokbox.sample.arcoreintegration"
