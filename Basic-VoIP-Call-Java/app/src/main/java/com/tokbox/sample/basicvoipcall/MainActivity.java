@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.telecom.VideoProfile;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -22,17 +23,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.opentok.android.OpentokError;
-import com.opentok.android.Publisher;
-import com.opentok.android.PublisherKit;
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
-import com.opentok.android.Subscriber;
+import com.opentok.android.AudioDeviceManager;
+
+import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import java.util.List;
+//import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
@@ -48,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private TelephonyManager mTelephonyManager;
     private PhoneAccountHandle mPhoneAccountHandle;
     private PhoneAccount mPhoneAccount;
+    //private OTFireBaseMessagingService mOTFireBaseMessagingService;
 
     @SuppressLint("NewApi")
     @Override
@@ -60,18 +59,29 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return;
         }
 
-        //publisherViewContainer = findViewById(R.id.publisherview);
-        //subscriberViewContainer = findViewById(R.id.subscriberview);
-
         requestPermissions();
 
         /*
-        findViewById(R.id.call_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startOutGoingCall();
-            }
-        });
+        mOTFireBaseMessagingService = new OTFireBaseMessagingService();
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+                        //String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d(TAG, token);
+                        Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
          */
 
@@ -85,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         ComponentName componentName = new ComponentName(this, OTConnectionService.class);
         mPhoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP Calling 1");
 
-        mPhoneAccount = new PhoneAccount.Builder(mPhoneAccountHandle, "VoIP calling 2")
-                //.setCapabilities(PhoneAccount.CAPABILITY_CONNECTION_MANAGER)
+        mPhoneAccount = new PhoneAccount.Builder(mPhoneAccountHandle, "VoIP calling 1")
+                .setCapabilities(PhoneAccount.CAPABILITY_CONNECTION_MANAGER)
                 .setCapabilities(PhoneAccount.CAPABILITY_CALL_PROVIDER)
                 .build();
     }
@@ -104,36 +114,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onPause() {
         super.onPause();
-
-        /*
-        if (session == null) {
-            return;
-        }
-
-        session.onPause();
-
-        if (isFinishing()) {
-            disconnectSession();
-        }
-         */
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        /*
-        if (session == null) {
-            return;
-        }
-
-        session.onResume();
-         */
     }
 
     @Override
     protected void onDestroy() {
-        //disconnectSession();
         super.onDestroy();
     }
 
@@ -160,15 +149,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 Manifest.permission.INTERNET,
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
-                //Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.MANAGE_OWN_CALLS,
-                Manifest.permission.CALL_PHONE
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.READ_PHONE_STATE
         };
 
         if (EasyPermissions.hasPermissions(this, perms)) {
-            //NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
-            //AudioDeviceManager.setAudioDevice(noiseAudioDevice);
-
+            if (AudioDeviceManager.getAudioDevice() == null) {
+                NoiseAudioDevice noiseAudioDevice = new NoiseAudioDevice(this);
+                AudioDeviceManager.setAudioDevice(noiseAudioDevice);
+            }
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
@@ -204,14 +194,33 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @SuppressLint("NewApi")
     private void startIncomingCall() {
-        Bundle callInfo = new Bundle();
-        callInfo.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
-        callInfo.putString("from", "+999999999999");
+        if (this.getApplicationContext().checkSelfPermission(Manifest.permission.MANAGE_OWN_CALLS) ==
+                PackageManager.PERMISSION_GRANTED) {
+            Bundle callInfo = new Bundle();
+            callInfo.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
+            callInfo.putString("from", "+000111222333");
 
-        Bundle test = new Bundle();
-        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, mPhoneAccountHandle);
-        test.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, callInfo);
-        mTelecomManager.addNewIncomingCall(mPhoneAccountHandle, test);
+            Bundle extras = new Bundle();
+            extras.putInt(TelecomManager.EXTRA_INCOMING_VIDEO_STATE, VideoProfile.STATE_AUDIO_ONLY);
+
+            extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, mPhoneAccountHandle);
+            extras.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, callInfo);
+
+            ComponentName componentName = new ComponentName(this, OTConnectionService.class);
+            PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "IncomingCall");
+            boolean isCallPermitted;
+            isCallPermitted = mTelecomManager.isIncomingCallPermitted(mPhoneAccountHandle);
+
+            Log.d(TAG, "isCallPermitted = " + isCallPermitted);
+            try {
+                mTelecomManager.addNewIncomingCall(mPhoneAccountHandle, extras);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+        } else {
+            Log.e("startIncomingCall: ","Permission not granted");
+
+        }
     }
 
     @SuppressLint("NewApi")
@@ -219,28 +228,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.i(TAG, "startOutGoingCall()");
         Bundle extras = new Bundle();
         extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
-        //ComponentName componentName = new ComponentName(this, OTConnectionService.class);
-        //PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "VoIP call");
-        /*
-        val receiver = call.callReceiver as User
-        var number = receiver.statusMessage
-        if (number.isNullOrEmpty())
-            number = "09999999999"
-        extras.putString("NAME",receiver.name)
-        extras.putString("SESSIONID", call.sessionId)
-        extras.putString("RECEIVERTYPE", call.receiverType)
-        extras.putString("CALLTYPE", call.type)
-        extras.putString("RECEIVERID",receiver.uid)
-        if (call.receiverType.equals(CometChatConstants.RECEIVER_TYPE_GROUP, ignoreCase = true))
-            extras.putString(UIKitConstants.IntentStrings.NAME, (call.receiver as Group).name)
-        else
-        extras.putString(UIKitConstants.IntentStrings.NAME, (call.callInitiator as User).name)
 
-         */
+        ComponentName componentName = new ComponentName(this, OTConnectionService.class);
+        PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(componentName, "OutgoingCall");
 
         Bundle test = new Bundle();
-        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, mPhoneAccountHandle);
-        //test.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
+        test.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandle);
+        test.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE, VideoProfile.STATE_BIDIRECTIONAL);
         test.putParcelable(TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, extras);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -253,15 +247,5 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return;
         }
         mTelecomManager.placeCall(Uri.parse("tel:+00000000000"), test);
-        /*
-        try {
-            if (callManagerContext.checkSelfPermission(Manifest.permission.MANAGE_OWN_CALLS)
-                    == PackageManager.PERMISSION_GRANTED) {
-                telecomManager.placeCall(Uri.parse("tel:$number"), test)
-            }
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-        }
-        */
     }
 }

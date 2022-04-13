@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 
 apply {
     from '../../commons.gradle'
@@ -40,12 +40,12 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:29.2.1')
+    //implementation platform('com.google.firebase:firebase-bom:29.2.1')
 
 
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
-    implementation 'com.google.firebase:firebase-analytics'
+    //implementation 'com.google.firebase:firebase-analytics'
 
 
     // Add the dependencies for any other desired Firebase products

@@ -10,12 +10,14 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
 import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
+import com.opentok.android.SubscriberKit;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class VoIPConnection extends Connection {
@@ -66,10 +68,11 @@ public class VoIPConnection extends Connection {
         connectSession();
         super.onAnswer();
 
-        /*
+        /*  //Change this to Answeractivity
         Intent myIntent = new Intent(mContext, MainActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(myIntent);
+
          */
     }
 
@@ -148,6 +151,7 @@ public class VoIPConnection extends Connection {
 
     private void subscribeToStream(Stream stream) {
         mSubscriber = new Subscriber.Builder(mContext, stream).build();
+        mSubscriber.setVideoListener(mVideoListener);
         mSession.subscribe(mSubscriber);
     }
 
@@ -173,5 +177,26 @@ public class VoIPConnection extends Connection {
         mPublisher.setPublisherListener(publisherListener);
         mSession.publish(mPublisher);
     }
+
+    private final Subscriber.VideoListener mVideoListener = new Subscriber.VideoListener() {
+        @Override
+        public void onVideoDataReceived(SubscriberKit subscriberKit) {
+            mSubscriber.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+            //subscriberViewContainer.addView(mSubscriber.getView());
+        }
+
+        @Override
+        public void onVideoDisabled(SubscriberKit subscriberKit, String s) { }
+
+        @Override
+        public void onVideoEnabled(SubscriberKit subscriberKit, String s) { }
+
+        @Override
+        public void onVideoDisableWarning(SubscriberKit subscriberKit) { }
+
+        @Override
+        public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) { }
+    };
+
 }
 

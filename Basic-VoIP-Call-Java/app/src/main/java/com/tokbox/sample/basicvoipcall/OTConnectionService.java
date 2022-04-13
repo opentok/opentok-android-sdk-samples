@@ -25,12 +25,10 @@ public class OTConnectionService extends ConnectionService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             conn.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         }
-        conn.setCallerDisplayName("test call", TelecomManager.PRESENTATION_ALLOWED);
-        conn.setAddress(Uri.parse("tel:" + "+919582940055"), TelecomManager.PRESENTATION_ALLOWED);
-        conn.setRinging();
+        conn.setCallerDisplayName("Incoming Test call", TelecomManager.PRESENTATION_ALLOWED);
+        conn.setAddress(Uri.parse("tel:" + "+00000000000"), TelecomManager.PRESENTATION_ALLOWED);
         conn.setInitializing();
         conn.setActive();
-        conn.setAudioModeIsVoip(true);
         return conn;
     }
 
@@ -53,9 +51,10 @@ public class OTConnectionService extends ConnectionService {
             conn.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         }
         conn.setCallerDisplayName("Test Call", TelecomManager.PRESENTATION_ALLOWED);
-        conn.setAddress(Uri.parse("tel:" + "+919207619607"), TelecomManager.PRESENTATION_ALLOWED);
+        conn.setAddress(Uri.parse("tel:" + "+00000000000"), TelecomManager.PRESENTATION_ALLOWED);
         conn.setInitializing();
         conn.setActive();
+        conn.setAudioModeIsVoip(true);
         return conn;
     }
 }

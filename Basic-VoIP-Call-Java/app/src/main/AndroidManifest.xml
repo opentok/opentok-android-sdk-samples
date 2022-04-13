@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tokbox.sample.basicvoipcall">
+    package="com.tokbox.sample.basicvoipcall" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -10,23 +10,28 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
-
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
-    <uses-permission android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
-        tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:remove="android:maxSdkVersion" /> <!-- Override permission in sdk manifest file. -->
+
+    <uses-permission
+        android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+        tools:ignore="ProtectedPermissions" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme" >
         <activity
-                android:name=".MainActivity"
-                android:screenOrientation="portrait">
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,14 +40,19 @@
         </activity>
 
         <service
-            android:name="com.tokbox.sample.basicvoipcall.OTConnectionService"
-            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+            android:name=".OTConnectionService"
+            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE" >
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
         </service>
-
-
+        <service
+            android:name=".OTFireBaseMessagingService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

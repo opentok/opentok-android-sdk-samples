@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         // Dependency versions are defined in the ../commons.gradle file
-        classpath "com.android.tools.build:gradle:${extAgpVersion}"
+        classpath "com.android.tools.build:gradle:7.1.2"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
