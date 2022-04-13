@@ -46,13 +46,14 @@
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
         </service>
-        <service
+
+ <!--       <service
             android:name=".OTFireBaseMessagingService"
-            android:exported="false" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
+        </service>-->
     </application>
 
 </manifest>

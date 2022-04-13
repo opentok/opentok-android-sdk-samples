@@ -10,6 +10,18 @@ to its audio stream.
 AudioDeviceManager.setAudioDevice(noiseAudioDevice);
 ```
 
+# Configure the app
+Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. 
+You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
+
+# Android Connection Service
+OTConnectionService.java shows how to use the Android ConnectionService class for creating an app
+with calling features. 
+
+# Register for Notification services
+OTFireBaseMessagingService.java can be used as a reference as to create notification services while 
+the app is in background mode. 
+
 ## Further Reading
 
 * Review [other sample projects](../)
