@@ -19,7 +19,7 @@ OTConnectionService.java shows how to use the Android ConnectionService class fo
 with calling features. 
 
 # Register for Notification services
-OTFireBaseMessagingService.java can be used as a reference as to create notification services while 
+OTFireBaseMessagingService.java can be used as a reference to create notification services while 
 the app is in background mode. 
 
 ## Further Reading
