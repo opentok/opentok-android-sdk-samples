@@ -1000,10 +1000,29 @@ class AdvancedAudioDevice extends BaseAudioDevice {
 
     private boolean isPhoneStateListenerRegistered;
 
+    //Phone state permissions are required to from Api 31. Adding this check to avoid crash.
+    private boolean hasPhoneStatePermission() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                log.e("Some features may not be available unless the phone permissions has been granted explicitly " +
+                        "in the App settings.");
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void registerPhoneStateListener() {
         Log.d(TAG, "registerPhoneStateListener() called");
 
         if (isPhoneStateListenerRegistered) {
+            return;
+        }
+
+        if (!hasPhoneStatePermission()) {
+            log.d("No Phone State permissions. Register phoneStateListener cannot " +
+                    "be completed.");
             return;
         }
 
@@ -1017,6 +1036,12 @@ class AdvancedAudioDevice extends BaseAudioDevice {
         Log.d(TAG, "unRegisterPhoneStateListener() called");
 
         if (!isPhoneStateListenerRegistered) {
+            return;
+        }
+
+        if (!hasPhoneStatePermission()) {
+            log.d("No Phone State permissions. Register phoneStateListener cannot " +
+                    "be completed.");
             return;
         }
 
