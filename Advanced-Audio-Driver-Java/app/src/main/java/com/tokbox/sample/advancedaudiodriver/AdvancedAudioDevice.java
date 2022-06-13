@@ -1,5 +1,6 @@
 package com.tokbox.sample.advancedaudiodriver;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
@@ -8,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -1005,7 +1007,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
         if (Build.VERSION.SDK_INT >= 31) {
             if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
-                log.e("Some features may not be available unless the phone permissions has been granted explicitly " +
+                Log.e(TAG, "Some features may not be available unless the phone permissions has been granted explicitly " +
                         "in the App settings.");
                 return false;
             }
@@ -1021,7 +1023,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
         }
 
         if (!hasPhoneStatePermission()) {
-            log.d("No Phone State permissions. Register phoneStateListener cannot " +
+            Log.d(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
                     "be completed.");
             return;
         }
@@ -1040,7 +1042,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
         }
 
         if (!hasPhoneStatePermission()) {
-            log.d("No Phone State permissions. Register phoneStateListener cannot " +
+            Log.d(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
                     "be completed.");
             return;
         }
