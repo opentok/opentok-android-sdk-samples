@@ -1027,7 +1027,6 @@ class AdvancedAudioDevice extends BaseAudioDevice {
         }
 
         if (telephonyManager != null) {
-            // add snippet code from Jint
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
             isPhoneStateListenerRegistered = true;
         }
