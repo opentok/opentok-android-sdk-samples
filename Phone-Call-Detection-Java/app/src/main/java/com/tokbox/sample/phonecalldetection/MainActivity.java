@@ -71,8 +71,27 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             session.publish(publisher);
         }
 
+        private boolean hasPhoneStatePermission() {
+            if (Build.VERSION.SDK_INT >= 31) {
+                if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    log.e("Some features may not be available unless the phone permissions has been granted explicitly " +
+                            "in the App settings.");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void registerPhoneListener() {
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+            if (!hasPhoneStatePermission()) {
+                log.d("No Phone State permissions. Register phoneStateListener cannot " +
+                        "be completed.");
+                return;
+            }
+            
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
