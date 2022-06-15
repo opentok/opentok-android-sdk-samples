@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             var telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
 
             if (!hasPhoneStatePermission()) {
-                Log.d(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
+                Log.e(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
                         "be completed.");
                 return;
             }

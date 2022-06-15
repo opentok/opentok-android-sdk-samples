@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
             if (!hasPhoneStatePermission()) {
-                Log.d(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
+                Log.e(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
                         "be completed.");
                 return;
             }
