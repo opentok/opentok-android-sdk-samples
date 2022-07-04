@@ -1,7 +1,10 @@
 package com.tokbox.sample.phonecalldetection
 
 import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.opengl.GLSurfaceView
+import android.os.Build
 import android.os.Bundle
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -9,16 +12,9 @@ import android.util.Log
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.opentok.android.BaseVideoRenderer
-import com.opentok.android.OpentokError
-import com.opentok.android.Publisher
-import com.opentok.android.PublisherKit
+import com.opentok.android.*
 import com.opentok.android.PublisherKit.PublisherListener
-import com.opentok.android.Session
 import com.opentok.android.Session.SessionListener
-import com.opentok.android.Stream
-import com.opentok.android.Subscriber
-import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.tokbox.sample.phonecalldetection.MainActivity
 import com.tokbox.sample.phonecalldetection.OpenTokConfig.description
@@ -27,10 +23,12 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
 
+
 class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private var session: Session? = null
     private var publisher: Publisher? = null
     private var subscriber: Subscriber? = null
+    private var context: Context? = null
 
     private lateinit var publisherViewContainer: FrameLayout
     private lateinit var subscriberViewContainer: FrameLayout
@@ -69,8 +67,27 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             session.publish(publisher)
         }
 
+        private fun hasPhoneStatePermission(): Boolean {
+            if (Build.VERSION.SDK_INT >= 31) {
+                if (context!!.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG, "Some features may not be available unless the phone permissions has been granted explicitly " +
+                            "in the App settings.")
+                    return false
+                }
+            }
+            return true
+        }
+
         private fun registerPhoneListener() {
-            val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+            var telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+
+            if (!hasPhoneStatePermission()) {
+                Log.e(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
+                        "be completed.");
+                return;
+            }
+
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
         }
 
@@ -188,6 +205,8 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
                 return
             }
 
+            setContext(this);
+            
             initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN)
         } else {
             EasyPermissions.requestPermissions(
@@ -223,5 +242,9 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     companion object {
         private val TAG = MainActivity::class.java.simpleName
         private const val PERMISSIONS_REQUEST_CODE = 124
+    }
+
+    private fun setContext(_context: Context) {
+        context = _context
     }
 }
