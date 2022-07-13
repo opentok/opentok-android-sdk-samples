@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.application'
+}
+//apply plugin: 'com.google.gms.google-services'
+
+apply {
+    from '../../commons.gradle'
+}
+
+android {
+    compileSdkVersion extCompileSdkVersion
+    buildToolsVersion extBuildToolsVersion
+
+    defaultConfig {
+        applicationId "com.tokbox.sample.basicvoipcall"
+        minSdkVersion 19
+        targetSdkVersion extTargetSdkVersion
+        versionCode extVersionCode
+        versionName extVersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled extMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    // Dependency versions are defined in the ../../commons.gradle file
+    implementation "com.opentok.android:opentok-android-sdk:2.21.3"
+    implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
+    implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+
+    // Import the Firebase BoM
+    //implementation platform('com.google.firebase:firebase-bom:29.2.1')
+
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    // When using the BoM, don't specify versions in Firebase dependencies
+    //implementation 'com.google.firebase:firebase-analytics'
+
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+}

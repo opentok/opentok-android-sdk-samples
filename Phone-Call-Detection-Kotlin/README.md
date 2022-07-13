@@ -17,6 +17,7 @@ This is the code responsible for listening for the call status:
 
 ```java
 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//Phone state permissions are required from Api 31. Add check of permission to avoid crash.
 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
 //...
