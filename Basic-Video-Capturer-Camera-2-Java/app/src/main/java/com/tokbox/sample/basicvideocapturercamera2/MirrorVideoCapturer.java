@@ -701,7 +701,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     @SuppressLint("all")
     private void initCamera() {
-        log.d(TAG, "initCamera()");
+        Log.d(TAG, "initCamera()");
         try {
             cameraState = CameraState.SETUP;
             // find desired camera & camera ouput size
