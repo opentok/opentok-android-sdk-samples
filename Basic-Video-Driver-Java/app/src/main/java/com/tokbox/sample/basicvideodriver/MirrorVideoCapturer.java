@@ -626,7 +626,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return -1;
     }
 
-    private Size selectPreferredSize(String camId, final int width, final int height, int format)
+    private Size selectPreferredSize(String camId, final int width, final int height)
             throws CameraAccessException {
         CameraCharacteristics info = cameraManager.getCameraCharacteristics(camId);
         StreamConfigurationMap dimMap = info.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -687,7 +687,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     @SuppressLint("all")
     private void initCamera() {
-        log.d("initCamera()");
+        log.d(TAG, "initCamera()");
         try {
             cameraState = CameraState.SETUP;
             // find desired camera & camera ouput size
