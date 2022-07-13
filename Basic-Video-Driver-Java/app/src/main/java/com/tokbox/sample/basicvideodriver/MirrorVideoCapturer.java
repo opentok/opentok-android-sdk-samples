@@ -696,7 +696,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             camFps = selectCameraFpsRange(camId, desiredFps);
             cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
             characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
-            cameraManager.openCamera(camId, cameraObserver, null);
+            cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);
         } catch (CameraAccessException exp) {
             throw new Camera2Exception(exp.getMessage());
         }
