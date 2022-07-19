@@ -686,14 +686,14 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                     frameDimensions.getWidth(),
                     frameDimensions.getHeight()
             );
-            if (cameraFrame != null)
-                cameraFrame.close();
-            cameraFrame = ImageReader.newInstance(
-                    preferredSize.getWidth(),
-                    preferredSize.getHeight(),
-                    PIXEL_FORMAT,
-                    3
-            );
+
+            if (cameraFrame != null) cameraFrame.close();
+
+            cameraFrame = ImageReader.newInstance(preferredSize.getWidth(),
+                                                preferredSize.getHeight(),
+                                                PIXEL_FORMAT,
+                                                3);
+
         } catch (CameraAccessException exp) {
             throw new Camera2Exception(exp.getMessage());
         }
