@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -325,7 +326,14 @@ public class ScreenshotVideoRenderer extends BaseVideoRenderer {
                 Bitmap bmp = Bitmap.createBitmap(intArray, width, height, Bitmap.Config.ARGB_8888);
 
                 try {
-                    String path = Environment.getExternalStorageDirectory().toString();
+                    String path = "";
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                                .toString();
+                    } else {
+                        path = Environment.getExternalStorageDirectory().toString();
+                    }
+
                     OutputStream fOutputStream = null;
                     File file = new File(path, "opentok-capture-" + System.currentTimeMillis() + ".png");
                     fOutputStream = new FileOutputStream(file);
