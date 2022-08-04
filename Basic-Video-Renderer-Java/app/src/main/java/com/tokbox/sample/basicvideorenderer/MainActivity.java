@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
             publisher = new Publisher.Builder(MainActivity.this)
-                    .renderer(new InvertedColorsVideoRenderer(MainActivity.this))
+                    .renderer(new InvertedColorsVideoRenderer(getApplicationContext()))
                     .build();
 
             publisher.setPublisherListener(publisherListener);

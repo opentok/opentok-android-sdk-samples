@@ -1,6 +1,7 @@
 package com.tokbox.sample.basicvideorenderer;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -42,6 +43,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         static final int COORDS_PER_VERTEX = 3;
         static final int TEXTURE_COORDS_PER_VERTEX = 2;
 
+
+        // uriel: here are the vertices you need to change
         static float xyzCoords[] = {-1.0f, 1.0f, 0.0f, // top left
                 -1.0f, -1.0f, 0.0f, // bottom left
                 1.0f, -1.0f, 0.0f, // bottom right
@@ -76,8 +79,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 + "  u=texture2D(Utex,vec2(nx,ny)).r;\n"
                 + "  v=texture2D(Vtex,vec2(nx,ny)).r;\n"
 
-                + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
-                // + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
+//                + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+                 + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
 
                 + "  u=u-0.5;\n" + "  v=v-0.5;\n" + "  r=y+1.5958*v;\n"
                 + "  g=y-0.39173*u-0.81290*v;\n" + "  b=y+2.017*u;\n"
@@ -114,7 +117,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            gl.glClearColor(0, 0, 0, 1);
+            gl.glClearColor(0, 0, 0, 0);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
@@ -258,7 +261,7 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-            gl.glClearColor(0, 0, 0, 1);
+            gl.glClearColor(0, 0, 0, 0);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             frameLock.lock();
@@ -352,6 +355,10 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
         this.context = context;
 
         view = new GLSurfaceView(context);
+        view.setZOrderMediaOverlay(true);
+        view.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+
+        view.getHolder().setFormat(PixelFormat.TRANSPARENT);
         view.setEGLContextClientVersion(2);
 
         renderer = new MyRenderer();
