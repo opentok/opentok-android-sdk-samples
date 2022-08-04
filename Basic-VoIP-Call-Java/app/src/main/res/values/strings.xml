@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Basic-VoIP-Call</string>
+    <string name="rationale_video_app">This app needs access to your camera and mic so you can perform audio calls</string>
+    <string name="title_settings_dialog">Permissions Required</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="fcm_message">FCM Message</string>
+</resources>

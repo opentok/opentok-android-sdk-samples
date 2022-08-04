@@ -3,6 +3,7 @@ import org.amshove.kluent.shouldExist
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import java.util.*
 
 class ProjectConsistencyTests {
 
@@ -110,7 +111,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} project dedicated GithubActions workflow file exists")
     @MethodSource("getProjectNames")
     fun `project dedicated GithubActions workflow file exists`(projectDirectoryName: String) {
-        val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
+        val workflowFileName = "build-${projectDirectoryName.lowercase(Locale.getDefault())}.yml"
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
 
         println(filePath)
@@ -123,7 +124,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} project GithubActions workflow file contains correct project name")
     @MethodSource("getProjectNames")
     fun `project GithubActions workflow file contains correct project name`(projectDirectoryName: String) {
-        val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
+        val workflowFileName = "build-${projectDirectoryName.lowercase(Locale.getDefault())}.yml"
 
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
         val file = File(filePath)
@@ -136,7 +137,7 @@ class ProjectConsistencyTests {
     @ParameterizedTest(name = "{0} project GithubActions workflow file contains correct build command")
     @MethodSource("getProjectNames")
     fun `project GithubActions workflow file contains correct project build command`(projectDirectoryName: String) {
-        val workflowFileName = "build-${projectDirectoryName.toLowerCase()}.yml"
+        val workflowFileName = "build-${projectDirectoryName.lowercase(Locale.getDefault())}.yml"
 
         val filePath = "$repoRootDirectoryPath/.github/workflows/$workflowFileName"
         val file = File(filePath)
@@ -245,7 +246,7 @@ class ProjectConsistencyTests {
          * ./Project-Name/app/src/main/java/com/tokbox/sample/projectname/
          */
         private fun getAbsoluteProjectPackagePath(projectDirectoryName: String): String {
-            val projectPackage = getProjectPackage(projectDirectoryName);
+            val projectPackage = getProjectPackage(projectDirectoryName)
             val packagePath = projectPackage.replace(".", "/")
             return "$repoRootDirectoryFile/$projectDirectoryName/app/src/main/java/$packagePath"
         }
@@ -265,13 +266,17 @@ class ProjectConsistencyTests {
              }
         }
 
-        private fun getLanguage(projectDirectoryName: String) = if(projectDirectoryName.endsWith("-Java")) {
+        private fun getLanguage(projectDirectoryName: String) = when {
+            projectDirectoryName.endsWith("-Java") -> {
                 "Java"
-            } else if(projectDirectoryName.endsWith("-Kotlin")) { 
+            }
+            projectDirectoryName.endsWith("-Kotlin") -> {
                 "Kotlin"
-            } else {
+            }
+            else -> {
                 throw IllegalArgumentException("Cant determine language from dirctory name: $projectDirectoryName")
             }
+        }
 
         /**
          * Converts project name
@@ -280,8 +285,8 @@ class ProjectConsistencyTests {
          * Output: projectname
          */
         private fun getRawProjectName(projectDirectoryName: String) = getProjectName(projectDirectoryName)
-                .replace("-", "")
-                .toLowerCase()
+            .replace("-", "")
+            .lowercase(Locale.getDefault())
     }
 
     private fun File.lineContains(string: String) = readLines().any { it.contains(string) }

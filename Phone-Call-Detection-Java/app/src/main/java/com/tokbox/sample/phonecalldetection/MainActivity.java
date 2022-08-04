@@ -2,7 +2,9 @@ package com.tokbox.sample.phonecalldetection;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -21,6 +23,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private Context context;
 
     private static final int PERMISSIONS_REQUEST_CODE = 124;
 
@@ -71,8 +75,27 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             session.publish(publisher);
         }
 
+        private boolean hasPhoneStatePermission() {
+            if (Build.VERSION.SDK_INT >= 31) {
+                if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG,"Some features may not be available unless the phone permissions has been granted explicitly " +
+                            "in the App settings.");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void registerPhoneListener() {
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+            if (!hasPhoneStatePermission()) {
+                Log.e(TAG, "No Phone State permissions. Register phoneStateListener cannot " +
+                        "be completed.");
+                return;
+            }
+            
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
@@ -212,6 +235,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 return;
             }
 
+            setContext(this);
+
             initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
@@ -237,5 +262,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.e(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         this.finish();
+    }
+
+    private void setContext(Context context)
+    {
+        this.context = context;
     }
 }
