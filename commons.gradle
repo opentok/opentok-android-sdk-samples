@@ -7,7 +7,7 @@ ext {
     extAgpVersion="4.2.1"
     extCompileSdkVersion=32
     extBuildToolsVersion="30.0.2"
-    extMinSdkVersion=16
+    extMinSdkVersion=21
     extTargetSdkVersion=32
     extVersionCode=1
     extVersionName="1.0"
