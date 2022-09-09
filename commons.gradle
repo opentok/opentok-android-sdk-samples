@@ -17,7 +17,7 @@ ext {
     extAppCompatVersion="1.4.1"
     extEasyPermissionsVersion="3.0.0"
     extConstraintLyoutVersion="2.0.4"
-    extArCoreVersion="1.22.0"
+    extArCoreVersion="1.33.0"
     extSceneFormVersion="1.17.1"
     extRetrofitVersion="2.9.0"
     extOkHttpVersion="4.8.1"
