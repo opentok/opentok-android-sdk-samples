@@ -8,7 +8,7 @@ apply {
 }
 
 android {
-    compileSdkVersion extCompileSdkVersion
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.tokbox.sample.phonecalldetection"
