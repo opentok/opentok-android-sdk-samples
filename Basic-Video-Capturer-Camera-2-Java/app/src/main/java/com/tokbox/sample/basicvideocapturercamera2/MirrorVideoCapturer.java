@@ -1,7 +1,5 @@
 package com.tokbox.sample.basicvideocapturercamera2;
 
-import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -35,8 +33,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 @TargetApi(21)
 @RequiresApi(21)
@@ -44,6 +40,7 @@ public
 class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
     private static final int PREFERRED_FACING_CAMERA = CameraMetadata.LENS_FACING_FRONT;
     private static final int PIXEL_FORMAT = ImageFormat.YUV_420_888;
+    private static final String TAG = MirrorVideoCapturer.class.getSimpleName();
 
     private enum CameraState {
         CLOSED,
