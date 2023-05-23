@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.tokbox.sample.basicaudiodriver"
-        minSdkVersion 19
+        minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
