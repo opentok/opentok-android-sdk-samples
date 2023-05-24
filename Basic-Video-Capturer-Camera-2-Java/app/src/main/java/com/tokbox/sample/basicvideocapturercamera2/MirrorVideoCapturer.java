@@ -236,12 +236,12 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /* caching of camera characteristics & display orientation for performance */
     private static class CameraInfoCache {
-        private final CameraCharacteristics   info;
-        private boolean                 frontFacing = false;
-        private int                     sensorOrientation = 0;
+        private final CameraCharacteristics info;
+        private boolean frontFacing = false;
+        private int sensorOrientation = 0;
 
         public CameraInfoCache(CameraCharacteristics info) {
-            this.info    = info;
+            this.info = info;
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
@@ -454,15 +454,6 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             cameraState = CameraState.CLOSING;
             camera.close();
         } else if (CameraState.SETUP == cameraState) {
-            /*
-            executeAfterCameraOpened = () -> {
-                cameraState = CameraState.CLOSING;
-                if (camera != null) {
-                    camera.close();
-                }
-            };
-
-             */
             executeAfterCameraOpened = null;
         }
         Log.d(TAG,"stopCapture exit");
