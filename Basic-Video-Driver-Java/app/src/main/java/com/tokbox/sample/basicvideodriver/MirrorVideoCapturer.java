@@ -293,6 +293,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 camId = cameraManager.getCameraIdList()[0];
             }
             cameraIndex = findCameraIndex(camId);
+            initCameraFrame();
         } catch (CameraAccessException e) {
             throw new Camera2Exception(e.getMessage());
         }
@@ -408,7 +409,6 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             }
 
             captureSession.close();
-            cameraFrame.close();
             characteristics = null;
         }
 
@@ -429,6 +429,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
         /* stop camera message thread */
         stopCamThread();
+
+        /* close ImageReader here */
+        cameraFrame.close();
 
         Log.d(TAG,"destroy exit");
     }
@@ -537,6 +540,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         executeAfterClosed = () -> {
             switch (oldState) {
                 case CAPTURE:
+                    initCameraFrame();
                     initCamera();
                     startCapture();
                     break;
@@ -622,7 +626,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return -1;
     }
 
-    private Size selectPreferredSize(String camId, final int width, final int height, int format)
+    private Size selectPreferredSize(String camId, final int width, final int height)
             throws CameraAccessException {
         CameraCharacteristics info = cameraManager.getCameraCharacteristics(camId);
         StreamConfigurationMap dimMap = info.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -659,32 +663,37 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    @SuppressLint("all")
-    private void initCamera() {
-        Log.d(TAG,"initCamera()");
-
+    private void initCameraFrame() {
         try {
-            cameraState = CameraState.SETUP;
-
-            // find desired camera & camera output size
             String[] cameraIdList = cameraManager.getCameraIdList();
             String camId = cameraIdList[cameraIndex];
-            camFps = selectCameraFpsRange(camId, desiredFps);
-
             Size preferredSize = selectPreferredSize(
                     camId,
                     frameDimensions.getWidth(),
-                    frameDimensions.getHeight(),
-                    PIXEL_FORMAT
+                    frameDimensions.getHeight()
             );
 
-            cameraFrame = ImageReader.newInstance(
-                    preferredSize.getWidth(),
-                    preferredSize.getHeight(),
-                    PIXEL_FORMAT,
-                    3
-            );
+            if (cameraFrame != null) cameraFrame.close();
 
+            cameraFrame = ImageReader.newInstance(preferredSize.getWidth(),
+                                                preferredSize.getHeight(),
+                                                PIXEL_FORMAT,
+                                                3);
+
+        } catch (CameraAccessException exp) {
+            throw new Camera2Exception(exp.getMessage());
+        }
+    }
+
+    @SuppressLint("all")
+    private void initCamera() {
+        Log.d(TAG, "initCamera()");
+        try {
+            cameraState = CameraState.SETUP;
+            // find desired camera & camera ouput size
+            String[] cameraIdList = cameraManager.getCameraIdList();
+            String camId = cameraIdList[cameraIndex];
+            camFps = selectCameraFpsRange(camId, desiredFps);
             cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
             characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
             cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);
