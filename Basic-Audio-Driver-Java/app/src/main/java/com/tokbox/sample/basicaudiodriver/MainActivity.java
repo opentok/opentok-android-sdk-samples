@@ -40,6 +40,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
             Log.d(TAG, "onStreamCreated: Own stream " + stream.getStreamId() + " created");
+            if (subscriber == null) {
+                subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+                subscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+                subscriber.setSubscriberListener(subscriberListener);
+                session.subscribe(subscriber);
+                subscriberViewContainer.addView(subscriber.getView());
+            }
         }
 
         @Override
