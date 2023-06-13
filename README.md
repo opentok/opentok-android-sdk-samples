@@ -24,6 +24,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - Phone-Call-Detection ([Java](./Phone-Call-Detection-Java), [Kotlin](./Phone-Call-Detection-Kotlin)) demonstrates how to detect incoming and outgoing phone calls
 - ARCore-Integration ([Java](./ARCore-Integration-Java)) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
 - Basic-VoIP-Call ([Java](./Basic-VoIP-Call-Java)) demonstrates how to use Android Connection Service (https://developer.android.com/reference/android/telecom/ConnectionService) with the OpenTok Android SDK.
+- Video-Transformers [Java](./Video-Transformers-Java) demonstrates how to use pre-built transformers in the Vonage Media Processor library or create your own custom video transformer to apply to published video.
 ## Open project
 
 1. Clone this repository `git@githubx.com:opentok/opentok-android-sdk-samples.git`
