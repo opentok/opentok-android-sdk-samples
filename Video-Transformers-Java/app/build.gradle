@@ -10,7 +10,7 @@ android {
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.basicvideochat"
+        applicationId "com.tokbox.sample.videotransformers"
         minSdkVersion 23
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

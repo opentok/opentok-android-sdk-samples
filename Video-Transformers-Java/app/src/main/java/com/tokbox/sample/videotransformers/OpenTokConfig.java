@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat;
+package com.tokbox.sample.videotransformers;
 
 import android.text.TextUtils;
 import android.webkit.URLUtil;
@@ -14,13 +14,13 @@ public class OpenTokConfig {
     */
 
     // Replace with a API key
-    public static final String API_KEY = "47521351";
+    public static final String API_KEY = "";
     
     // Replace with a generated Session ID
-    public static final String SESSION_ID = "1_MX40NzUyMTM1MX5-MTY4NDQxNjYwOTE4Mn5WNVV1dEllTEVOc0pzRHlaZHFWdytMNHF-fn4";
+    public static final String SESSION_ID = "";
     
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NzUyMTM1MSZzaWc9OTMyYzgxNzZkMjAyYjIwZjhlYzM2YzAyYTkwMGRhOWY1YmM4ZWMxNzpzZXNzaW9uX2lkPTFfTVg0ME56VXlNVE0xTVg1LU1UWTRORFF4TmpZd09URTRNbjVXTlZWMWRFbGxURVZPYzBwelJIbGFaSEZXZHl0TU5IRi1mbjQmY3JlYXRlX3RpbWU9MTY4NDQxNjYxNCZub25jZT0wLjY0NTE0Mjc4Nzk3NTA2Nzcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTY4NzAwODYxMyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
+    public static final String TOKEN = "";
 
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 

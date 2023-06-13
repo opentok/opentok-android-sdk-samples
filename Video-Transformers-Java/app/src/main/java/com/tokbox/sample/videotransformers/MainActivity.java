@@ -1,10 +1,19 @@
-package com.tokbox.sample.basicvideochat;
+package com.tokbox.sample.videotransformers;
 
 import android.Manifest;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.media.Image;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -17,8 +26,8 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.tokbox.sample.basicvideochat.network.APIService;
-import com.tokbox.sample.basicvideochat.network.GetSessionResponse;
+import com.tokbox.sample.videotransformers.network.APIService;
+import com.tokbox.sample.videotransformers.network.GetSessionResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
@@ -51,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private FrameLayout publisherViewContainer;
     private FrameLayout subscriberViewContainer;
+    private Context context;
+
+    private Button buttonVideoTransformers;
 
     public ArrayList<PublisherKit.VideoTransformer> videoTransformers = new ArrayList<>();
 
@@ -144,7 +156,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(R.layout.activity_main);
+        buttonVideoTransformers = findViewById(R.id.setvideotransformers);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
@@ -273,33 +287,88 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         this.finish();
     }
 
-    private customVideoTransformer blackWhite = new customVideoTransformer();
+    private customVideoTransformer logoTransformer = new customVideoTransformer();
 
     public class customVideoTransformer implements PublisherKit.CustomVideoTransformer {
 
+        public Bitmap resizeImage(Bitmap image, int width, int height) {
+            Matrix matrix = new Matrix();
+            matrix.postScale(width / (float) image.getWidth(), height / (float) image.getHeight());
+            return Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, false);
+        }
+
         @Override
-        public void onTransform(BaseVideoRenderer.Frame frame) {
+        public void onTransform(BaseVideoRenderer.Frame frame){
 
-            byte neutralColor = (byte) 128;
-            byte[] byteArray = new byte[frame.getUplane().capacity()];
+            // Obtain the Y  plane of the video frame
+            ByteBuffer yPlane = frame.getYplane();
 
-            Arrays.fill(byteArray, neutralColor);
+            // Get the dimensions of the video frame
+            int videoWidth = frame.getWidth();
+            int videoHeight = frame.getHeight();
 
-            frame.convertInPlace(frame.getYplane(), ByteBuffer.wrap(byteArray), ByteBuffer.wrap(byteArray), frame.getYstride(), frame.getUvStride());
+            // Get the dimensions of the logo
+            Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.vonage_logo);
+
+            // Calculate the desired size of the image
+            int desiredWidth = videoWidth / 8; // Adjust this value as needed
+            int desiredHeight = (int) (image.getHeight() * ((float) desiredWidth / image.getWidth()));
+
+            // Resize the image to the desired size
+            image = resizeImage(image, desiredWidth, desiredHeight);
+
+            int logoWidth = image.getWidth();
+            int logoHeight = image.getHeight();
+
+            // Location of the image (center of video)
+            int logoPositionX = videoWidth / 2;
+            int logoPositionY = videoHeight / 2;
+
+            // Overlay the logo on the video frame
+            for (int y = 0; y < logoHeight; y++) {
+                for (int x = 0; x < logoWidth; x++) {
+                    int frameOffset = (logoPositionY + y) * videoWidth + (logoPositionX + x);
+
+                    // Get the logo pixel color
+                    int logoPixel = image.getPixel(x, y);
+
+                    // Extract the color channels (ARGB)
+                    int logoAlpha = (logoPixel >> 24) & 0xFF;
+                    int logoRed = (logoPixel >> 16) & 0xFF;
+
+                    // Overlay the logo pixel on the video frame
+                    int framePixel = yPlane.get(frameOffset) & 0xFF;
+
+                    // Calculate the blended pixel value
+                    int blendedPixel = ((logoAlpha * logoRed + (255 - logoAlpha) * framePixel) / 255) & 0xFF;
+
+                    // Set the blended pixel value in the video frame
+                    yPlane.put(frameOffset, (byte) blendedPixel);
+                }
+            }
         }
     }
 
+    private boolean isSet = false;
     public void SetVideoTransformers(View view) {
-        videoTransformers.clear();
-        PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
-        PublisherKit.VideoTransformer blackAndWhite = publisher.new VideoTransformer("blackAndWhite", blackWhite);
-        videoTransformers.add(backgroundBlur);
-        //videoTransformers.add(blackAndWhite);
-        publisher.setVideoTransformers(videoTransformers);
+        if(!isSet) {
+            videoTransformers.clear();
+            PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
+            PublisherKit.VideoTransformer myCustomTransformer = publisher.new VideoTransformer("myTransformer", logoTransformer);
+            videoTransformers.add(backgroundBlur);
+            videoTransformers.add(myCustomTransformer);
+            publisher.setVideoTransformers(videoTransformers);
+            isSet = true;
+            buttonVideoTransformers.setText("Reset");
+        } else {
+            ResetVideoTransformers();
+            isSet = false;
+            buttonVideoTransformers.setText("Set");
+        }
 
     }
 
-    public void ResetVideoTransformers(View view) {
+    public void ResetVideoTransformers() {
         videoTransformers.clear();
         publisher.setVideoTransformers(videoTransformers);
     }
