@@ -1,4 +1,4 @@
-name: Build Basic-Video-Chat-Java
+name: Build Video-Transformers-Java
 
 on:
   push:

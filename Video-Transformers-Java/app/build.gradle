@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.tokbox.sample.videotransformers"
-        minSdkVersion 23
+        minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
