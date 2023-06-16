@@ -8,7 +8,7 @@ apply {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.tokbox.sample.phonecalldetection"
@@ -42,5 +42,5 @@ dependencies {
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
     implementation "androidx.core:core-ktx:+"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
 }
