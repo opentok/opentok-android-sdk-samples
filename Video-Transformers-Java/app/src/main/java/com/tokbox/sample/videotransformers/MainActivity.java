@@ -164,6 +164,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         subscriberViewContainer = findViewById(R.id.subscriber_container);
 
         requestPermissions();
+
+        // Get the image in bitmap format
+        image = BitmapFactory.decodeResource(context.getResources(), R.drawable.vonage_logo);
     }
 
     @Override
@@ -287,14 +290,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         this.finish();
     }
 
+    // Logo to be loaded
+    Bitmap image;
+
     private customVideoTransformer logoTransformer = new customVideoTransformer();
 
     public class customVideoTransformer implements PublisherKit.CustomVideoTransformer {
 
         public Bitmap resizeImage(Bitmap image, int width, int height) {
-            Matrix matrix = new Matrix();
-            matrix.postScale(width / (float) image.getWidth(), height / (float) image.getHeight());
-            return Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, false);
+            return Bitmap.createScaledBitmap(image, width, height, true);
         }
 
         @Override
@@ -306,9 +310,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             // Get the dimensions of the video frame
             int videoWidth = frame.getWidth();
             int videoHeight = frame.getHeight();
-
-            // Get the dimensions of the logo
-            Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.vonage_logo);
 
             // Calculate the desired size of the image
             int desiredWidth = videoWidth / 8; // Adjust this value as needed
