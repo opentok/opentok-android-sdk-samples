@@ -322,8 +322,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             int logoHeight = image.getHeight();
 
             // Location of the image (center of video)
-            int logoPositionX = videoWidth / 2;
-            int logoPositionY = videoHeight / 2;
+            int logoPositionX = videoWidth * 1/5 - logoWidth; // Adjust this as needed for the desired position
+            int logoPositionY = videoHeight * 9/10 - logoHeight; // Adjust this as needed for the desired position
 
             // Overlay the logo on the video frame
             for (int y = 0; y < logoHeight; y++) {
