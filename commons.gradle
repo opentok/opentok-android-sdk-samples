@@ -7,12 +7,12 @@ ext {
     extAgpVersion="4.2.1"
     extCompileSdkVersion=32
     extBuildToolsVersion="30.0.2"
-    extMinSdkVersion=21
+    extMinSdkVersion=23
     extTargetSdkVersion=32
     extVersionCode=1
     extVersionName="1.0"
     extMinifyEnabled=false
-    extOpentokSdkVersion="2.25.1"
+    extOpentokSdkVersion="2.25.2"
 
     extAppCompatVersion="1.4.1"
     extEasyPermissionsVersion="3.0.0"
