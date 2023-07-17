@@ -8,7 +8,7 @@ apply {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.tokbox.sample.phonecalldetection"
@@ -37,10 +37,10 @@ android {
 
 dependencies {
     // Dependency versions are defined in the ../../commons.gradle file
-    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation "com.opentok.android:opentok-android-sdk:2.25.1"
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
     implementation "androidx.core:core-ktx:+"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
 }

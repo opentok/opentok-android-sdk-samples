@@ -13,7 +13,6 @@ ext {
     extVersionName="1.0"
     extMinifyEnabled=false
     extOpentokSdkVersion="2.25.3"
-
     extAppCompatVersion="1.4.1"
     extEasyPermissionsVersion="3.0.0"
     extConstraintLyoutVersion="2.0.4"
