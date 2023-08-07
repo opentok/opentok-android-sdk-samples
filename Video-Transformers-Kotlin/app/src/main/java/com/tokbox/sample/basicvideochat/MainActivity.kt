@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat
+package com.tokbox.sample.videotransformers
 
 import android.Manifest
 import android.content.res.Resources
@@ -16,9 +16,9 @@ import com.opentok.android.*
 import com.opentok.android.PublisherKit.*
 import com.opentok.android.Session.SessionListener
 import com.opentok.android.SubscriberKit.SubscriberListener
-import com.tokbox.sample.basicvideochat.MainActivity
-import com.tokbox.sample.basicvideochat.network.APIService
-import com.tokbox.sample.basicvideochat.network.GetSessionResponse
+import com.tokbox.sample.videotransformers.MainActivity
+import com.tokbox.sample.videotransformers.network.APIService
+import com.tokbox.sample.videotransformers.network.GetSessionResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pub.devrel.easypermissions.AfterPermissionGranted

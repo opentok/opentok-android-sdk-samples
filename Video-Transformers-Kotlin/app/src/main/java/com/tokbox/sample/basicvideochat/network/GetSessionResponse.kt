@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat.network
+package com.tokbox.sample.videotransformers.network
 
 import com.squareup.moshi.Json
 

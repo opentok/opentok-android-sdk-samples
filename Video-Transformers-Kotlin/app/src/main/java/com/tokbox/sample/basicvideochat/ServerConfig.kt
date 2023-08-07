@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat
+package com.tokbox.sample.videotransformers
 
 import android.text.TextUtils
 import android.webkit.URLUtil
