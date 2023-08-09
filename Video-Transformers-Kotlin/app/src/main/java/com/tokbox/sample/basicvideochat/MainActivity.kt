@@ -251,7 +251,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     class logoWatermark(private val resources: Resources) : CustomVideoTransformer {
 
         // Get the image in bitmap format
-        private var image: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.vonage_logo)
+        private final var image: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.vonage_logo)
 
         fun resizeImage(image: Bitmap?, width: Int, height: Int): Bitmap {
             return Bitmap.createScaledBitmap(image!!, width, height, true)
@@ -271,9 +271,9 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             val desiredHeight: Int = (image.getHeight() * (desiredWidth.toFloat() / image.getWidth())).toInt()
 
             // Resize the image to the desired size
-            image = resizeImage(image, desiredWidth, desiredHeight)
-            val logoWidth: Int = image.getWidth()
-            val logoHeight: Int = image.getHeight()
+            val reizedImage = resizeImage(image, desiredWidth, desiredHeight)
+            val logoWidth: Int = reizedImage.getWidth()
+            val logoHeight: Int = reizedImage.getHeight()
 
             // Location of the image (center of video)
             val logoPositionX = videoWidth * 1 / 2 - logoWidth // Adjust this as needed for the desired position
@@ -285,7 +285,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
                     val frameOffset = (logoPositionY + y) * videoWidth + (logoPositionX + x)
 
                     // Get the logo pixel color
-                    val logoPixel: Int = image.getPixel(x, y)
+                    val logoPixel: Int = reizedImage.getPixel(x, y)
 
                     // Extract the color channels (ARGB)
                     val logoAlpha = logoPixel shr 24 and 0xFF
