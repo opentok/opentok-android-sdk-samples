@@ -12,7 +12,7 @@ ext {
     extVersionCode=1
     extVersionName="1.0"
     extMinifyEnabled=false
-    extOpentokSdkVersion="2.25.3"
+    extOpentokSdkVersion="2.26.0"
     extAppCompatVersion="1.4.1"
     extEasyPermissionsVersion="3.0.0"
     extConstraintLyoutVersion="2.0.4"
