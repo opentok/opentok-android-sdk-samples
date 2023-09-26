@@ -257,6 +257,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private SubscriberContainer findContainerForStream(Stream stream) {
         for (SubscriberContainer subscriberContainer : subscribers) {
+            Log.i(TAG, "Subscriber object " + subscriberContainer.subscriber);
+            Log.i(TAG, "Subscriber object stream " + subscriberContainer.subscriber.getStream());
+
             if (subscriberContainer.subscriber.getStream().getStreamId().equals(stream.getStreamId())) {
                 return subscriberContainer;
             }
@@ -286,8 +289,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void removeSubscriberWithStream(Stream stream) {
+        Log.i(TAG, "Printing subscribers which are not null before calling findContainerForStream");
+        for (int i = 0; i < MAX_NUM_SUBSCRIBERS; i++) {
+            SubscriberContainer existingContainer = subscribers.get(i);
+            if (existingContainer.subscriber != null) {
+                Log.i(TAG, "Subscriber not set to null is " + existingContainer.subscriber.getStream().getStreamId());
+            }
+        }
         SubscriberContainer container = findContainerForStream(stream);
 
+        Log.i(TAG, "After returning from findContainerForStream to remove stream");
         if (container == null) {
             return;
         }
@@ -295,7 +306,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         container.container.removeView(container.subscriber.getView());
         container.toggleAudio.setOnCheckedChangeListener(null);
         container.toggleAudio.setVisibility(View.INVISIBLE);
+        Log.i(TAG, "Stream id of Subscriber is being set to null is " + container.subscriber.getStream().getStreamId());
         container.subscriber = null;
+
+//        Log.i(TAG, "Printing subscribers which are not null");
+//        for (int i = 0; i < MAX_NUM_SUBSCRIBERS; i++) {
+//            SubscriberContainer existingContainer = subscribers.get(i);
+//            if(existingContainer.subscriber != null) {
+//                Log.i(TAG, "Subscriber not set to null is " + existingContainer.subscriber.getStream().getStreamId());
+//            }
+        //       }
     }
 
     private void disconnectSession() {
