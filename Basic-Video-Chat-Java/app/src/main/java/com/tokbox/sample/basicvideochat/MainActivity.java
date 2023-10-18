@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
                 subscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
                 subscriber.setSubscriberListener(subscriberListener);
+                subscriber.setVideoListener(subscriberVideoListener);
                 session.subscribe(subscriber);
                 subscriberViewContainer.addView(subscriber.getView());
             }
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         public void onConnected(SubscriberKit subscriberKit) {
             Log.d(TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.getStream().getStreamId());
+            publisher.setPublishVideo(false);
         }
 
         @Override
@@ -131,6 +133,36 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
             finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
+        }
+    };
+
+    SubscriberKit.VideoListener subscriberVideoListener = new SubscriberKit.VideoListener() {
+
+        @Override
+        public void onVideoDataReceived(SubscriberKit subscriberKit) {
+
+        }
+
+        @Override
+        public void onVideoDisabled(SubscriberKit subscriberKit, String s) {
+            Log.i(TAG, "onVideoDisabled + reason" + s);
+
+            publisher.setPublishVideo(true);
+        }
+
+        @Override
+        public void onVideoEnabled(SubscriberKit subscriberKit, String s) {
+            Log.i(TAG, "onVideoEnabled + reason" + s);
+        }
+
+        @Override
+        public void onVideoDisableWarning(SubscriberKit subscriberKit) {
+
+        }
+
+        @Override
+        public void onVideoDisableWarningLifted(SubscriberKit subscriberKit) {
+
         }
     };
 
@@ -185,25 +217,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
         if (EasyPermissions.hasPermissions(this, perms)) {
+            initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
 
-            if (ServerConfig.hasChatServerUrl()) {
-                // Custom server URL exists - retrieve session config
-                if(!ServerConfig.isValid()) {
-                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
-                    return;
-                }
-
-                initRetrofit();
-                getSession();
-            } else {
-                // Use hardcoded session config
-                if(!OpenTokConfig.isValid()) {
-                    finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
-                    return;
-                }
-
-                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
-            }
+//            if (ServerConfig.hasChatServerUrl()) {
+//                // Custom server URL exists - retrieve session config
+//                if(!ServerConfig.isValid()) {
+//                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
+//                    return;
+//                }
+//
+//                initRetrofit();
+//                getSession();
+//            } else {
+//                // Use hardcoded session config
+//                if(!OpenTokConfig.isValid()) {
+//                    finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+//                    return;
+//                }
+//
+//                //initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
+//            }
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
