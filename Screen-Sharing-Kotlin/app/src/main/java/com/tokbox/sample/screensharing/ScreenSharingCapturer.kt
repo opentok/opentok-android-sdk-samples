@@ -6,10 +6,11 @@ import android.graphics.Canvas
 import android.os.Handler
 import android.view.View
 import com.opentok.android.BaseVideoCapturer
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ScreenSharingCapturer(private val context: Context, private val contentView: View) :
     BaseVideoCapturer() {
-    private var capturing = false
+    private val capturing = AtomicBoolean(false)
     private val fps = 15
     private var width = 0
     private var height = 0
@@ -19,7 +20,7 @@ class ScreenSharingCapturer(private val context: Context, private val contentVie
     private val handler = Handler()
     private val newFrame: Runnable = object : Runnable {
         override fun run() {
-            if (capturing) {
+            if (capturing.get()) {
                 val width = contentView.width
                 val height = contentView.height
                 if (frame == null || this@ScreenSharingCapturer.width != width || this@ScreenSharingCapturer.height != height) {
@@ -46,19 +47,29 @@ class ScreenSharingCapturer(private val context: Context, private val contentVie
 
     override fun init() {}
     override fun startCapture(): Int {
-        capturing = true
-        handler.postDelayed(newFrame, (1000 / fps).toLong())
-        return 0
+        if (capturing.compareAndSet(false, true)) {
+            // Start capturing
+            handler.postDelayed(newFrame, (1000 / fps).toLong())
+            return 0
+        } else {
+            // Already capturing
+            return -1
+        }
     }
 
     override fun stopCapture(): Int {
-        capturing = false
-        handler.removeCallbacks(newFrame)
-        return 0
+        if (capturing.compareAndSet(true, false)) {
+            // Stop capturing
+            handler.removeCallbacks(newFrame)
+            return 0
+        } else {
+            // Not capturing
+            return -1
+        }
     }
 
     override fun isCaptureStarted(): Boolean {
-        return capturing
+        return capturing.get()
     }
 
     override fun getCaptureSettings(): CaptureSettings {
