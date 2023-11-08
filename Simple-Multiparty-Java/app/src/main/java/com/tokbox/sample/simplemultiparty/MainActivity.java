@@ -70,6 +70,28 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     };
 
+    private PublisherKit.VideoListener publisherVideoListener = new PublisherKit.VideoListener() {
+        @Override
+        public void onVideoDisabled(PublisherKit publisherKit, String s) {
+            Log.d(TAG, "onVideoDisabled: Publisher Stream Destroyed. Own stream " );
+        }
+
+        @Override
+        public void onVideoEnabled(PublisherKit publisherKit, String s) {
+            Log.d(TAG, "onVideoEnabled: Publisher Stream Destroyed. Own stream ");
+        }
+
+        @Override
+        public void onVideoDisableWarning(PublisherKit publisherKit) {
+            Log.d(TAG, "onVideoDisableWarning: Publisher Stream Destroyed. Own stream " );
+        }
+
+        @Override
+        public void onVideoDisableWarningLifted(PublisherKit publisherKit) {
+            Log.d(TAG, "onVideoDisableWarningLifted: Publisher Stream Destroyed. Own stream ");
+        }
+    };
+
     private Session.SessionListener sessionListener = new Session.SessionListener() {
         @Override
         public void onConnected(Session session) {
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
+            publisher.setVideoListener(publisherVideoListener);
             publisher.setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
 
             publisherViewContainer.addView(publisher.getView());
