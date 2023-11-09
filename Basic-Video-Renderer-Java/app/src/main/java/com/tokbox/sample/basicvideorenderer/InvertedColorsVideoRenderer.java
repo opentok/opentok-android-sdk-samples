@@ -76,8 +76,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 + "  u=texture2D(Utex,vec2(nx,ny)).r;\n"
                 + "  v=texture2D(Vtex,vec2(nx,ny)).r;\n"
 
-                + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
-                // + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
+              //  + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+                 + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
 
                 + "  u=u-0.5;\n" + "  v=v-0.5;\n" + "  r=y+1.5958*v;\n"
                 + "  g=y-0.39173*u-0.81290*v;\n" + "  b=y+2.017*u;\n"
@@ -202,48 +202,43 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             textureHeight = frame.getHeight();
         }
 
+        void GlTexSubImage2D(int width, int height, int stride,
+                             ByteBuffer buf) {
+            if (stride == width) {
+                // Yay!  We can upload the entire plane in a single GL call.
+                GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
+                        height, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+                        buf);
+            } else {
+                for (int row = 0; row < height; ++row) {
+                    buf.position( row * stride);
+                    GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, row, width,
+                            1, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+                            buf);
+                }
+            }
+        }
+
         void updateTextures(Frame frame) {
             int width = frame.getWidth();
             int height = frame.getHeight();
             int half_width = (width + 1) >> 1;
             int half_height = (height + 1) >> 1;
-            int y_size = width * height;
-            int uv_size = half_width * half_height;
 
-            ByteBuffer bb = frame.getBuffer();
-            // If we are reusing this frame, make sure we reset position and
-            // limit
-            bb.clear();
+            GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+            GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
 
-            if (bb.remaining() == y_size + uv_size * 2) {
-                bb.position(0);
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
+            GlTexSubImage2D(width, height, frame.getYstride(), frame.getYplane());
 
-                GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
-                GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1]);
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getUplane());
 
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
-                GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
-                        height, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
-                        bb);
-
-                bb.position(y_size);
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1]);
-                GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0,
-                        half_width, half_height, GLES20.GL_LUMINANCE,
-                        GLES20.GL_UNSIGNED_BYTE, bb);
-
-                bb.position(y_size + uv_size);
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
-                GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0,
-                        half_width, half_height, GLES20.GL_LUMINANCE,
-                        GLES20.GL_UNSIGNED_BYTE, bb);
-            } else {
-                textureWidth = 0;
-                textureHeight = 0;
-            }
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getVplane());
 
         }
 
