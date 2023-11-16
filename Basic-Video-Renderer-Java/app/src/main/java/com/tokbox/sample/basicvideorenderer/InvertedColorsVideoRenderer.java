@@ -76,8 +76,8 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
                 + "  u=texture2D(Utex,vec2(nx,ny)).r;\n"
                 + "  v=texture2D(Vtex,vec2(nx,ny)).r;\n"
 
-              //  + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
-                 + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
+                + "  y=1.0-1.1643*(y-0.0625);\n" // this line produces the inverted effect
+                //   + "  y=1.1643*(y-0.0625);\n"  // use this line instead if you want to have normal colors
 
                 + "  u=u-0.5;\n" + "  v=v-0.5;\n" + "  r=y+1.5958*v;\n"
                 + "  g=y-0.39173*u-0.81290*v;\n" + "  b=y+2.017*u;\n"
