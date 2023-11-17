@@ -239,7 +239,6 @@ public class InvertedColorsVideoRenderer extends BaseVideoRenderer {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
             GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getVplane());
-
         }
 
         @Override

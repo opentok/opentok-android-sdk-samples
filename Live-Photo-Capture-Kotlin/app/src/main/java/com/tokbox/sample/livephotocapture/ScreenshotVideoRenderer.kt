@@ -127,46 +127,44 @@ void main(void) {
             textureHeight = frame.height
         }
 
-        private fun updateTextures(frame: Frame) {
-            val width = frame.width
-            val height = frame.height
-            val half_width = width + 1 shr 1
-            val half_height = height + 1 shr 1
-            val y_size = width * height
-            val uv_size = half_width * half_height
-            val bb = frame.buffer
-            // If we are reusing this frame, make sure we reset position and
-            // limit
-            bb.clear()
-            if (bb.remaining() == y_size + uv_size * 2) {
-                bb.position(0)
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0])
-                GLES20.glTexSubImage2D(
-                    GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
-                    height, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
-                    bb
-                )
-                bb.position(y_size)
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE1)
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1])
-                GLES20.glTexSubImage2D(
-                    GLES20.GL_TEXTURE_2D, 0, 0, 0,
-                    half_width, half_height, GLES20.GL_LUMINANCE,
-                    GLES20.GL_UNSIGNED_BYTE, bb
-                )
-                bb.position(y_size + uv_size)
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE2)
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2])
-                GLES20.glTexSubImage2D(
-                    GLES20.GL_TEXTURE_2D, 0, 0, 0,
-                    half_width, half_height, GLES20.GL_LUMINANCE,
-                    GLES20.GL_UNSIGNED_BYTE, bb
-                )
+        private fun GlTexSubImage2D(width: Int, height: Int, stride: Int,
+                             buf: ByteBuffer) {
+            if (stride == width) {
+                // Yay!  We can upload the entire plane in a single GL call.
+                GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, width,
+                        height, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+                        buf);
             } else {
-                textureWidth = 0
-                textureHeight = 0
+                for (row in 0 until height) {
+                    buf.position( row * stride);
+                    GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, row, width,
+                            1, GLES20.GL_LUMINANCE, GLES20.GL_UNSIGNED_BYTE,
+                            buf);
+                }
             }
+        }
+
+        private fun updateTextures(frame: Frame) {
+            val width = frame.getWidth();
+            val height = frame.getHeight();
+            val half_width = (width + 1) >> 1;
+            val half_height = (height + 1) >> 1;
+
+            GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
+            GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
+            GlTexSubImage2D(width, height, frame.getYstride(), frame.getYplane());
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1]);
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getUplane());
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getVplane());
+        }
         }
 
         override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
