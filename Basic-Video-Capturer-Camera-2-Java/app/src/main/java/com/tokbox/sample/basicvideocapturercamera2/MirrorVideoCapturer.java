@@ -71,6 +71,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     private Runnable executeAfterClosed;
     private Runnable executeAfterCameraOpened;
+    private Runnable executeAfterCameraSessionConfigured;
 
     private static final SparseIntArray rotationTable = new SparseIntArray() {
         {
@@ -195,6 +196,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
                     Log.d(TAG,"CameraCaptureSession.StateCallback onConfigured() enter.");
+
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
@@ -204,6 +206,11 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         e.printStackTrace();
                     }
                     Log.d(TAG,"CameraCaptureSession.StateCallback onConfigured() exit.");
+
+                    if (executeAfterCameraSessionConfigured != null) {
+                        executeAfterCameraSessionConfigured.run();
+                        executeAfterCameraSessionConfigured = null;
+                    }
                 }
 
                 @Override
@@ -296,8 +303,8 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
 
     /* Constructors etc... */
     public MirrorVideoCapturer(Context ctx,
-                                Publisher.CameraCaptureResolution resolution,
-                                Publisher.CameraCaptureFrameRate fps) {
+                               Publisher.CameraCaptureResolution resolution,
+                               Publisher.CameraCaptureFrameRate fps) {
         cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
         display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         camera = null;
@@ -337,14 +344,10 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     public synchronized void init() {
         Log.d(TAG,"init() enter");
 
-        if (cameraState == CameraState.CLOSING) {
-            executeAfterClosed = () -> doInit();
-        } else {
-            doInit();
-        }
+        doInit();
         cameraState = CameraState.SETUP;
-        Log.d(TAG,"init() exit");
 
+        Log.d(TAG,"init() exit");
     }
 
     private int doStartCapture() {
@@ -440,9 +443,8 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      */
     @Override
     public synchronized int stopCapture() {
-        Log.d(TAG,"stopCapture enter");
-        if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
-            cameraState = CameraState.CLOSING;
+        Log.d(TAG,"stopCapture() enter (cameraState: " + cameraState + ")");
+        if (null != camera && null != captureSession && CameraState.CAPTURE == cameraState) {
             try {
                 captureSession.stopRepeating();
             } catch (CameraAccessException e) {
@@ -450,11 +452,23 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             }
             captureSession.close();
             cameraInfoCache = null;
+            cameraState = CameraState.CLOSING;
         } else if (null != camera && CameraState.OPEN == cameraState) {
             cameraState = CameraState.CLOSING;
             camera.close();
         } else if (CameraState.SETUP == cameraState) {
-            executeAfterCameraOpened = null;
+            executeAfterCameraOpened = () -> {
+                cameraState = CameraState.CLOSING;
+                if (camera != null) {
+                    camera.close();
+                }
+            };
+        } else if (CameraState.CREATESESSION == cameraState) {
+            executeAfterCameraSessionConfigured = () -> {
+                captureSession.close();
+                cameraState = CameraState.CLOSING;
+                executeAfterCameraSessionConfigured = null;
+            };
         }
         Log.d(TAG,"stopCapture exit");
         return 0;
@@ -693,20 +707,20 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                 List<Range<Integer>> fpsLst = new ArrayList<>();
                 Collections.addAll(fpsLst,
                         info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
-                /* sort list by error from desired fps *
-                 * Android seems to do a better job at color correction/avoid 'dark frames' issue by
-                 * selecting camera settings with the smallest lower bound on allowed frame rate
-                 * range. */
-                return Collections.min(fpsLst, new Comparator<Range<Integer>>() {
+
+                Log.d(TAG,"Supported fps ranges = " + fpsLst);
+                Range<Integer> selectedRange =  Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
                         return calcError(lhs) - calcError(rhs);
                     }
 
                     private int calcError(Range<Integer> val) {
-                        return val.getLower() + Math.abs(val.getUpper() - fps);
+                        return Math.abs(val.getLower() - fps) + Math.abs(val.getUpper() - fps);
                     }
                 });
+                Log.d(TAG,"Desired fps = " + fps + " || Selected frame rate range = " + selectedRange);
+                return selectedRange;
             }
         }
         return null;
