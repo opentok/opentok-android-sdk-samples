@@ -214,13 +214,23 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
                 }
             }
         }
-
+        
         void updateTextures(Frame frame) {
             int width = frame.getWidth();
             int height = frame.getHeight();
             int half_width = (width + 1) >> 1;
             int half_height = (height + 1) >> 1;
 
+            ByteBuffer bb = frame.getBuffer();
+            bb.clear();
+            //check if buffer data is correctly sized.
+            if (bb.remaining() != frame.getYplaneSize() + frame.getUVplaneSize() * 2) {
+                textureWidth = 0;
+                textureHeight = 0;
+                return;
+            }
+
+            bb.position(0);
             GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1);
             GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1);
 
@@ -230,11 +240,11 @@ public class ReceiveFrameMetaDataRenderer extends BaseVideoRenderer {
 
             GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[1]);
-            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getUplane());
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(), frame.getUplane());
 
             GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[2]);
-            GlTexSubImage2D(half_width, half_height, frame.getUvStride(),  frame.getVplane());
+            GlTexSubImage2D(half_width, half_height, frame.getUvStride(), frame.getVplane());
         }
 
         @Override

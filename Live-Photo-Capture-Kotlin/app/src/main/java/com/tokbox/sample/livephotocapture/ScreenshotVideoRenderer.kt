@@ -150,6 +150,17 @@ void main(void) {
             val half_width = width + 1 shr 1
             val half_height = height + 1 shr 1
 
+            val bb = frame.buffer
+            // If we are reusing this frame, make sure we reset position and
+            // limit
+            bb.clear()
+            if (bb.remaining() != frame.getYplaneSize() + frame.getUVplaneSize() * 2) {
+                textureWidth = 0
+                textureHeight = 0
+                return
+            }
+
+            bb.position(0)
             GLES20.glPixelStorei(GLES20.GL_UNPACK_ALIGNMENT, 1)
             GLES20.glPixelStorei(GLES20.GL_PACK_ALIGNMENT, 1)
 
