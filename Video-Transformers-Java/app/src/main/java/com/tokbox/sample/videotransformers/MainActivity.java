@@ -41,6 +41,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -363,7 +364,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 return; // Return if the resource ID is not found
             }
 
-            File imageFile = new File(getBaseContext().getFilesDir(), resourceName + ".jpeg");
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.beach); // Assuming "beach" is the name of the drawable resource
+            File imageFile = new File(context.getFilesDir(), resourceName + ".jpeg");
+
+            try (FileOutputStream outputStream = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
 
             //ArrayList<PublisherKit.VideoTransformer> videoTransformers = new ArrayList<>();
             PublisherKit.VideoTransformer backgroundReplacement = publisher.new VideoTransformer(
