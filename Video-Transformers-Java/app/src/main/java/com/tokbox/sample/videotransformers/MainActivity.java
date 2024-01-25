@@ -2,6 +2,7 @@ package com.tokbox.sample.videotransformers;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -39,6 +40,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -205,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE};
 
         if (EasyPermissions.hasPermissions(this, perms)) {
 
@@ -354,10 +356,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void SetVideoTransformers(View view) {
         if(!isSet) {
             videoTransformers.clear();
-            PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
-            PublisherKit.VideoTransformer myCustomTransformer = publisher.new VideoTransformer("myTransformer", logoTransformer);
-            videoTransformers.add(backgroundBlur);
-            videoTransformers.add(myCustomTransformer);
+            String resourceName;
+            try {
+                resourceName = getResources().getResourceEntryName(R.drawable.beach); // Assuming "beach" is the name of the drawable resource
+            } catch (Resources.NotFoundException e) {
+                return; // Return if the resource ID is not found
+            }
+
+            File imageFile = new File(getBaseContext().getFilesDir(), resourceName + ".jpeg");
+
+            //ArrayList<PublisherKit.VideoTransformer> videoTransformers = new ArrayList<>();
+            PublisherKit.VideoTransformer backgroundReplacement = publisher.new VideoTransformer(
+                    "BackgroundReplacement",
+                    "{\"image_file_path\":\"" + imageFile.getAbsolutePath() + "\"}"
+            );
+            videoTransformers.add(backgroundReplacement);
+            //PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
+            //PublisherKit.VideoTransformer myCustomTransformer = publisher.new VideoTransformer("myTransformer", logoTransformer);
+            //videoTransformers.add(backgroundBlur);
+            //videoTransformers.add(myCustomTransformer);
             publisher.setVideoTransformers(videoTransformers);
             isSet = true;
             buttonVideoTransformers.setText("Reset");
