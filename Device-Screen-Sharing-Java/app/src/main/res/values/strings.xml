@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Screen-Sharing</string>
+    <string name="rationale_video_app">This app needs access to your camera and mic so you can perform video calls</string>
+</resources>
