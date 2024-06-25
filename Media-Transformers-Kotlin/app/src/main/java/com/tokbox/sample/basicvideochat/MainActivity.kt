@@ -46,8 +46,9 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     //Button to toggle Video Transformers
     private var buttonVideoTransformers: Button? = null
 
-    // Array of Video Transformers
+    // Array of Media Transformers
     var videoTransformers: ArrayList<VideoTransformer> = ArrayList()
+    var audioTransformers: ArrayList<AudioTransformer> = ArrayList()
 
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
@@ -313,11 +314,20 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             videoTransformers.add(backgroundBlur)
             videoTransformers.add(myCustomTransformer)
             publisher!!.setVideoTransformers(videoTransformers)
+
+            audioTransformers.clear()
+            val ns = publisher!!.AudioTransformer("NoiseSuppression", "")
+            audioTransformers.add(ns)
+            publisher!!.setAudioTransformers(audioTransformers)
+
             isSet = true
             buttonVideoTransformers?.text = "Reset"
         } else {
             videoTransformers.clear()
             publisher!!.setVideoTransformers(videoTransformers)
+            audioTransformers.clear()
+            publisher!!.setAudioTransformers(audioTransformers)
+
             isSet = false
             buttonVideoTransformers?.text = "Set"
         }
