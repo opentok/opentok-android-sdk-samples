@@ -33,12 +33,12 @@
     </FrameLayout>
 
     <Button
-        android:id="@+id/setvideotransformers"
+        android:id="@+id/setmediatransformers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:onClick="SetVideoTransformers"
+        android:onClick="SetMediaTransformers"
         android:text="Set"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"

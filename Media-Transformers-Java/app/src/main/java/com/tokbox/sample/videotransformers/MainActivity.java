@@ -4,11 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.media.Image;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +36,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -62,9 +56,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private FrameLayout subscriberViewContainer;
     private Context context;
 
-    private Button buttonVideoTransformers;
+    private Button buttonMediaTransformers;
 
     public ArrayList<PublisherKit.VideoTransformer> videoTransformers = new ArrayList<>();
+    public ArrayList<PublisherKit.AudioTransformer> audioTransformers = new ArrayList<>();
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -158,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_main);
-        buttonVideoTransformers = findViewById(R.id.setvideotransformers);
+        buttonMediaTransformers = findViewById(R.id.setmediatransformers);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
@@ -351,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private boolean isSet = false;
-    public void SetVideoTransformers(View view) {
+    public void SetMediaTransformers(View view) {
         if(!isSet) {
             videoTransformers.clear();
             PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
@@ -359,18 +354,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             videoTransformers.add(backgroundBlur);
             videoTransformers.add(myCustomTransformer);
             publisher.setVideoTransformers(videoTransformers);
-            isSet = true;
-            buttonVideoTransformers.setText("Reset");
+
+            audioTransformers.clear();
+            PublisherKit.AudioTransformer ns = publisher.new AudioTransformer("NoiseSuppression", "");
+            audioTransformers.add(ns);
+            publisher.setAudioTransformers(audioTransformers);
+
+            buttonMediaTransformers.setText("Reset");
         } else {
-            ResetVideoTransformers();
-            isSet = false;
-            buttonVideoTransformers.setText("Set");
+            videoTransformers.clear();
+            publisher.setVideoTransformers(videoTransformers);
+            audioTransformers.clear();
+            publisher.setAudioTransformers(audioTransformers);
+
+            buttonMediaTransformers.setText("Set");
         }
+        isSet = !isSet;
 
-    }
-
-    public void ResetVideoTransformers() {
-        videoTransformers.clear();
-        publisher.setVideoTransformers(videoTransformers);
     }
 }
