@@ -1,4 +1,4 @@
-name: Build Video-Transformers-Java
+name: Build Media-Transformers-Java
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
           java-version: 15
 
       - name: Build
-        run: cd Video-Transformers-Java && ./gradlew app:assembleRelease && cd ..
+        run: cd Media-Transformers-Java && ./gradlew app:assembleRelease && cd ..
