@@ -1,4 +1,4 @@
-package com.tokbox.sample.videotransformers;
+package com.tokbox.sample.mediatransformers;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,8 +21,8 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.tokbox.sample.videotransformers.network.APIService;
-import com.tokbox.sample.videotransformers.network.GetSessionResponse;
+import com.tokbox.sample.mediatransformers.network.APIService;
+import com.tokbox.sample.mediatransformers.network.GetSessionResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;

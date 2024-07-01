@@ -10,7 +10,7 @@ android {
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.videotransformers"
+        applicationId "com.tokbox.sample.mediatransformers"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

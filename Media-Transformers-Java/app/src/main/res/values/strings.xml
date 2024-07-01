@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Video-Transformers</string>
+    <string name="app_name">Media-Transformers</string>
     <string name="action_settings">Settings</string>
 
     <string name="title_settings_dialog">Permissions Required</string>
