@@ -2,8 +2,10 @@ package com.tokbox.sample.mediatransformers;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +36,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +61,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private FrameLayout subscriberViewContainer;
     private Context context;
 
-    private Button buttonMediaTransformers;
+    private Button buttonBlur;
+    private Button buttonVirtualBackground;
+    private Button buttonNS;
 
     public ArrayList<PublisherKit.VideoTransformer> videoTransformers = new ArrayList<>();
     public ArrayList<PublisherKit.AudioTransformer> audioTransformers = new ArrayList<>();
+
+
+    // Media Transformers variables
+    Bitmap watermark;
+    File beachImageFile; // Absolute path of beach virtual background
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -153,15 +165,47 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_main);
-        buttonMediaTransformers = findViewById(R.id.setmediatransformers);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
 
         requestPermissions();
 
-        // Get the image in bitmap format
-        image = BitmapFactory.decodeResource(context.getResources(), R.drawable.vonage_logo);
+        buttonBlur = findViewById(R.id.setbackgroundblur);
+        buttonVirtualBackground = findViewById(R.id.setbackgroundreplacement);
+        buttonNS = findViewById(R.id.setnoisesuppression);
+
+        buttonBlur.setBackgroundColor(Color.RED);
+        buttonVirtualBackground.setBackgroundColor(Color.RED);
+        buttonNS.setBackgroundColor(Color.RED);
+
+        setupVideoTransformersImages();
+    }
+
+    void setupVideoTransformersImages() {
+        // Get watermark image in bitmap format
+        watermark = BitmapFactory.decodeResource(context.getResources(), R.drawable.vonage_logo);
+
+        // Get Virtual Background image path
+        Resources resources = context.getResources();
+        String resourceName;
+        try {
+            resourceName = getResources().getResourceEntryName(R.drawable.beach); // Assuming "beach" is the name of the drawable resource
+        } catch (Resources.NotFoundException e) {
+            throw new RuntimeException("Virtual Background Image file not found");
+        }
+
+        // Create beach JPEG file in the app's internal storage
+        Bitmap bitmap = BitmapFactory.decodeResource(resources, R.drawable.beach); // Assuming "beach" is the name of the drawable resource
+        beachImageFile = new File(context.getFilesDir(), resourceName + ".jpeg");
+
+        try (FileOutputStream outputStream = new FileOutputStream(beachImageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
     }
 
     @Override
@@ -285,10 +329,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         this.finish();
     }
 
-    // Logo to be loaded
-    Bitmap image;
-
-    private customVideoTransformer logoTransformer = new customVideoTransformer();
+    private customVideoTransformer watermarkTransformer = new customVideoTransformer();
 
     public class customVideoTransformer implements PublisherKit.CustomVideoTransformer {
 
@@ -308,13 +349,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             // Calculate the desired size of the image
             int desiredWidth = videoWidth / 8; // Adjust this value as needed
-            int desiredHeight = (int) (image.getHeight() * ((float) desiredWidth / image.getWidth()));
+            int desiredHeight = (int) (watermark.getHeight() * ((float) desiredWidth / watermark.getWidth()));
 
             // Resize the image to the desired size
-            image = resizeImage(image, desiredWidth, desiredHeight);
+            watermark = resizeImage(watermark, desiredWidth, desiredHeight);
 
-            int logoWidth = image.getWidth();
-            int logoHeight = image.getHeight();
+            int logoWidth = watermark.getWidth();
+            int logoHeight = watermark.getHeight();
 
             // Location of the image (center of video)
             int logoPositionX = videoWidth * 1/2 - logoWidth; // Adjust this as needed for the desired position
@@ -326,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     int frameOffset = (logoPositionY + y) * videoWidth + (logoPositionX + x);
 
                     // Get the logo pixel color
-                    int logoPixel = image.getPixel(x, y);
+                    int logoPixel = watermark.getPixel(x, y);
 
                     // Extract the color channels (ARGB)
                     int logoAlpha = (logoPixel >> 24) & 0xFF;
@@ -345,31 +386,41 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-    private boolean isSet = false;
-    public void SetMediaTransformers(View view) {
-        if(!isSet) {
-            videoTransformers.clear();
-            PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
-            PublisherKit.VideoTransformer myCustomTransformer = publisher.new VideoTransformer("myTransformer", logoTransformer);
-            videoTransformers.add(backgroundBlur);
-            videoTransformers.add(myCustomTransformer);
-            publisher.setVideoTransformers(videoTransformers);
+    public void SetBackgroundBlurAndCustomTransformers(View view) {
+        videoTransformers.clear();
+        PublisherKit.VideoTransformer backgroundBlur = publisher.new VideoTransformer("BackgroundBlur", "{\"radius\":\"High\"}");
+        PublisherKit.VideoTransformer myCustomTransformer = publisher.new VideoTransformer("myTransformer", watermarkTransformer);
+        videoTransformers.add(backgroundBlur);
+        videoTransformers.add(myCustomTransformer);
+        publisher.setVideoTransformers(videoTransformers);
+        buttonBlur.setBackgroundColor(Color.GREEN);
+        buttonVirtualBackground.setBackgroundColor(Color.RED);
+    }
 
+    public void SetBackgroundReplacementTransformers(View view) {
+        videoTransformers.clear();
+
+        PublisherKit.VideoTransformer BackgroundReplacement = publisher.new VideoTransformer("BackgroundReplacement", "{\"image_file_path\":\"" + beachImageFile.getAbsolutePath() + "\"}");
+        videoTransformers.add(BackgroundReplacement);
+        publisher.setVideoTransformers(videoTransformers);
+
+        buttonVirtualBackground.setBackgroundColor(Color.GREEN);
+        buttonBlur.setBackgroundColor(Color.RED);
+    }
+
+    boolean isNoiseSuppressionSet = false;
+    public void SetNoiseSuppressionTransformer(View view) {
+        if(!isNoiseSuppressionSet) {
             audioTransformers.clear();
             PublisherKit.AudioTransformer ns = publisher.new AudioTransformer("NoiseSuppression", "");
             audioTransformers.add(ns);
             publisher.setAudioTransformers(audioTransformers);
-
-            buttonMediaTransformers.setText("Reset");
+            buttonNS.setBackgroundColor(Color.GREEN);
         } else {
-            videoTransformers.clear();
-            publisher.setVideoTransformers(videoTransformers);
             audioTransformers.clear();
             publisher.setAudioTransformers(audioTransformers);
-
-            buttonMediaTransformers.setText("Set");
+            buttonNS.setBackgroundColor(Color.RED);
         }
-        isSet = !isSet;
-
+        isNoiseSuppressionSet = !isNoiseSuppressionSet;
     }
 }
