@@ -32,16 +32,40 @@
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/setmediatransformers"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="SetMediaTransformers"
-        android:text="Set"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/setbackgroundblur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:onClick="SetBackgroundBlurAndCustomTransformers"
+            android:text="Blur" />
+
+        <Button
+            android:id="@+id/setbackgroundreplacement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:onClick="SetBackgroundReplacementTransformers"
+            android:text="Virtual" />
+
+        <Button
+            android:id="@+id/setnoisesuppression"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:onClick="SetNoiseSuppressionTransformer"
+            android:text="NS" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
