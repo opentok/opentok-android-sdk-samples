@@ -32,7 +32,12 @@ android {
 
 dependencies {
     // Dependency versions are defined in the ../../commons.gradle file
-    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    // implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+     implementation fileTree(dir: "libs", include: ["*.aar"])
+//    implementation(name: 'opentok-android-sdk-2.29.0', ext: 'aar')
+//    implementation(name: 'client-sdk-video-transformers-2.28.2', ext: 'aar')
+
+    implementation 'com.vonage:webrtc:99.12.39'
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
