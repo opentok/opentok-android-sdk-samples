@@ -19,7 +19,7 @@ ext {
     extArCoreVersion="1.33.0"
     extSceneFormVersion="1.17.1"
     extRetrofitVersion="2.9.0"
-    extOkHttpVersion="4.8.1"
+    extOkHttpVersion="4.9.3"
     extRetrofit2ConverterMoshi="2.9.0"
     extOkHttpLoggingInterceptor="4.9.0"
 }
