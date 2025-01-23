@@ -3,10 +3,14 @@ package com.tokbox.sample.basicvideochat
 import android.Manifest
 import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.opentok.android.AudioDeviceManager
+import com.opentok.android.BaseAudioDevice
 import com.opentok.android.BaseVideoRenderer
 import com.opentok.android.OpentokError
 import com.opentok.android.Publisher
@@ -42,7 +46,16 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private lateinit var subscriberViewContainer: FrameLayout
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
+
             Log.d(TAG, "onStreamCreated: Publisher Stream Created. Own stream ${stream.streamId}")
+
+            AudioDeviceManager.getAudioDevice()?.outputMode = BaseAudioDevice.OutputMode.Handset
+            Log.d(TAG, "AudioDeviceManager.getAudioDevice()?.outputMode ${AudioDeviceManager.getAudioDevice()?.outputMode}")
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                Log.d(TAG, "AudioDeviceManager.getAudioDevice()?.outputMode ${AudioDeviceManager.getAudioDevice()?.outputMode}")
+            }, 7000)
+
         }
 
         override fun onStreamDestroyed(publisherKit: PublisherKit, stream: Stream) {
@@ -63,6 +76,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             if (publisher?.view is GLSurfaceView) {
                 (publisher?.view as GLSurfaceView).setZOrderOnTop(true)
             }
+            Log.d(TAG, "AudioDeviceManager.getAudioDevice()?.outputMode ${AudioDeviceManager.getAudioDevice()?.outputMode}")
             session.publish(publisher)
         }
 
