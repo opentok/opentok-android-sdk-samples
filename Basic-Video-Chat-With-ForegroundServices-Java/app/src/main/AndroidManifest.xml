@@ -31,7 +31,7 @@
         </activity>
         <service
             android:enabled="true"
-            android:name=".ActiveMeetingForegroundService"
+            android:name=".MyForegroundService"
             android:foregroundServiceType="microphone">
         </service>
     </application>

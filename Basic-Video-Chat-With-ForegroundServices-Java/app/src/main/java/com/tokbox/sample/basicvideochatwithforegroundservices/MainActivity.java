@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent serviceIntent = new Intent(this, ActiveMeetingForegroundService.class);
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
         stopService(serviceIntent);
     }
 
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             session.onPause();
         }
 
-        Intent serviceIntent = new Intent(this, ActiveMeetingForegroundService.class);
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         } else {
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onResume() {
         super.onResume();
 
-        Intent serviceIntent = new Intent(this, ActiveMeetingForegroundService.class);
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
         stopService(serviceIntent);
 
         if (session != null) {

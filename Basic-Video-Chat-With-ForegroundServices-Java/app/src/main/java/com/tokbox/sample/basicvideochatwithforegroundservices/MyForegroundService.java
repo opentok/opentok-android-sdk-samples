@@ -11,11 +11,8 @@ import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
 
-import java.util.List;
-import java.util.Map;
-
-public class ActiveMeetingForegroundService extends Service {
-    private static final String CHANNEL_ID = "ActiveMeetingForegroundService";
+public class MyForegroundService extends Service {
+    private static final String CHANNEL_ID = "MyForegroundService";
     private static final String CHANNEL_NAME = "Audio Foreground Service";
     private static final int NOTIFICATION_ID_MIC = 1;
 
@@ -27,9 +24,9 @@ public class ActiveMeetingForegroundService extends Service {
      * clients, we don't need to deal with IPC.
      */
     public class LocalBinder extends Binder {
-        public ActiveMeetingForegroundService getService() {
-            // Return this instance of ActiveMeetingForegroundService so clients can call public methods
-            return ActiveMeetingForegroundService.this;
+        public MyForegroundService getService() {
+            // Return this instance of MyForegroundService so clients can call public methods
+            return MyForegroundService.this;
         }
     }
 
@@ -59,7 +56,6 @@ public class ActiveMeetingForegroundService extends Service {
                 .setOngoing(true)
                 .build();
 
-        final int notificationId = (int) System.currentTimeMillis();
         startForeground(NOTIFICATION_ID_MIC, notification);
         return START_NOT_STICKY;
     }

@@ -57,7 +57,110 @@ private void getSession() {
 }
 ```
 
+# Set up Foreground Services
+
+## What is a Foreground Service
+
+Foreground services let you asynchronously perform operations that are noticeable to the user. Foreground services show a status bar notification, to make users aware that your app is performing a task in the foreground and is consuming system resources.
+
+Examples of use cases that use foreground services include:
+
+ - Keep capturing and sending audio to peers even when the user opens a different app.
+ - Allow a user to share their screen while switching between apps.
+ - Allow users to turn off their screen while still listening to a video call.
+
+## Foreground Services Types
+
+Android 10 introduced the android:foregroundServiceType attribute within the <service> element. The idea of it is to explicitly specify what kind of work the service does.
+
+Android 14 makes specifying the foreground service type mandatory. This is to ensure the correct usage of foreground services and consistency across device manufacturers.
+
+The currently supported types are:
+
+- **camera** (required in Android 11) — when accessing the camera from the background, such as video calling apps
+- **connectedDevice** — when interacting with external device, such as Bluetooth fitness device
+- **dataSync** — when uploading or downloading data, will be deprecated and alternatives like DownloadManager, BackupManager, or WorkManager should be used instead
+- **health** (new in Android 14) — for fitness apps such as exercise trackers
+- **location** (required in Android 10) — when location is required, such as navigation
+- **mediaPlayback** — when continuing audio or video playback from the background, like Spotify or Netflix
+- **mediaProjection** — when projecting content to external devices or screens
+- **microphone** (required in Android 11) — when accessing the microphone from the background, such as calling apps
+- **phoneCall** — when continuing an ongoing call
+- **remoteMessaging** (new in Android 14) — when transferring text messages from one device to another
+- **shortService** — when it’s required to quickly finish critical work that can’t be interrupted, can only run for about 3 minutes
+- **specialUse** — when other types don’t cover your use case
+- **systemExempted** — reserved for system apps
+
+## Declare foreground service type
+
+The first step in supporting Android 14 is to update your service declaration in the AndroidManifest file and specify the correct foreground service type.
+
+If your service requires multiple types, you can combine them using the | operator like this:
+
+```
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" ...>
+    <service
+        android:name=".MyForegroundService"
+        android:foregroundServiceType="microphone|camera"
+        android:exported="false">
+    </service>
+</manifest>
+```
+
+If you try to start a foreground service without declaring its type in the manifest, the system will throw a <u>MissingForegroundServiceTypeException</u> upon calling **startForeground()**.
+
+## Request specific foreground service permission
+
+From Android 9 (API 28) onwards apps had to request **FOREGROUND_SERVICE** permission in the app manifest, which was granted automatically by the system.
+
+```
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+```
+
+Starting from Android 14 (API 34) apps need to additionally request specific permission depending on the type of the foreground service. So, if your service keeps accessing the microphone from the background you would need to specify **FOREGROUND_SERVICE_MICROPHONE**. The permission is automatically granted by the system.
+
+```
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+```
+
+If your service requires multiple types, you have to declare this permission for every type.
+
+If you forget to declare either of the two permissions, you will receive a **SecurityException** with the exact reason why.
+
+## Launch a foreground service
+
+Depending on the API level used, starting the service is done as following:
+
+```
+Intent serviceIntent = new Intent(this, MyForegroundService.class);
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // Android 8.0 (API 26) and above
+    startForegroundService(serviceIntent);
+} else { // Android 7.0 (API 24, 25)
+    startService(serviceIntent);
+}
+```
+
+The code snippet launches a service. However, the service is not yet running in the foreground. Inside the service itself, you need to call startForeground() to promote the service to a foreground service. In case you are using AndroidX, you need to call ServiceCompat.startForeground().
+
+```
+Note: If you pass a foreground service type to startForeground that you did not declare in the manifest, the system throws IllegalArgumentException.
+```
+
+## Provide details of your use case on Google Play Console
+
+After you upload the new version of the app that targets Android 14 and uses a foreground service type to the Google Play Console, you will see a prompt in your console to provide additional details about your usage.
+
+As Google wants to make sure that apps are using foreground services appropriately, you will need to submit a new declaration on the App content page (Policy -> App content).
+
+For each foreground service type you declare, you’ll need to do the following:
+
+- Describe the app functionality that is using that foreground service type.
+- Describe the user impact if the task is deferred or interrupted by the system.
+- Include a link to a video demonstrating each foreground service feature. - The video should demonstrate the steps the user needs to take in your app to trigger the feature.
+- Choose your specific use case for each foreground service type. You can choose from a pre-set list of use cases listed here or enter it manually.
+
 ## Further Reading
 
 * Review [other sample projects](../)
 * Read more about [OpenTok Android SDK](https://tokbox.com/developer/sdks/android/)
+* Read more about [Foreground Services Overview](https://developer.android.com/develop/background-work/services/fgs) 
