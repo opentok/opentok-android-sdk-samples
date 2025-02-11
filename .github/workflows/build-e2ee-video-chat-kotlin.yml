@@ -1,4 +1,4 @@
-name: Build Basic-Video-Chat-With_ForegroundServices-Java
+name: Build E2EE-Video-Chat-Kotlin
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: cd Basic-Video-Chat-With-ForegroundServices-Java && ./gradlew app:assembleRelease && cd ..
+        run: cd E2EE-Video-Chat-Kotlin && ./gradlew app:assembleRelease && cd ..

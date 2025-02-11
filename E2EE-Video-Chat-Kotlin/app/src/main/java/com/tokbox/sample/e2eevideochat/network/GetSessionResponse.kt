@@ -1,4 +1,4 @@
-package com.tokbox.sample.ee2evideo.network
+package com.tokbox.sample.e2eevideochat.network
 
 import com.squareup.moshi.Json
 

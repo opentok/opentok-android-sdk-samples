@@ -1,4 +1,4 @@
-name: Build Media-Transformers-Kotlin
+name: Build Basic-Video-Chat-With-ForegroundServices-Java
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: cd Media-Transformers-Kotlin && ./gradlew app:assembleRelease && cd ..
+        run: cd Basic-Video-Chat-With-ForegroundServices-Java && ./gradlew app:assembleRelease && cd ..

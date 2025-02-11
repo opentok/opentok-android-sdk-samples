@@ -8,11 +8,11 @@ apply {
 }
 
 android {
-    namespace "com.tokbox.sample.ee2evideo"
+    namespace "com.tokbox.sample.e2eevideochat"
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.ee2evideo"
+        applicationId "com.tokbox.sample.e2eevideochat"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode

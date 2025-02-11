@@ -7,6 +7,7 @@ apply {
 }
 
 android {
+    namespace "com.tokbox.sample.basicaudiodriver"
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {

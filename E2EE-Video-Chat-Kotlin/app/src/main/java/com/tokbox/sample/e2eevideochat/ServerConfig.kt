@@ -1,4 +1,4 @@
-package com.tokbox.sample.ee2evideo
+package com.tokbox.sample.e2eevideochat
 
 import android.text.TextUtils
 import android.webkit.URLUtil

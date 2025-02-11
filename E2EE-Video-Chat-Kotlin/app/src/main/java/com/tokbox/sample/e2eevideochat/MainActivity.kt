@@ -1,4 +1,4 @@
-package com.tokbox.sample.ee2evideo
+package com.tokbox.sample.e2eevideochat
 
 import android.Manifest
 import android.opengl.GLSurfaceView
@@ -19,9 +19,9 @@ import com.opentok.android.Subscriber
 import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.tokbox.sample.basicvideochat.R
-import com.tokbox.sample.ee2evideo.MainActivity
-import com.tokbox.sample.ee2evideo.network.APIService
-import com.tokbox.sample.ee2evideo.network.GetSessionResponse
+import com.tokbox.sample.e2eevideochat.MainActivity
+import com.tokbox.sample.e2eevideochat.network.APIService
+import com.tokbox.sample.e2eevideochat.network.GetSessionResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pub.devrel.easypermissions.AfterPermissionGranted
