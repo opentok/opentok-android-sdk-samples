@@ -22,4 +22,4 @@ jobs:
           java-version: 15
 
       - name: Build
-        run: cd Basic-Video-Chat-Java && ./gradlew app:assembleRelease && cd ..
+        run: cd Basic-Video-Chat-With-ForegroundServices-Java && ./gradlew app:assembleRelease && cd ..
