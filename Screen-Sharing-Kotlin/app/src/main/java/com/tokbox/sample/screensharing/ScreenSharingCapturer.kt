@@ -34,13 +34,21 @@ class ScreenSharingCapturer(private val context: Context, private val contentVie
                     canvas = Canvas(bmp!!)
                     frame = IntArray(width * height)
                 }
-                canvas!!.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
-                canvas!!.translate(-contentView.scrollX.toFloat(), -contentView.scrollY.toFloat())
-                contentView.draw(canvas)
-                bmp!!.getPixels(frame, 0, width, 0, 0, width, height)
-                provideIntArrayFrame(frame, ARGB, width, height, 0, false)
-                canvas!!.restore()
-                handler.postDelayed(this, (1000 / fps).toLong())
+
+                val localCanvas = canvas
+                if (localCanvas != null) {
+                    localCanvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+                    localCanvas.translate(-contentView.scrollX.toFloat(), -contentView.scrollY.toFloat())
+                    contentView.draw(localCanvas)
+                    val localFrame = frame
+                    if(localFrame != null){
+                        bmp!!.getPixels(localFrame, 0, width, 0, 0, width, height)
+                        provideIntArrayFrame(frame, ARGB, width, height, 0, false)
+                        localCanvas.restore()
+                        handler.postDelayed(this, (1000 / fps).toLong())
+                    }
+                }
+
             }
         }
     }

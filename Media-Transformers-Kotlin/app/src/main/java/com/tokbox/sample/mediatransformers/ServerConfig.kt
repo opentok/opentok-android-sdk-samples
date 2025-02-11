@@ -1,4 +1,4 @@
-package com.tokbox.sample.videotransformers
+package com.tokbox.sample.mediatransformers
 
 import android.text.TextUtils
 import android.webkit.URLUtil

@@ -1,4 +1,4 @@
-package com.tokbox.sample.videotransformers.network
+package com.tokbox.sample.mediatransformers.network
 
 import com.squareup.moshi.Json
 

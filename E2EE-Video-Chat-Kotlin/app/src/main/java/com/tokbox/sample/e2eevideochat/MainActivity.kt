@@ -18,7 +18,7 @@ import com.opentok.android.Stream
 import com.opentok.android.Subscriber
 import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
-import com.tokbox.sample.basicvideochat.R
+import com.tokbox.sample.e2eevideochat.R
 import com.tokbox.sample.e2eevideochat.MainActivity
 import com.tokbox.sample.e2eevideochat.network.APIService
 import com.tokbox.sample.e2eevideochat.network.GetSessionResponse

@@ -1,4 +1,4 @@
-package com.tokbox.sample.videotransformers
+package com.tokbox.sample.mediatransformers
 
 import android.Manifest
 import android.content.res.Resources
@@ -16,9 +16,8 @@ import com.opentok.android.*
 import com.opentok.android.PublisherKit.*
 import com.opentok.android.Session.SessionListener
 import com.opentok.android.SubscriberKit.SubscriberListener
-import com.tokbox.sample.videotransformers.MainActivity
-import com.tokbox.sample.videotransformers.network.APIService
-import com.tokbox.sample.videotransformers.network.GetSessionResponse
+import com.tokbox.sample.mediatransformers.network.APIService
+import com.tokbox.sample.mediatransformers.network.GetSessionResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         subscriberViewContainer = findViewById(R.id.subscriber_container)
         requestPermissions()
 
-        buttonVideoTransformers = findViewById(R.id.setvideotransformers)
+        buttonVideoTransformers = findViewById(R.id.setmediatransformers)
 
         // Initialize the logoTransformer after the MainActivity is fully initialized.
         logoTransformer = logoWatermark(resources)
