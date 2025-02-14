@@ -17,7 +17,7 @@ public class ServerConfig {
     Note that this application will ignore credentials in the `OpenTokConfig` file when `CHAT_SERVER_URL` contains a
     valid URL.
     */
-    public static final String CHAT_SERVER_URL = "https://YOURAPPNAME.herokuapp.com";
+    public static final String CHAT_SERVER_URL = "";
 
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 
