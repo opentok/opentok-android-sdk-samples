@@ -8,12 +8,12 @@ apply {
 
 android {
     namespace "com.tokbox.sample.basicvideochatwithforegroundservices"
-    compileSdkVersion extCompileSdkVersion
+    compileSdkVersion 35
 
     defaultConfig {
         applicationId "com.tokbox.sample.basicvideochatwithforegroundservices"
         minSdkVersion extMinSdkVersion
-        targetSdkVersion extTargetSdkVersion
+        targetSdkVersion 35
         versionCode extVersionCode
         versionName extVersionName
     }
@@ -33,14 +33,20 @@ android {
 }
 
 dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
     // Dependency versions are defined in the ../../commons.gradle file
     implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation "androidx.core:core:1.12.0"
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
 
     implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
     implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
     implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
     implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
+    implementation 'androidx.lifecycle:lifecycle-service:2.8.7'
 }
