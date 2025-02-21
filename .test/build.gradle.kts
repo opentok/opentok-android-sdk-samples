@@ -29,6 +29,6 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.jvmTarget = "17"
 }
 
