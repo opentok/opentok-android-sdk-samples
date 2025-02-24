@@ -8,12 +8,12 @@ apply {
 
 android {
     namespace "com.tokbox.sample.basicvideochatwithforegroundservices"
-    compileSdkVersion 35
+    compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
         applicationId "com.tokbox.sample.basicvideochatwithforegroundservices"
         minSdkVersion extMinSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
         versionName extVersionName
     }

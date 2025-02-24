@@ -48,10 +48,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String CHANNEL_ID = "MyForegroundService";
-    private static final String CHANNEL_NAME = "Audio Foreground Service";
-
-    private static final int REQUEST_MICROPHONE_PERMISSIONS = 125;
     private static final int PERMISSIONS_REQUEST_CODE = 124;
 
     private Retrofit retrofit;
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            finishWithMessage("PublisherKit onError: " + opentokError.getMessage());
+            Log.e(TAG, "PublisherKit onError: " + opentokError.getMessage());
         }
     };
 
@@ -129,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            finishWithMessage("Session error: " + opentokError.getMessage());
+            Log.e(TAG, "Session error: " + opentokError.getMessage());
         }
     };
 
@@ -146,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
+            Log.e(TAG, "SubscriberKit onError: " + opentokError.getMessage());
         }
     };
 
@@ -170,11 +166,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         // lifecycle of microphone foreground service is when audio is being published
         // you should also stop the foreground service if you call
         // publisher.setPublishAudio(false);
         stopMicrophoneForegroundService();
+        super.onDestroy();
     }
 
     @Override
@@ -189,11 +185,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onResume() {
         super.onResume();
-
         if (session != null) {
             session.onResume();
         }
     }
+
+    private static final String CHANNEL_ID = "MyForegroundService";
+    private static final String CHANNEL_NAME = "Audio Foreground Service";
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -261,21 +259,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     }
 
-    private boolean hasPermissions() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE ||
-                        ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_MICROPHONE) == PackageManager.PERMISSION_GRANTED) &&
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED);
-    }
-
     private void setupSession() {
         if (ServerConfig.hasChatServerUrl()) {
             // Custom server URL exists - retrieve session config
             if(!ServerConfig.isValid()) {
-                finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
+                Log.e(TAG, "Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
                 return;
             }
 
@@ -284,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         } else {
             // Use hardcoded session config
             if(!OpenTokConfig.isValid()) {
-                finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+                Log.e(TAG, "Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
                 return;
             }
 
@@ -361,11 +349,5 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 .build();
 
         apiService = retrofit.create(APIService.class);
-    }
-
-    private void finishWithMessage(String message) {
-        Log.e(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        this.finish();
     }
 }
