@@ -4,23 +4,38 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.*;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.*;
+import android.util.Log;
+import android.util.Range;
+import android.util.Size;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.opentok.android.BaseVideoCapturer;
 import com.opentok.android.Publisher;
 
-import java.util.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @TargetApi(21)
 @RequiresApi(21)
@@ -36,34 +51,31 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         SETUP,
         OPEN,
         CAPTURE,
+        CREATESESSION,
         ERROR
     }
 
-    private CameraManager cameraManager;
+    private final CameraManager cameraManager;
     private CameraDevice camera;
     private HandlerThread cameraThread;
     private Handler cameraThreadHandler;
     private ImageReader cameraFrame;
-    private CaptureRequest captureRequest;
     private CaptureRequest.Builder captureRequestBuilder;
     private CameraCaptureSession captureSession;
-    private CameraInfoCache characteristics;
+    private CameraInfoCache cameraInfoCache;
     private CameraState cameraState;
-    private Display display;
+    private final Display display;
     private DisplayOrientationCache displayOrientationCache;
-    private ReentrantLock reentrantLock;
-    private Condition condition;
     private int cameraIndex;
-    private Size frameDimensions;
-    private int desiredFps;
+    private final Size frameDimensions;
+    private final int desiredFps;
     private Range<Integer> camFps;
-    private List<RuntimeException> runtimeExceptionList;
-    private boolean isPaused;
 
     private Runnable executeAfterClosed;
     private Runnable executeAfterCameraOpened;
+    private Runnable executeAfterCameraSessionConfigured;
 
-    private static final SparseIntArray rotationTable = new SparseIntArray() {
+    static final SparseIntArray rotationTable = new SparseIntArray() {
         {
             append(Surface.ROTATION_0, 0);
             append(Surface.ROTATION_90, 90);
@@ -76,6 +88,7 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             append(Publisher.CameraCaptureResolution.LOW.ordinal(), new Size(352, 288));
             append(Publisher.CameraCaptureResolution.MEDIUM.ordinal(), new Size(640, 480));
             append(Publisher.CameraCaptureResolution.HIGH.ordinal(), new Size(1280, 720));
+            append(Publisher.CameraCaptureResolution.HIGH_1080P.ordinal(), new Size(1920, 1080));
         }
     };
     private static final SparseIntArray frameRateTable = new SparseIntArray() {
@@ -88,46 +101,50 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     };
 
     /* Observers/Notification callback objects */
-    private CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
+    private final CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(CameraDevice camera) {
-            Log.d(TAG,"CameraDevice onOpened");
-
+        public void onOpened(@NonNull CameraDevice camera) {
+            Log.d(TAG,"CameraDevice.StateCallback onOpened() enter");
             cameraState = CameraState.OPEN;
             MirrorVideoCapturer.this.camera = camera;
             if (executeAfterCameraOpened != null) {
                 executeAfterCameraOpened.run();
             }
+            executeAfterCameraOpened = null;
+            Log.d(TAG,"CameraDevice.StateCallback onOpened() exit");
         }
 
         @Override
-        public void onDisconnected(CameraDevice camera) {
+        public void onDisconnected(@NonNull CameraDevice camera) {
+            Log.d(TAG,"CameraDevice.StateCallback onDisconnected() enter");
             try {
-                Log.d(TAG,"CameraDevice onDisconnected");
-
+                executeAfterClosed = null;
                 MirrorVideoCapturer.this.camera.close();
-            } catch (NullPointerException e) {
-                // does nothing
+            } catch (Exception exception) {
+                handleException(exception);
             }
+            Log.d(TAG,"CameraDevice.StateCallback onDisconnected() exit");
         }
 
-        @Override
-        public void onError(CameraDevice camera, int error) {
-            try {
-                Log.d(TAG,"CameraDevice onError");
 
+        @Override
+        public void onError(@NonNull CameraDevice camera, int error) {
+            Log.d(TAG,"CameraDevice.StateCallback onError() enter");
+            try {
+                // In some rare cases we may receive an error:
+                // - before the camera is opened and assigned, so let's just
+                // explicitly close the camera in the callback parameter
+                // - on Android 15 when app is moved to background
                 MirrorVideoCapturer.this.camera.close();
                 // wait for condition variable
-            } catch (NullPointerException e) {
-                // does nothing
+            } catch (Exception exception) {
+                handleException(exception);
             }
-            postAsyncException(new Camera2Exception("Camera Open Error: " + error));
+            Log.d(TAG,"CameraDevice.StateCallback onError() exit");
         }
-
         @Override
         public void onClosed(CameraDevice camera) {
-            Log.d(TAG,"CameraDevice onClosed");
-
+            Log.d(TAG,"CameraDevice.StateCallback onClosed() enter.");
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             MirrorVideoCapturer.this.camera = null;
@@ -135,107 +152,117 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             if (executeAfterClosed != null) {
                 executeAfterClosed.run();
             }
-
+            executeAfterClosed = null;
+            Log.d(TAG,"CameraDevice.StateCallback onClosed() exit.");
         }
     };
 
-    private ImageReader.OnImageAvailableListener frameObserver = new ImageReader.OnImageAvailableListener() {
+    private final ImageReader.OnImageAvailableListener frameObserver = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
-            Image frame = reader.acquireNextImage();
-            if (frame == null
-                    || (frame.getPlanes().length > 0 && frame.getPlanes()[0].getBuffer() == null)
-                    || (frame.getPlanes().length > 1 && frame.getPlanes()[1].getBuffer() == null)
-                    || (frame.getPlanes().length > 2 && frame.getPlanes()[2].getBuffer() == null))
-            {
-                Log.d(TAG,"onImageAvailable frame provided has no image data");
-                return;
+            try {
+                Image frame = reader.acquireNextImage();
+                if (frame == null
+                        || (frame.getPlanes().length > 0 && frame.getPlanes()[0].getBuffer() == null)
+                        || (frame.getPlanes().length > 1 && frame.getPlanes()[1].getBuffer() == null)
+                        || (frame.getPlanes().length > 2 && frame.getPlanes()[2].getBuffer() == null)) {
+                    Log.d(TAG,"onImageAvailable frame provided has no image data");
+                    return;
+                }
+                if (CameraState.CAPTURE == cameraState) {
+                    provideBufferFramePlanar(
+                            frame.getPlanes()[0].getBuffer(),
+                            frame.getPlanes()[1].getBuffer(),
+                            frame.getPlanes()[2].getBuffer(),
+                            frame.getPlanes()[0].getPixelStride(),
+                            frame.getPlanes()[0].getRowStride(),
+                            frame.getPlanes()[1].getPixelStride(),
+                            frame.getPlanes()[1].getRowStride(),
+                            frame.getPlanes()[2].getPixelStride(),
+                            frame.getPlanes()[2].getRowStride(),
+                            frame.getWidth(),
+                            frame.getHeight(),
+                            calculateCamRotation(),
+                            isFrontCamera()
+                    );
+                }
+                frame.close();
+            } catch (IllegalStateException e) {
+                Log.d(TAG,"ImageReader.acquireNextImage() throws error !");
+                throw (new Camera2Exception(e.getMessage()));
             }
-
-            if (CameraState.CAPTURE == cameraState) {
-                provideBufferFramePlanar(
-                        frame.getPlanes()[0].getBuffer(),
-                        frame.getPlanes()[1].getBuffer(),
-                        frame.getPlanes()[2].getBuffer(),
-                        frame.getPlanes()[0].getPixelStride(),
-                        frame.getPlanes()[0].getRowStride(),
-                        frame.getPlanes()[1].getPixelStride(),
-                        frame.getPlanes()[1].getRowStride(),
-                        frame.getPlanes()[2].getPixelStride(),
-                        frame.getPlanes()[2].getRowStride(),
-                        frame.getWidth(),
-                        frame.getHeight(),
-                        calculateCamRotation(),
-                        isFrontCamera()
-                );
-            }
-            frame.close();
         }
     };
 
-    private CameraCaptureSession.StateCallback captureSessionObserver =
+    private final CameraCaptureSession.StateCallback captureSessionObserver =
             new CameraCaptureSession.StateCallback() {
                 @Override
-                public void onConfigured(CameraCaptureSession session) {
-                    Log.d(TAG,"CaptureSession onConfigured");
-
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onConfigured() enter.");
                     try {
                         cameraState = CameraState.CAPTURE;
                         captureSession = session;
-                        captureRequest = captureRequestBuilder.build();
-                        captureSession.setRepeatingRequest(captureRequest, captureNotification, cameraThreadHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
+                        CaptureRequest captureRequest = captureRequestBuilder.build();
+                        captureSession.setRepeatingRequest(captureRequest, captureNotification, null);
+                    } catch (Exception exception) {
+                        handleException(exception);
                     }
+
+                    if (executeAfterCameraSessionConfigured != null) {
+                        executeAfterCameraSessionConfigured.run();
+                        executeAfterCameraSessionConfigured = null;
+                    }
+                    synchronized (lock) {
+                        if (cycleCameraInProgress) {
+                            cycleCameraInProgress = false;
+                            onCameraChanged(getCameraIndex());
+                        }
+                    }
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onConfigured() exit.");
+
                 }
 
                 @Override
-                public void onConfigureFailed(CameraCaptureSession session) {
-                    Log.d(TAG,"CaptureSession onFailed");
-
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onFailed() enter.");
                     cameraState = CameraState.ERROR;
-                    postAsyncException(new Camera2Exception("Camera session configuration failed"));
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onFailed() exit.");
+
                 }
 
                 @Override
-                public void onClosed(CameraCaptureSession session) {
-                    Log.d(TAG,"CaptureSession onClosed");
-
+                public void onClosed(@NonNull CameraCaptureSession session) {
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onClosed() enter.");
                     if (camera != null) {
                         camera.close();
                     }
+                    Log.d(TAG,"CameraCaptureSession.StateCallback onClosed() exit.");
                 }
             };
 
-    private CameraCaptureSession.CaptureCallback captureNotification =
+    private final CameraCaptureSession.CaptureCallback captureNotification =
             new CameraCaptureSession.CaptureCallback() {
                 @Override
-                public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
+                public void onCaptureStarted(@NonNull CameraCaptureSession session,
+                                             @NonNull CaptureRequest request,
                                              long timestamp, long frameNumber) {
                     super.onCaptureStarted(session, request, timestamp, frameNumber);
                 }
             };
 
-
     /* caching of camera characteristics & display orientation for performance */
     private static class CameraInfoCache {
-        private CameraCharacteristics info;
-        private boolean frontFacing = false;
-        private int sensorOrientation = 0;
+        private final boolean frontFacing;
+        private final int sensorOrientation;
 
         public CameraInfoCache(CameraCharacteristics info) {
-            info    = info;
             /* its actually faster to cache these results then to always look
                them up, and since they are queried every frame...
              */
-            frontFacing = info.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
-            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            frontFacing = info.get(CameraCharacteristics.LENS_FACING)
+                    == CameraCharacteristics.LENS_FACING_FRONT;
+            sensorOrientation = info.get(CameraCharacteristics.SENSOR_ORIENTATION).intValue();
         }
-
-        public <T> T get(CameraCharacteristics.Key<T> key) {
-            return info.get(key);
-        }
-
         public boolean isFrontFacing() {
             return frontFacing;
         }
@@ -246,16 +273,16 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
     }
 
     private static class DisplayOrientationCache implements Runnable {
-        private static final int    POLL_DELAY_MS = 750; /* 750 ms */
+        private static final int POLL_DELAY_MS = 750; /* 750 ms */
         private int displayRotation;
-        private Display display;
-        private Handler handler;
+        private final Display display;
+        private final Handler handler;
 
-        public DisplayOrientationCache(Display dsp, Handler hndlr) {
+        public DisplayOrientationCache(Display dsp, Handler handler) {
             display = dsp;
-            handler = hndlr;
+            this.handler = handler;
             displayRotation = rotationTable.get(display.getRotation());
-            handler.postDelayed(this, POLL_DELAY_MS);
+            this.handler.postDelayed(this, POLL_DELAY_MS);
         }
 
         public int getOrientation() {
@@ -269,58 +296,69 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
+    /* custom exceptions */
     public static class Camera2Exception extends RuntimeException {
         public Camera2Exception(String message) {
             super(message);
         }
     }
 
-    public MirrorVideoCapturer(Context context) {
-        cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-        display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    /* Constructors etc... */
+    public MirrorVideoCapturer(Context ctx,
+                               Publisher.CameraCaptureResolution resolution,
+                               Publisher.CameraCaptureFrameRate fps) {
+        cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
+        display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         camera = null;
         cameraState = CameraState.CLOSED;
-        reentrantLock = new ReentrantLock();
-        condition = reentrantLock.newCondition();
-        frameDimensions = resolutionTable.get(Publisher.CameraCaptureResolution.HIGH.ordinal());
-        desiredFps = frameRateTable.get(Publisher.CameraCaptureFrameRate.FPS_30.ordinal());
-        runtimeExceptionList = new ArrayList<RuntimeException>();
-        isPaused = false;
+        frameDimensions = resolutionTable.get(resolution.ordinal());
+        desiredFps = frameRateTable.get(fps.ordinal());
         try {
             String camId = selectCamera(PREFERRED_FACING_CAMERA);
             /* if default camera facing direction is not found, use first camera */
             if (null == camId && (0 < cameraManager.getCameraIdList().length)) {
                 camId = cameraManager.getCameraIdList()[0];
             }
-            cameraIndex = findCameraIndex(camId);
-        } catch (CameraAccessException e) {
-            throw new Camera2Exception(e.getMessage());
+            setCameraIndex(findCameraIndex(camId));
+            if (getCameraIndex() == -1) {
+                Log.d(TAG,"Exception!. Camera Index cannot be -1.");
+            } else {
+                initCameraFrame();
+            }
+        } catch (Exception exception) {
+            handleException(exception);
         }
+
     }
 
-    /*
+    private void doInit() {
+        Log.d(TAG,"doInit() enter");
+        cameraInfoCache = null;
+        // start camera looper thread
+        startCamThread();
+        // start display orientation polling
+        startDisplayOrientationCache();
+        // open selected camera
+        initCamera();
+        Log.d(TAG,"doInit() exit");
+    }
+
+    /**
      * Initializes the video capturer.
      */
     @Override
     public synchronized void init() {
-        Log.d(TAG,"init enter");
+        Log.d(TAG,"init() enter");
 
-        characteristics = null;
+        doInit();
+        cameraState = CameraState.SETUP;
+        Log.d(TAG,"init() exit");
 
-        // start camera looper thread
-        startCamThread();
-
-        // start display orientation polling
-        startDisplayOrientationCache();
-
-        // open selected camera
-        initCamera();
-        Log.d(TAG,"init exit");
     }
 
-    private int startCameraCapture() {
-
-        Log.d(TAG,"doStartCapture enter");
+    private void doStartCapture() {
+        Log.d(TAG,"doStartCapture() enter");
+        cameraState = CameraState.CREATESESSION;
         try {
             // create camera preview request
             if (isFrontCamera()) {
@@ -331,21 +369,13 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_MODE,
                         CaptureRequest.CONTROL_MODE_USE_SCENE_MODE
                 );
-
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
-
                 captureRequestBuilder.set(
                         CaptureRequest.CONTROL_SCENE_MODE,
                         CaptureRequest.CONTROL_SCENE_MODE_FACE_PRIORITY
-                );
-
-                camera.createCaptureSession(
-                        Arrays.asList(cameraFrame.getSurface()),
-                        captureSessionObserver,
-                        cameraThreadHandler
                 );
             } else {
                 captureRequestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -355,74 +385,101 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                         CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
                 );
-
-                camera.createCaptureSession(
-                        Arrays.asList(cameraFrame.getSurface()),
-                        captureSessionObserver,
-                        cameraThreadHandler
-                );
             }
-        } catch (CameraAccessException e) {
-            throw new Camera2Exception(e.getMessage());
+            camera.createCaptureSession(
+                    Collections.singletonList(cameraFrame.getSurface()),
+                    captureSessionObserver,
+                    null
+            );
+        } catch (CameraAccessException exception) {
+            handleException(exception);
         }
-
-        Log.d(TAG,"doStartCapture exit");
-
-        return 0;
+        Log.d(TAG,"doStartCapture() exit");
     }
-
-    /*
+    /**
      * Starts capturing video.
      */
     @Override
     public synchronized int startCapture() {
-        Log.d(TAG,"startCapture enter (cameraState: "+ cameraState +")");
-
-        if (null != camera && CameraState.OPEN == cameraState) {
-            return startCameraCapture();
-        } else if (CameraState.SETUP == cameraState) {
-            Log.d(TAG,"camera not yet ready, queuing the start until camera is opened");
-            executeAfterCameraOpened = () -> startCameraCapture();
+        Log.d(TAG,"startCapture() enter (cameraState: " + cameraState + ")");
+        Runnable resume = () -> {
+            initCamera();
+            scheduleStartCapture();
+        };
+        if (cameraState == CameraState.CLOSING) {
+            executeAfterClosed = resume;
+        } else if (cameraState == CameraState.CLOSED) {
+            resume.run();
         } else {
-            throw new Camera2Exception("Start Capture called before init successfully completed");
+            scheduleStartCapture();
         }
-
-        Log.d(TAG,"startCapture exit");
-
+        Log.d(TAG,"startCapture() exit");
         return 0;
     }
 
-    /*
+    /**
+     * Starts capturing video.
+     */
+    private synchronized void scheduleStartCapture() {
+        Log.d(TAG,"scheduleStartCapture() enter (cameraState: " + cameraState + ")");
+        if (null != camera && CameraState.OPEN == cameraState) {
+            doStartCapture();
+            return;
+        } else if (CameraState.SETUP == cameraState) {
+            Log.d(TAG,"camera not yet ready, queuing the start until camera is opened.");
+            executeAfterCameraOpened = this::doStartCapture;
+        } else if (CameraState.CREATESESSION == cameraState) {
+            Log.d(TAG,"Camera session creation already requested");
+        } else {
+            Log.d(TAG,"Start Capture called before init successfully completed.");
+        }
+        Log.d(TAG,"scheduleStartCapture() exit");
+    }
+
+    /**
      * Stops capturing video.
      */
     @Override
     public synchronized int stopCapture() {
-        Log.d(TAG,"stopCapture enter");
-
-        if (null != camera && null != captureSession && CameraState.CLOSED != cameraState) {
-            cameraState = CameraState.CLOSING;
+        Log.d(TAG,"stopCapture() enter (cameraState: " + cameraState + ")");
+        if (null != camera && null != captureSession && CameraState.CAPTURE == cameraState) {
             try {
                 captureSession.stopRepeating();
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
             }
-
+            // On Android 15, IllegalStateException exception is raised because camera is already closed
+            catch (CameraAccessException  | IllegalStateException exception) {
+                handleException(exception);
+            }
             captureSession.close();
-            cameraFrame.close();
-            characteristics = null;
+            cameraInfoCache = null;
+            cameraState = CameraState.CLOSING;
+        } else if (null != camera && CameraState.OPEN == cameraState) {
+            cameraState = CameraState.CLOSING;
+            camera.close();
+        } else if (CameraState.SETUP == cameraState) {
+            executeAfterCameraOpened = () -> {
+                cameraState = CameraState.CLOSING;
+                if (camera != null) {
+                    camera.close();
+                }
+            };
+        } else if (CameraState.CREATESESSION == cameraState) {
+            executeAfterCameraSessionConfigured = () -> {
+                captureSession.close();
+                cameraState = CameraState.CLOSING;
+                executeAfterCameraSessionConfigured = null;
+            };
         }
-
         Log.d(TAG,"stopCapture exit");
-
         return 0;
     }
 
-    /*
+    /**
      * Destroys the BaseVideoCapturer object.
      */
     @Override
     public synchronized void destroy() {
-        Log.d(TAG,"destroy enter");
+        Log.d(TAG,"destroy() enter");
 
         /* stop display orientation polling */
         stopDisplayOrientationCache();
@@ -430,10 +487,12 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         /* stop camera message thread */
         stopCamThread();
 
-        Log.d(TAG,"destroy exit");
+        /* close ImageReader here */
+        cameraFrame.close();
+        Log.d(TAG,"destroy() exit");
     }
 
-    /*
+    /**
      * Whether video is being captured (true) or not (false).
      */
     @Override
@@ -441,21 +500,23 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return (cameraState == CameraState.CAPTURE);
     }
 
-    /*
+    /**
      * Returns the settings for the video capturer.
      */
     @Override
     public synchronized CaptureSettings getCaptureSettings() {
-        CaptureSettings captureSettings = new CaptureSettings();
-        captureSettings.fps = desiredFps;
-        captureSettings.width = (null != cameraFrame) ? cameraFrame.getWidth() : 0;
-        captureSettings.height = (null != cameraFrame) ? cameraFrame.getHeight() : 0;
-        captureSettings.format = BaseVideoCapturer.NV21;
-        captureSettings.expectedDelay = 0;
-        return captureSettings;
+        CaptureSettings retObj = new CaptureSettings();
+        retObj.fps = desiredFps;
+        retObj.width = (null != cameraFrame) ? cameraFrame.getWidth() : -1;
+        retObj.height = (null != cameraFrame) ? cameraFrame.getHeight() : -1;
+        retObj.format = BaseVideoCapturer.NV21;
+        retObj.expectedDelay = 0;
+        retObj.mirrorInLocalRender = frameMirrorX;
+
+        return retObj;
     }
 
-    /*
+    /**
      * Call this method when the activity pauses. When you override this method, implement code
      * to respond to the activity being paused. For example, you may pause capturing audio or video.
      *
@@ -463,80 +524,155 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      */
     @Override
     public synchronized void onPause() {
-        Log.d(TAG,"onPause");
-
-        // shutdown old camera but not the camera-callback thread
-        switch (cameraState) {
-            case CAPTURE:
-                stopCapture();
-                isPaused = true;
-                break;
-            case SETUP:
-            default:
-                break;
-        }
+        // PublisherKit.onPause() already calls setPublishVideo(false), which stops the camera
+        // Nothing to do here
     }
 
-    /*
+    /**
      * Call this method when the activity resumes. When you override this method, implement code
-     * to respond to the activity being resumed. For example, you may resume capturing audio or video.
+     * to respond to the activity being resumed. For example, you may resume capturing audio
+     * or video.
      *
      * @see #onPause()
      */
     @Override
     public void onResume() {
-        Log.d(TAG,"onResume");
+        // PublisherKit.onResume() already calls setPublishVideo(true), which resumes the camera
+        // Nothing to do here
+    }
 
-        if (isPaused) {
-            Runnable resume = () -> {
-                initCamera();
-                startCapture();
-            };
-            if (cameraState == CameraState.CLOSING) {
-                executeAfterClosed = resume;
-            } else if (cameraState == CameraState.CLOSED){
-                resume.run();
+    private boolean isDepthOutputCamera(String cameraId) throws CameraAccessException {
+        CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+        int[] capabilities = characteristics.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+        if (capabilities != null) {
+            for (int capability : capabilities) {
+                if (capability == CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT) {
+                    Log.d(TAG," REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => TRUE");
+                    return true;
+                }
             }
-            isPaused = false;
-        } else {
-            Log.d(TAG,"Capturer was not paused when onResume was called");
         }
+        Log.d(TAG," REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => FALSE");
+        return false;
+    }
+
+    private boolean isBackwardCompatible(String cameraId) throws CameraAccessException {
+        CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+        int[] capabilities = characteristics.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+        if (capabilities != null) {
+            for (int capability : capabilities) {
+                if (capability == CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE) {
+                    Log.d(TAG," REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => TRUE");
+                    return true;
+                }
+            }
+        }
+        Log.d(TAG," REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => FALSE");
+        return false;
+    }
+
+    private Size[] getCameraOutputSizes(String cameraId) throws CameraAccessException {
+        CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+        StreamConfigurationMap dimMap = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+
+        return dimMap != null ? dimMap.getOutputSizes(PIXEL_FORMAT) : new Size[0];
+    }
+
+    private int getNextSupportedCameraIndex() throws CameraAccessException {
+        String[] cameraIds = cameraManager.getCameraIdList();
+        int numCameraIds = cameraIds.length;
+
+        // Cycle through all the cameras to find the next one with supported
+        // outputs
+        for (int i = 0; i < numCameraIds; ++i) {
+            // We use +1 so that the algorithm will rollover and check the
+            // current camera too.  At minimum, the current camera *should* have
+            // supported outputs.
+            int nextCameraIndex = (getCameraIndex() + i + 1) % numCameraIds;
+            Size[] outputSizes = getCameraOutputSizes(cameraIds[nextCameraIndex]);
+            boolean hasSupportedOutputs = outputSizes != null && outputSizes.length > 0;
+
+
+            // OPENTOK-48451. Best guess is that the crash is happening when sdk is
+            // trying to open depth sensor cameras while doing cycleCamera() function.
+            boolean isDepthOutputCamera = isDepthOutputCamera(cameraIds[nextCameraIndex]);
+            boolean isBackwardCompatible = isBackwardCompatible(cameraIds[nextCameraIndex]);
+
+            if (hasSupportedOutputs && isBackwardCompatible && !isDepthOutputCamera) {
+                return nextCameraIndex;
+            }
+        }
+
+        // No supported cameras found
+        return -1;
     }
 
     @Override
     public synchronized void cycleCamera() {
-        try {
-            String[] camLst = cameraManager.getCameraIdList();
-            swapCamera((cameraIndex + 1) % camLst.length);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            throw new Camera2Exception(e.getMessage());
+        synchronized (lock) {
+            if (cycleCameraInProgress) {
+                Log.d(TAG, "cycleCamera is still in progress.");
+                return;
+            }
+            cycleCameraInProgress = true;
         }
+        Log.d(TAG,"cycleCamera() enter");
+        try {
+            int nextCameraIndex = getNextSupportedCameraIndex();
+            setCameraIndex(nextCameraIndex);
+
+            boolean canSwapCamera = getCameraIndex() != -1;
+            // I think all devices *should* have at least one camera with
+            // supported outputs, but adding this just in case.
+            if (!canSwapCamera) {
+                handleException(new Camera2Exception("No cameras with supported outputs found"));
+            } else {
+                swapCamera(getCameraIndex());
+            }
+        } catch (Exception exception) {
+            handleException(exception);
+        }
+        Log.d(TAG,"cycleCamera() exit");
     }
+
+    private boolean cycleCameraInProgress = false;
+    private final Object lock = new Object();
 
     @Override
     public int getCameraIndex() {
         return cameraIndex;
     }
 
+    private void setCameraIndex(int index) {
+        cameraIndex = index;
+    }
+
     @Override
     public synchronized void swapCamera(int cameraId) {
-        CameraState oldState = cameraState;
+        Log.d(TAG,"swapCamera() enter. cameraState = " + cameraState);
 
+        CameraState oldState = cameraState;
         /* shutdown old camera but not the camera-callback thread */
         switch (oldState) {
             case CAPTURE:
                 stopCapture();
+                break;
+            case ERROR: //Previous camera open attempt failed.
+            case CLOSED:
+                initCameraFrame();
+                initCamera();
+                startCapture();
                 break;
             case SETUP:
             default:
                 break;
         }
         /* set camera ID */
-        cameraIndex = cameraId;
+        setCameraIndex(cameraId);
         executeAfterClosed = () -> {
             switch (oldState) {
                 case CAPTURE:
+                    initCameraFrame();
                     initCamera();
                     startCapture();
                     break;
@@ -545,39 +681,41 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
                     break;
             }
         };
-
+        Log.d(TAG,"swapCamera() exit");
     }
-
     private boolean isFrontCamera() {
-        return (characteristics != null) && characteristics.isFrontFacing();
+        return (cameraInfoCache != null) && cameraInfoCache.isFrontFacing();
     }
 
     private void startCamThread() {
+        Log.d(TAG,"startCamThread() enter");
         cameraThread = new HandlerThread("Camera2VideoCapturer-Camera-Thread");
         cameraThread.start();
         cameraThreadHandler = new Handler(cameraThread.getLooper());
+        Log.d(TAG,"startCamThread() exit");
     }
 
     private void stopCamThread() {
+        Log.d(TAG,"stopCamThread() enter");
         try {
             cameraThread.quitSafely();
             cameraThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            // does nothing
+        } catch (Exception exception) {
+            handleException(exception);
         } finally {
             cameraThread = null;
             cameraThreadHandler = null;
         }
+        Log.d(TAG,"stopCamThread() exit");
     }
 
-    private String selectCamera(int lenseDirection) throws CameraAccessException {
+    private String selectCamera(int lensDirection) throws CameraAccessException {
         for (String id : cameraManager.getCameraIdList()) {
             CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
             /* discard cameras that don't face the right direction */
-            if (lenseDirection == info.get(CameraCharacteristics.LENS_FACING)) {
-                Log.d(TAG,"selectCamera() Direction the camera faces relative to device screen: " + info.get(CameraCharacteristics.LENS_FACING));
+            if (lensDirection == info.get(CameraCharacteristics.LENS_FACING)) {
+                Log.d(TAG,"selectCamera() Direction the camera faces relative to device screen: "
+                        + info.get(CameraCharacteristics.LENS_FACING));
                 return id;
             }
         }
@@ -589,31 +727,30 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
             if (id.equals(camId)) {
                 CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
                 List<Range<Integer>> fpsLst = new ArrayList<>();
-                Collections.addAll(fpsLst, info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
+                Collections.addAll(fpsLst,
+                        info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
 
-                /*
-                Sort list by error from desired fps
-                Android seems to do a better job at color correction/avoid 'dark frames' issue by
-                selecting camera settings with the smallest lower bound on allowed frame rate range.
-                */
-                return Collections.min(fpsLst, new Comparator<Range<Integer>>() {
+                Log.d(TAG,"Supported fps ranges = " + fpsLst);
+                Range<Integer> selectedRange = Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
                         return calcError(lhs) - calcError(rhs);
                     }
 
                     private int calcError(Range<Integer> val) {
-                        return val.getLower() + Math.abs(val.getUpper() - fps);
+                        return Math.abs(val.getLower() - fps) + Math.abs(val.getUpper() - fps);
                     }
                 });
+                Log.d(TAG,"Desired fps = " + fps + " || Selected frame rate range = " + selectedRange);
+                return selectedRange;
             }
         }
         return null;
     }
 
+
     private int findCameraIndex(String camId) throws CameraAccessException {
         String[] idList = cameraManager.getCameraIdList();
-
         for (int ndx = 0; ndx < idList.length; ++ndx) {
             if (idList[ndx].equals(camId)) {
                 return ndx;
@@ -622,13 +759,11 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         return -1;
     }
 
-    private Size selectPreferredSize(String camId, final int width, final int height, int format)
+    private Size selectPreferredSize(String camId, final int width, final int height)
             throws CameraAccessException {
-        CameraCharacteristics info = cameraManager.getCameraCharacteristics(camId);
-        StreamConfigurationMap dimMap = info.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        Size[] outputSizeArray = getCameraOutputSizes(camId);
         List<Size> sizeLst = new ArrayList<Size>();
-        int[] formats = dimMap.getOutputFormats();
-        Collections.addAll(sizeLst, dimMap.getOutputSizes(ImageFormat.YUV_420_888));
+        Collections.addAll(sizeLst, outputSizeArray);
         /* sort list by error from desired size */
         return Collections.min(sizeLst, new Comparator<Size>() {
             @Override
@@ -646,10 +781,10 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
      * Set current camera orientation
      */
     private int calculateCamRotation() {
-        if (characteristics != null) {
+        if (cameraInfoCache != null) {
             int cameraRotation = displayOrientationCache.getOrientation();
-            int cameraOrientation = characteristics.sensorOrientation();
-            if (!characteristics.isFrontFacing()) {
+            int cameraOrientation = cameraInfoCache.sensorOrientation();
+            if (!cameraInfoCache.isFrontFacing()) {
                 return Math.abs((cameraRotation - cameraOrientation) % 360);
             } else {
                 return (cameraRotation + cameraOrientation + 360) % 360;
@@ -659,49 +794,85 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         }
     }
 
-    @SuppressLint("all")
-    private void initCamera() {
-        Log.d(TAG,"initCamera()");
-
+    private void initCameraFrame() {
+        if (getCameraIndex() == -1) {
+            Log.d(TAG," Camera Index cannot be -1. initCameraFrame() unsuccessful.");
+            return;
+        }
+        Log.d(TAG,"initCameraFrame() enter.");
         try {
-            cameraState = CameraState.SETUP;
-
-            // find desired camera & camera output size
             String[] cameraIdList = cameraManager.getCameraIdList();
-            String camId = cameraIdList[cameraIndex];
-            camFps = selectCameraFpsRange(camId, desiredFps);
-
+            String camId = cameraIdList[getCameraIndex()];
             Size preferredSize = selectPreferredSize(
                     camId,
                     frameDimensions.getWidth(),
-                    frameDimensions.getHeight(),
-                    PIXEL_FORMAT
+                    frameDimensions.getHeight()
             );
-
+            if (cameraFrame != null)
+                cameraFrame.close();
             cameraFrame = ImageReader.newInstance(
                     preferredSize.getWidth(),
                     preferredSize.getHeight(),
                     PIXEL_FORMAT,
                     3
             );
-
-            cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
-            characteristics = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
-            cameraManager.openCamera(camId, cameraObserver, cameraThreadHandler);
-        } catch (CameraAccessException exp) {
-            throw new Camera2Exception(exp.getMessage());
+        } catch (Exception exception) {
+            handleException(exception);
         }
+
+        Log.d(TAG,"initCameraFrame() exit.");
     }
 
-    private void postAsyncException(RuntimeException exp) {
-        runtimeExceptionList.add(exp);
+    @SuppressLint("MissingPermission")
+    private void initCamera() {
+        if (getCameraIndex() == -1) {
+            Log.d(TAG," Camera Index cannot be -1. initCamera() unsuccessful.");
+            return;
+        }
+        Log.d(TAG,"initCamera() enter.");
+        try {
+            cameraState = CameraState.SETUP;
+            // find desired camera & camera output size
+            String[] cameraIdList = cameraManager.getCameraIdList();
+            String camId = cameraIdList[getCameraIndex()];
+            camFps = selectCameraFpsRange(camId, desiredFps);
+            cameraFrame.setOnImageAvailableListener(frameObserver, cameraThreadHandler);
+            cameraInfoCache = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
+            cameraManager.openCamera(camId, cameraObserver, null);
+        } catch (Exception exception) {
+            Log.d(TAG,"Camera cannot be opened. Check the error message below.");
+            handleException(exception);
+        }
+        Log.d(TAG,"initCamera() exit.");
     }
+
+    private void handleException(Exception exception) {
+        cameraState = CameraState.ERROR;
+        synchronized (lock) {
+            cycleCameraInProgress = false;
+        }
+        //Log exception as an error
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        exception.printStackTrace(printWriter);
+        printWriter.flush();
+        String stackTrace = writer.toString();
+        Log.d(TAG,stackTrace);
+
+        //Send the exception to client
+        onCaptureError(exception);
+    }
+
 
     private void startDisplayOrientationCache() {
         displayOrientationCache = new DisplayOrientationCache(display, cameraThreadHandler);
     }
 
     private void stopDisplayOrientationCache() {
-        cameraThreadHandler.removeCallbacks(displayOrientationCache);
+        if (cameraThreadHandler != null) {
+            if (displayOrientationCache != null) {
+                cameraThreadHandler.removeCallbacks(displayOrientationCache);
+            }
+        }
     }
 }
