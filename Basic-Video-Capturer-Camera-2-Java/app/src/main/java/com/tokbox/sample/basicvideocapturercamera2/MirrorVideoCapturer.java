@@ -131,6 +131,10 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         public void onError(@NonNull CameraDevice camera, int error) {
             Log.d(TAG,"CameraDevice.StateCallback onError() enter");
             try {
+                // In some rare cases we may receive an error:
+                // - before the camera is opened and assigned, so let's just
+                // explicitly close the camera in the callback parameter
+                // - on Android 15 when app is moved to background
                 MirrorVideoCapturer.this.camera.close();
                 // wait for condition variable
             } catch (Exception exception) {
@@ -441,7 +445,9 @@ class MirrorVideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer
         if (null != camera && null != captureSession && CameraState.CAPTURE == cameraState) {
             try {
                 captureSession.stopRepeating();
-            } catch (CameraAccessException exception) {
+            }
+            // On Android 15, IllegalStateException exception is raised because camera is already closed
+            catch (CameraAccessException  | IllegalStateException exception) {
                 handleException(exception);
             }
             captureSession.close();

@@ -57,9 +57,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(MainActivity.this);
+            MirrorVideoCapturer mirrorVideoCapturer = new MirrorVideoCapturer(MainActivity.this, Publisher.CameraCaptureResolution.HIGH, Publisher.CameraCaptureFrameRate.FPS_30);
             InvertedColorsVideoRenderer invertedColorsVideoRenderer = new InvertedColorsVideoRenderer(MainActivity.this);
-
+                    
             publisher = new Publisher.Builder(MainActivity.this)
                     .capturer(mirrorVideoCapturer)
                     .renderer(invertedColorsVideoRenderer)

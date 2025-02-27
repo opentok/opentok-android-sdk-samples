@@ -1,15 +1,26 @@
 package com.tokbox.sample.basicvideochatwithforegroundservices;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -34,10 +45,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
     private static final int PERMISSIONS_REQUEST_CODE = 124;
 
     private Retrofit retrofit;
@@ -63,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            finishWithMessage("PublisherKit onError: " + opentokError.getMessage());
+            Log.e(TAG, "PublisherKit onError: " + opentokError.getMessage());
         }
     };
 
@@ -75,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             publisher = new Publisher.Builder(MainActivity.this).build();
             publisher.setPublisherListener(publisherListener);
             publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-            
             publisherViewContainer.addView(publisher.getView());
 
             if (publisher.getView() instanceof GLSurfaceView) {
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
 
             session.publish(publisher);
+            startMicrophoneForegroundService();
         }
 
         @Override
@@ -115,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(Session session, OpentokError opentokError) {
-            finishWithMessage("Session error: " + opentokError.getMessage());
+            Log.e(TAG, "Session error: " + opentokError.getMessage());
         }
     };
 
@@ -132,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         @Override
         public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
+            Log.e(TAG, "SubscriberKit onError: " + opentokError.getMessage());
         }
     };
 
@@ -145,87 +155,148 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            if (!isBatteryOptimizationIgnored()) {
+                requestBatteryOptimizationIntent();
+            }
+        }
+        createNotificationChannel();
         requestPermissions();
     }
 
     @Override
     protected void onDestroy() {
+        // lifecycle of microphone foreground service is when audio is being published
+        // you should also stop the foreground service if you call
+        // publisher.setPublishAudio(false);
+        stopMicrophoneForegroundService();
         super.onDestroy();
-        Intent serviceIntent = new Intent(this, MyForegroundService.class);
-        stopService(serviceIntent);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
-
         if (session != null) {
             session.onPause();
         }
+        super.onPause();
 
-        Intent serviceIntent = new Intent(this, MyForegroundService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        Intent serviceIntent = new Intent(this, MyForegroundService.class);
-        stopService(serviceIntent);
-
         if (session != null) {
             session.onResume();
         }
     }
 
+    private static final String CHANNEL_ID = "MyForegroundService";
+    private static final String CHANNEL_NAME = "Audio Foreground Service";
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    /**
+     * Checks if battery optimizations are ignored for the app.
+     *
+     * @return true if the app is ignoring battery optimizations, false otherwise.
+     */
+    boolean isBatteryOptimizationIgnored() {
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        return powerManager.isIgnoringBatteryOptimizations(getApplicationContext().getPackageName());
+    }
+
+    /**
+     * Setting Battery to Ignore Optimizations will prevent on Android 15 or above to disable network
+     * connectivity when app is on background
+     * +info: https://developer.android.com/reference/android/provider/Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     *
+     * @return The Intent to request battery optimization exemption, or null if already ignored.
+     */
+    void requestBatteryOptimizationIntent() {
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        String packageName = getApplicationContext().getPackageName();
+
+        if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + packageName));
+            startActivity(intent);
+        }
+    }
+
+    void startMicrophoneForegroundService() {
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getApplicationContext().startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+        }
+    }
+
+    void stopMicrophoneForegroundService() {
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
+        stopService(serviceIntent);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ": " + perms);
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        finishWithMessage("onPermissionsDenied: " + requestCode + ": " + perms);
-    }
-
-    @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
-    private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-
-        if (EasyPermissions.hasPermissions(this, perms)) {
-
-            if (ServerConfig.hasChatServerUrl()) {
-                // Custom server URL exists - retrieve session config
-                if(!ServerConfig.isValid()) {
-                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
-                    return;
-                }
-
-                initRetrofit();
-                getSession();
-            } else {
-                // Use hardcoded session config
-                if(!OpenTokConfig.isValid()) {
-                    finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
-                    return;
-                }
-
-                initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
-            }
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
+        if(requestCode == PERMISSIONS_REQUEST_CODE) {
+            setupSession();
         }
+    }
+
+    private void setupSession() {
+        if (ServerConfig.hasChatServerUrl()) {
+            // Custom server URL exists - retrieve session config
+            if(!ServerConfig.isValid()) {
+                Log.e(TAG, "Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
+                return;
+            }
+
+            initRetrofit();
+            getSession();
+        } else {
+            // Use hardcoded session config
+            if(!OpenTokConfig.isValid()) {
+                Log.e(TAG, "Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
+                return;
+            }
+
+            initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
+        }
+    }
+
+    private void requestPermissions() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.FOREGROUND_SERVICE_MICROPHONE,
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                }, PERMISSIONS_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                }, PERMISSIONS_REQUEST_CODE);
+            }
     }
 
     /* Make a request for session data */
@@ -278,11 +349,5 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 .build();
 
         apiService = retrofit.create(APIService.class);
-    }
-
-    private void finishWithMessage(String message) {
-        Log.e(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        this.finish();
     }
 }
