@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+apply {
+    from '../../commons.gradle'
+}
+
+android {
+    namespace "com.tokbox.sample.enabletorch"
+    compileSdkVersion extCompileSdkVersion
+
+    defaultConfig {
+        applicationId "com.tokbox.sample.enabletorch"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdkVersion
+        versionCode extVersionCode
+        versionName extVersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled extMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // Dependency versions are defined in the ../../commons.gradle file
+    implementation "com.vonage:client-sdk-video:${extOpentokSdkVersion}"
+    implementation "com.vonage:client-sdk-video-transformers:${extOpentokSdkVersion}"
+    implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
+    implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
+    implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
+
+    implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
+    implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
+}
