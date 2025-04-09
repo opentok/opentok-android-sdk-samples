@@ -1,9 +1,7 @@
 # Camera Controls Java
 
 This application, built on top of Basic Video Chat, showcases how to set the preferred torch/flashlight mode and zoom factor for the camera. 
-Note that this is a preference and may not take effect if the active camera does not support the functionality 
-(for example, the front camera typically does not support torch). 
-
+Note that this is a preference and may not take effect if the active camera does not support the functionality (for example, the front camera typically does not support torch). 
 
 The default value for torch is false. Passing true or false indicates whether the publisher should enable 
 or disable the camera's torch when available.
