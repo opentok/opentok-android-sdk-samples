@@ -2,6 +2,7 @@ package com.tokbox.sample.cameracontrols;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         requestPermissions();
 
         buttonTorch = findViewById(R.id.settorch);
-        buttonTorch.setBackgroundColor(Color.RED);
+        buttonTorch.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
 
     }
 
@@ -292,9 +293,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         cameraTorch = !cameraTorch;
         publisher.setCameraTorch(cameraTorch);
         if(cameraTorch) {
-            buttonTorch.setBackgroundColor(Color.RED);
+            buttonTorch.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
         } else {
-            buttonTorch.setBackgroundColor(Color.GREEN);
+            buttonTorch.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
         }
     }
 
@@ -309,6 +310,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         publisher.setCameraZoomFactor(zoomFactor);
+    }
+
+    public void SwapCamera(View view) {
+        if (publisher != null) {
+            publisher.cycleCamera();
+        }
     }
 
 }
