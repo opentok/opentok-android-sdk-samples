@@ -1,6 +1,8 @@
 package com.tokbox.sample.cameracontrols
 
 import android.Manifest
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +39,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private lateinit var subscriberViewContainer: FrameLayout
 
     //Button to toggle Video Transformers
-    private var buttonVideoTransformers: Button? = null
+    private var buttonTorch: Button? = null
 
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
@@ -119,7 +121,8 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         subscriberViewContainer = findViewById(R.id.subscriber_container)
         requestPermissions()
 
-        buttonVideoTransformers = findViewById(R.id.setcameracontrols)
+        buttonTorch = findViewById(R.id.settorch)
+        buttonTorch?.setBackgroundTintList(ColorStateList.valueOf(Color.RED))
 
     }
 
@@ -237,12 +240,13 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     }
 
     private var cameraTorch = false
-    fun setTorch(view: View) {
+    fun SetTorch(view: View) {
         cameraTorch = !cameraTorch
         publisher.setCameraTorch(cameraTorch)
         
         val color = if (cameraTorch) Color.RED else Color.GREEN
-        buttonTorch.setBackgroundColor(color)
+        buttonTorch?.setBackgroundTintList(ColorStateList.valueOf(color))
+
     }
 
     var zoomFactor: Float = 1.0f
@@ -256,6 +260,12 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
         }
 
         publisher.setCameraZoomFactor(zoomFactor)
+    }
+
+    fun SwapCamera(view: View?) {
+        if (publisher != null) {
+            publisher!!.cycleCamera()
+        }
     }
 
 }
