@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+    <FrameLayout
+            android:id="@+id/videoLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+                android:id="@+id/subscriber_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+        <FrameLayout
+                android:id="@+id/publisher_container"
+                android:layout_width="90dp"
+                android:layout_height="120dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#CCCCCC"
+                android:padding="2dp" />
+
+        <ImageButton
+            android:id="@+id/call"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:onClick="onCallButtonClick"
+            android:padding="2dp"
+            android:src="@android:drawable/sym_call_outgoing" />
+
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
