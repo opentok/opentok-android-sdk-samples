@@ -242,7 +242,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
     private var cameraTorch = false
     fun SetTorch(view: View) {
         cameraTorch = !cameraTorch
-        publisher.setCameraTorch(cameraTorch)
+        publisher!!.setCameraTorch(cameraTorch)
         
         val color = if (cameraTorch) Color.RED else Color.GREEN
         buttonTorch?.setBackgroundTintList(ColorStateList.valueOf(color))
@@ -259,7 +259,7 @@ class MainActivity : AppCompatActivity(), PermissionCallbacks {
             0.5f
         }
 
-        publisher.setCameraZoomFactor(zoomFactor)
+        publisher!!.setCameraZoomFactor(zoomFactor)
     }
 
     fun SwapCamera(view: View?) {
