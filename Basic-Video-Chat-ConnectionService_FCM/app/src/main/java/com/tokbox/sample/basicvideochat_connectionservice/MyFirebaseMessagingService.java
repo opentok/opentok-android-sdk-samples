@@ -113,8 +113,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
         extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, data.get("callerId"));
         extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
-        extras.putString("ROOM_NAME", data.get("roomName"));
         extras.putString("CALLER_NAME", data.get("callerName"));
+        extras.putString("API_KEY", data.get("apiKey"));
+        extras.putString("SESSION_ID", data.get("sessionId"));
+        extras.putString("TOKEN", data.get("token"));
 
         TelecomManager telecomManager = VonageConnectionService.getTelecomManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -134,8 +136,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String calleeId = data.get("calleeId");
         Log.d(TAG, "Call answered by: " + calleeId);
     }
-
-
 
     /**
      * There are two scenarios when onNewToken is called:
@@ -174,7 +174,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setContentTitle("fcm_message")
+                        .setContentTitle("Incoming Call")
                         .setSmallIcon(R.drawable.ic_stat_ic_notification)
                         .setContentText(messageBody)
                         .setAutoCancel(true)

@@ -1,7 +1,14 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
+
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
@@ -12,7 +19,11 @@ import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -45,7 +56,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, VonageSessionListener, CallEventListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -54,102 +65,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Retrofit retrofit;
     private APIService apiService;
 
-    private Session session;
-    private Publisher publisher;
-    private Subscriber subscriber;
-
+    private VonageManager vonageManager;
     private FrameLayout publisherViewContainer;
     private FrameLayout subscriberViewContainer;
+
+    private ImageButton makeCallButton;
+    private TextView callerNameTextView;
+    private TextView callStatusTextView;
+    private LinearLayout incomingCallLayout;
 
     private static PhoneAccount phoneAccount;
     private static PhoneAccountHandle handle;
     private static TelecomManager telecomManager;
-
-    private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
-        @Override
-        public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
-            Log.d(TAG, "onStreamCreated: Publisher Stream Created. Own stream " + stream.getStreamId());
-        }
-
-        @Override
-        public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
-            Log.d(TAG, "onStreamDestroyed: Publisher Stream Destroyed. Own stream " + stream.getStreamId());
-        }
-
-        @Override
-        public void onError(PublisherKit publisherKit, OpentokError opentokError) {
-            finishWithMessage("PublisherKit onError: " + opentokError.getMessage());
-        }
-    };
-
-    private Session.SessionListener sessionListener = new Session.SessionListener() {
-        @Override
-        public void onConnected(Session session) {
-            Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
-
-            publisher = new Publisher.Builder(MainActivity.this).build();
-            publisher.setPublisherListener(publisherListener);
-            publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-            
-            publisherViewContainer.addView(publisher.getView());
-
-            if (publisher.getView() instanceof GLSurfaceView) {
-                ((GLSurfaceView) publisher.getView()).setZOrderOnTop(true);
-            }
-
-            session.publish(publisher);
-        }
-
-        @Override
-        public void onDisconnected(Session session) {
-            Log.d(TAG, "onDisconnected: Disconnected from session: " + session.getSessionId());
-        }
-
-        @Override
-        public void onStreamReceived(Session session, Stream stream) {
-            Log.d(TAG, "onStreamReceived: New Stream Received " + stream.getStreamId() + " in session: " + session.getSessionId());
-
-            if (subscriber == null) {
-                subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
-                subscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
-                subscriber.setSubscriberListener(subscriberListener);
-                session.subscribe(subscriber);
-                subscriberViewContainer.addView(subscriber.getView());
-            }
-        }
-
-        @Override
-        public void onStreamDropped(Session session, Stream stream) {
-            Log.d(TAG, "onStreamDropped: Stream Dropped: " + stream.getStreamId() + " in session: " + session.getSessionId());
-
-            if (subscriber != null) {
-                subscriber = null;
-                subscriberViewContainer.removeAllViews();
-            }
-        }
-
-        @Override
-        public void onError(Session session, OpentokError opentokError) {
-            finishWithMessage("Session error: " + opentokError.getMessage());
-        }
-    };
-
-    SubscriberKit.SubscriberListener subscriberListener = new SubscriberKit.SubscriberListener() {
-        @Override
-        public void onConnected(SubscriberKit subscriberKit) {
-            Log.d(TAG, "onConnected: Subscriber connected. Stream: " + subscriberKit.getStream().getStreamId());
-        }
-
-        @Override
-        public void onDisconnected(SubscriberKit subscriberKit) {
-            Log.d(TAG, "onDisconnected: Subscriber disconnected. Stream: " + subscriberKit.getStream().getStreamId());
-        }
-
-        @Override
-        public void onError(SubscriberKit subscriberKit, OpentokError opentokError) {
-            finishWithMessage("SubscriberKit onError: " + opentokError.getMessage());
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,28 +102,45 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     // To place a call to a client, you need its ID
                 });
 
+        vonageManager = VonageManager.getInstance(this, this);
+        VonageConnectionService.setCallEventListener(this);
+
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
+        makeCallButton = findViewById(R.id.call);
+        callerNameTextView = findViewById(R.id.participantNameText);
+        callStatusTextView = findViewById(R.id.callStatusText);
+        incomingCallLayout = findViewById(R.id.incoming_call_controls);
 
         requestPermissions();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (session != null) {
-            session.onPause();
-        }
+    public void onIncomingCall(String callerName, String callStatus) {
+        runOnUiThread(() -> {
+            callerNameTextView.setText(callerName);
+            callStatusTextView.setText(callStatus);
+            makeCallButton.setVisibility(View.GONE);
+            incomingCallLayout.setVisibility(View.VISIBLE);
+        });
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        vonageManager.onResume();
+    }
 
-        if (session != null) {
-            session.onResume();
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        vonageManager.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        vonageManager.endSession();
     }
 
     @Override
@@ -223,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.RECORD_AUDIO,
                                 Manifest.permission.CALL_PHONE,
-                                Manifest.permission.POST_NOTIFICATIONS};
+                                Manifest.permission.POST_NOTIFICATIONS,
+                                Manifest.permission.MANAGE_OWN_CALLS};
         } else {
             perms = new String[]{Manifest.permission.INTERNET,
                     Manifest.permission.CAMERA,
@@ -249,11 +194,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
 
+        /*
         // The user needs to grant app to place calls
         phoneAccount = VonageConnectionService.getPhoneAccount();
         if (!phoneAccount.isEnabled()) {
             showEnableAccountPrompt();
         }
+
+         */
+
     }
 
     /* Make a request for session data */
@@ -266,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             @Override
             public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
                 GetSessionResponse body = response.body();
-                initializeSession(body.apiKey, body.sessionId, body.token);
+                vonageManager.initializeSession(body.apiKey, body.sessionId, body.token);
             }
 
             @Override
@@ -276,24 +225,46 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         });
     }
 
+    public void onAcceptIncomingCall(View view) {
+        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+    }
+
+    public void onRejectIncomingCall(View view) {
+        VonageManager.getInstance().endSession();
+    }
+
     public void onCallButtonClick(View view) {
-        telecomManager = VonageConnectionService.getTelecomManager();
-
-        // Place call
-        Uri uri = Uri.fromParts("tel", "12345", null);
-        Bundle extras = new Bundle();
-        extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            telecomManager.placeCall(uri, extras);
-        }
-
         // Use hardcoded session config
         if(!OpenTokConfig.isValid()) {
             finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
             return;
         }
 
-        initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
+        telecomManager = VonageConnectionService.getTelecomManager();
+        handle = VonageConnectionService.getAccountHandle();
+
+        if( telecomManager != null && handle != null) {
+            Bundle extras = new Bundle();
+            //extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
+            String userIdToCall = "momdevice";
+            String roomName = "room_xyz";
+            String callerId = "user123";
+            String callerName = "Mom";
+
+            // Build the URI with custom data in query parameters
+            Uri destinationUri = Uri.fromParts("vonagecall", userIdToCall, null).buildUpon()
+                    .appendQueryParameter("roomName", roomName)
+                    .appendQueryParameter("callerId", callerId)
+                    .appendQueryParameter("callerName", callerName)
+                    .build();
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_OWN_CALLS) == PackageManager.PERMISSION_GRANTED) {
+                telecomManager.placeCall(destinationUri, extras);
+                VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+                makeCallButton.setVisibility(View.INVISIBLE);
+                incomingCallLayout.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void showEnableAccountPrompt() {
@@ -307,21 +278,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
-    }
-
-    private void initializeSession(String apiKey, String sessionId, String token) {
-        Log.i(TAG, "apiKey: " + apiKey);
-        Log.i(TAG, "sessionId: " + sessionId);
-        Log.i(TAG, "token: " + token);
-
-        /*
-        The context used depends on the specific use case, but usually, it is desired for the session to
-        live outside of the Activity e.g: live between activities. For a production applications,
-        it's convenient to use Application context instead of Activity context.
-         */
-        session = new Session.Builder(this, apiKey, sessionId).build();
-        session.setSessionListener(sessionListener);
-        session.connect(token);
     }
 
     private void initRetrofit() {
@@ -345,5 +301,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.e(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         this.finish();
+    }
+
+    @Override
+    public void onPublisherViewReady(View view) {
+        publisherViewContainer.addView(view);
+    }
+
+    @Override
+    public void onSubscriberViewReady(View view) {
+        subscriberViewContainer.addView(view);
+    }
+
+    @Override
+    public void onStreamDropped() {
+        subscriberViewContainer.removeAllViews();
+    }
+
+    @Override
+    public void onError(String message) {
+        finishWithMessage(message);
     }
 }

@@ -17,17 +17,21 @@ public class VonageConnection extends Connection {
     private String mRoomName;
     private Intent mLaunchIntent;
     private static final int REQUEST_CODE_ROOM_ACTIVITY = 2;
+    private String mApiKey = "";
+    private String mSessionId = "";
+    private String mToken = "";
 
-    public VonageConnection(@NonNull Context context, String roomName, String callerId, String callerName) {
+    public VonageConnection(@NonNull Context context, String apiKey, String sessionId, String token, String callerId, String callerName) {
         this.context = context;
-        this.mRoomName = roomName;
+        this.mApiKey = apiKey;
+        this.mSessionId = sessionId;
+        this.mToken = token;
 
         setCallerDisplayName(callerName, PRESENTATION_ALLOWED);
-        setAddress(Uri.fromParts("tel", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
+        setAddress(Uri.fromParts("vonagecall", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            // If using Phone Call UI
-            setConnectionProperties(PROPERTY_SELF_MANAGED);
+            setConnectionProperties(PROPERTY_SELF_MANAGED); // uncomment when using custom UI
         }
 
         setAudioModeIsVoip(true);
@@ -41,7 +45,6 @@ public class VonageConnection extends Connection {
     public void onAnswer() {
         super.onAnswer();
         setActive();
-
     }
 
     @Override
