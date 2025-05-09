@@ -101,13 +101,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             String notificationBody = remoteMessage.getNotification().getBody();
             if (remoteMessage.getNotification().getBody() != null) {
-                sendNotification(notificationBody);
+                NotificationHelper.sendNotification(getApplicationContext(), notificationBody);
             }
         }
     }
 
     private void handleIncomingCall(Map<String, String> data) {
-        PhoneAccountHandle handle = VonageConnectionService.getAccountHandle();
+        
+        PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
 
         Bundle extras = new Bundle();
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
@@ -118,7 +119,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         extras.putString("SESSION_ID", data.get("sessionId"));
         extras.putString("TOKEN", data.get("token"));
 
-        TelecomManager telecomManager = VonageConnectionService.getTelecomManager();
+        TelecomManager telecomManager = PhoneAccountManager.getTelecomManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if(telecomManager.isIncomingCallPermitted(handle)){
                 telecomManager.addNewIncomingCall(handle, extras);
@@ -157,41 +158,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void handleNow() {
         Log.d(TAG, "Short lived task is done.");
-    }
-
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
-    private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_IMMUTABLE);
-
-        String channelId = "fcm_default_channel";
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setContentTitle("Incoming Call")
-                        .setSmallIcon(R.drawable.ic_stat_ic_notification)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 }

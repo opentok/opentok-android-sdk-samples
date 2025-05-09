@@ -5,21 +5,14 @@ import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.S
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
-import android.telecom.PhoneAccount;
-import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -32,15 +25,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.opentok.android.BaseVideoRenderer;
-import com.opentok.android.OpentokError;
-import com.opentok.android.Publisher;
-import com.opentok.android.PublisherKit;
-import com.opentok.android.Session;
-import com.opentok.android.Stream;
-import com.opentok.android.Subscriber;
-import com.opentok.android.SubscriberKit;
-import com.tokbox.sample.basicvideochat_connectionservice.R;
 import com.tokbox.sample.basicvideochat_connectionservice.network.APIService;
 import com.tokbox.sample.basicvideochat_connectionservice.network.GetSessionResponse;
 import okhttp3.OkHttpClient;
@@ -74,10 +58,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private TextView callStatusTextView;
     private LinearLayout incomingCallLayout;
 
-    private static PhoneAccount phoneAccount;
-    private static PhoneAccountHandle handle;
-    private static TelecomManager telecomManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -86,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // Register Firebase client to create unique ID
         FirebaseApp.initializeApp(this);
-        VonageConnectionService.registerPhoneAccount(this);
+        PhoneAccountManager.registerPhoneAccount(this);
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
@@ -193,16 +173,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
         }
-
-        /*
-        // The user needs to grant app to place calls
-        phoneAccount = VonageConnectionService.getPhoneAccount();
-        if (!phoneAccount.isEnabled()) {
-            showEnableAccountPrompt();
-        }
-
-         */
-
     }
 
     /* Make a request for session data */
@@ -226,13 +196,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     public void onAcceptIncomingCall(View view) {
+        incomingCallLayout.setVisibility(View.INVISIBLE);
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
     }
 
     public void onRejectIncomingCall(View view) {
+        incomingCallLayout.setVisibility(View.INVISIBLE);
+        makeCallButton.setVisibility(View.VISIBLE);
         VonageManager.getInstance().endSession();
     }
 
+    // This is a showcase of how to handle a outgoing call
+    // This usually involves making an HTTP POST request to the FCM v1 API
+    // which based on the provided IDs, it will get the corresponding FCM token
+    // of the remote device token(s) to message.
+    // Here we are populating the 
     public void onCallButtonClick(View view) {
         // Use hardcoded session config
         if(!OpenTokConfig.isValid()) {
@@ -240,44 +218,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return;
         }
 
-        telecomManager = VonageConnectionService.getTelecomManager();
-        handle = VonageConnectionService.getAccountHandle();
-
-        if( telecomManager != null && handle != null) {
+        if( PhoneAccountManager.getTelecomManager() != null && PhoneAccountManager.getAccountHandle() != null) {
             Bundle extras = new Bundle();
-            //extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
-            String userIdToCall = "momdevice";
+            extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, PhoneAccountManager.getAccountHandle());
+
+            String userIdToCall = "13322443";
             String roomName = "room_xyz";
             String callerId = "user123";
             String callerName = "Mom";
 
             // Build the URI with custom data in query parameters
-            Uri destinationUri = Uri.fromParts("vonagecall", userIdToCall, null).buildUpon()
-                    .appendQueryParameter("roomName", roomName)
-                    .appendQueryParameter("callerId", callerId)
-                    .appendQueryParameter("callerName", callerName)
-                    .build();
+            Uri destinationUri = Uri.parse("vonagecall:1208341834");
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_OWN_CALLS) == PackageManager.PERMISSION_GRANTED) {
-                telecomManager.placeCall(destinationUri, extras);
-                VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
-                makeCallButton.setVisibility(View.INVISIBLE);
-                incomingCallLayout.setVisibility(View.INVISIBLE);
+                PhoneAccountManager.getTelecomManager().placeCall(destinationUri, extras);
+                //VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+                //makeCallButton.setVisibility(View.INVISIBLE);
+                //incomingCallLayout.setVisibility(View.INVISIBLE);
             }
         }
-    }
-
-    private void showEnableAccountPrompt() {
-        new AlertDialog.Builder(this)
-                .setTitle("Enable Calling")
-                .setMessage("To receive calls, please enable call permissions.")
-                .setPositiveButton("Enable", (dialog, which) -> {
-                    Intent intent = new Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
     }
 
     private void initRetrofit() {
