@@ -26,7 +26,8 @@ The Android projects in this directory demonstrate typical use cases and feature
 - Basic-VoIP-Call ([Java](./Basic-VoIP-Call-Java)) demonstrates how to use Android Connection Service (https://developer.android.com/reference/android/telecom/ConnectionService) with the OpenTok Android SDK.
 - Video-Transformers ([Java](./Media-Transformers-Java), [Kotlin](./Media-Transformers-Kotlin)) demonstrates how to use pre-built transformers in the Vonage Media Processor library or create your own custom video transformer to apply to published video.
 - E2EE-Video-Chat [Kotlin](./E2EE-Video-Chat-Kotlin) demonstrates how to have a two-way End to End Encrypted (E2EE) audio and video communication using OpenTok.
-- Basic-Video-Chat-With-ForegroundServices [Java](./Basic-Video-Chat-With-ForegroundServices-Java)demonstrates how to setup foreground services in order to have a seamless user experience.
+- Basic-Video-Chat-With-ForegroundServices ([Java](./Basic-Video-Chat-With-ForegroundServices-Java), [Kotlin](./Basic-Video-Chat-With-ForegroundServices-Kotlin)) demonstrates how to setup foreground services in order to have a seamless user experience.
+- Camera-Controls ([Java](./Camera-Controls-Java), [Kotlin](./Camera-Controls-Kotlin)) demonstrates how to set the preferred torch/flashlight mode and zoom factor for the camera.
 
 ## Open project
 
