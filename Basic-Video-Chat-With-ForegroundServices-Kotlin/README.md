@@ -1,4 +1,4 @@
-# Basic Video Chat kotlin With Foreground Services
+# Basic Video Chat Kotlin With Foreground Services
 
 This application provides a complete version of the OpenTok [Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/) for Android differing only by setting up a foreground service for when the app is moved to the background (future use cases requiring foreground services will be added). Upon deploying this sample application, you should be able to have two-way audio and video communication using OpenTok and leveraging the usage of foreground services to have an even more seamless experience.
 
