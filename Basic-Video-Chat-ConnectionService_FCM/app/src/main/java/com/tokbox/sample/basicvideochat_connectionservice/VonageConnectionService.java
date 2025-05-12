@@ -47,7 +47,6 @@ public class VonageConnectionService extends ConnectionService {
         String callerId = extras.getString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS);
         String callerName = extras.getString("CALLER_NAME");
 
-        // To showcase functionality we always join same session
         VonageConnection connection = new VonageConnection(getApplicationContext(), API_KEY, SESSION_ID, TOKEN, callerId, callerName);
         VonageManager.getInstance().setCurrentConnection(connection);
         connection.setRinging();

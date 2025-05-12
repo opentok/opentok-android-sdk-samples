@@ -35,7 +35,7 @@ public class VonageConnection extends Connection {
         setAddress(Uri.fromParts("vonagecall", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            setConnectionProperties(PROPERTY_SELF_MANAGED); // uncomment when using custom UI
+            setConnectionProperties(PROPERTY_SELF_MANAGED);
         }
 
         setAudioModeIsVoip(true);
@@ -55,9 +55,9 @@ public class VonageConnection extends Connection {
     @Override
     public void onDisconnect() {
         super.onDisconnect();
+        VonageManager.getInstance().endSession();
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
         destroy();
-        VonageManager.getInstance().endSession();
     }
 
     @Override

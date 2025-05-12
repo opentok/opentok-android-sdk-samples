@@ -39,6 +39,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, VonageSessionListener, CallEventListener {
 
@@ -103,10 +104,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onIncomingCall(String callerName, String callStatus) {
         runOnUiThread(() -> {
-            callerNameTextView.setText(callerName);
-            callStatusTextView.setText(callStatus);
-            makeCallButton.setVisibility(View.GONE);
-            incomingCallLayout.setVisibility(View.VISIBLE);
+            if(Objects.equals(callStatus, "Call Cancelled")) {
+                callerNameTextView.setText(callerName);
+                callStatusTextView.setText(callStatus);
+                makeCallButton.setVisibility(View.VISIBLE);
+                incomingCallLayout.setVisibility(View.INVISIBLE);
+            } else if(Objects.equals(callStatus, "Incoming Call")) {
+                callerNameTextView.setText(callerName);
+                callStatusTextView.setText(callStatus);
+                makeCallButton.setVisibility(View.GONE);
+                incomingCallLayout.setVisibility(View.VISIBLE);
+            } else {
+                callerNameTextView.setText(callerName);
+                callStatusTextView.setText(callStatus);
+                makeCallButton.setVisibility(View.GONE);
+                incomingCallLayout.setVisibility(View.INVISIBLE);
+            }
         });
     }
 
@@ -202,13 +215,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void onAcceptIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
-        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
+        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, true);
         VonageManager.getInstance().getCurrentConnection().onAnswer();
     }
 
     public void onRejectIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
         makeCallButton.setVisibility(View.VISIBLE);
+        callStatusTextView.setText("");
+        callerNameTextView.setText("");
         FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
         VonageManager.getInstance().getCurrentConnection().onReject();
     }
