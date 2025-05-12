@@ -14,13 +14,13 @@ public class OpenTokConfig {
     */
 
     // Replace with a API key
-    public static final String API_KEY = "47521351";
+    public static final String API_KEY = "";
     
     // Replace with a generated Session ID
-    public static final String SESSION_ID = "1_MX40NzUyMTM1MX5-MTc0NjU2MzYyMzc0NX5jWWFvY2k0cnM0TVJDS250R1EyR1dUcnJ-fn4";
+    public static final String SESSION_ID = "";
     
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NzUyMTM1MSZzaWc9MmU1YTlhNzE3NmMzZWI5OTU0NzY0ZjcxYjlkMzcxYzM4NTRjZjQ5MDpzZXNzaW9uX2lkPTFfTVg0ME56VXlNVE0xTVg1LU1UYzBOalUyTXpZeU16YzBOWDVqV1dGdlkyazBjbk0wVFZKRFMyNTBSMUV5UjFkVWNuSi1mbjQmY3JlYXRlX3RpbWU9MTc0NjU2MzYyOSZub25jZT0wLjczODcwMDE4NDI1OTU1NiZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNzQ5MTU1NjI4JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
+    public static final String TOKEN = "";
 
     // *** The code below is to validate this configuration file. You do not need to modify it  ***
 

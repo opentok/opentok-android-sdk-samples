@@ -16,7 +16,7 @@ import java.io.IOException;
 public class FcmEventSender {
     private static final String TAG = VonageManager.class.getSimpleName();
     private static final String SERVER_URL = "https://example.com/notify";  // Replace with your actual server URL
-    private static final String FCM_API_URL = "https://fcm.googleapis.com/v1/projects/vonageconnectionservice/messages:send";
+    private static final String FCM_API_URL = "https://fcm.googleapis.com/v1/projects/<YOUR_PROJECT>/messages:send"; // Replace with your actual FCM project URL
 
     private static final FcmEventSender instance = new FcmEventSender();
 
@@ -93,14 +93,13 @@ public class FcmEventSender {
     // Helper method to get Google Cloud OAuth token
     private String getGoogleCloudToken() {
         // TODO: Replace with your logic to fetch a real OAuth token
-        return "ya29.c.c0ASRK0GY9SWdcSAzVo6k_x2ALUGQ_ZZb7Td9a5aqIEamm5R0VC12K1VytIBCWVpqq6--ZY6nITwsj5IX3F0xbNB4-S_WZy_segHoKFNZHoc9lPgYtF444gqIiIKvISoIPA6RGZqGNj4QX1V6SBIr7Oi2UQAlX---VK1NNyZWT4EnyPfsfCbQ7uLeERE7rIXQwncbF5VH8uYcZrkILgsFmu5VQW5K7wqUyeJCMGAsqH-tiqf-ln8qh6mHxTE0hLs38zRgn7oXT5IvSXiT5d3NWY2ajAFJDfXE7DzJTi-YGUhxxl1Fgw0PuNTKIZfMkxC_f7eEBYtLumUhvg8SGkyws8PjnHwuXyMomA6gikjQeKSHnCEe9Q78Z5GIrE385K20zO7_tBeO79oYQ-aB8vz4RqwS1Vgw10emQ029rRl_nj5xQfJ_pIeMX9YkbWnfbezfonr_kMqQlyWuomuspmpFfMtoFp-k9neZ_83jXiRmeUdFyXYXpIYXo0nYmui3aqMuqjdI49Y700JIZl0_lqxQmiZgq4tkoQtQVBwbmhahBQUsstYXF-nd8xfkflbBeh1y5YQb30brz5ImxxX2hb4SV2UfvVWk-d0Sxrlep7WgjsdJQgx0aX3_96m9xkmIcXX2s9h3mYW19sIb7Ow5Fwh8oZZhfey62h5_-WSr-k_xRYUlniYYS6SZatYl0z96SBcs6JrhV3rIV0s6cxtwSwFkWBUkrb9clZyaSoxB111F4aJf0fw0MO420S89s1Ryxn5qSValrI0qfQWdl_SBkiIyXBFWhQ969Qv-uFSfVqeyogUidM2kxUqjUpfQj9_B5MJzVJsatsmOQ6JFjO5qccRFcmuczVqYk8fx2Ijmio-itlZxsg0ZJpql6hob2k483rI56dcdZvSWOJkrsnsi-rz0ZX8xOwx3pkoXV_qhY_eMBb7Xn83pcfyQ_YBJ6kYnp2g3VIx-Zkw93wF8oYa8OagmqSYp4_uR5oI7UulymvphJ_Y9nadaclX7w3u1";
-
+        return "";
     }
 
     // Look up the FCM token for the remote user
     private String lookupFcmTokenForUserId(String userId) {
         // TODO: Replace with logic to query the backend to get the FCM token for a user ID
-        return "fvtU6hOGQByzRTEsPhoOQY:APA91bFyN8ixT1u-M1QbL-82pybYHxy1X2yYs1QzlPdyBPHyCq2aCx8PHYk3d1F32RybLWSWW5kjIZUb6UvC7O0gLHR6FSW_EQ1dHR9hW1dDTNxmbkVyyhY";  // Hardcoded for testing
+        return "";
     }
 
     // Send FCM message to remote device

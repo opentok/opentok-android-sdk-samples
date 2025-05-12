@@ -35,14 +35,8 @@ public class PhoneAccountManager {
         ComponentName componentName = new ComponentName(context, VonageConnectionService.class);
         handle = new PhoneAccountHandle(componentName, ACCOUNT_ID);
 
-        Bundle bundle = new Bundle();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.putBoolean(EXTRA_LOG_SELF_MANAGED_CALLS, false);
-        }
-
         phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
                 .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
-                //.setExtras(bundle)
                 .setSupportedUriSchemes(Collections.singletonList("vonagecall"))
                 .setHighlightColor(Color.BLUE)
                 .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
