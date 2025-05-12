@@ -2,6 +2,10 @@ package com.tokbox.sample.basicvideochat_connectionservice;
 
 import static android.telecom.TelecomManager.PRESENTATION_ALLOWED;
 
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,6 +49,7 @@ public class VonageConnection extends Connection {
     public void onAnswer() {
         super.onAnswer();
         setActive();
+        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
     }
 
     @Override
@@ -52,6 +57,7 @@ public class VonageConnection extends Connection {
         super.onDisconnect();
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
         destroy();
+        VonageManager.getInstance().endSession();
     }
 
     @Override

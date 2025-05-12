@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.telecom.VideoProfile;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -40,6 +41,12 @@ import java.util.Map;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
+
+    private static CallEventListener listener;
+
+    public static void setCallEventListener(CallEventListener l) {
+        listener = l;
+    }
 
     /**
      * Called when message is received.
@@ -73,8 +80,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             /*
             type            | What it does?
             INCOMING_CALL   | Shows system call UI
-            CALL_CANCELED   | Ends incoming UI (caller hung up)
-            CALL_ANSWERED   | Signals call picked up
+            CALL_REJECTED   | Ends incoming UI (caller hung up)
+            CALL_ACCEPTED   | Signals call picked up
              */
 
             switch (type) {
@@ -82,11 +89,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     handleIncomingCall(data);
                     break;
 
-                case "CALL_CANCELED":
+                case "CALL_REJECTED":
                     handleCallCanceled(data);
                     break;
 
-                case "CALL_ANSWERED":
+                case "CALL_ACCEPTED":
                     handleCallAnswered(data);
                     break;
 
@@ -115,27 +122,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, data.get("callerId"));
         extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
         extras.putString("CALLER_NAME", data.get("callerName"));
-        extras.putString("API_KEY", data.get("apiKey"));
-        extras.putString("SESSION_ID", data.get("sessionId"));
-        extras.putString("TOKEN", data.get("token"));
 
         TelecomManager telecomManager = PhoneAccountManager.getTelecomManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if(telecomManager.isIncomingCallPermitted(handle)){
                 telecomManager.addNewIncomingCall(handle, extras);
+                if (listener != null) {
+                    listener.onIncomingCall(data.get("callerName"), "Incoming Call");
+                }
             }
         }
     }
 
     private void handleCallCanceled(Map<String, String> data) {
-        String callerId = data.get("callerId");
-        Log.d(TAG, "Call canceled by: " + callerId);
-
+        if (listener != null) {
+            listener.onIncomingCall(data.get("callerName"), "Call Cancelled");
+        }
+        Log.d(TAG, "Call canceled by: " + data.get("callerId"));
     }
 
     private void handleCallAnswered(Map<String, String> data) {
-        String calleeId = data.get("calleeId");
-        Log.d(TAG, "Call answered by: " + calleeId);
+        if (listener != null) {
+            listener.onIncomingCall(data.get("callerName"), "");
+        }
+        Log.d(TAG, "Call answered by: " + data.get("callerId"));
     }
 
     /**

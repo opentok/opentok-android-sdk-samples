@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int PERMISSIONS_REQUEST_CODE = 124;
+    private static final int PERMISSIONS_REQUEST_CODE = 1234;
 
     private Retrofit retrofit;
     private APIService apiService;
@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private TextView callerNameTextView;
     private TextView callStatusTextView;
     private LinearLayout incomingCallLayout;
+
+    // These values should be passed by the user
+    // Based on the id, your server should retrieve the corresponding FCM Token
+    // and with it, you can use FCM to send a notification push to that client
+    private String callerId = "123456";
+    private String callerName = "Mom";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +85,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     Log.d("FCM", "Firebase Token: " + token);
 
                     // Send token to your app server
-                    // To place a call to a client, you need its ID
                 });
 
         vonageManager = VonageManager.getInstance(this, this);
-        VonageConnectionService.setCallEventListener(this);
+        MyFirebaseMessagingService.setCallEventListener(this);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
@@ -141,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = null;
+        String[] perms;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             perms = new String[]{Manifest.permission.INTERNET,
                                 Manifest.permission.CAMERA,
@@ -197,13 +202,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void onAcceptIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
-        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
+        VonageManager.getInstance().getCurrentConnection().onAnswer();
     }
 
     public void onRejectIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
         makeCallButton.setVisibility(View.VISIBLE);
-        VonageManager.getInstance().endSession();
+        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
+        VonageManager.getInstance().getCurrentConnection().onReject();
     }
 
     // This is a showcase of how to handle a outgoing call
@@ -222,19 +229,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Bundle extras = new Bundle();
             extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, PhoneAccountManager.getAccountHandle());
 
-            String userIdToCall = "13322443";
-            String roomName = "room_xyz";
-            String callerId = "user123";
-            String callerName = "Mom";
-
             // Build the URI with custom data in query parameters
-            Uri destinationUri = Uri.parse("vonagecall:1208341834");
+            Uri destinationUri = Uri.fromParts("vonagecall", callerId, null).buildUpon()
+                    .appendQueryParameter("callerId", callerId)
+                    .appendQueryParameter("callerName", callerName)
+                    .build();
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_OWN_CALLS) == PackageManager.PERMISSION_GRANTED) {
                 PhoneAccountManager.getTelecomManager().placeCall(destinationUri, extras);
-                //VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
-                //makeCallButton.setVisibility(View.INVISIBLE);
-                //incomingCallLayout.setVisibility(View.INVISIBLE);
+
+                // Update UI
+                callStatusTextView.setText("Calling");
+                callerNameTextView.setText(callerName);
+                makeCallButton.setVisibility(View.INVISIBLE);
+                incomingCallLayout.setVisibility(View.INVISIBLE);
             }
         }
     }

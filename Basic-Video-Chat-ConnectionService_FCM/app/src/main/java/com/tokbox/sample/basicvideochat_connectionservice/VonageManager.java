@@ -21,6 +21,7 @@ public class VonageManager {
     private Subscriber subscriber;
     private Context context;
     private final VonageSessionListener callback;
+    private VonageConnection currentConnection;
     private static VonageManager instance;
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
@@ -126,6 +127,14 @@ public class VonageManager {
             throw new IllegalStateException("VonageManager is not initialized. Call getInstance(context, callback) first.");
         }
         return instance;
+    }
+
+    public void setCurrentConnection(VonageConnection connection) {
+        this.currentConnection = connection;
+    }
+
+    public VonageConnection getCurrentConnection() {
+        return currentConnection;
     }
 
     public void initializeSession(String apiKey, String sessionId, String token) {

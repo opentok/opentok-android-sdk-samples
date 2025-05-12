@@ -1,4 +1,4 @@
-# Basic Video Chat Java
+# Basic Video Chat ConnectionService FCM Java
 
 This application provides a completed version of the OpenTok [Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to have two-way audio and video communication using OpenTok.
 

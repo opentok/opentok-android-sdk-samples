@@ -25,15 +25,6 @@ public class PhoneAccountManager {
     public static TelecomManager getTelecomManager() {
         return telecomManager;
     }
-
-    public static boolean isPhoneAccountEnabled() {
-        return phoneAccount != null && phoneAccount.isEnabled();
-    }
-
-    public static PhoneAccount getPhoneAccount() {
-        return phoneAccount;
-    }
-
     public static PhoneAccountHandle getAccountHandle() {
         return handle;
     }
@@ -51,7 +42,7 @@ public class PhoneAccountManager {
 
         phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
                 .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
-                .setExtras(bundle)
+                //.setExtras(bundle)
                 .setSupportedUriSchemes(Collections.singletonList("vonagecall"))
                 .setHighlightColor(Color.BLUE)
                 .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
