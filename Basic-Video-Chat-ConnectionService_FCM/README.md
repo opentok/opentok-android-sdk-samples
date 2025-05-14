@@ -1,11 +1,93 @@
-# Basic Video Chat ConnectionService FCM Java
+# Basic Video Chat ConnectionService Firebase Cloud Messaging Java
 
-This application provides a completed version of the OpenTok [Basic Video Chat tutorial](https://tokbox.com/developer/tutorials/android/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to have two-way audio and video communication using OpenTok.
+## Overview
 
-Main features:
-* Connect to an OpenTok session
-* Publish an audio-video stream to the session
-* Subscribe to another client's audio-video stream
+An abstract service that should be implemented by any apps which either:
+- Can make phone calls (VoIP or otherwise) and want those calls to be integrated into the built-in phone app.  Referred to as a <b>system managed</b> [ConnectionService](https://developer.android.com/reference/android/telecom/ConnectionService).
+- Are a standalone calling app and don't want their calls to be integrated into the built-in phone app.  Referred to as a <b>self managed</b> [ConnectionService](https://developer.android.com/reference/android/telecom/ConnectionService).
+
+A VoIP app can implement a [`ConnectionService`](https://developer.android.com/reference/android/telecom/ConnectionService) to ensure that its calls are integrated into the Android platform.  There are numerous benefits to using the Telecom APIs for a VoIP app:
+- Call concurrency is handled - the user is able to swap between calls in different apps and on the mobile network.
+- Simplified audio routing - the platform provides your app with a unified list of the audio routes which are available and a standardized way to switch audio routes.
+- Bluetooth integration - your calls will be visible on and controllable via bluetooth devices.
+- Companion device integration - wearable devices such as watches which implement an `InCallService` can optionally subscribe to see self-managed calls.  Similar to a bluetooth headunit, wearables will typically render your call using a generic call UX and provide the user with basic call controls such as hangup, answer, reject.
+
+## Manifest declarations and permissions
+
+To integrate a self-managed ConnectionService, declare the `MANAGE_OWN_CALLS` and `BIND_TELECOM_CONNECTION_SERVICE` permissions in the AndroidManifest.xml file.
+
+```xml
+<uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+<uses-permission android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE" />
+
+```
+
+Register the service in `AndroidManifest.xml` file.
+
+```xml
+<service
+    android:name=".MyConnectionService"
+    android:label="@string/service_label"
+    android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+    <intent-filter>
+        <action android:name="android.telecom.ConnectionService" />
+    </intent-filter>
+</service>
+```
+
+## TelecomManager and PhoneAccount
+
+[TelecomManager](https://developer.android.com/reference/android/telecom/TelecomManager) uses a registered [PhoneAccount](https://developer.android.com/reference/android/telecom/PhoneAccount) to place a phone/VoIP call. Use [TelecomManager.registerPhoneAccount()](https://developer.android.com/reference/android/telecom/TelecomManager#registerPhoneAccount(android.telecom.PhoneAccount)) and configure a PhoneAccount with [CAPABILITY_SELF_MANAGED](https://developer.android.com/reference/android/telecom/PhoneAccount#CAPABILITY_SELF_MANAGED), indicating that this PhoneAccount is responsible for managing its own Connection.
+
+## Implement ConnectionService
+
+Your app uses [TelecomManager.placeCall(Uri, Bundle)](https://developer.android.com/reference/android/telecom/TelecomManager#placeCall(android.net.Uri,%20android.os.Bundle)) to start new outgoing calls and
+[TelecomManager.addNewIncomingCall()](https://developer.android.com/reference/android/telecom/TelecomManager#addNewIncomingCall(android.telecom.PhoneAccountHandle,%20android.os.Bundle)) to report new incoming
+calls. Calling these APIs causes the Telecom stack to bind to your app's
+ConnectionService implementation.
+Your app should implement the following `ConnectionService` methods:
+- [onCreateOutgoingConnection()](https://developer.android.com/reference/android/telecom/ConnectionService#onCreateOutgoingConnection(android.telecom.PhoneAccountHandle,%20android.telecom.ConnectionRequest)) - called by Telecom to ask your app to make a new [Connection](https://developer.android.com/reference/android/telecom/Connection)
+    to represent an outgoing call your app requested via
+    [TelecomManager.placeCall(Uri, Bundle)](https://developer.android.com/reference/android/telecom/TelecomManager#placeCall(android.net.Uri,%20android.os.Bundle)).
+-<[onCreateIncomingConnectionFailed()](https://developer.android.com/reference/android/telecom/ConnectionService#onCreateIncomingConnectionFailed(android.telecom.PhoneAccountHandle,%20android.telecom.ConnectionRequest)) - called by Telecom to inform your app that a call it reported via
+    [TelecomManager.placeCall(Uri, Bundle)](https://developer.android.com/reference/android/telecom/TelecomManager#placeCall(android.net.Uri,%20android.os.Bundle)) cannot be handled at this time.  Your app
+    should NOT place a call at the current time.
+-[onCreateIncomingConnection()](https://developer.android.com/reference/android/telecom/ConnectionService#onCreateIncomingConnection(android.telecom.PhoneAccountHandle,%20android.telecom.ConnectionRequest)) - called by Telecom to ask your app to make a new [Connection](https://developer.android.com/reference/android/telecom/Connection)
+    to represent an incoming call your app reported via
+    [TelecomManager.addNewIncomingCall()](https://developer.android.com/reference/android/telecom/TelecomManager#addNewIncomingCall(android.telecom.PhoneAccountHandle,%20android.os.Bundle)).
+-[onCreateIncomingConnectionFailed()](https://developer.android.com/reference/android/telecom/ConnectionService#onCreateIncomingConnectionFailed(android.telecom.PhoneAccountHandle,%20android.telecom.ConnectionRequest)) - called by Telecom to inform your app that an incoming call it reported
+    via [TelecomManager.addNewIncomingCall()](https://developer.android.com/reference/android/telecom/TelecomManager#addNewIncomingCall(android.telecom.PhoneAccountHandle,%20android.os.Bundle)) cannot be handled
+    at this time.  Your app should NOT post a new incoming call notification and should silently
+    reject the call.
+
+## Implement [Connection](https://developer.android.com/reference/android/telecom/Connection)
+
+Your app should extend the [Connection](https://developer.android.com/reference/android/telecom/Connection) class to represent calls in your app.  When you
+create new instances of your [Connection](https://developer.android.com/reference/android/telecom/Connection), you should ensure the following properties are
+set on the new [Connection](https://developer.android.com/reference/android/telecom/Connection) instance returned by your [`ConnectionService`](https://developer.android.com/reference/android/telecom/ConnectionService):
+- `Connection#setAddress(Uri, int)` - the identifier for the other party.  For
+    apps that user phone numbers the `Uri` can be a `PhoneAccount#SCHEME_TEL` URI
+    representing the phone number.
+- `Connection#setCallerDisplayName(String, int)` - the display name of the other
+    party.  This is what will be shown on Bluetooth devices and other calling surfaces such
+    as wearable devices.  This is particularly important for calls that do not use a phone
+    number to identify the caller or called party.
+- `Connection#setConnectionProperties(int)` - ensure you set
+    `Connection#PROPERTY_SELF_MANAGED` to identify to the platform that the call is
+    handled by your app.
+- `Connection#setConnectionCapabilities(int)` - if your app supports making calls
+    inactive (i.e. holding calls) you should get `Connection#CAPABILITY_SUPPORT_HOLD` and
+    `Connection#CAPABILITY_HOLD` to indicate to the platform that you calls can potentially
+    be held for concurrent calling scenarios.
+- `Connection#setAudioModeIsVoip(boolean)` - set to `true` to ensure that the
+    platform knows your call is a VoIP call.
+- For newly created [Connection](https://developer.android.com/reference/android/telecom/Connection) instances, do NOT change the state of your call
+    using `Connection#setActive()`, `Connection#setOnHold()` until the call is added
+    to Telecom (ie you have returned it via
+    `ConnectionService#onCreateOutgoingConnection(PhoneAccountHandle, ConnectionRequest)`
+    or
+    `ConnectionService#onCreateIncomingConnection(PhoneAccountHandle, ConnectionRequest)`).
+
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
