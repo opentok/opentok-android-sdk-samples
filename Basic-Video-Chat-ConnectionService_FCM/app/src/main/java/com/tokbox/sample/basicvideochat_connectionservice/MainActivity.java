@@ -18,6 +18,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -29,8 +32,6 @@ import com.tokbox.sample.basicvideochat_connectionservice.network.GetSessionResp
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,9 +39,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, VonageSessionListener, CallEventListener {
+public class MainActivity extends AppCompatActivity implements VonageSessionListener, CallEventListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -65,6 +67,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     // and with it, you can use FCM to send a notification push to that client
     private String callerId = "123456";
     private String callerName = "Mom";
+
+    private final ActivityResultLauncher<String[]> permissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+                    String permission = entry.getKey();
+                    Boolean isGranted = entry.getValue();
+                    Log.d("Permission", permission + " -> " + (isGranted ? "GRANTED" : "DENIED"));
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,23 +155,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         vonageManager.endSession();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ": " + perms);
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        finishWithMessage("onPermissionsDenied: " + requestCode + ": " + perms);
-    }
-
-    @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
         String[] perms;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -177,20 +171,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     Manifest.permission.CALL_PHONE};
         }
 
-        if (EasyPermissions.hasPermissions(this, perms)) {
-
-            if (ServerConfig.hasChatServerUrl()) {
-                // Custom server URL exists - retrieve session config
-                if(!ServerConfig.isValid()) {
-                    finishWithMessage("Invalid chat server url: " + ServerConfig.CHAT_SERVER_URL);
-                    return;
-                }
-
-                initRetrofit();
-                getSession();
+        boolean allPermissionsGranted = true;
+        for (String permission : perms) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                allPermissionsGranted = false;
+                break;
             }
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
+        }
+
+        if(!allPermissionsGranted) {
+            permissionLauncher.launch(perms);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
