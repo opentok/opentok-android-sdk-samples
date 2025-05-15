@@ -1,25 +1,24 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
-
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -54,10 +53,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private FrameLayout publisherViewContainer;
     private FrameLayout subscriberViewContainer;
 
-    private ImageButton makeCallButton;
+    private Button makeFcmCallButton;
+    private Button makeSimulatedCallButton;
     private TextView callerNameTextView;
     private TextView callStatusTextView;
     private LinearLayout incomingCallLayout;
+    private LinearLayout outgoingCallLayout;
 
     // These values should be passed by the user
     // Based on the id, your server should retrieve the corresponding FCM Token
@@ -93,10 +94,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
-        makeCallButton = findViewById(R.id.call);
+        makeFcmCallButton = findViewById(R.id.button_call_fcm);
+        makeSimulatedCallButton = findViewById(R.id.button_call_simulate);
+        outgoingCallLayout = findViewById(R.id.outgoing_call_layout);
         callerNameTextView = findViewById(R.id.participantNameText);
         callStatusTextView = findViewById(R.id.callStatusText);
-        incomingCallLayout = findViewById(R.id.incoming_call_controls);
+        incomingCallLayout = findViewById(R.id.incoming_call_layout);
 
         requestPermissions();
     }
@@ -107,17 +110,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if(Objects.equals(callStatus, "Call Cancelled")) {
                 callerNameTextView.setText(callerName);
                 callStatusTextView.setText(callStatus);
-                makeCallButton.setVisibility(View.VISIBLE);
+                outgoingCallLayout.setVisibility(View.VISIBLE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
             } else if(Objects.equals(callStatus, "Incoming Call")) {
                 callerNameTextView.setText(callerName);
                 callStatusTextView.setText(callStatus);
-                makeCallButton.setVisibility(View.GONE);
+                outgoingCallLayout.setVisibility(View.GONE);
                 incomingCallLayout.setVisibility(View.VISIBLE);
             } else {
                 callerNameTextView.setText(callerName);
                 callStatusTextView.setText(callStatus);
-                makeCallButton.setVisibility(View.GONE);
+                outgoingCallLayout.setVisibility(View.GONE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
             }
         });
@@ -185,11 +188,43 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 initRetrofit();
                 getSession();
-            } else {
-
             }
         } else {
             EasyPermissions.requestPermissions(this, getString(R.string.rationale_video_app), PERMISSIONS_REQUEST_CODE, perms);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            if (!isBatteryOptimizationIgnored()) {
+                requestBatteryOptimizationIntent();
+            }
+        }
+    }
+
+    /**
+     * Checks if battery optimizations are ignored for the app.
+     *
+     * @return true if the app is ignoring battery optimizations, false otherwise.
+     */
+    boolean isBatteryOptimizationIgnored() {
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        return powerManager.isIgnoringBatteryOptimizations(getApplicationContext().getPackageName());
+    }
+
+    /**
+     * Setting Battery to Ignore Optimizations will prevent on Android 15 or above to disable network
+     * connectivity when app is on background
+     * +info: https://developer.android.com/reference/android/provider/Settings#ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+     *
+     * @return The Intent to request battery optimization exemption, or null if already ignored.
+     */
+    void requestBatteryOptimizationIntent() {
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        String packageName = getApplicationContext().getPackageName();
+
+        if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + packageName));
+            startActivity(intent);
         }
     }
 
@@ -221,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void onRejectIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
-        makeCallButton.setVisibility(View.VISIBLE);
+        outgoingCallLayout.setVisibility(View.VISIBLE);
         callStatusTextView.setText("");
         callerNameTextView.setText("");
         FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
@@ -256,10 +291,32 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 // Update UI
                 callStatusTextView.setText("Calling");
                 callerNameTextView.setText(callerName);
-                makeCallButton.setVisibility(View.INVISIBLE);
+                outgoingCallLayout.setVisibility(View.INVISIBLE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
             }
         }
+    }
+
+    public void onSimulatedCallButtonClick(View view) {
+        PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
+
+        Bundle extras = new Bundle();
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
+        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
+        extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
+        extras.putString("CALLER_NAME", "Simulated Caller");
+
+        TelecomManager telecomManager = PhoneAccountManager.getTelecomManager();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(telecomManager.isIncomingCallPermitted(handle)) {
+                VonageManager.getInstance().setOnConnectionReadyListener(connection -> {
+                    connection.onAnswer(); // Answer after connection is ready
+                    onIncomingCall("Simulated Caller", "In call");
+                });
+                telecomManager.addNewIncomingCall(handle, extras);
+            }
+        }
+
     }
 
     private void initRetrofit() {

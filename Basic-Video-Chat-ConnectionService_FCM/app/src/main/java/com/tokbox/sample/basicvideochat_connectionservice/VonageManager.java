@@ -23,6 +23,7 @@ public class VonageManager {
     private final VonageSessionListener callback;
     private VonageConnection currentConnection;
     private static VonageManager instance;
+    private OnConnectionReadyListener connectionReadyListener;
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -110,6 +111,10 @@ public class VonageManager {
         }
     };
 
+    public interface OnConnectionReadyListener {
+        void onConnectionReady(VonageConnection connection);
+    }
+
     private VonageManager(Context context, VonageSessionListener callback) {
         this.context = context;
         this.callback = callback;
@@ -131,6 +136,14 @@ public class VonageManager {
 
     public void setCurrentConnection(VonageConnection connection) {
         this.currentConnection = connection;
+        if (connectionReadyListener != null) {
+            connectionReadyListener.onConnectionReady(connection);
+            connectionReadyListener = null; // one-time listener
+        }
+    }
+
+    public void setOnConnectionReadyListener(OnConnectionReadyListener listener) {
+        this.connectionReadyListener = listener;
     }
 
     public VonageConnection getCurrentConnection() {

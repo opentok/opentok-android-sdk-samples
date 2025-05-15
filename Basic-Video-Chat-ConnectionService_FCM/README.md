@@ -1,4 +1,4 @@
-# Basic Video Chat ConnectionService Firebase Cloud Messaging Java
+# `ConnectionService` with Notifications Push powered by Firebase Cloud Messaging
 
 ## Overview
 
