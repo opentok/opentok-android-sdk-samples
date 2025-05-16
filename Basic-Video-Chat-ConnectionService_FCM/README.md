@@ -88,6 +88,76 @@ set on the new [Connection](https://developer.android.com/reference/android/tele
     or
     `ConnectionService#onCreateIncomingConnection(PhoneAccountHandle, ConnectionRequest)`).
 
+## Firebase Cloud Messaging (FCM) - Android Integration Guide
+
+## What is FCM?
+
+[Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) is a free, cross-platform messaging solution from Google that lets you **send notifications and data messages to Android, iOS, and web clients**. It is widely used for push notifications, real-time updates, and messaging apps.
+
+## How Does FCM Work?
+
+FCM uses a **publish-subscribe model** between:
+
+1. **Your App (Client)** – Receives messages from Firebase.
+2. **Firebase Cloud Messaging Server** – Distributes messages.
+3. **Your App Server (Optional)** – Sends targeted messages via FCM APIs.
+
+## Types of Messages
+
+- **Notification Messages**: Handled automatically by FCM when the app is in the background.
+- **Data Messages**: Handled by your app regardless of foreground/background state. You define the payload and behavior.
+
+## How to Set Up FCM in an Android Project
+
+### Prerequisites
+
+- A Firebase account: [https://firebase.google.com/](https://firebase.google.com/)
+- An Android project with **minSdkVersion >= 19**
+
+---
+
+### 1. Add Firebase to Your Android Project
+
+#### a. Create a Project on Firebase Console
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Click **"Add project"**
+3. Register your Android app with your package name
+4. Download the `google-services.json` file
+5. Place it in your project's `app/` directory
+
+---
+
+### 2. Update Gradle Files
+
+#### Root `build.gradle`
+
+```groovy
+buildscript {
+    dependencies {
+        classpath 'com.google.gms:google-services:4.3.15'
+    }
+}
+```
+
+## Example of JSON data
+
+```json
+{
+   "message": {
+       "token": "<DEVICE_TOKEN>",
+       "notification": {
+           "title": "Incoming Call",
+           "body": "Mom is calling..."
+       },
+       "data": {
+           "type": "INCOMING_CALL",
+           "callerId": "user123",
+           "callerName": "Mom"
+       }
+   }
+}
+```
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
