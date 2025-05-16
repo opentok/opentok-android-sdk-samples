@@ -1,5 +1,12 @@
 # `ConnectionService` with Notifications Push powered by Firebase Cloud Messaging
 
+The sample app enables real-time video calling between users, featuring both push-notification-initiated calls and simulated calls for testing. It uses Firebase Cloud Messaging (FCM) to send and receive call invitations and leverages Android SDK to handle the live video feed.
+
+Key Features:
+ - Push Notification Call Invites using FCM
+ - Call Simulation Mode for testing call flows without push
+ - Handle incoming calls
+
 ## Overview
 
 An abstract service that should be implemented by any apps which either:
