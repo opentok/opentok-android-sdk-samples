@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+apply {
+    from '../../commons.gradle'
+}
+
+android {
+    namespace "com.tokbox.sample.basicvideochat_connectionservice"
+    compileSdkVersion extCompileSdkVersion
+
+    defaultConfig {
+        applicationId "com.tokbox.sample.basicvideochat_connectionservice"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdkVersion
+        versionCode extVersionCode
+        versionName extVersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled extMinifyEnabled
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // Dependency versions are defined in the ../../commons.gradle file
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
+    implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
+    implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
+
+    implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
+    implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
+    implementation 'com.google.firebase:firebase-messaging:24.1.1'
+    implementation 'org.json:json:20250107'
+}
+
+apply plugin: 'com.google.gms.google-services'
