@@ -12,6 +12,8 @@ import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FcmEventSender {
     private static final String TAG = VonageManager.class.getSimpleName();
@@ -23,71 +25,64 @@ public class FcmEventSender {
     public static FcmEventSender getInstance() {
         return instance;
     }
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private FcmEventSender() {}
 
     // IMPORTANT: This network operation should NOT run on the main thread!
-    // You need to perform this asynchronously.
     public void notifyCallerOfCallResponse(String callerId, String callerName, boolean accepted) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Send the FCM message to the remote device token(s)
-                    // This usually involves making an HTTP POST request to the FCM v1 API
-                    // This step is typically done from a secure backend using the Firebase Admin SDK!
+        executor.execute(() -> {
+            try {
+                // Send the FCM message to the remote device token(s)
+                // This usually involves making an HTTP POST request to the FCM v1 API
+                // This step is typically done from a secure backend using the Firebase Admin SDK!
 
-                    // In a real app, you'd use Firebase Admin SDK on your backend to send the message
-                    // You would NOT send FCM messages directly from the Android client in production this way.
-                    String googleCloudToken = getGoogleCloudToken();  // OAuth token
+                // In a real app, you'd use Firebase Admin SDK on your backend to send the message
+                // You would NOT send FCM messages directly from the Android client in production this way.
+                String googleCloudToken = getGoogleCloudToken();  // OAuth token
 
-                    // In the server look up the remote user's FCM token(s) based on remoteUserId
-                    String remoteDeviceFcmToken = lookupFcmTokenForUserId(callerId);
+                // In the server look up the remote user's FCM token(s) based on remoteUserId
+                String remoteDeviceFcmToken = lookupFcmTokenForUserId(callerId);
 
-                    if (!remoteDeviceFcmToken.isEmpty() && !googleCloudToken.isEmpty()) {
-                        if(accepted){
-                            sendFcmMessage("CALL_ACCEPTED", remoteDeviceFcmToken, callerName, callerId, googleCloudToken);
-                        } else {
-                            sendFcmMessage("CALL_REJECTED", remoteDeviceFcmToken, callerName, callerId, googleCloudToken);
-                        }
+                if (!remoteDeviceFcmToken.isEmpty() && !googleCloudToken.isEmpty()) {
+                    if(accepted){
+                        sendFcmMessage("CALL_ACCEPTED", remoteDeviceFcmToken, callerName, callerId, googleCloudToken);
                     } else {
-                        Log.e(TAG,"FCM token or OAuth Google token not found");
+                        sendFcmMessage("CALL_REJECTED", remoteDeviceFcmToken, callerName, callerId, googleCloudToken);
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
+                } else {
+                    Log.e(TAG,"FCM token or OAuth Google token not found");
                 }
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
             }
-        }).start();
+        });
     }
 
     // IMPORTANT: This network operation should NOT run on the main thread!
-    // You need to perform this asynchronously.
     public void notifyRemoteDeviceOfOutgoingCall(String remoteUserId, String localUserId, String localUserName) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Send the FCM message to the remote device token(s)
-                    // This usually involves making an HTTP POST request to the FCM v1 API
-                    // This step is typically done from a secure backend using the Firebase Admin SDK!
+        executor.execute(() -> {
+            try {
+                // Send the FCM message to the remote device token(s)
+                // This usually involves making an HTTP POST request to the FCM v1 API
+                // This step is typically done from a secure backend using the Firebase Admin SDK!
 
-                    // In a real app, you'd use Firebase Admin SDK on your backend to send the message
-                    // You would NOT send FCM messages directly from the Android client in production this way.
-                    String googleCloudToken = getGoogleCloudToken();  // OAuth token
+                // In a real app, you'd use Firebase Admin SDK on your backend to send the message
+                // You would NOT send FCM messages directly from the Android client in production this way.
+                String googleCloudToken = getGoogleCloudToken();  // OAuth token
 
-                    // In the server look up the remote user's FCM token(s) based on remoteUserId
-                    String remoteDeviceFcmToken = lookupFcmTokenForUserId(remoteUserId);
+                // In the server look up the remote user's FCM token(s) based on remoteUserId
+                String remoteDeviceFcmToken = lookupFcmTokenForUserId(remoteUserId);
 
-                    if (!remoteDeviceFcmToken.isEmpty() && !googleCloudToken.isEmpty()) {
-                        sendFcmMessage("INCOMING_CALL", remoteDeviceFcmToken, localUserName, localUserId, googleCloudToken);
-                    } else {
-                        Log.e(TAG,"FCM token or OAuth Google token not found");
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
+                if (!remoteDeviceFcmToken.isEmpty() && !googleCloudToken.isEmpty()) {
+                    sendFcmMessage("INCOMING_CALL", remoteDeviceFcmToken, localUserName, localUserId, googleCloudToken);
+                } else {
+                    Log.e(TAG,"FCM token or OAuth Google token not found");
                 }
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
             }
-        }).start();
+        });
     }
 
     // Helper method to get Google Cloud OAuth token

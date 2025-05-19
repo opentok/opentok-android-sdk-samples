@@ -34,7 +34,7 @@ public class VonageConnectionService extends ConnectionService {
         FcmEventSender.getInstance().notifyRemoteDeviceOfOutgoingCall(userIdToCall, callerId, callerName);
 
         // Start Vonage session
-        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+        connection.onPlaceCall();
 
         return connection;
     }
@@ -65,4 +65,5 @@ public class VonageConnectionService extends ConnectionService {
                                                  ConnectionRequest request) {
         Log.e(TAG, "Outgoing connection failed: " + request.getAddress());
     }
+
 }

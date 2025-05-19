@@ -10,9 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.DisconnectCause;
 import android.telecom.TelecomManager;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 public class VonageConnection extends Connection {
@@ -43,6 +46,16 @@ public class VonageConnection extends Connection {
         int capabilities = CAPABILITY_HOLD | CAPABILITY_SUPPORT_HOLD | CAPABILITY_MUTE;
         setConnectionCapabilities(capabilities);
 
+    }
+
+    @Override
+    public void onCallAudioStateChanged(CallAudioState audioState) {
+        Log.d("VonageConnection", "Audio state is " + audioState.toString());
+    }
+
+    public void onPlaceCall() {
+        setActive();
+        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
     }
 
     @Override
