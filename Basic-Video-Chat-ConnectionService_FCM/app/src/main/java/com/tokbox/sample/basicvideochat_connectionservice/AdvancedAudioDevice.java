@@ -81,7 +81,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
     private int estimatedRenderDelay = 0;
 
     private AudioManager audioManager;
-    private AudioManagerMode audioManagerMode = new AudioManagerMode();
+    //private AudioManagerMode audioManagerMode = new AudioManagerMode();
 
     private int outputSamplingRate = DEFAULT_SAMPLE_RATE;
     private int captureSamplingRate = DEFAULT_SAMPLE_RATE;
@@ -679,6 +679,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
     @Override
     public boolean initRenderer() {
 
+        /*
         // Request audio focus for playback
         int result = audioManager.requestAudioFocus(audioFocusChangeListener,
             // Use the music stream.
@@ -692,6 +693,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
             Log.e("AUDIO_FOCUS", "Audio Focus request DENIED !");
             return false;
         }
+        */
 
         // initalize default values
         bluetoothState = BluetoothState.Disconnected;
@@ -826,7 +828,7 @@ class AdvancedAudioDevice extends BaseAudioDevice {
             isRendering = false;
             rendererLock.unlock();
         }
-        audioManagerMode.releaseMode(audioManager);
+        //audioManagerMode.releaseMode(audioManager);
 
         unregisterHeadsetReceiver();
         unregisterBtReceiver();
