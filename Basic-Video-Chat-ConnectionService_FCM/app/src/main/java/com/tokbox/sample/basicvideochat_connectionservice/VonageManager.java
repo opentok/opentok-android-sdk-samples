@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import com.opentok.android.AudioDeviceManager;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -138,7 +139,7 @@ public class VonageManager {
         this.currentConnection = connection;
         if (connectionReadyListener != null) {
             connectionReadyListener.onConnectionReady(connection);
-            connectionReadyListener = null; // one-time listener
+            connectionReadyListener = null;
         }
     }
 
@@ -155,9 +156,16 @@ public class VonageManager {
         Log.i(TAG, "sessionId: " + sessionId);
         Log.i(TAG, "token: " + token);
 
+        AdvancedAudioDevice advancedAudioDevice = new AdvancedAudioDevice(context);
+        AudioDeviceManager.setAudioDevice(advancedAudioDevice);
+
         session = new Session.Builder(this.context.getApplicationContext(), apiKey, sessionId).build();
         session.setSessionListener(sessionListener);
         session.connect(token);
+
+        com.opentok.android.OpenTokConfig.setJNILogs(true);
+        com.opentok.android.OpenTokConfig.setOTKitLogs(true);
+        com.opentok.android.OpenTokConfig.setWebRTCLogs(false);
     }
 
     public void onResume() {
