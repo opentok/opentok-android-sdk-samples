@@ -119,13 +119,12 @@ FCM uses a **publish-subscribe model** between:
 ### Prerequisites
 
 - A Firebase account: [https://firebase.google.com/](https://firebase.google.com/)
-- An Android project with **minSdkVersion >= 19**
 
 ---
 
-### 1. Add Firebase to Your Android Project
+### Add Firebase to Your Android Project
 
-#### a. Create a Project on Firebase Console
+#### Create a Project on Firebase Console
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click **"Add project"**
@@ -135,7 +134,7 @@ FCM uses a **publish-subscribe model** between:
 
 ---
 
-### 2. Update Gradle Files
+### Update Gradle Files
 
 #### Root `build.gradle`
 
@@ -147,8 +146,33 @@ buildscript {
 }
 ```
 
-## Example of JSON data
+### Get Google Cloud Token
 
+In your server you need to dynamically fetch the google cloud token. For the scope of this sample app,
+you can hardcode it to the project in **getGoogleCloudToken()**. To retrieve the token you can use:
+
+```python
+from google.oauth2 import service_account
+from google.auth.transport.requests import Request
+
+SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
+SERVICE_ACCOUNT_FILE = "/path/to/googleservices.json"
+
+credentials = service_account.Credentials.from_service_account_file(
+    SERVICE_ACCOUNT_FILE,
+    scopes=SCOPES
+)
+
+# Refresh the token if necessary
+if not credentials.valid:
+    credentials.refresh(Request())
+
+print(credentials.token)
+```
+
+### Example of JSON data
+
+The data sent between endpoints its customiseable. It should contain the FCM token of the receiver, it can contain values for a notification and any other values under "data".
 ```json
 {
    "message": {
