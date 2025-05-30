@@ -151,12 +151,10 @@ public class VonageManager {
         return currentConnection;
     }
 
-    public void initializeSession(String apiKey, String sessionId, String token) {
+    public void initializeSession(AdvancedAudioDevice advancedAudioDevice, String apiKey, String sessionId, String token) {
         Log.i(TAG, "apiKey: " + apiKey);
         Log.i(TAG, "sessionId: " + sessionId);
         Log.i(TAG, "token: " + token);
-
-        AdvancedAudioDevice advancedAudioDevice = new AdvancedAudioDevice(context);
         AudioDeviceManager.setAudioDevice(advancedAudioDevice);
 
         session = new Session.Builder(this.context.getApplicationContext(), apiKey, sessionId).build();

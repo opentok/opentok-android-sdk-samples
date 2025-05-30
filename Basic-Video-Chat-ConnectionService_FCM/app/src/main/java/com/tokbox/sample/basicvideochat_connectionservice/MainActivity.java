@@ -1,5 +1,9 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
+import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -88,17 +92,17 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         PhoneAccountManager.registerPhoneAccount(this);
 
         FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
 
-                    String token = task.getResult();
-                    Log.d("FCM", "Firebase Token: " + token);
+                String token = task.getResult();
+                Log.d("FCM", "Firebase Token: " + token);
 
-                    // Send token to your app server
-                });
+                // Send token to your app server
+            });
 
         vonageManager = VonageManager.getInstance(this, this);
         MyFirebaseMessagingService.setCallEventListener(this);
@@ -163,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                                 Manifest.permission.RECORD_AUDIO,
                                 Manifest.permission.CALL_PHONE,
                                 Manifest.permission.POST_NOTIFICATIONS,
-                                Manifest.permission.MANAGE_OWN_CALLS};
+                                Manifest.permission.MANAGE_OWN_CALLS,
+                                Manifest.permission.FOREGROUND_SERVICE};
         } else {
             perms = new String[]{Manifest.permission.INTERNET,
                     Manifest.permission.CAMERA,
@@ -216,26 +221,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             intent.setData(Uri.parse("package:" + packageName));
             startActivity(intent);
         }
-    }
-
-    /* Make a request for session data */
-    private void getSession() {
-        Log.i(TAG, "getSession");
-
-        Call<GetSessionResponse> call = apiService.getSession();
-
-        call.enqueue(new Callback<GetSessionResponse>() {
-            @Override
-            public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
-                GetSessionResponse body = response.body();
-                vonageManager.initializeSession(body.apiKey, body.sessionId, body.token);
-            }
-
-            @Override
-            public void onFailure(Call<GetSessionResponse> call, Throwable t) {
-                throw new RuntimeException(t.getMessage());
-            }
-        });
     }
 
     public void onAcceptIncomingCall(View view) {
@@ -306,7 +291,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 telecomManager.addNewIncomingCall(handle, extras);
             }
         }
-
     }
 
     private void initRetrofit() {

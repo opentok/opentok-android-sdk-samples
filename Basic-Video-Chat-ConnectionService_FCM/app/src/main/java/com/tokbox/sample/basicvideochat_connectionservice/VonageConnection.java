@@ -27,12 +27,17 @@ public class VonageConnection extends Connection {
     private String mApiKey = "";
     private String mSessionId = "";
     private String mToken = "";
+    private AdvancedAudioDevice advancedAudioDevice;
+    private boolean automaticHandlingAudioFocus = false;
+    boolean initialised = false;
 
     public VonageConnection(@NonNull Context context, String apiKey, String sessionId, String token, String callerId, String callerName) {
         this.context = context;
         this.mApiKey = apiKey;
         this.mSessionId = sessionId;
         this.mToken = token;
+
+        advancedAudioDevice = new AdvancedAudioDevice(context, automaticHandlingAudioFocus); // passing true fails because of connection service
 
         setCallerDisplayName(callerName, PRESENTATION_ALLOWED);
         setAddress(Uri.fromParts("vonagecall", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
@@ -55,14 +60,17 @@ public class VonageConnection extends Connection {
 
     public void onPlaceCall() {
         setActive();
-        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+        VonageManager.getInstance().initializeSession(advancedAudioDevice, API_KEY, SESSION_ID, TOKEN);
     }
 
     @Override
     public void onAnswer() {
         super.onAnswer();
         setActive();
-        VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+        if(!initialised) {
+            VonageManager.getInstance().initializeSession(advancedAudioDevice, API_KEY, SESSION_ID, TOKEN);
+            initialised = true;
+        }
     }
 
     @Override
@@ -90,5 +98,16 @@ public class VonageConnection extends Connection {
     public void onUnhold() {
         super.onUnhold();
         setActive();
+    }
+
+    @Override
+    public void onStateChanged(int state) {
+        super.onStateChanged(state);
+
+        if (state == Connection.STATE_ACTIVE) {
+            if(!automaticHandlingAudioFocus) {
+                advancedAudioDevice.requestAudioFocus();
+            }
+        }
     }
 }

@@ -66,4 +66,8 @@ public class VonageConnectionService extends ConnectionService {
         Log.e(TAG, "Outgoing connection failed: " + request.getAddress());
     }
 
+    @Override
+    public void onConnectionServiceFocusGained () {
+        Log.e(TAG, "Outgoing connection failed: ");
+    }
 }

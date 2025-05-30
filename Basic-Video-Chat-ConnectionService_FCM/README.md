@@ -3,7 +3,9 @@
 The sample app enables real-time video calling between users, featuring both push-notification-initiated calls and simulated calls for testing. It uses Firebase Cloud Messaging (FCM) to send and receive call invitations and leverages Android SDK to handle the live video feed.
 
 Key Features:
- - Push Notification Call Invites using FCM
+ - Push Notification Call Invites using FCM:
+    - between two clients.
+    - via Postman to your client.
  - Call Simulation Mode for testing call flows without push
  - Handle incoming calls
 
@@ -156,7 +158,7 @@ from google.oauth2 import service_account
 from google.auth.transport.requests import Request
 
 SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
-SERVICE_ACCOUNT_FILE = "/path/to/googleservices.json"
+SERVICE_ACCOUNT_FILE = "/path/to/googleservices.json" # Can be downloaded from your Google Cloud project page
 
 credentials = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE,
@@ -172,7 +174,8 @@ print(credentials.token)
 
 ### Example of JSON data
 
-The data sent between endpoints its customiseable. It should contain the FCM token of the receiver, it can contain values for a notification and any other values under "data".
+The data sent between endpoints its customiseable. It should contain the FCM token of the receiver, it can contain values for a notification message and any additional values under "data".
+
 ```json
 {
    "message": {
