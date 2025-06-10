@@ -13,9 +13,9 @@ ext {
     extVersionName="1.0"
     extMinifyEnabled=false
     extOpentokSdkVersion="2.30.1"
-    extAppCompatVersion="1.4.1"
+    extAppCompatVersion="1.7.1"
     extEasyPermissionsVersion="3.0.0"
-    extConstraintLyoutVersion="2.0.4"
+    extConstraintLyoutVersion="2.2.1"
     extArCoreVersion="1.33.0"
     extSceneFormVersion="1.17.1"
     extRetrofitVersion="2.9.0"
