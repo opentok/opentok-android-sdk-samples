@@ -112,6 +112,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         }
     };
 
+    private final BroadcastReceiver callEndedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_CALL_ENDED.equals(intent.getAction())) {
+                resetCallLayout();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -193,6 +202,10 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 new IntentFilter(CallActionReceiver.ACTION_REJECTED_CALL)
         );
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                callEndedReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_CALL_ENDED)
+        );
     }
 
     @Override
@@ -247,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         LocalBroadcastManager.getInstance(this).unregisterReceiver(callAnsweredReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingCallReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rejectedIncomingCallReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(callEndedReceiver);
     }
 
     private void requestPermissions() {
@@ -345,7 +359,10 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onHangUpButtonClick(View view) {
-        VonageManager.getInstance().endCall();
+        Intent endIntent = new Intent(CallActionReceiver.ACTION_END_CALL);
+        endIntent.setPackage(getPackageName());
+        sendBroadcast(endIntent);
+
         incomingCallLayout.setVisibility(View.INVISIBLE);
         outgoingCallLayout.setVisibility(View.VISIBLE);
         devicesSelectorLayout.setVisibility(View.INVISIBLE);
@@ -486,6 +503,18 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     public void onError(String message) {
         finishWithMessage(message);
         VonageManager.getInstance().endCall();
+    }
+
+    private void resetCallLayout() {
+        runOnUiThread(() -> {
+            incomingCallLayout.setVisibility(View.INVISIBLE);
+            outgoingCallLayout.setVisibility(View.VISIBLE);
+            devicesSelectorLayout.setVisibility(View.INVISIBLE);
+            endCallLayout.setVisibility(View.INVISIBLE);
+            publisherViewContainer.setVisibility(View.INVISIBLE);
+            callStatusTextView.setText("");
+            callerNameTextView.setText("");
+        });
     }
 
     private void updateUIForAnsweredCall() {

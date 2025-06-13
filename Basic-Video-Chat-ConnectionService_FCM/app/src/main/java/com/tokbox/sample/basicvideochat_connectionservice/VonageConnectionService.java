@@ -9,6 +9,11 @@ import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.A
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
 
+import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +24,37 @@ import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 public class VonageConnectionService extends ConnectionService {
     private static final String TAG = VonageConnectionService.class.getSimpleName();
+
+    private final BroadcastReceiver callEndedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_CALL_ENDED.equals(intent.getAction())) {
+                stopForeground(true);
+            }
+            VonageConnectionHolder.getInstance().setConnection(null);
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                callEndedReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_CALL_ENDED)
+        );
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(callEndedReceiver);
+    }
 
     @Override
     public Connection onCreateOutgoingConnection(PhoneAccountHandle connectionManagerPhoneAccount,
@@ -30,22 +64,12 @@ public class VonageConnectionService extends ConnectionService {
         String callerId = extras.getString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS);
         String callerName = extras.getString("CALLER_NAME");
 
-        /*Uri destinationUri = request.getAddress();
-        String userIdToCall = destinationUri.getSchemeSpecificPart();
-        String callerId = destinationUri.getQueryParameter("callerId");
-        String callerName = destinationUri.getQueryParameter("callerName");*/
-
-        // To showcase functionality we always join same session
         VonageConnection connection = new VonageConnection(getApplicationContext());
         VonageManager.getInstance().setCurrentConnection(connection);
         connection.setInitializing();
         connection.setInitialized();
 
-        // Notify *remote* device via FCM of call
-        //FcmEventSender.getInstance().notifyRemoteDeviceOfOutgoingCall(userIdToCall, callerId, callerName);
-
         connection.setCallerDisplayName(callerName, PRESENTATION_ALLOWED);
-        //setAddress(Uri.fromParts("vonagecall", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             connection.setConnectionProperties(PROPERTY_SELF_MANAGED);
@@ -60,6 +84,9 @@ public class VonageConnectionService extends ConnectionService {
         AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(connection);
 
         VonageConnectionHolder.getInstance().setConnection(connection);
+
+        Notification notification = connection.getOngoingCallNotification();
+        startForeground(VonageConnection.ONGOING_CALL_NOTIFICATION_ID, notification);
 
         return connection;
     }
@@ -89,6 +116,9 @@ public class VonageConnectionService extends ConnectionService {
         AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(connection);
 
         VonageConnectionHolder.getInstance().setConnection(connection);
+
+        Notification notification = connection.getIncomingCallNotification(true);
+        startForeground(VonageConnection.ONGOING_CALL_NOTIFICATION_ID, notification);
 
         return connection;
     }

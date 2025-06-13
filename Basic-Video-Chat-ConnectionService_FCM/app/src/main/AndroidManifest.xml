@@ -14,7 +14,11 @@
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
     <uses-permission android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -46,13 +50,14 @@
 
         <meta-data
             android:name="android.telecom.connectionService"
-            android:value="com.tokbox.sample.basicvideochat_connectionservice.VonageConnectionService" >
+            android:value="com.tokbox.sample.basicvideochat_connectionservice.VonageConnectionService">
         </meta-data>
 
         <service
             android:name="com.tokbox.sample.basicvideochat_connectionservice.VonageConnectionService"
             android:exported="true"
-            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE" >
+            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+            android:foregroundServiceType="microphone|camera">
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>

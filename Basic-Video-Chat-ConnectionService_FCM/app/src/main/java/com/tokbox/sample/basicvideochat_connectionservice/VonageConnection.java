@@ -37,8 +37,9 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     private String mRoomName;
     private Intent mLaunchIntent;
     private static final int REQUEST_CODE_ROOM_ACTIVITY = 2;
-    private static final int ONGOING_CALL_NOTIFICATION_ID = 1;
+    public static final int ONGOING_CALL_NOTIFICATION_ID = 1;
     private AudioDeviceSelector audioDeviceSelector = AudioDeviceSelector.getInstance();
+
 
     public VonageConnection(@NonNull Context context) {
         this.context = context;
@@ -83,9 +84,12 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         super.onDisconnect();
         VonageManager.getInstance().endSession();
         AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(null);
-        VonageConnectionHolder.getInstance().setConnection(null);
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
         removeCallNotification();
+
+        Intent endedIntent = new Intent(CallActionReceiver.ACTION_CALL_ENDED);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(endedIntent);
+
         destroy();
     }
 
@@ -99,10 +103,13 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     public void onReject() {
         super.onReject();
         removeCallNotification();
+
+        Intent rejectedIntent = new Intent(CallActionReceiver.ACTION_REJECTED_CALL);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(rejectedIntent);
+
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
 
-        Intent answeredIntent = new Intent(CallActionReceiver.ACTION_REJECTED_CALL);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
+        destroy();
     }
 
     @Override
@@ -206,6 +213,14 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     }
 
     private void postIncomingCallNotification(Boolean isRinging) {
+        Notification notification = getIncomingCallNotification(isRinging);
+        notification.flags |= Notification.FLAG_INSISTENT;
+
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.notify(ONGOING_CALL_NOTIFICATION_ID, notification);
+    }
+
+    public Notification getIncomingCallNotification(Boolean isRinging) {
         // Create an intent which triggers your fullscreen incoming call user interface.
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -217,53 +232,62 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         final Notification.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder = new Notification.Builder(context, NotificationChannelManager.INCOMING_CALL_CHANNEL_ID);
-            builder.setOngoing(true);
-            builder.setPriority(Notification.PRIORITY_HIGH);
-            builder.setOnlyAlertOnce(!isRinging);
-            // Set notification content intent to take user to fullscreen UI if user taps on the
-            // notification body.
-            builder.setContentIntent(pendingIntent);
-            // Set full screen intent to trigger display of the fullscreen UI when the notification
-            // manager deems it appropriate.
-            builder.setFullScreenIntent(pendingIntent, true);
+        } else {
+            builder = new Notification.Builder(context);
+        }
+        builder.setOngoing(true);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+        builder.setOnlyAlertOnce(!isRinging);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setColorized(true);
+        }
+        // Set notification content intent to take user to fullscreen UI if user taps on the
+        // notification body.
+        builder.setContentIntent(pendingIntent);
+        // Set full screen intent to trigger display of the fullscreen UI when the notification
+        // manager deems it appropriate.
+        builder.setFullScreenIntent(pendingIntent, true);
 
-            builder.setSmallIcon(R.drawable.ic_stat_ic_notification);
-            builder.setContentTitle("Incoming call");
-            builder.setContentText("Mom is calling...");
+        builder.setSmallIcon(R.drawable.ic_stat_ic_notification);
+        builder.setContentTitle("Incoming call");
+        builder.setContentText("Mom is calling...");
+        builder.setColor(0xFF2196F3);
 
-            Intent answerIntent = new Intent(context, CallActionReceiver.class);
-            answerIntent.setAction(CallActionReceiver.ACTION_ANSWER_CALL);
-            PendingIntent answerPendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    CallActionReceiver.ACTION_ANSWER_CALL_ID,
-                    answerIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
+        Intent answerIntent = new Intent(context, CallActionReceiver.class);
+        answerIntent.setAction(CallActionReceiver.ACTION_ANSWER_CALL);
+        PendingIntent answerPendingIntent = PendingIntent.getBroadcast(
+                context,
+                CallActionReceiver.ACTION_ANSWER_CALL_ID,
+                answerIntent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
 
-            Intent rejectIntent = new Intent(context, CallActionReceiver.class);
-            rejectIntent.setAction(CallActionReceiver.ACTION_REJECT_CALL);
-            PendingIntent rejectPendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    CallActionReceiver.ACTION_REJECT_CALL_ID,
-                    rejectIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
+        Intent rejectIntent = new Intent(context, CallActionReceiver.class);
+        rejectIntent.setAction(CallActionReceiver.ACTION_REJECT_CALL);
+        PendingIntent rejectPendingIntent = PendingIntent.getBroadcast(
+                context,
+                CallActionReceiver.ACTION_REJECT_CALL_ID,
+                rejectIntent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
 
-            builder.addAction(new Notification.Action.Builder(
-                    R.drawable.answer_call, "Answer", answerPendingIntent).build());
-            builder.addAction(new Notification.Action.Builder(
-                    R.drawable.end_call, "Reject", rejectPendingIntent).build());
+        builder.addAction(new Notification.Action.Builder(
+                R.drawable.answer_call, "Answer", answerPendingIntent).build());
+        builder.addAction(new Notification.Action.Builder(
+                R.drawable.end_call, "Reject", rejectPendingIntent).build());
 
-            Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_INSISTENT;
+        return builder.build();
+    }
 
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+    private void updateOngoingCallNotification() {
+        Notification notification = getOngoingCallNotification();
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        if (notificationManager != null) {
             notificationManager.notify(ONGOING_CALL_NOTIFICATION_ID, notification);
         }
     }
 
-
-    private void updateOngoingCallNotification() {
+    public Notification getOngoingCallNotification() {
         Intent hangupIntent = new Intent(context, CallActionReceiver.class);
         hangupIntent.setAction(CallActionReceiver.ACTION_END_CALL);
         PendingIntent hangupPendingIntent = PendingIntent.getBroadcast(
@@ -279,7 +303,10 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         } else {
             builder = new Notification.Builder(context);
         }
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setColorized(true);
+        }
+        builder.setColor(0xFF2196F3);
         builder.setOngoing(true)
                 .setContentTitle("Ongoing call")
                 .setContentText("Talking with Mom...")
@@ -289,11 +316,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
                         R.drawable.end_call, "End call", hangupPendingIntent
                 ).build());
 
-        Notification notification = builder.build();
-        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        if (notificationManager != null) {
-            notificationManager.notify(ONGOING_CALL_NOTIFICATION_ID, notification);
-        }
+        return builder.build();
     }
 
     private void removeCallNotification() {
