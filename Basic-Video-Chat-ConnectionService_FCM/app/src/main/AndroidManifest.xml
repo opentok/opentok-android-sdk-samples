@@ -57,6 +57,14 @@
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
         </service>
+
+        <receiver android:name="com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_ANSWER_CALL" />
+                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_REJECT_CALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

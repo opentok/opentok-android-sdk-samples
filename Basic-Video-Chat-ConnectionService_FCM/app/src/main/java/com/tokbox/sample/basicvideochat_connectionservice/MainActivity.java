@@ -1,8 +1,11 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -52,15 +56,19 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     private APIService apiService;
 
     private VonageManager vonageManager;
+    private NotificationChannelManager notificationChannelManager;
+
+    private CallActionReceiver callActionReceiver = new CallActionReceiver();
+
     private FrameLayout publisherViewContainer;
     private FrameLayout subscriberViewContainer;
 
-    private Button makeFcmCallButton;
-    private Button makeSimulatedCallButton;
     private TextView callerNameTextView;
     private TextView callStatusTextView;
     private LinearLayout incomingCallLayout;
     private LinearLayout outgoingCallLayout;
+    private LinearLayout endCallLayout;
+    private LinearLayout devicesSelectorLayout;
 
     // These values should be passed by the user
     // Based on the id, your server should retrieve the corresponding FCM Token
@@ -76,6 +84,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                     Log.d("Permission", permission + " -> " + (isGranted ? "GRANTED" : "DENIED"));
                 }
             });
+
+    private final BroadcastReceiver callAnsweredReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_ANSWERED_CALL.equals(intent.getAction())) {
+                updateUIForAnsweredCall();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,19 +117,54 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                     // Send token to your app server
                 });
 
-        vonageManager = VonageManager.getInstance(this, this);
+        vonageManager = VonageManager.getInstance(getApplicationContext(), this);
+        vonageManager.setAudioFocusManager(getApplicationContext());
+
+        notificationChannelManager = new NotificationChannelManager(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannelManager.setup();
+        }
+
         MyFirebaseMessagingService.setCallEventListener(this);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
-        makeFcmCallButton = findViewById(R.id.button_call_fcm);
-        makeSimulatedCallButton = findViewById(R.id.button_call_simulate);
         outgoingCallLayout = findViewById(R.id.outgoing_call_layout);
         callerNameTextView = findViewById(R.id.participantNameText);
         callStatusTextView = findViewById(R.id.callStatusText);
         incomingCallLayout = findViewById(R.id.incoming_call_layout);
+        endCallLayout = findViewById(R.id.end_call_layout);
+        devicesSelectorLayout = findViewById(R.id.audio_devices_layout);
 
         requestPermissions();
+
+        registerCallActions();
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String action = intent.getStringExtra("action");
+            if ("simulate_incoming".equals(action)) {
+                onIncomingCallButtonClick(null);
+            }
+        }
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private void registerCallActions() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(CallActionReceiver.ACTION_ANSWER_CALL);
+        filter.addAction(CallActionReceiver.ACTION_REJECT_CALL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(callActionReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(callActionReceiver, filter);
+        }
+
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                callAnsweredReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_ANSWERED_CALL)
+        );
     }
 
     @Override
@@ -123,20 +175,30 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 callStatusTextView.setText(callStatus);
                 outgoingCallLayout.setVisibility(View.VISIBLE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
+                devicesSelectorLayout.setVisibility(View.INVISIBLE);
+                endCallLayout.setVisibility(View.INVISIBLE);
+                publisherViewContainer.setVisibility(View.INVISIBLE);
             } else if(Objects.equals(callStatus, "Incoming Call")) {
                 callerNameTextView.setText(callerName);
                 callStatusTextView.setText(callStatus);
                 outgoingCallLayout.setVisibility(View.GONE);
                 incomingCallLayout.setVisibility(View.VISIBLE);
+                devicesSelectorLayout.setVisibility(View.VISIBLE);
+                endCallLayout.setVisibility(View.VISIBLE);
+                publisherViewContainer.setVisibility(View.INVISIBLE);
             } else {
                 callerNameTextView.setText(callerName);
                 callStatusTextView.setText(callStatus);
                 outgoingCallLayout.setVisibility(View.GONE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
+                devicesSelectorLayout.setVisibility(View.VISIBLE);
+                endCallLayout.setVisibility(View.VISIBLE);
+                publisherViewContainer.setVisibility(View.VISIBLE);
             }
         });
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onResume() {
         super.onResume();
@@ -153,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     public void onDestroy() {
         super.onDestroy();
         vonageManager.endSession();
+        unregisterReceiver(callActionReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(callAnsweredReceiver);
     }
 
     private void requestPermissions() {
@@ -244,13 +308,32 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         VonageManager.getInstance().getCurrentConnection().onAnswer();
     }
 
+    public void onHangUpButtonClick(View view) {
+        VonageManager.getInstance().endCall();
+        incomingCallLayout.setVisibility(View.INVISIBLE);
+        outgoingCallLayout.setVisibility(View.VISIBLE);
+        devicesSelectorLayout.setVisibility(View.INVISIBLE);
+        endCallLayout.setVisibility(View.INVISIBLE);
+        publisherViewContainer.setVisibility(View.INVISIBLE);
+        callStatusTextView.setText("");
+        callerNameTextView.setText("");
+    }
+
     public void onRejectIncomingCall(View view) {
         incomingCallLayout.setVisibility(View.INVISIBLE);
         outgoingCallLayout.setVisibility(View.VISIBLE);
+        devicesSelectorLayout.setVisibility(View.INVISIBLE);
+        endCallLayout.setVisibility(View.INVISIBLE);
+        publisherViewContainer.setVisibility(View.INVISIBLE);
         callStatusTextView.setText("");
         callerNameTextView.setText("");
         FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
         VonageManager.getInstance().getCurrentConnection().onReject();
+    }
+
+    public void onShowAudioDevicesButtonClick(View view) {
+        AudioDeviceDialogFragment dialog = new AudioDeviceDialogFragment();
+        dialog.show(getSupportFragmentManager(), "audio_device_dialog");
     }
 
     // This is a showcase of how to handle a outgoing call
@@ -283,17 +366,45 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 callerNameTextView.setText(callerName);
                 outgoingCallLayout.setVisibility(View.INVISIBLE);
                 incomingCallLayout.setVisibility(View.INVISIBLE);
+                publisherViewContainer.setVisibility(View.INVISIBLE);
             }
         }
     }
 
-    public void onSimulatedCallButtonClick(View view) {
+    public void onIncomingCallButtonClick(View view) {
+        Bundle extras = new Bundle();
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, PhoneAccountManager.getAccountHandle());
+        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
+        extras.putString("CALLER_NAME", "Simulated Caller");
+
+        PhoneAccountManager.notifyIncomingVideoCall(extras);
+    }
+
+    public void onOutgoingCallButtonClick(View view) {
+        PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
+
+        Bundle extras = new Bundle();
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
+        extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
+        extras.putString("CALLER_NAME", "Simulated Caller");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            VonageManager.getInstance().setOnConnectionReadyListener(connection -> {
+                connection.onPlaceCall(); // Answer after connection is ready
+                onIncomingCall("Simulated Caller", "In call");
+            });
+            PhoneAccountManager.startOutgoingVideoCall(this, extras);
+        }
+    }
+
+    public void onSimulateIncomingCallButtonClick(View view) {
         PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
 
         Bundle extras = new Bundle();
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
         extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
         extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
+
         extras.putString("CALLER_NAME", "Simulated Caller");
 
         TelecomManager telecomManager = PhoneAccountManager.getTelecomManager();
@@ -306,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 telecomManager.addNewIncomingCall(handle, extras);
             }
         }
-
     }
 
     private void initRetrofit() {
@@ -335,6 +445,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     @Override
     public void onPublisherViewReady(View view) {
         publisherViewContainer.addView(view);
+        publisherViewContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -350,5 +461,18 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     @Override
     public void onError(String message) {
         finishWithMessage(message);
+        VonageManager.getInstance().endCall();
+    }
+
+    private void updateUIForAnsweredCall() {
+        runOnUiThread(() -> {
+            incomingCallLayout.setVisibility(View.INVISIBLE);
+            outgoingCallLayout.setVisibility(View.INVISIBLE);
+            devicesSelectorLayout.setVisibility(View.VISIBLE);
+            endCallLayout.setVisibility(View.VISIBLE);
+            publisherViewContainer.setVisibility(View.VISIBLE);
+            callStatusTextView.setText("In Call");
+            callerNameTextView.setText(callerName);
+        });
     }
 }

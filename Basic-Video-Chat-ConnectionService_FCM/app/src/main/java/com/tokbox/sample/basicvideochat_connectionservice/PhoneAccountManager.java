@@ -2,16 +2,22 @@ package com.tokbox.sample.basicvideochat_connectionservice;
 
 import static android.telecom.PhoneAccount.EXTRA_LOG_SELF_MANAGED_CALLS;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.telecom.VideoProfile;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import java.util.Collections;
 
@@ -21,6 +27,8 @@ public class PhoneAccountManager {
     private static PhoneAccount phoneAccount;
     private static PhoneAccountHandle handle;
     private static TelecomManager telecomManager;
+
+    private static String VONAGE_CALL_SCHEME = "vonagecall";
 
     public static TelecomManager getTelecomManager() {
         return telecomManager;
@@ -35,15 +43,46 @@ public class PhoneAccountManager {
         ComponentName componentName = new ComponentName(context, VonageConnectionService.class);
         handle = new PhoneAccountHandle(componentName, ACCOUNT_ID);
 
-        phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
-                .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
-                .setSupportedUriSchemes(Collections.singletonList("vonagecall"))
-                .setHighlightColor(Color.BLUE)
-                .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
-                .build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
+                    .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED | PhoneAccount.CAPABILITY_VIDEO_CALLING)
+                    .setHighlightColor(Color.BLUE)
+                    .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
+                    .addSupportedUriScheme(PhoneAccount.SCHEME_TEL)
+                    .addSupportedUriScheme(VONAGE_CALL_SCHEME)
+                    .build();
+        } else {
+            phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
+                    .setCapabilities(PhoneAccount.CAPABILITY_VIDEO_CALLING)
+                    .setHighlightColor(Color.BLUE)
+                    .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
+                    .addSupportedUriScheme(PhoneAccount.SCHEME_TEL)
+                    .addSupportedUriScheme(VONAGE_CALL_SCHEME)
+                    .build();
+        }
 
         telecomManager.registerPhoneAccount(phoneAccount);
-
         Log.d("PhoneAccountManager", "PhoneAccount registered: " + phoneAccount.isEnabled());
+    }
+
+    public static void startOutgoingVideoCall(Context context, Bundle extras) {
+        extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE,
+                VideoProfile.STATE_BIDIRECTIONAL);
+
+        Uri calleeUri = Uri.fromParts(VONAGE_CALL_SCHEME, "user-42", null);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        telecomManager.placeCall(calleeUri, extras);
+    }
+
+    public static void notifyIncomingVideoCall(Bundle extras) {
+        if (telecomManager != null && handle != null) {
+            telecomManager.addNewIncomingCall(handle, extras);
+            Log.d("PhoneAccountManager", "Incoming video call notified.");
+        } else {
+            Log.e("PhoneAccountManager", "TelecomManager or PhoneAccountHandle is null. Cannot notify incoming call.");
+        }
     }
 }

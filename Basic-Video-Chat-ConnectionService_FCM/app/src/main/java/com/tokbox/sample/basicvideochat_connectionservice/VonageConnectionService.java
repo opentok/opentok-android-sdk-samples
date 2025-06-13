@@ -1,10 +1,16 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
+import static android.telecom.Connection.CAPABILITY_HOLD;
+import static android.telecom.Connection.CAPABILITY_MUTE;
+import static android.telecom.Connection.CAPABILITY_SUPPORT_HOLD;
+import static android.telecom.Connection.PROPERTY_SELF_MANAGED;
+import static android.telecom.TelecomManager.PRESENTATION_ALLOWED;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.telecom.Connection;
 import android.telecom.ConnectionRequest;
@@ -19,22 +25,41 @@ public class VonageConnectionService extends ConnectionService {
     @Override
     public Connection onCreateOutgoingConnection(PhoneAccountHandle connectionManagerPhoneAccount,
                                                  ConnectionRequest request) {
-        Uri destinationUri = request.getAddress();
 
+        Bundle extras = request.getExtras();
+        String callerId = extras.getString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS);
+        String callerName = extras.getString("CALLER_NAME");
+
+        /*Uri destinationUri = request.getAddress();
         String userIdToCall = destinationUri.getSchemeSpecificPart();
         String callerId = destinationUri.getQueryParameter("callerId");
-        String callerName = destinationUri.getQueryParameter("callerName");
+        String callerName = destinationUri.getQueryParameter("callerName");*/
 
         // To showcase functionality we always join same session
-        VonageConnection connection = new VonageConnection(getApplicationContext(), API_KEY, SESSION_ID, TOKEN, callerId, callerName);
+        VonageConnection connection = new VonageConnection(getApplicationContext());
         VonageManager.getInstance().setCurrentConnection(connection);
-        connection.setDialing();
+        connection.setInitializing();
+        connection.setInitialized();
 
         // Notify *remote* device via FCM of call
-        FcmEventSender.getInstance().notifyRemoteDeviceOfOutgoingCall(userIdToCall, callerId, callerName);
+        //FcmEventSender.getInstance().notifyRemoteDeviceOfOutgoingCall(userIdToCall, callerId, callerName);
 
-        // Start Vonage session
-        connection.onPlaceCall();
+        connection.setCallerDisplayName(callerName, PRESENTATION_ALLOWED);
+        //setAddress(Uri.fromParts("vonagecall", callerId, null), TelecomManager.PRESENTATION_ALLOWED);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            connection.setConnectionProperties(PROPERTY_SELF_MANAGED);
+        }
+
+        connection.setAudioModeIsVoip(true);
+        connection.setVideoState(request.getVideoState());
+
+        int capabilities = CAPABILITY_HOLD | CAPABILITY_SUPPORT_HOLD | CAPABILITY_MUTE;
+        connection.setConnectionCapabilities(capabilities);
+
+        AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(connection);
+
+        VonageConnectionHolder.getInstance().setConnection(connection);
 
         return connection;
     }
@@ -47,9 +72,23 @@ public class VonageConnectionService extends ConnectionService {
         String callerId = extras.getString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS);
         String callerName = extras.getString("CALLER_NAME");
 
-        VonageConnection connection = new VonageConnection(getApplicationContext(), API_KEY, SESSION_ID, TOKEN, callerId, callerName);
+        VonageConnection connection = new VonageConnection(getApplicationContext());
         VonageManager.getInstance().setCurrentConnection(connection);
         connection.setRinging();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            connection.setConnectionProperties(PROPERTY_SELF_MANAGED);
+        }
+
+        connection.setAudioModeIsVoip(true);
+        connection.setVideoState(request.getVideoState());
+
+        int capabilities = CAPABILITY_HOLD | CAPABILITY_SUPPORT_HOLD | CAPABILITY_MUTE;
+        connection.setConnectionCapabilities(capabilities);
+
+        AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(connection);
+
+        VonageConnectionHolder.getInstance().setConnection(connection);
 
         return connection;
     }
@@ -58,12 +97,27 @@ public class VonageConnectionService extends ConnectionService {
     public void onCreateIncomingConnectionFailed(PhoneAccountHandle connectionManagerPhoneAccount,
                                                  ConnectionRequest request) {
         Log.e(TAG, "Incoming connection failed: " + request.getAddress());
+        VonageConnectionHolder.getInstance().setConnection(null);
     }
 
     @Override
     public void onCreateOutgoingConnectionFailed(PhoneAccountHandle connectionManagerPhoneAccount,
                                                  ConnectionRequest request) {
         Log.e(TAG, "Outgoing connection failed: " + request.getAddress());
+        VonageConnectionHolder.getInstance().setConnection(null);
     }
 
+    @Override
+    public void onConnectionServiceFocusGained() {
+        super.onConnectionServiceFocusGained();
+
+        Log.e(TAG, "onConnectionServiceFocusGained");
+    }
+
+    @Override
+    public void onConnectionServiceFocusLost() {
+        super.onConnectionServiceFocusLost();
+
+        Log.e(TAG, "onConnectionServiceFocusLost");
+    }
 }

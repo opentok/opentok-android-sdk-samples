@@ -1,0 +1,1 @@
+adb shell am start -n com.tokbox.sample.basicvideochat_connectionservice/.MainActivity --es action simulate_incoming

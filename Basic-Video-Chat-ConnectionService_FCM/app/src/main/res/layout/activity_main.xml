@@ -25,7 +25,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="#CCCCCC"
-            android:padding="2dp" />
+            android:padding="2dp"
+            android:visibility="invisible"/>
 
         <!-- Overlay UI elements -->
 
@@ -66,16 +67,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal|center_vertical"
-                android:onClick="onCallButtonClick"
-                android:text="Call via Notification Push" />
+                android:onClick="onIncomingCallButtonClick"
+                android:text="Incoming call" />
 
             <Button
                 android:id="@+id/button_call_simulate"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="onSimulatedCallButtonClick"
-                android:text="Simulate Call" />
+                android:onClick="onOutgoingCallButtonClick"
+                android:text="Outgoing Call" />
 
         </LinearLayout>
 
@@ -106,5 +107,38 @@
                 android:text="Reject" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/audio_devices_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
+            android:visibility="invisible">
+            <Button
+                android:id="@+id/show_audio_devices"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E91E63"
+                android:onClick="onShowAudioDevicesButtonClick"
+                android:text="Show audio devices" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/end_call_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
+            android:visibility="invisible">
+            <Button
+                android:id="@+id/finish_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E91E63"
+                android:onClick="onHangUpButtonClick"
+                android:text="HangUp" />
+        </LinearLayout>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
