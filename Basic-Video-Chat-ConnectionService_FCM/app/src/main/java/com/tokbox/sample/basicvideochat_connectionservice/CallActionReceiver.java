@@ -13,6 +13,8 @@ public class CallActionReceiver extends BroadcastReceiver {
     public static final String ACTION_REJECT_CALL = "com.tokbox.sample.basicvideochat_connectionservice.ACTION_REJECT_CALL";
     public static final String ACTION_END_CALL = "com.tokbox.sample.basicvideochat_connectionservice.ACTION_END_CALL";
     public static final String ACTION_ANSWERED_CALL = "com.tokbox.sample.basicvideochat_connectionservice.ACTION_ANSWERED_CALL";
+    public static final String ACTION_INCOMING_CALL = "com.tokbox.sample.basicvideochat_connectionservice.ACTION_INCOMING_CALL";
+    public static final String ACTION_REJECTED_CALL = "com.tokbox.sample.basicvideochat_connectionservice.ACTION_REJECTED_CALL";
 
     public static final int ACTION_ANSWER_CALL_ID = 2;
     public static final int ACTION_REJECT_CALL_ID = 3;

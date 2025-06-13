@@ -50,6 +50,9 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         Log.d("VonageConnection", "onShowIncomingCallUi");
 
         postIncomingCallNotification(true);
+
+        Intent answeredIntent = new Intent(CallActionReceiver.ACTION_INCOMING_CALL);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
     }
 
     @Override
@@ -97,6 +100,9 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         super.onReject();
         removeCallNotification();
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
+
+        Intent answeredIntent = new Intent(CallActionReceiver.ACTION_REJECTED_CALL);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
     }
 
     @Override

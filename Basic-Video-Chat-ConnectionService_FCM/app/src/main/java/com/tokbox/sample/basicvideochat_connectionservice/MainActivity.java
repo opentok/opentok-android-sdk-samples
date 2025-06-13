@@ -94,6 +94,24 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         }
     };
 
+    private final BroadcastReceiver incomingCallReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_INCOMING_CALL.equals(intent.getAction())) {
+                showIncomingCallLayout();
+            }
+        }
+    };
+
+    private final BroadcastReceiver rejectedIncomingCallReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_REJECTED_CALL.equals(intent.getAction())) {
+                hideIncomingCallLayout();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -160,11 +178,21 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             registerReceiver(callActionReceiver, filter);
         }
 
-
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 callAnsweredReceiver,
                 new IntentFilter(CallActionReceiver.ACTION_ANSWERED_CALL)
         );
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                incomingCallReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_INCOMING_CALL)
+        );
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                rejectedIncomingCallReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_REJECTED_CALL)
+        );
+
     }
 
     @Override
@@ -217,6 +245,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         vonageManager.endSession();
         unregisterReceiver(callActionReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(callAnsweredReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingCallReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(rejectedIncomingCallReceiver);
     }
 
     private void requestPermissions() {
@@ -303,9 +333,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onAcceptIncomingCall(View view) {
-        incomingCallLayout.setVisibility(View.INVISIBLE);
-        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, true);
-        VonageManager.getInstance().getCurrentConnection().onAnswer();
+        Intent answerIntent = new Intent(CallActionReceiver.ACTION_ANSWER_CALL);
+        answerIntent.setPackage(getPackageName());
+        sendBroadcast(answerIntent);
+    }
+
+    public void onRejectIncomingCall(View view) {
+        Intent rejectIntent = new Intent(CallActionReceiver.ACTION_REJECT_CALL);
+        rejectIntent.setPackage(getPackageName());
+        sendBroadcast(rejectIntent);
     }
 
     public void onHangUpButtonClick(View view) {
@@ -317,18 +353,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         publisherViewContainer.setVisibility(View.INVISIBLE);
         callStatusTextView.setText("");
         callerNameTextView.setText("");
-    }
-
-    public void onRejectIncomingCall(View view) {
-        incomingCallLayout.setVisibility(View.INVISIBLE);
-        outgoingCallLayout.setVisibility(View.VISIBLE);
-        devicesSelectorLayout.setVisibility(View.INVISIBLE);
-        endCallLayout.setVisibility(View.INVISIBLE);
-        publisherViewContainer.setVisibility(View.INVISIBLE);
-        callStatusTextView.setText("");
-        callerNameTextView.setText("");
-        FcmEventSender.getInstance().notifyCallerOfCallResponse(callerId, callerName, false);
-        VonageManager.getInstance().getCurrentConnection().onReject();
     }
 
     public void onShowAudioDevicesButtonClick(View view) {
@@ -473,6 +497,26 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             publisherViewContainer.setVisibility(View.VISIBLE);
             callStatusTextView.setText("In Call");
             callerNameTextView.setText(callerName);
+        });
+    }
+
+    private void showIncomingCallLayout() {
+        runOnUiThread(() -> {
+            incomingCallLayout.setVisibility(View.VISIBLE);
+            outgoingCallLayout.setVisibility(View.INVISIBLE);
+            devicesSelectorLayout.setVisibility(View.INVISIBLE);
+            endCallLayout.setVisibility(View.INVISIBLE);
+            publisherViewContainer.setVisibility(View.INVISIBLE);
+        });
+    }
+
+    private void hideIncomingCallLayout() {
+        runOnUiThread(() -> {
+            incomingCallLayout.setVisibility(View.INVISIBLE);
+            outgoingCallLayout.setVisibility(View.VISIBLE);
+            devicesSelectorLayout.setVisibility(View.INVISIBLE);
+            endCallLayout.setVisibility(View.INVISIBLE);
+            publisherViewContainer.setVisibility(View.INVISIBLE);
         });
     }
 }
