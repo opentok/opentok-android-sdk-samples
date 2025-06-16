@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     private VonageManager vonageManager;
     private NotificationChannelManager notificationChannelManager;
     private PhoneAccountManager phoneAccountManager;
-
-    private CallActionReceiver callActionReceiver = new CallActionReceiver();
-
     private FrameLayout publisherViewContainer;
     private FrameLayout subscriberViewContainer;
 
@@ -191,15 +188,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void registerCallActions() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(CallActionReceiver.ACTION_ANSWER_CALL);
-        filter.addAction(CallActionReceiver.ACTION_REJECT_CALL);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(callActionReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            registerReceiver(callActionReceiver, filter);
-        }
-
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 callAnsweredReceiver,
                 new IntentFilter(CallActionReceiver.ACTION_ANSWERED_CALL)
@@ -273,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     public void onDestroy() {
         super.onDestroy();
         vonageManager.endSession();
-        unregisterReceiver(callActionReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(callAnsweredReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingCallReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rejectedIncomingCallReceiver);
