@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.fcm;
 
 /**
  * Copyright 2016 Google Inc. All Rights Reserved.
@@ -24,6 +24,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
 
 import java.util.Map;
 

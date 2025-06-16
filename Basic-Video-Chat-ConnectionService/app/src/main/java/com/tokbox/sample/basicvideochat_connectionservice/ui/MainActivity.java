@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -29,6 +29,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
+import com.tokbox.sample.basicvideochat_connectionservice.R;
+import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
+import com.tokbox.sample.basicvideochat_connectionservice.VonageSessionListener;
 import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.PhoneAccountManager;
 import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceDialogFragment;
 

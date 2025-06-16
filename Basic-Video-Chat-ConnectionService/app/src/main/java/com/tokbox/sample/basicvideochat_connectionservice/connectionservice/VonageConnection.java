@@ -26,7 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelectionListener;
 import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
 import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
-import com.tokbox.sample.basicvideochat_connectionservice.MainActivity;
+import com.tokbox.sample.basicvideochat_connectionservice.ui.MainActivity;
 import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
 import com.tokbox.sample.basicvideochat_connectionservice.R;
 import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;

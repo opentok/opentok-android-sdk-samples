@@ -25,7 +25,7 @@ public class NotificationChannelManager {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    void setup() {
+    public void setup() {
         setupIncomingCallChannel();
         setupOngoingCallChannel();
     }
