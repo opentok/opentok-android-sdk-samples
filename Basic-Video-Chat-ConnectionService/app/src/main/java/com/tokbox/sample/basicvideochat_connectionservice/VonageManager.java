@@ -29,7 +29,6 @@ public class VonageManager {
     private Subscriber subscriber;
     private Context context;
     private final VonageSessionListener callback;
-    private VonageConnection currentConnection;
     private AudioManager audioManager;
     private AudioDeviceManager audioDeviceManager;
     private BaseAudioDevice.AudioFocusManager audioFocusManager;
