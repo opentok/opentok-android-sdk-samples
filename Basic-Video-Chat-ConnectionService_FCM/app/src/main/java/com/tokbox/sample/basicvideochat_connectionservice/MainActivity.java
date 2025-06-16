@@ -29,11 +29,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.PhoneAccountManager;
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceDialogFragment;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements VonageSessionListener, CallEventListener {
+public class MainActivity extends AppCompatActivity implements VonageSessionListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private VonageManager vonageManager;
@@ -198,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         );
     }
 
-    @Override
     public void onIncomingCall(String callerName, String callStatus) {
         runOnUiThread(() -> {
             if(Objects.equals(callStatus, "Call Cancelled")) {
@@ -354,8 +355,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
     private void launchIncomingCall() {
         Bundle extras = new Bundle();
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountManager.handle);
-        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
         extras.putString("CALLER_NAME", "Simulated Caller");
 
         phoneAccountManager.notifyIncomingVideoCall(extras);
@@ -366,7 +365,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
         Bundle extras = new Bundle();
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
-        extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
         extras.putString("CALLER_NAME", "Simulated Caller");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

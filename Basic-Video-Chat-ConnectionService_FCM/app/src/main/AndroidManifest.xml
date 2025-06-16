@@ -54,7 +54,7 @@
         </meta-data>
 
         <service
-            android:name="com.tokbox.sample.basicvideochat_connectionservice.VonageConnectionService"
+            android:name="com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionService"
             android:exported="true"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:foregroundServiceType="microphone|camera">
@@ -68,6 +68,7 @@
             <intent-filter>
                 <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_ANSWER_CALL" />
                 <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_REJECT_CALL" />
+                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_END_CALL" />
             </intent-filter>
         </receiver>
     </application>

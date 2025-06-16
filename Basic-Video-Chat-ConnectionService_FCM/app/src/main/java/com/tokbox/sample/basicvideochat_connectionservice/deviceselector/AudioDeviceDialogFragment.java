@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.deviceselector;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

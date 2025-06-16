@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
 
 import static android.telecom.Connection.CAPABILITY_HOLD;
 import static android.telecom.Connection.CAPABILITY_MUTE;
@@ -21,6 +21,9 @@ import android.telecom.TelecomManager;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
+import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
 
 public class VonageConnectionService extends ConnectionService {
     private static final String TAG = VonageConnectionService.class.getSimpleName();

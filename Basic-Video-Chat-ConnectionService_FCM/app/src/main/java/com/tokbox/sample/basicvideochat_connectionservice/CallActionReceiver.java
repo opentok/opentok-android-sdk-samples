@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnection;
+import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionHolder;
+
 public class CallActionReceiver extends BroadcastReceiver {
 
     private static final String TAG = "CallActionReceiver";

@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.deviceselector;
 
 public interface AudioDeviceSelectionListener {
     /**

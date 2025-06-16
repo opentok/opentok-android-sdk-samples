@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -16,6 +16,8 @@ import android.telecom.VideoProfile;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+
+import com.tokbox.sample.basicvideochat_connectionservice.R;
 
 public class PhoneAccountManager {
 
@@ -71,6 +73,9 @@ public class PhoneAccountManager {
     }
 
     public void notifyIncomingVideoCall(Bundle extras) {
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
+        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
+
         if (telecomManager != null && handle != null) {
             telecomManager.addNewIncomingCall(handle, extras);
             Log.d("PhoneAccountManager", "Incoming video call notified.");

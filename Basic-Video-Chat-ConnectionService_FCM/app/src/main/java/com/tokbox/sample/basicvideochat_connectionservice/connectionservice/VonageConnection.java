@@ -1,8 +1,5 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
 
-import static android.telecom.TelecomManager.PRESENTATION_ALLOWED;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
 import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
@@ -12,7 +9,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.OutcomeReceiver;
 import android.telecom.CallAudioState;
@@ -20,7 +16,6 @@ import android.telecom.CallEndpoint;
 import android.telecom.CallEndpointException;
 import android.telecom.Connection;
 import android.telecom.DisconnectCause;
-import android.telecom.TelecomManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,10 +23,18 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelectionListener;
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
+import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochat_connectionservice.MainActivity;
+import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
+import com.tokbox.sample.basicvideochat_connectionservice.R;
+import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class VonageConnection extends Connection implements AudioDeviceSelectionListener{
+public class VonageConnection extends Connection implements AudioDeviceSelectionListener {
 
     private static final String TAG = VonageConnection.class.getSimpleName();
     private final Context context;
