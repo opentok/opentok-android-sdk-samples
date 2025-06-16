@@ -26,6 +26,8 @@ public class PhoneAccountManager {
     public PhoneAccountHandle handle;
     private TelecomManager telecomManager;
     private final Context context;
+    public static String CALLER_NAME = "CALLER_NAME";
+    public static String CALLER_ID = "CALLER_ID";
 
     public PhoneAccountManager(Context context) {
         this.context = context;
@@ -60,11 +62,19 @@ public class PhoneAccountManager {
         Log.d("PhoneAccountManager", "PhoneAccount registered: " + phoneAccount.isEnabled());
     }
 
-    public void startOutgoingVideoCall(Context context, Bundle extras) {
+    public void startOutgoingVideoCall(String callerName, String callerId) {
+        Bundle extras = new Bundle();
+        extras.putString(PhoneAccountManager.CALLER_NAME, callerName);
+        extras.putString(PhoneAccountManager.CALLER_ID, callerId);
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
         extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE,
                 VideoProfile.STATE_BIDIRECTIONAL);
 
-        Uri calleeUri = Uri.fromParts(VONAGE_CALL_SCHEME, "user-42", null);
+        Uri calleeUri = new Uri.Builder()
+                .scheme(VONAGE_CALL_SCHEME)
+                .authority(callerId)
+                .appendQueryParameter("callerName", callerName)
+                .build();
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -72,9 +82,19 @@ public class PhoneAccountManager {
         telecomManager.placeCall(calleeUri, extras);
     }
 
-    public void notifyIncomingVideoCall(Bundle extras) {
+    public void notifyIncomingVideoCall(String callerName, String callerId) {
+        Bundle extras = new Bundle();
+        extras.putString(PhoneAccountManager.CALLER_NAME, callerName);
+        extras.putString(PhoneAccountManager.CALLER_ID, callerId);
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
-        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
+
+        Uri calleeUri = new Uri.Builder()
+                .scheme(VONAGE_CALL_SCHEME)
+                .authority(callerId)
+                .appendQueryParameter("callerName", callerName)
+                .build();
+
+        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, calleeUri.toString());
 
         if (telecomManager != null && handle != null) {
             telecomManager.addNewIncomingCall(handle, extras);

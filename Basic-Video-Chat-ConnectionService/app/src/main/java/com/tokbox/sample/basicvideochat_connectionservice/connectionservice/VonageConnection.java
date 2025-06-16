@@ -38,11 +38,14 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
     private static final String TAG = VonageConnection.class.getSimpleName();
     private final Context context;
-    public static final int ONGOING_CALL_NOTIFICATION_ID = 1;
+    public int callNotificationId;
+    private String remoteName = "";
     private AudioDeviceSelector audioDeviceSelector = AudioDeviceSelector.getInstance();
 
-    public VonageConnection(@NonNull Context context) {
+    public VonageConnection(@NonNull Context context, String remoteName, int callNotificationId) {
         this.context = context;
+        this.remoteName = remoteName;
+        this.callNotificationId = callNotificationId;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         super.onShowIncomingCallUi();
         Log.d(TAG, "onShowIncomingCallUi");
 
-        postIncomingCallNotification(true);
+        // Show incoming call activity here if needed
 
         Intent answeredIntent = new Intent(CallActionReceiver.ACTION_INCOMING_CALL);
         LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
@@ -77,6 +80,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setActive();
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
+        postIncomingCallNotification(false);
         removeCallNotification();
         updateOngoingCallNotification();
 
@@ -187,7 +191,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     private void changeCallEndpoint(CallEndpoint endpoint) {
         Executor executor = ContextCompat.getMainExecutor(context);
 
-        requestCallEndpointChange(endpoint, executor, new OutcomeReceiver<Void, CallEndpointException>() {
+        requestCallEndpointChange(endpoint, executor, new OutcomeReceiver<>() {
             @Override
             public void onResult(Void result) {
                 Log.d("VonageConnection", "Successfully switched to endpoint: " + endpoint.getEndpointType());
@@ -233,9 +237,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     private void postIncomingCallNotification(Boolean isRinging) {
         Notification notification = getIncomingCallNotification(isRinging);
         notification.flags |= Notification.FLAG_INSISTENT;
-
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        notificationManager.notify(ONGOING_CALL_NOTIFICATION_ID, notification);
+        notificationManager.notify(callNotificationId, notification);
     }
 
     public Notification getIncomingCallNotification(Boolean isRinging) {
@@ -268,7 +271,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         builder.setSmallIcon(R.drawable.ic_stat_ic_notification);
         builder.setContentTitle("Incoming call");
-        builder.setContentText("Mom is calling...");
+        builder.setContentText(remoteName + " is calling...");
         builder.setColor(0xFF2196F3);
 
         Intent answerIntent = new Intent(context, CallActionReceiver.class);
@@ -298,10 +301,10 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     }
 
     private void updateOngoingCallNotification() {
-        Notification notification = getOngoingCallNotification();
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         if (notificationManager != null) {
-            notificationManager.notify(ONGOING_CALL_NOTIFICATION_ID, notification);
+            Notification notification = getOngoingCallNotification();
+            notificationManager.notify(callNotificationId, notification);
         }
     }
 
@@ -327,7 +330,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         builder.setColor(0xFF2196F3);
         builder.setOngoing(true)
                 .setContentTitle("Ongoing call")
-                .setContentText("Talking with Mom...")
+                .setContentText("Talking with " + remoteName + "...")
                 .setSmallIcon(R.drawable.ic_stat_ic_notification)
                 .setOnlyAlertOnce(true)
                 .addAction(new Notification.Action.Builder(
@@ -340,7 +343,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     private void removeCallNotification() {
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         if (notificationManager != null) {
-            notificationManager.cancel(ONGOING_CALL_NOTIFICATION_ID);
+            notificationManager.cancel(callNotificationId);
         }
     }
 }

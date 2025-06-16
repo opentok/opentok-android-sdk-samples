@@ -2,6 +2,7 @@ package com.tokbox.sample.basicvideochat_connectionservice.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ComponentCaller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -108,7 +110,10 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         @Override
         public void onReceive(Context context, Intent intent) {
             if (CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL.equals(intent.getAction())) {
-                launchIncomingCall();
+
+                String callerName = intent.getStringExtra(PhoneAccountManager.CALLER_NAME);
+                String callerId = intent.getStringExtra(PhoneAccountManager.CALLER_ID);
+                launchIncomingCall(callerName, callerId);
             }
         }
     };
@@ -163,8 +168,24 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         if (intent != null) {
             String action = intent.getStringExtra("action");
             if ("simulate_incoming".equals(action)) {
-                onIncomingCallButtonClick(null);
+
+                String callerName = intent.getStringExtra(PhoneAccountManager.CALLER_NAME);
+                String callerId = intent.getStringExtra(PhoneAccountManager.CALLER_ID);
+                launchIncomingCall(callerName, callerId);
             }
+        }
+    }
+
+    @Override
+    public void onNewIntent(@NonNull Intent intent, @NonNull ComponentCaller caller) {
+        super.onNewIntent(intent, caller);
+
+        String action = intent.getStringExtra("action");
+        if ("simulate_incoming".equals(action)) {
+
+            String callerName = intent.getStringExtra(PhoneAccountManager.CALLER_NAME);
+            String callerId = intent.getStringExtra(PhoneAccountManager.CALLER_ID);
+            launchIncomingCall(callerName, callerId);
         }
     }
 
@@ -355,26 +376,23 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onIncomingCallButtonClick(View view) {
-        launchIncomingCall();
+        String callerName = "Simulated Caller";
+        String callerId = "+4401539702257";
+
+        launchIncomingCall(callerName, callerId);
     }
 
-    private void launchIncomingCall() {
-        Bundle extras = new Bundle();
-        extras.putString("CALLER_NAME", "Simulated Caller");
-
-        phoneAccountManager.notifyIncomingVideoCall(extras);
+    private void launchIncomingCall(String callerName, String callerId) {
+        phoneAccountManager.notifyIncomingVideoCall(callerName, callerId);
     }
 
     public void onOutgoingCallButtonClick(View view) {
-        PhoneAccountHandle handle = phoneAccountManager.handle;
-
-        Bundle extras = new Bundle();
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
-        extras.putString("CALLER_NAME", "Simulated Caller");
+        String callerName = "Simulated Caller";
+        String callerId = "+4401539702257";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            phoneAccountManager.startOutgoingVideoCall(this, extras);
-            onIncomingCall("Simulated Caller", "In call");
+            phoneAccountManager.startOutgoingVideoCall(callerName, callerId);
+            onIncomingCall(callerName, "In call");
         }
     }
 

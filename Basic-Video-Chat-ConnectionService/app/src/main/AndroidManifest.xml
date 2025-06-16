@@ -29,7 +29,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.tokbox.sample.basicvideochat_connectionservice.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:exported="true">
@@ -41,7 +41,7 @@
         </activity>
 
         <service
-            android:name="com.tokbox.sample.basicvideochat_connectionservice.fcm.MyFirebaseMessagingService"
+            android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -54,7 +54,7 @@
         </meta-data>
 
         <service
-            android:name="com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionService"
+            android:name=".connectionservice.VonageConnectionService"
             android:exported="true"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:foregroundServiceType="microphone|camera">
@@ -63,7 +63,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver"
+        <receiver android:name=".CallActionReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_ANSWER_CALL" />
