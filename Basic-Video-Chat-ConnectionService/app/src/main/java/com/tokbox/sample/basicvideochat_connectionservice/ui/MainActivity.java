@@ -415,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             publisherViewContainer.setVisibility(View.INVISIBLE);
             callStatusTextView.setText("");
             callerNameTextView.setText("");
+            onStreamDropped();
         });
     }
 
@@ -447,6 +448,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             devicesSelectorLayout.setVisibility(View.INVISIBLE);
             endCallLayout.setVisibility(View.INVISIBLE);
             publisherViewContainer.setVisibility(View.INVISIBLE);
+            onStreamDropped();
         });
     }
 }
