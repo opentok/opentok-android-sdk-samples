@@ -1,7 +1,5 @@
 package com.tokbox.sample.basicvideochat_connectionservice;
 
-import static android.telecom.PhoneAccount.EXTRA_LOG_SELF_MANAGED_CALLS;
-
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,30 +17,25 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import java.util.Collections;
-
 public class PhoneAccountManager {
 
     public static final String ACCOUNT_ID = "vonage_video_call";
-    private static PhoneAccount phoneAccount;
-    private static PhoneAccountHandle handle;
-    private static TelecomManager telecomManager;
-
     private static String VONAGE_CALL_SCHEME = "vonagecall";
+    public PhoneAccountHandle handle;
+    private TelecomManager telecomManager;
+    private final Context context;
 
-    public static TelecomManager getTelecomManager() {
-        return telecomManager;
-    }
-    public static PhoneAccountHandle getAccountHandle() {
-        return handle;
+    public PhoneAccountManager(Context context) {
+        this.context = context;
     }
 
-    public static void registerPhoneAccount(Context context) {
+    public void registerPhoneAccount() {
         telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
 
         ComponentName componentName = new ComponentName(context, VonageConnectionService.class);
         handle = new PhoneAccountHandle(componentName, ACCOUNT_ID);
 
+        PhoneAccount phoneAccount;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             phoneAccount = PhoneAccount.builder(handle, "Vonage Video")
                     .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED | PhoneAccount.CAPABILITY_VIDEO_CALLING)
@@ -65,7 +58,7 @@ public class PhoneAccountManager {
         Log.d("PhoneAccountManager", "PhoneAccount registered: " + phoneAccount.isEnabled());
     }
 
-    public static void startOutgoingVideoCall(Context context, Bundle extras) {
+    public void startOutgoingVideoCall(Context context, Bundle extras) {
         extras.putInt(TelecomManager.EXTRA_START_CALL_WITH_VIDEO_STATE,
                 VideoProfile.STATE_BIDIRECTIONAL);
 
@@ -77,7 +70,7 @@ public class PhoneAccountManager {
         telecomManager.placeCall(calleeUri, extras);
     }
 
-    public static void notifyIncomingVideoCall(Bundle extras) {
+    public void notifyIncomingVideoCall(Bundle extras) {
         if (telecomManager != null && handle != null) {
             telecomManager.addNewIncomingCall(handle, extras);
             Log.d("PhoneAccountManager", "Incoming video call notified.");

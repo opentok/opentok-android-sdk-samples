@@ -14,25 +14,13 @@ public class OpenTokConfig {
     */
 
     // Replace with a API key
-    public static final String API_KEY = "47521351";
+    public static final String API_KEY = "48048351";
     
     // Replace with a generated Session ID
-    public static final String SESSION_ID = "1_MX40NzUyMTM1MX5-MTc0NzI5ODM2NjY2MX5LTW9OUFVwVlJOVEZFUitsY3BLUTBTVGZ-fn4";
+    public static final String SESSION_ID = "2_MX40ODA0ODM1MX5-MTc0OTE5NTY2MTc5NX5naDd3LzJDVDBOMTlTYmZHWDhTWDVqa2l-fn4";
     
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00NzUyMTM1MSZzaWc9ZTVkZmEwMmZkYjUxNGEzYmYwNDhhMTMxYTllMWQ1NDJiYTBhYTE2YTpzZXNzaW9uX2lkPTFfTVg0ME56VXlNVE0xTVg1LU1UYzBOekk1T0RNMk5qWTJNWDVMVFc5T1VGVndWbEpPVkVaRlVpdHNZM0JMVVRCVFZHWi1mbjQmY3JlYXRlX3RpbWU9MTc0NzI5ODM3MiZub25jZT0wLjg2NjY5MzcwMTc0NDU3MyZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNzQ5ODkwMzcxJmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
-
-    // *** The code below is to validate this configuration file. You do not need to modify it  ***
-
-    public static boolean isValid() {
-        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)
-                || TextUtils.isEmpty(OpenTokConfig.SESSION_ID)
-                || TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
-            return false;
-        }
-
-        return true;
-    }
+    public static final String TOKEN = "T1==cGFydG5lcl9pZD00ODA0ODM1MSZzaWc9Y2EzMmMxYmExMGQxNjUzYTQ2Zjc4NWU4N2ZiMTU5ODIzNzFjYzJiODpzZXNzaW9uX2lkPTJfTVg0ME9EQTBPRE0xTVg1LU1UYzBPVEU1TlRZMk1UYzVOWDVuYURkM0x6SkRWREJPTVRsVFltWkhXRGhUV0RWcWEybC1mbjQmY3JlYXRlX3RpbWU9MTc0OTczMDA4OSZub25jZT0wLjk3NDc1MDIwMDc1NDY3ODImcm9sZT1tb2RlcmF0b3ImZXhwaXJlX3RpbWU9MTc0OTczMTg4Njk0MiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
 
     @NonNull
     public static String getDescription() {

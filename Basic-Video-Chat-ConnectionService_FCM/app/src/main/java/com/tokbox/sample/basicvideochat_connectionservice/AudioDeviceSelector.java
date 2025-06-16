@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AudioDeviceSelector {
-    private static final String TAG = "AudioDeviceSelector";
+    private static final String TAG = AudioDeviceSelector.class.getSimpleName();
 
     public static class AudioDevice {
         private final String name;
@@ -87,19 +87,19 @@ public class AudioDeviceSelector {
                     type = CallAudioState.ROUTE_BLUETOOTH;
                     break;
                 case CallEndpoint.TYPE_WIRED_HEADSET:
-                    name = "Auriculares con cable";
+                    name = "Wired Headset";
                     type = CallAudioState.ROUTE_WIRED_HEADSET;
                     break;
                 case CallEndpoint.TYPE_SPEAKER:
-                    name = "Altavoz";
+                    name = "Speaker";
                     type = CallAudioState.ROUTE_SPEAKER;
                     break;
                 case CallEndpoint.TYPE_EARPIECE:
-                    name = "Auricular";
+                    name = "Earpiece";
                     type = CallAudioState.ROUTE_EARPIECE;
                     break;
                 default:
-                    name = "Desconocido";
+                    name = "Unknown";
                     type = 0;
                     break;
             }
@@ -138,7 +138,7 @@ public class AudioDeviceSelector {
         int currentRoute = audioState.getRoute();
 
         if ((supportedRoutes & CallAudioState.ROUTE_EARPIECE) != 0) {
-            AudioDevice device = new AudioDevice("Auricular", CallAudioState.ROUTE_EARPIECE);
+            AudioDevice device = new AudioDevice("Earpiece", CallAudioState.ROUTE_EARPIECE);
             devices.add(device);
             if (currentRoute == CallAudioState.ROUTE_EARPIECE) {
                 activeDevice.postValue(device);
@@ -154,7 +154,7 @@ public class AudioDeviceSelector {
         }
 
         if ((supportedRoutes & CallAudioState.ROUTE_WIRED_HEADSET) != 0) {
-            AudioDevice device = new AudioDevice("Auriculares con cable", CallAudioState.ROUTE_WIRED_HEADSET);
+            AudioDevice device = new AudioDevice("Wired Headset", CallAudioState.ROUTE_WIRED_HEADSET);
             devices.add(device);
             if (currentRoute == CallAudioState.ROUTE_WIRED_HEADSET) {
                 activeDevice.postValue(device);
@@ -162,7 +162,7 @@ public class AudioDeviceSelector {
         }
 
         if ((supportedRoutes & CallAudioState.ROUTE_SPEAKER) != 0) {
-            AudioDevice device = new AudioDevice("Altavoz", CallAudioState.ROUTE_SPEAKER);
+            AudioDevice device = new AudioDevice("Speaker", CallAudioState.ROUTE_SPEAKER);
             devices.add(device);
             if (currentRoute == CallAudioState.ROUTE_SPEAKER) {
                 activeDevice.postValue(device);
@@ -174,7 +174,7 @@ public class AudioDeviceSelector {
 
     public void selectDevice(AudioDevice device) {
         if (listener == null) {
-            Log.e(TAG, "No hay listener configurado para cambiar el dispositivo de audio");
+            Log.e(TAG, "No listener set for audio device selection");
             return;
         }
 

@@ -16,7 +16,6 @@ import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,39 +23,22 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.tokbox.sample.basicvideochat_connectionservice.network.APIService;
-import com.tokbox.sample.basicvideochat_connectionservice.network.GetSessionResponse;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import okhttp3.logging.HttpLoggingInterceptor.Level;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements VonageSessionListener, CallEventListener {
-
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private static final int PERMISSIONS_REQUEST_CODE = 1234;
-
-    private Retrofit retrofit;
-    private APIService apiService;
 
     private VonageManager vonageManager;
     private NotificationChannelManager notificationChannelManager;
+    private PhoneAccountManager phoneAccountManager;
 
     private CallActionReceiver callActionReceiver = new CallActionReceiver();
 
@@ -69,12 +51,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     private LinearLayout outgoingCallLayout;
     private LinearLayout endCallLayout;
     private LinearLayout devicesSelectorLayout;
-
-    // These values should be passed by the user
-    // Based on the id, your server should retrieve the corresponding FCM Token
-    // and with it, you can use FCM to send a notification push to that client
-    private String callerId = "123456";
-    private String callerName = "Mom";
 
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
@@ -121,6 +97,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         }
     };
 
+    private final BroadcastReceiver incomingNotificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL.equals(intent.getAction())) {
+                launchIncomingCall();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -129,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
         // Register Firebase client to create unique ID
         FirebaseApp.initializeApp(this);
-        PhoneAccountManager.registerPhoneAccount(this);
+
+        phoneAccountManager = new PhoneAccountManager(this);
+        phoneAccountManager.registerPhoneAccount();
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
@@ -151,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannelManager.setup();
         }
-
-        MyFirebaseMessagingService.setCallEventListener(this);
 
         publisherViewContainer = findViewById(R.id.publisher_container);
         subscriberViewContainer = findViewById(R.id.subscriber_container);
@@ -205,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 callEndedReceiver,
                 new IntentFilter(CallActionReceiver.ACTION_CALL_ENDED)
+        );
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                incomingNotificationReceiver,
+                new IntentFilter(CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL)
         );
     }
 
@@ -261,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingCallReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rejectedIncomingCallReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(callEndedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingNotificationReceiver);
     }
 
     private void requestPermissions() {
@@ -326,26 +317,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         }
     }
 
-    /* Make a request for session data */
-    private void getSession() {
-        Log.i(TAG, "getSession");
-
-        Call<GetSessionResponse> call = apiService.getSession();
-
-        call.enqueue(new Callback<GetSessionResponse>() {
-            @Override
-            public void onResponse(Call<GetSessionResponse> call, Response<GetSessionResponse> response) {
-                GetSessionResponse body = response.body();
-                vonageManager.initializeSession(body.apiKey, body.sessionId, body.token);
-            }
-
-            @Override
-            public void onFailure(Call<GetSessionResponse> call, Throwable t) {
-                throw new RuntimeException(t.getMessage());
-            }
-        });
-    }
-
     public void onAcceptIncomingCall(View view) {
         Intent answerIntent = new Intent(CallActionReceiver.ACTION_ANSWER_CALL);
         answerIntent.setPackage(getPackageName());
@@ -377,52 +348,21 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         dialog.show(getSupportFragmentManager(), "audio_device_dialog");
     }
 
-    // This is a showcase of how to handle a outgoing call
-    // This usually involves making an HTTP POST request to the FCM v1 API
-    // which based on the provided IDs, it will get the corresponding FCM token
-    // of the remote device token(s) to message.
-    // Here we are populating the 
-    public void onCallButtonClick(View view) {
-        // Use hardcoded session config
-        if(!OpenTokConfig.isValid()) {
-            finishWithMessage("Invalid OpenTokConfig. " + OpenTokConfig.getDescription());
-            return;
-        }
-
-        if( PhoneAccountManager.getTelecomManager() != null && PhoneAccountManager.getAccountHandle() != null) {
-            Bundle extras = new Bundle();
-            extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, PhoneAccountManager.getAccountHandle());
-
-            // Build the URI with custom data in query parameters
-            Uri destinationUri = Uri.fromParts("vonagecall", callerId, null).buildUpon()
-                    .appendQueryParameter("callerId", callerId)
-                    .appendQueryParameter("callerName", callerName)
-                    .build();
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_OWN_CALLS) == PackageManager.PERMISSION_GRANTED) {
-                PhoneAccountManager.getTelecomManager().placeCall(destinationUri, extras);
-
-                // Update UI
-                callStatusTextView.setText("Calling");
-                callerNameTextView.setText(callerName);
-                outgoingCallLayout.setVisibility(View.INVISIBLE);
-                incomingCallLayout.setVisibility(View.INVISIBLE);
-                publisherViewContainer.setVisibility(View.INVISIBLE);
-            }
-        }
+    public void onIncomingCallButtonClick(View view) {
+        launchIncomingCall();
     }
 
-    public void onIncomingCallButtonClick(View view) {
+    private void launchIncomingCall() {
         Bundle extras = new Bundle();
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, PhoneAccountManager.getAccountHandle());
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountManager.handle);
         extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
         extras.putString("CALLER_NAME", "Simulated Caller");
 
-        PhoneAccountManager.notifyIncomingVideoCall(extras);
+        phoneAccountManager.notifyIncomingVideoCall(extras);
     }
 
     public void onOutgoingCallButtonClick(View view) {
-        PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
+        PhoneAccountHandle handle = phoneAccountManager.handle;
 
         Bundle extras = new Bundle();
         extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
@@ -430,51 +370,9 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         extras.putString("CALLER_NAME", "Simulated Caller");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            VonageManager.getInstance().setOnConnectionReadyListener(connection -> {
-                connection.onPlaceCall(); // Answer after connection is ready
-                onIncomingCall("Simulated Caller", "In call");
-            });
-            PhoneAccountManager.startOutgoingVideoCall(this, extras);
+            phoneAccountManager.startOutgoingVideoCall(this, extras);
+            onIncomingCall("Simulated Caller", "In call");
         }
-    }
-
-    public void onSimulateIncomingCallButtonClick(View view) {
-        PhoneAccountHandle handle = PhoneAccountManager.getAccountHandle();
-
-        Bundle extras = new Bundle();
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, handle);
-        extras.putString(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS, "IdSimulatedCall");
-        extras.putBoolean(TelecomManager.METADATA_IN_CALL_SERVICE_UI, true);
-
-        extras.putString("CALLER_NAME", "Simulated Caller");
-
-        TelecomManager telecomManager = PhoneAccountManager.getTelecomManager();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if(telecomManager.isIncomingCallPermitted(handle)) {
-                VonageManager.getInstance().setOnConnectionReadyListener(connection -> {
-                    connection.onAnswer(); // Answer after connection is ready
-                    onIncomingCall("Simulated Caller", "In call");
-                });
-                telecomManager.addNewIncomingCall(handle, extras);
-            }
-        }
-    }
-
-    private void initRetrofit() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(Level.BODY);
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .build();
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(ServerConfig.CHAT_SERVER_URL)
-                .addConverterFactory(MoshiConverterFactory.create())
-                .client(client)
-                .build();
-
-        apiService = retrofit.create(APIService.class);
     }
 
     private void finishWithMessage(String message) {
@@ -525,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             endCallLayout.setVisibility(View.VISIBLE);
             publisherViewContainer.setVisibility(View.VISIBLE);
             callStatusTextView.setText("In Call");
-            callerNameTextView.setText(callerName);
+            callerNameTextView.setText("Mom");
         });
     }
 

@@ -5,16 +5,12 @@ import static android.telecom.Connection.CAPABILITY_MUTE;
 import static android.telecom.Connection.CAPABILITY_SUPPORT_HOLD;
 import static android.telecom.Connection.PROPERTY_SELF_MANAGED;
 import static android.telecom.TelecomManager.PRESENTATION_ALLOWED;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
 
 import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.telecom.Connection;
@@ -65,8 +61,6 @@ public class VonageConnectionService extends ConnectionService {
         String callerName = extras.getString("CALLER_NAME");
 
         VonageConnection connection = new VonageConnection(getApplicationContext());
-        VonageManager.getInstance().setCurrentConnection(connection);
-        connection.setInitializing();
         connection.setInitialized();
 
         connection.setCallerDisplayName(callerName, PRESENTATION_ALLOWED);
@@ -88,6 +82,8 @@ public class VonageConnectionService extends ConnectionService {
         Notification notification = connection.getOngoingCallNotification();
         startForeground(VonageConnection.ONGOING_CALL_NOTIFICATION_ID, notification);
 
+        connection.onPlaceCall();
+        
         return connection;
     }
 
@@ -100,7 +96,6 @@ public class VonageConnectionService extends ConnectionService {
         String callerName = extras.getString("CALLER_NAME");
 
         VonageConnection connection = new VonageConnection(getApplicationContext());
-        VonageManager.getInstance().setCurrentConnection(connection);
         connection.setRinging();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

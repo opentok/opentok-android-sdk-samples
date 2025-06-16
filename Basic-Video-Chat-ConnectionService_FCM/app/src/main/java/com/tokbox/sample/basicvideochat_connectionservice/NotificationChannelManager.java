@@ -17,7 +17,7 @@ public class NotificationChannelManager {
     public static final String INCOMING_CALL_CHANNEL_ID = "vonage_video_call_channel";
     public static final String ONGOING_CALL_CHANNEL_ID = "vonage_ongoing_video_call_channel";
 
-    private Context context;
+    private final Context context;
 
     public NotificationChannelManager(Context context) {
         this.context = context;

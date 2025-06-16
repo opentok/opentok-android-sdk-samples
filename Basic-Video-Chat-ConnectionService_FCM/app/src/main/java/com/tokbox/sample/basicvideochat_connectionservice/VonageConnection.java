@@ -33,13 +33,10 @@ import java.util.concurrent.Executor;
 
 public class VonageConnection extends Connection implements AudioDeviceSelectionListener{
 
+    private static final String TAG = VonageConnection.class.getSimpleName();
     private final Context context;
-    private String mRoomName;
-    private Intent mLaunchIntent;
-    private static final int REQUEST_CODE_ROOM_ACTIVITY = 2;
     public static final int ONGOING_CALL_NOTIFICATION_ID = 1;
     private AudioDeviceSelector audioDeviceSelector = AudioDeviceSelector.getInstance();
-
 
     public VonageConnection(@NonNull Context context) {
         this.context = context;
@@ -48,7 +45,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onShowIncomingCallUi() {
         super.onShowIncomingCallUi();
-        Log.d("VonageConnection", "onShowIncomingCallUi");
+        Log.d(TAG, "onShowIncomingCallUi");
 
         postIncomingCallNotification(true);
 
@@ -59,10 +56,13 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onSilence() {
         super.onSilence();
+        Log.d(TAG, "onSilence");
+
         postIncomingCallNotification(false);
     }
 
     public void onPlaceCall() {
+        Log.d(TAG, "onPlaceCall");
         setActive();
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
     }
@@ -70,6 +70,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onAnswer() {
         super.onAnswer();
+        Log.d(TAG, "onAnswer");
+
         setActive();
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
         removeCallNotification();
@@ -82,6 +84,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onDisconnect() {
         super.onDisconnect();
+        Log.d(TAG, "onDisconnect");
+
         VonageManager.getInstance().endSession();
         AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(null);
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
@@ -96,12 +100,16 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onAbort() {
         super.onAbort();
+        Log.d(TAG, "onAbort");
+
         onDisconnect();
     }
 
     @Override
     public void onReject() {
         super.onReject();
+        Log.d(TAG, "onReject");
+
         removeCallNotification();
 
         Intent rejectedIntent = new Intent(CallActionReceiver.ACTION_REJECTED_CALL);
@@ -115,6 +123,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onHold() {
         super.onHold();
+        Log.d(TAG, "onHold");
+
         setOnHold();
 
         VonageManager.getInstance().setMuted(true);
@@ -123,6 +133,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onUnhold() {
         super.onUnhold();
+        Log.d(TAG, "onUnhold");
+
         setActive();
         VonageManager.getInstance().setMuted(false);
     }
@@ -130,6 +142,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onStateChanged(int state) {
         super.onStateChanged(state);
+        Log.d(TAG, "onStateChanged " + Connection.stateToString(state));
 
         if (state == Connection.STATE_ACTIVE) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -148,6 +161,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onAvailableCallEndpointsChanged(@NonNull List<CallEndpoint> endpoints) {
         super.onAvailableCallEndpointsChanged(endpoints);
+        Log.d(TAG, "onAvailableCallEndpointsChanged");
 
         if (audioDeviceSelector != null) {
             audioDeviceSelector.onAvailableCallEndpointsChanged(endpoints);
@@ -208,6 +222,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
     @Override
     public void onMuteStateChanged(boolean isMuted) {
         super.onMuteStateChanged(isMuted);
+        Log.d(TAG, "onMuteStateChanged");
 
         VonageManager.getInstance().setMuted(isMuted);
     }

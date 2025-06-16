@@ -42,9 +42,6 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
-    implementation "com.squareup.retrofit2:retrofit:${extRetrofitVersion}"
-    implementation "com.squareup.okhttp3:okhttp:${extOkHttpVersion}"
-    implementation "com.squareup.retrofit2:converter-moshi:${extRetrofit2ConverterMoshi}"
     implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
     implementation 'com.google.firebase:firebase-messaging:24.1.1'
     implementation 'org.json:json:20250107'

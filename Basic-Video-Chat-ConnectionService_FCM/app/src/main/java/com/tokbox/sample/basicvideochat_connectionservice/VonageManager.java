@@ -35,7 +35,6 @@ public class VonageManager {
     private boolean audioFocusActive = false;
 
     private static VonageManager instance;
-    private OnConnectionReadyListener connectionReadyListener;
 
     private PublisherKit.PublisherListener publisherListener = new PublisherKit.PublisherListener() {
         @Override
@@ -127,10 +126,6 @@ public class VonageManager {
         }
     };
 
-    public interface OnConnectionReadyListener {
-        void onConnectionReady(VonageConnection connection);
-    }
-
     private VonageManager(Context context, VonageSessionListener callback) {
         this.context = context;
         this.callback = callback;
@@ -148,22 +143,6 @@ public class VonageManager {
             throw new IllegalStateException("VonageManager is not initialized. Call getInstance(context, callback) first.");
         }
         return instance;
-    }
-
-    public void setCurrentConnection(VonageConnection connection) {
-        this.currentConnection = connection;
-        if (connectionReadyListener != null) {
-            connectionReadyListener.onConnectionReady(connection);
-            connectionReadyListener = null;
-        }
-    }
-
-    public void setOnConnectionReadyListener(OnConnectionReadyListener listener) {
-        this.connectionReadyListener = listener;
-    }
-
-    public VonageConnection getCurrentConnection() {
-        return currentConnection;
     }
 
     public void initializeSession(String apiKey, String sessionId, String token) {
