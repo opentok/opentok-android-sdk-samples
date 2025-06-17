@@ -27,8 +27,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
 import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
 import com.tokbox.sample.basicvideochat_connectionservice.R;
@@ -120,22 +118,6 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Register Firebase client to create unique ID
-        FirebaseApp.initializeApp(this);
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
-
-                    String token = task.getResult();
-                    Log.d("FCM", "Firebase Token: " + token);
-
-                    // Send token to your app server
-                });
 
         vonageManager = VonageManager.getInstance(getApplicationContext(), this);
         vonageManager.setAudioFocusManager(getApplicationContext());

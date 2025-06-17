@@ -41,10 +41,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
-
-    implementation "com.squareup.okhttp3:logging-interceptor:${extOkHttpLoggingInterceptor}"
-    implementation 'com.google.firebase:firebase-messaging:24.1.1'
-    implementation 'org.json:json:20250107'
 }
 
 apply plugin: 'com.google.gms.google-services'
