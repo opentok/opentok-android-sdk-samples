@@ -302,14 +302,16 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     private void launchIncomingCall(String callerName, String callerId) {
-        phoneAccountManager.notifyIncomingVideoCall(callerName, callerId);
+        if (phoneAccountManager.canPlaceIncomingCall()) {
+            phoneAccountManager.notifyIncomingVideoCall(callerName, callerId);
+        }
     }
 
     public void onOutgoingCallButtonClick(View view) {
         String callerName = "Simulated Caller";
         String callerId = "+4401539702257";
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && phoneAccountManager.canPlaceOutgoingCall()) {
             phoneAccountManager.startOutgoingVideoCall(callerName, callerId);
             showOngoingCall(callerName);
         }

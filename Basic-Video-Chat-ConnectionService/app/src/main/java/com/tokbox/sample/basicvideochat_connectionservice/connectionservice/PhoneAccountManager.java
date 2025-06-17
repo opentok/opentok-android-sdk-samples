@@ -103,4 +103,30 @@ public class PhoneAccountManager {
             Log.e("PhoneAccountManager", "TelecomManager or PhoneAccountHandle is null. Cannot notify incoming call.");
         }
     }
+
+    public boolean canPlaceIncomingCall() {
+        if (telecomManager == null || handle == null) {
+            Log.e("PhoneAccountManager", "TelecomManager or PhoneAccountHandle is not initialized.");
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return telecomManager.isIncomingCallPermitted(handle);
+        } else {
+            return true;
+        }
+    }
+
+    public boolean canPlaceOutgoingCall() {
+        if (telecomManager == null || handle == null) {
+            Log.e("PhoneAccountManager", "TelecomManager or PhoneAccountHandle is not initialized.");
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return telecomManager.isOutgoingCallPermitted(handle);
+        } else {
+            return true;
+        }
+    }
 }
