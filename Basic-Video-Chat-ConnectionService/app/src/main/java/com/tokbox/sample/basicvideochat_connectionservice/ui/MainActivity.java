@@ -13,8 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.telecom.PhoneAccountHandle;
-import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -58,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     private LinearLayout endCallLayout;
     private LinearLayout devicesSelectorLayout;
 
+    private LocalBroadcastManager localBroadcastManager;
+
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
                 for (Map.Entry<String, Boolean> entry : result.entrySet()) {
@@ -71,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         @Override
         public void onReceive(Context context, Intent intent) {
             if (CallActionReceiver.ACTION_ANSWERED_CALL.equals(intent.getAction())) {
-                updateUIForAnsweredCall();
+                String callerName = intent.getStringExtra(PhoneAccountManager.CALLER_NAME);
+                showOngoingCall(callerName);
             }
         }
     };
@@ -117,15 +118,11 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Register Firebase client to create unique ID
         FirebaseApp.initializeApp(this);
-
-        phoneAccountManager = new PhoneAccountManager(this);
-        phoneAccountManager.registerPhoneAccount();
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
@@ -142,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
         vonageManager = VonageManager.getInstance(getApplicationContext(), this);
         vonageManager.setAudioFocusManager(getApplicationContext());
+        phoneAccountManager = new PhoneAccountManager(this);
+        phoneAccountManager.registerPhoneAccount();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         notificationChannelManager = new NotificationChannelManager(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -188,60 +188,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void registerCallActions() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                callAnsweredReceiver,
-                new IntentFilter(CallActionReceiver.ACTION_ANSWERED_CALL)
-        );
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                incomingCallReceiver,
-                new IntentFilter(CallActionReceiver.ACTION_INCOMING_CALL)
-        );
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                rejectedIncomingCallReceiver,
-                new IntentFilter(CallActionReceiver.ACTION_REJECTED_CALL)
-        );
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                callEndedReceiver,
-                new IntentFilter(CallActionReceiver.ACTION_CALL_ENDED)
-        );
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                incomingNotificationReceiver,
-                new IntentFilter(CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL)
-        );
+        registerReceiver(callAnsweredReceiver, CallActionReceiver.ACTION_ANSWERED_CALL);
+        registerReceiver(incomingCallReceiver, CallActionReceiver.ACTION_INCOMING_CALL);
+        registerReceiver(rejectedIncomingCallReceiver, CallActionReceiver.ACTION_REJECTED_CALL);
+        registerReceiver(callEndedReceiver, CallActionReceiver.ACTION_CALL_ENDED);
+        registerReceiver(incomingNotificationReceiver, CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL);
     }
 
-    public void onIncomingCall(String callerName, String callStatus) {
-        runOnUiThread(() -> {
-            if(Objects.equals(callStatus, "Call Cancelled")) {
-                callerNameTextView.setText(callerName);
-                callStatusTextView.setText(callStatus);
-                outgoingCallLayout.setVisibility(View.VISIBLE);
-                incomingCallLayout.setVisibility(View.INVISIBLE);
-                devicesSelectorLayout.setVisibility(View.INVISIBLE);
-                endCallLayout.setVisibility(View.INVISIBLE);
-                publisherViewContainer.setVisibility(View.INVISIBLE);
-            } else if(Objects.equals(callStatus, "Incoming Call")) {
-                callerNameTextView.setText(callerName);
-                callStatusTextView.setText(callStatus);
-                outgoingCallLayout.setVisibility(View.GONE);
-                incomingCallLayout.setVisibility(View.VISIBLE);
-                devicesSelectorLayout.setVisibility(View.VISIBLE);
-                endCallLayout.setVisibility(View.VISIBLE);
-                publisherViewContainer.setVisibility(View.INVISIBLE);
-            } else {
-                callerNameTextView.setText(callerName);
-                callStatusTextView.setText(callStatus);
-                outgoingCallLayout.setVisibility(View.GONE);
-                incomingCallLayout.setVisibility(View.INVISIBLE);
-                devicesSelectorLayout.setVisibility(View.VISIBLE);
-                endCallLayout.setVisibility(View.VISIBLE);
-                publisherViewContainer.setVisibility(View.VISIBLE);
-            }
-        });
+    private void registerReceiver(BroadcastReceiver receiver, String action) {
+        localBroadcastManager.registerReceiver(receiver, new IntentFilter(action));
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -261,11 +216,13 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     public void onDestroy() {
         super.onDestroy();
         vonageManager.endSession();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(callAnsweredReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingCallReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(rejectedIncomingCallReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(callEndedReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(incomingNotificationReceiver);
+        localBroadcastManager.unregisterReceiver(callAnsweredReceiver);
+        localBroadcastManager.unregisterReceiver(incomingCallReceiver);
+        localBroadcastManager.unregisterReceiver(rejectedIncomingCallReceiver);
+        localBroadcastManager.unregisterReceiver(callEndedReceiver);
+        localBroadcastManager.unregisterReceiver(incomingNotificationReceiver);
+
+        localBroadcastManager = null;
     }
 
     private void requestPermissions() {
@@ -332,29 +289,22 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onAcceptIncomingCall(View view) {
-        Intent answerIntent = new Intent(CallActionReceiver.ACTION_ANSWER_CALL);
-        answerIntent.setPackage(getPackageName());
-        sendBroadcast(answerIntent);
+        invokeIntent(CallActionReceiver.ACTION_ANSWER_CALL);
     }
 
     public void onRejectIncomingCall(View view) {
-        Intent rejectIntent = new Intent(CallActionReceiver.ACTION_REJECT_CALL);
-        rejectIntent.setPackage(getPackageName());
-        sendBroadcast(rejectIntent);
+        invokeIntent(CallActionReceiver.ACTION_REJECT_CALL);
     }
 
     public void onHangUpButtonClick(View view) {
-        Intent endIntent = new Intent(CallActionReceiver.ACTION_END_CALL);
+        invokeIntent(CallActionReceiver.ACTION_END_CALL);
+        resetCallLayout();
+    }
+
+    public void invokeIntent(String action) {
+        Intent endIntent = new Intent(action);
         endIntent.setPackage(getPackageName());
         sendBroadcast(endIntent);
-
-        incomingCallLayout.setVisibility(View.INVISIBLE);
-        outgoingCallLayout.setVisibility(View.VISIBLE);
-        devicesSelectorLayout.setVisibility(View.INVISIBLE);
-        endCallLayout.setVisibility(View.INVISIBLE);
-        publisherViewContainer.setVisibility(View.INVISIBLE);
-        callStatusTextView.setText("");
-        callerNameTextView.setText("");
     }
 
     public void onShowAudioDevicesButtonClick(View view) {
@@ -379,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             phoneAccountManager.startOutgoingVideoCall(callerName, callerId);
-            onIncomingCall(callerName, "In call");
+            showOngoingCall(callerName);
         }
     }
 
@@ -424,15 +374,15 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         });
     }
 
-    private void updateUIForAnsweredCall() {
+    private void showOngoingCall( String remoteName) {
         runOnUiThread(() -> {
             incomingCallLayout.setVisibility(View.INVISIBLE);
             outgoingCallLayout.setVisibility(View.INVISIBLE);
             devicesSelectorLayout.setVisibility(View.VISIBLE);
             endCallLayout.setVisibility(View.VISIBLE);
             publisherViewContainer.setVisibility(View.VISIBLE);
-            callStatusTextView.setText("In Call");
-            callerNameTextView.setText("Mom");
+            callStatusTextView.setText("In call");
+            callerNameTextView.setText(remoteName);
         });
     }
 
