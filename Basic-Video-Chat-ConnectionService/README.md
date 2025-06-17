@@ -33,7 +33,7 @@ The app customizes Android’s ConnectionService and Connection classes to:
 Register the service in `AndroidManifest.xml` file.
 
 ```xml
-        <service
+<service
     android:name=".connectionservice.VonageConnectionService"
     android:exported="true"
     android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
