@@ -84,3 +84,28 @@ To represent calls in your app, extend the [Connection](https://developer.androi
 - If your app supports call hold, set `Connection#CAPABILITY_SUPPORT_HOLD` and `Connection#CAPABILITY_HOLD` using `Connection#setConnectionCapabilities(int)` to enable concurrent call scenarios.
 - Call `Connection#setAudioModeIsVoip(true)` to inform the platform that the call is VoIP.
 - Do not change the call state (e.g., with `Connection#setActive()` or `Connection#setOnHold()`) until the `Connection` has been added to Telecom by returning it from `onCreateOutgoingConnection` or `onCreateIncomingConnection`.
+
+## Modifying the App for System Managed Calls
+
+To adapt the app so that calls are managed by the system (system managed), follow these steps:
+
+1. **Change the PhoneAccount capability:**
+    - Replace `PhoneAccount.CAPABILITY_SELF_MANAGED` with `PhoneAccount.CAPABILITY_CALL_PROVIDER` when registering your `PhoneAccount`.
+
+2. **Use standard URI schemes:**
+    - When placing calls with `TelecomManager.placeCall()`, use `tel:` or `sip:` schemes in the destination URI.
+
+3. **Update ConnectionService address parsing:**
+    - Ensure your `ConnectionService` implementation correctly parses and handles `tel:` or `sip:` addresses when creating connections.
+
+4. **Activate the PhoneAccount in system settings:**
+    - The user must manually enable the call account in the system Settings app. You can launch the relevant screen with the following intent:
+
+    ```java
+    startActivity(new Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS));
+    ```
+
+5. **Call history integration:**
+    - With system-managed mode, calls made and received through your app will appear in the device’s default phone app call history, just like native calls. This allows users to view, return, or manage these calls directly from the standard phone app, providing a more integrated experience.
+
+With these changes, your app’s calls will be fully integrated and managed by the Android system, providing a native calling experience.
