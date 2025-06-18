@@ -44,6 +44,34 @@ Register the service in `AndroidManifest.xml` file.
 </service>
 ```
 
+4. **Audio Focus Management:**  
+   When using ConnectionService, you need to configure the SDK to delegate audio focus control to your app:
+   
+```java
+   private AudioDeviceManager audioDeviceManager;
+   private BaseAudioDevice.AudioFocusManager audioFocusManager;
+
+   public void setupAudioFocusManager(Context context) {
+       audioDeviceManager = new AudioDeviceManager(context);
+       audioFocusManager = audioDeviceManager.getAudioFocusManager();
+
+       audioFocusManager.setRequestAudioFocus(false);
+   }
+
+    public void notifyAudioFocusIsActive() {
+        audioFocusManager.audioFocusActivated();
+    }
+
+    public void notifyAudioFocusIsInactive() {
+        audioFocusManager.audioFocusDeactivated();
+    }
+```
+
+When delegating audio focus to the app, the SDK will stop its automatic audio routing. Instead, this routing logic will be handled by ConnectionService, which notifies the app about available audio devices through the Connection's CallEndpoint and CallAudioState APIs. Your app must implement support for audio device enumeration and selection logic.
+
+This delegation ensures proper audio routing and coordination with the Android Telecom system.
+
+
 ## Requirements
 
 - Android API Level 26 or higher is recommended.
