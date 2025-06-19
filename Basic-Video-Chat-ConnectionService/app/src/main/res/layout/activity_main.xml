@@ -78,13 +78,6 @@
                 android:onClick="onOutgoingCallButtonClick"
                 android:text="Outgoing Call" />
 
-            <Button
-                android:id="@+id/button_is_on_hold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onUnHoldButtonClick"
-                android:text="Unhold call" />
         </LinearLayout>
 
         <LinearLayout
@@ -148,6 +141,15 @@
                 android:backgroundTint="#E91E63"
                 android:onClick="onHangUpButtonClick"
                 android:text="HangUp" />
+
+            <Button
+                android:id="@+id/button_is_on_hold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onUnHoldButtonClick"
+                android:text="Unhold call" />
         </LinearLayout>
+
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
