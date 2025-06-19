@@ -33,6 +33,8 @@ import com.tokbox.sample.basicvideochat_connectionservice.R;
 import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
 import com.tokbox.sample.basicvideochat_connectionservice.VonageSessionListener;
 import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.PhoneAccountManager;
+import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnection;
+import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionHolder;
 import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceDialogFragment;
 
 import java.util.Map;
@@ -314,6 +316,13 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && phoneAccountManager.canPlaceOutgoingCall()) {
             phoneAccountManager.startOutgoingVideoCall(callerName, callerId);
             showOngoingCall(callerName);
+        }
+    }
+
+    public void onUnHoldButtonClick(View view) {
+        VonageConnection connection = VonageConnectionHolder.getInstance().getConnection();
+        if (connection != null) {
+            connection.onUnhold();
         }
     }
 

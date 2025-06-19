@@ -78,6 +78,13 @@
                 android:onClick="onOutgoingCallButtonClick"
                 android:text="Outgoing Call" />
 
+            <Button
+                android:id="@+id/button_is_on_hold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onUnHoldButtonClick"
+                android:text="Unhold call" />
         </LinearLayout>
 
         <LinearLayout
