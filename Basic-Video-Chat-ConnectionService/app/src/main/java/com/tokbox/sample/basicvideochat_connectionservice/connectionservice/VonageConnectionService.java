@@ -23,6 +23,7 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
 import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
 import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
 
@@ -145,13 +146,15 @@ public class VonageConnectionService extends ConnectionService {
     public void onConnectionServiceFocusGained() {
         super.onConnectionServiceFocusGained();
 
-        Log.e(TAG, "onConnectionServiceFocusGained");
+        VonageManager.getInstance().notifyAudioFocusIsActive();
+        Log.d(TAG, "onConnectionServiceFocusGained");
     }
 
     @Override
     public void onConnectionServiceFocusLost() {
         super.onConnectionServiceFocusLost();
 
-        Log.e(TAG, "onConnectionServiceFocusLost");
+        VonageManager.getInstance().notifyAudioFocusIsInactive();
+        Log.d(TAG, "onConnectionServiceFocusLost");
     }
 }

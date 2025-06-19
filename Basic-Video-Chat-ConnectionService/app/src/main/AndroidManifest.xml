@@ -42,7 +42,7 @@
 
         <meta-data
             android:name="android.telecom.connectionService"
-            android:value="com.tokbox.sample.basicvideochat_connectionservice.VonageConnectionService">
+            android:value="com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionService">
         </meta-data>
 
         <service

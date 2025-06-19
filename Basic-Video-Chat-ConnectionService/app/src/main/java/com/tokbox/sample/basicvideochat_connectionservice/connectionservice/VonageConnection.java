@@ -133,7 +133,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         Log.d(TAG, "onHold");
 
         setOnHold();
-
         VonageManager.getInstance().setMuted(true);
     }
 
@@ -144,25 +143,13 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setActive();
         VonageManager.getInstance().setMuted(false);
+        VonageManager.getInstance().notifyAudioFocusIsActive();
     }
 
     @Override
     public void onStateChanged(int state) {
         super.onStateChanged(state);
         Log.d(TAG, "onStateChanged " + Connection.stateToString(state));
-
-        if (state == Connection.STATE_ACTIVE) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                VonageManager.getInstance().requestAudioFocus(context);
-            }
-            VonageManager.getInstance().notifyAudioFocusIsActive();
-        } else if (state == Connection.STATE_HOLDING) {
-            VonageManager.getInstance().notifyAudioFocusIsInactive();
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                VonageManager.getInstance().releaseAudioFocus();
-            }
-        }
-        Log.d("VonageConnection", "Connection state changed to: " + state);
     }
 
     @Override
