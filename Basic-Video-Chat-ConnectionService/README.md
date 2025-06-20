@@ -113,6 +113,10 @@ To represent calls in your app, extend the [Connection](https://developer.androi
 - Call `Connection#setAudioModeIsVoip(true)` to inform the platform that the call is VoIP.
 - Do not change the call state (e.g., with `Connection#setActive()` or `Connection#setOnHold()`) until the `Connection` has been added to Telecom by returning it from `onCreateOutgoingConnection` or `onCreateIncomingConnection`.
 
+## Hold/Un hold calls
+
+When receiving and answering an external call while the app is already in a call, ConnectionService will notify your app that the call changed to HOLDING state. When the user finishes the external call it has to manually unhold the call by pressing the unhold call button. This will modify the call state to active and resume the audio playback.
+
 ## Modifying the App for System Managed Calls
 
 To adapt the app so that calls are managed by the system (system managed), follow these steps:
