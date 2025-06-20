@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                 launchIncomingCall(callerName, callerId);
             }
         }
+
+        // Launches the Phone Account settings screen to allow the user to manage phone accounts.
+        // startActivity(new Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS));
     }
 
     @Override
