@@ -42,5 +42,5 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.16.0"
 }
