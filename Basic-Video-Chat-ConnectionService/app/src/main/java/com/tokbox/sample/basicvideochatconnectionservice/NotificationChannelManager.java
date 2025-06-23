@@ -1,6 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
-
-import static androidx.core.content.ContextCompat.getSystemService;
+package com.tokbox.sample.basicvideochatconnectionservice;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

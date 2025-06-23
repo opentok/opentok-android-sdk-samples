@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
+package com.tokbox.sample.basicvideochatconnectionservice.connectionservice;
 
 public class VonageConnectionHolder {
 

@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
+package com.tokbox.sample.basicvideochatconnectionservice.connectionservice;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -17,7 +17,7 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import com.tokbox.sample.basicvideochat_connectionservice.R;
+import com.tokbox.sample.basicvideochatconnectionservice.R;
 
 public class PhoneAccountManager {
 

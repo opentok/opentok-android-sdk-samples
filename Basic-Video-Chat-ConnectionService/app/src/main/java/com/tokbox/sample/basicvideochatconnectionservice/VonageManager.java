@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice;
+package com.tokbox.sample.basicvideochatconnectionservice;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -14,8 +14,8 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.SubscriberKit;
-import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnection;
-import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionHolder;
+import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnection;
+import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionHolder;
 
 public class VonageManager {
     private static final String TAG = VonageManager.class.getSimpleName();

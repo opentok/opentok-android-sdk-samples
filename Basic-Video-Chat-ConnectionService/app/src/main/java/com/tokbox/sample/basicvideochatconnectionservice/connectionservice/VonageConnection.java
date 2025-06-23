@@ -1,8 +1,8 @@
-package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
+package com.tokbox.sample.basicvideochatconnectionservice.connectionservice;
 
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.API_KEY;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.SESSION_ID;
-import static com.tokbox.sample.basicvideochat_connectionservice.OpenTokConfig.TOKEN;
+import static com.tokbox.sample.basicvideochatconnectionservice.OpenTokConfig.API_KEY;
+import static com.tokbox.sample.basicvideochatconnectionservice.OpenTokConfig.SESSION_ID;
+import static com.tokbox.sample.basicvideochatconnectionservice.OpenTokConfig.TOKEN;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -23,13 +23,13 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
-import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
-import com.tokbox.sample.basicvideochat_connectionservice.R;
-import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelectionListener;
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
-import com.tokbox.sample.basicvideochat_connectionservice.ui.MainActivity;
+import com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochatconnectionservice.NotificationChannelManager;
+import com.tokbox.sample.basicvideochatconnectionservice.R;
+import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
+import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelectionListener;
+import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelector;
+import com.tokbox.sample.basicvideochatconnectionservice.ui.MainActivity;
 
 import java.util.List;
 import java.util.concurrent.Executor;

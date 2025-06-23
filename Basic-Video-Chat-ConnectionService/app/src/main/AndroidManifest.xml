@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tokbox.sample.basicvideochat_connectionservice" >
+    package="com.tokbox.sample.basicvideochatconnectionservice" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,7 +29,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.tokbox.sample.basicvideochatconnectionservice.ui.MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:exported="true">
@@ -42,11 +42,11 @@
 
         <meta-data
             android:name="android.telecom.connectionService"
-            android:value="com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionService">
+            android:value="com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionService">
         </meta-data>
 
         <service
-            android:name=".connectionservice.VonageConnectionService"
+            android:name="com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionService"
             android:exported="true"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:foregroundServiceType="microphone|camera">
@@ -55,12 +55,12 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".CallActionReceiver"
+        <receiver android:name="com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_ANSWER_CALL" />
-                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_REJECT_CALL" />
-                <action android:name="com.tokbox.sample.basicvideochat_connectionservice.ACTION_END_CALL" />
+                <action android:name="com.tokbox.sample.basicvideochatconnectionservice.ACTION_ANSWER_CALL" />
+                <action android:name="com.tokbox.sample.basicvideochatconnectionservice.ACTION_REJECT_CALL" />
+                <action android:name="com.tokbox.sample.basicvideochatconnectionservice.ACTION_END_CALL" />
             </intent-filter>
         </receiver>
     </application>

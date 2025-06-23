@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice.ui;
+package com.tokbox.sample.basicvideochatconnectionservice.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,18 +28,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
-import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
-import com.tokbox.sample.basicvideochat_connectionservice.R;
-import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
-import com.tokbox.sample.basicvideochat_connectionservice.VonageSessionListener;
-import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.PhoneAccountManager;
-import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnection;
-import com.tokbox.sample.basicvideochat_connectionservice.connectionservice.VonageConnectionHolder;
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceDialogFragment;
+import com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochatconnectionservice.NotificationChannelManager;
+import com.tokbox.sample.basicvideochatconnectionservice.R;
+import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
+import com.tokbox.sample.basicvideochatconnectionservice.VonageSessionListener;
+import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.PhoneAccountManager;
+import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnection;
+import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionHolder;
+import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceDialogFragment;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements VonageSessionListener {
     private static final String TAG = MainActivity.class.getSimpleName();

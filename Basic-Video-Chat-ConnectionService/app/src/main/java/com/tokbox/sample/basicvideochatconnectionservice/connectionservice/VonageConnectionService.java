@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochat_connectionservice.connectionservice;
+package com.tokbox.sample.basicvideochatconnectionservice.connectionservice;
 
 import static android.telecom.Connection.CAPABILITY_HOLD;
 import static android.telecom.Connection.CAPABILITY_MUTE;
@@ -18,14 +18,13 @@ import android.telecom.Connection;
 import android.telecom.ConnectionRequest;
 import android.telecom.ConnectionService;
 import android.telecom.PhoneAccountHandle;
-import android.telecom.TelecomManager;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
-import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
+import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelector;
+import com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver;
 
 import java.util.Random;
 

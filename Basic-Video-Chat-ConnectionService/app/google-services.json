@@ -28,7 +28,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:292924425678:android:63250fc79cd2e76fad579f",
         "android_client_info": {
-          "package_name": "com.tokbox.sample.basicvideochat_connectionservice"
+          "package_name": "com.tokbox.sample.basicvideochatconnectionservice"
         }
       },
       "oauth_client": [],

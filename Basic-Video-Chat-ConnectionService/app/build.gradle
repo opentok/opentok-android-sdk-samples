@@ -7,11 +7,11 @@ apply {
 }
 
 android {
-    namespace "com.tokbox.sample.basicvideochat_connectionservice"
+    namespace "com.tokbox.sample.basicvideochatconnectionservice"
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.basicvideochat_connectionservice"
+        applicationId "com.tokbox.sample.basicvideochatconnectionservice"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
