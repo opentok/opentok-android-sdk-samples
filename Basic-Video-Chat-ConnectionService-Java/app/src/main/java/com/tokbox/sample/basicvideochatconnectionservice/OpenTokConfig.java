@@ -12,13 +12,13 @@ public class OpenTokConfig {
     */
 
     // Replace with a API key
-    public static final String API_KEY = "48048351";
+    public static final String API_KEY = "";
     
     // Replace with a generated Session ID
-    public static final String SESSION_ID = "2_MX40ODA0ODM1MX5-MTc0OTE5NTY2MTc5NX5naDd3LzJDVDBOMTlTYmZHWDhTWDVqa2l-fn4";
+    public static final String SESSION_ID = "";
     
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
-    public static final String TOKEN = "T1==cGFydG5lcl9pZD00ODA0ODM1MSZzaWc9Y2EzMmMxYmExMGQxNjUzYTQ2Zjc4NWU4N2ZiMTU5ODIzNzFjYzJiODpzZXNzaW9uX2lkPTJfTVg0ME9EQTBPRE0xTVg1LU1UYzBPVEU1TlRZMk1UYzVOWDVuYURkM0x6SkRWREJPTVRsVFltWkhXRGhUV0RWcWEybC1mbjQmY3JlYXRlX3RpbWU9MTc0OTczMDA4OSZub25jZT0wLjk3NDc1MDIwMDc1NDY3ODImcm9sZT1tb2RlcmF0b3ImZXhwaXJlX3RpbWU9MTc0OTczMTg4Njk0MiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
+    public static final String TOKEN = "";
 
     @NonNull
     public static String getDescription() {

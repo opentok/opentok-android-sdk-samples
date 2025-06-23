@@ -29,7 +29,7 @@ import com.tokbox.sample.basicvideochatconnectionservice.R;
 import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
 import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelectionListener;
 import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelector;
-import com.tokbox.sample.basicvideochatconnectionservice.ui.MainActivity;
+import com.tokbox.sample.basicvideochatconnectionservice.MainActivity;
 
 import java.util.List;
 import java.util.concurrent.Executor;

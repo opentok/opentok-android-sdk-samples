@@ -1,4 +1,4 @@
-package com.tokbox.sample.basicvideochatconnectionservice.ui;
+package com.tokbox.sample.basicvideochatconnectionservice;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,11 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver;
-import com.tokbox.sample.basicvideochatconnectionservice.NotificationChannelManager;
-import com.tokbox.sample.basicvideochatconnectionservice.R;
-import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
-import com.tokbox.sample.basicvideochatconnectionservice.VonageSessionListener;
 import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.PhoneAccountManager;
 import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnection;
 import com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionHolder;
