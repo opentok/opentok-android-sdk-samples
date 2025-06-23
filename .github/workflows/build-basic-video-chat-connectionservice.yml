@@ -1,4 +1,4 @@
-name: Build Basic-Video-Capturer-Java
+name: Build Basic-Video-Chat-ConnectionService
 
 on:
   push:
