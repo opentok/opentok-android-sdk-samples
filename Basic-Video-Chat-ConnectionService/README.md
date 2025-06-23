@@ -115,7 +115,9 @@ To represent calls in your app, extend the [Connection](https://developer.androi
 
 ## Hold/Un hold calls
 
-When receiving and answering an external call while the app is already in a call, ConnectionService will notify your app that the call changed to HOLDING state. When the user finishes the external call it has to manually unhold the call by pressing the unhold call button. This will modify the call state to active and resume the audio playback.
+When receiving and answering an external call while the app is already in a call, ConnectionService will notify your app that the call changed to HOLDING state.
+
+When an external call ended by the remote end the user has to manually unhold the call by pressing the unhold call button. If the external call is ended by the user, the app will automatically unhold the call and resume the audio playback.
 
 ## Modifying the App for System Managed Calls
 
