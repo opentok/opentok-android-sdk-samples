@@ -222,7 +222,6 @@ public class VonageManager {
     public void setMuted(Boolean isMuted) {
         if (publisher != null) {
             publisher.setPublishAudio(!isMuted);
-            publisher.setPublishVideo(!isMuted);
         }
     }
 }
