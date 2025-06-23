@@ -23,13 +23,13 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelectionListener;
-import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
 import com.tokbox.sample.basicvideochat_connectionservice.CallActionReceiver;
-import com.tokbox.sample.basicvideochat_connectionservice.ui.MainActivity;
 import com.tokbox.sample.basicvideochat_connectionservice.NotificationChannelManager;
 import com.tokbox.sample.basicvideochat_connectionservice.R;
 import com.tokbox.sample.basicvideochat_connectionservice.VonageManager;
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelectionListener;
+import com.tokbox.sample.basicvideochat_connectionservice.deviceselector.AudioDeviceSelector;
+import com.tokbox.sample.basicvideochat_connectionservice.ui.MainActivity;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -80,7 +80,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         setActive();
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
         postIncomingCallNotification(false);
-        removeCallNotification();
+//        removeCallNotification();
         updateOngoingCallNotification();
 
         broadcastAction(CallActionReceiver.ACTION_ANSWERED_CALL);
@@ -94,7 +94,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         VonageManager.getInstance().endSession();
         AudioDeviceSelector.getInstance().setAudioDeviceSelectionListener(null);
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
-        removeCallNotification();
 
         broadcastAction(CallActionReceiver.ACTION_CALL_ENDED);
 
@@ -114,8 +113,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         super.onReject();
         Log.d(TAG, "onReject");
 
-        removeCallNotification();
-
         broadcastAction(CallActionReceiver.ACTION_REJECTED_CALL);
 
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
@@ -130,6 +127,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setOnHold();
         VonageManager.getInstance().setMuted(true);
+        VonageManager.getInstance().notifyAudioFocusIsInactive();
 
         broadcastAction(CallActionReceiver.ACTION_CALL_HOLDING);
     }
@@ -325,13 +323,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
                 ).build());
 
         return builder.build();
-    }
-
-    private void removeCallNotification() {
-        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-        if (notificationManager != null) {
-            notificationManager.cancel(callNotificationId);
-        }
     }
 
     private void broadcastAction(String action) {
