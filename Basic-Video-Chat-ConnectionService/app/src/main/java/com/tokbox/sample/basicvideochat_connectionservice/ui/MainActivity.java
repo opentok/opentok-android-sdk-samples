@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     private LinearLayout outgoingCallLayout;
     private LinearLayout endCallLayout;
     private LinearLayout devicesSelectorLayout;
+    private Button buttonIsOnHold;
 
     private LocalBroadcastManager localBroadcastManager;
 
@@ -117,6 +119,24 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         }
     };
 
+    private final BroadcastReceiver holdingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_CALL_HOLDING.equals(intent.getAction())) {
+                showHolding();
+            }
+        }
+    };
+
+    private final BroadcastReceiver unHoldingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (CallActionReceiver.ACTION_CALL_UNHOLDING.equals(intent.getAction())) {
+                showUnHolding();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         incomingCallLayout = findViewById(R.id.incoming_call_layout);
         endCallLayout = findViewById(R.id.end_call_layout);
         devicesSelectorLayout = findViewById(R.id.audio_devices_layout);
+        buttonIsOnHold = findViewById(R.id.button_is_on_hold);
 
         requestPermissions();
 
@@ -181,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         registerReceiver(rejectedIncomingCallReceiver, CallActionReceiver.ACTION_REJECTED_CALL);
         registerReceiver(callEndedReceiver, CallActionReceiver.ACTION_CALL_ENDED);
         registerReceiver(incomingNotificationReceiver, CallActionReceiver.ACTION_NOTIFY_INCOMING_CALL);
+        registerReceiver(holdingReceiver, CallActionReceiver.ACTION_CALL_HOLDING);
+        registerReceiver(unHoldingReceiver, CallActionReceiver.ACTION_CALL_UNHOLDING);
     }
 
     private void registerReceiver(BroadcastReceiver receiver, String action) {
@@ -209,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
         localBroadcastManager.unregisterReceiver(rejectedIncomingCallReceiver);
         localBroadcastManager.unregisterReceiver(callEndedReceiver);
         localBroadcastManager.unregisterReceiver(incomingNotificationReceiver);
+        localBroadcastManager.unregisterReceiver(holdingReceiver);
+        localBroadcastManager.unregisterReceiver(unHoldingReceiver);
 
         localBroadcastManager = null;
     }
@@ -367,11 +392,12 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             publisherViewContainer.setVisibility(View.INVISIBLE);
             callStatusTextView.setText("");
             callerNameTextView.setText("");
+            buttonIsOnHold.setVisibility(View.INVISIBLE);
             onStreamDropped();
         });
     }
 
-    private void showOngoingCall( String remoteName) {
+    private void showOngoingCall(String remoteName) {
         runOnUiThread(() -> {
             incomingCallLayout.setVisibility(View.INVISIBLE);
             outgoingCallLayout.setVisibility(View.INVISIBLE);
@@ -380,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             publisherViewContainer.setVisibility(View.VISIBLE);
             callStatusTextView.setText("In call");
             callerNameTextView.setText(remoteName);
+            buttonIsOnHold.setVisibility(View.INVISIBLE);
         });
     }
 
@@ -390,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             devicesSelectorLayout.setVisibility(View.INVISIBLE);
             endCallLayout.setVisibility(View.INVISIBLE);
             publisherViewContainer.setVisibility(View.INVISIBLE);
+            buttonIsOnHold.setVisibility(View.INVISIBLE);
         });
     }
 
@@ -401,6 +429,20 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
             endCallLayout.setVisibility(View.INVISIBLE);
             publisherViewContainer.setVisibility(View.INVISIBLE);
             onStreamDropped();
+        });
+    }
+
+    private void showHolding() {
+        runOnUiThread(() -> {
+            callStatusTextView.setText("On Hold");
+            buttonIsOnHold.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private void showUnHolding() {
+        runOnUiThread(() -> {
+            callStatusTextView.setText("In call");
+            buttonIsOnHold.setVisibility(View.INVISIBLE);
         });
     }
 }

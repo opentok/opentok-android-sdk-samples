@@ -55,8 +55,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         // Show incoming call activity here if needed
 
-        Intent answeredIntent = new Intent(CallActionReceiver.ACTION_INCOMING_CALL);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
+        broadcastAction(CallActionReceiver.ACTION_INCOMING_CALL);
     }
 
     @Override
@@ -84,8 +83,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         removeCallNotification();
         updateOngoingCallNotification();
 
-        Intent answeredIntent = new Intent(CallActionReceiver.ACTION_ANSWERED_CALL);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(answeredIntent);
+        broadcastAction(CallActionReceiver.ACTION_ANSWERED_CALL);
     }
 
     @Override
@@ -98,8 +96,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
         removeCallNotification();
 
-        Intent endedIntent = new Intent(CallActionReceiver.ACTION_CALL_ENDED);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(endedIntent);
+        broadcastAction(CallActionReceiver.ACTION_CALL_ENDED);
 
         destroy();
     }
@@ -119,8 +116,7 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         removeCallNotification();
 
-        Intent rejectedIntent = new Intent(CallActionReceiver.ACTION_REJECTED_CALL);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(rejectedIntent);
+        broadcastAction(CallActionReceiver.ACTION_REJECTED_CALL);
 
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
 
@@ -134,6 +130,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setOnHold();
         VonageManager.getInstance().setMuted(true);
+
+        broadcastAction(CallActionReceiver.ACTION_CALL_HOLDING);
     }
 
     @Override
@@ -144,6 +142,8 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         setActive();
         VonageManager.getInstance().setMuted(false);
         VonageManager.getInstance().notifyAudioFocusIsActive();
+
+        broadcastAction(CallActionReceiver.ACTION_CALL_UNHOLDING);
     }
 
     @Override
@@ -332,5 +332,10 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         if (notificationManager != null) {
             notificationManager.cancel(callNotificationId);
         }
+    }
+
+    private void broadcastAction(String action) {
+        Intent intent = new Intent(action);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
