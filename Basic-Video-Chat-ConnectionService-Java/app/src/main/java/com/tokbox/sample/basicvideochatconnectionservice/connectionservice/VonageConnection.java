@@ -24,12 +24,12 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.tokbox.sample.basicvideochatconnectionservice.CallActionReceiver;
+import com.tokbox.sample.basicvideochatconnectionservice.MainActivity;
 import com.tokbox.sample.basicvideochatconnectionservice.NotificationChannelManager;
 import com.tokbox.sample.basicvideochatconnectionservice.R;
 import com.tokbox.sample.basicvideochatconnectionservice.VonageManager;
 import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelectionListener;
 import com.tokbox.sample.basicvideochatconnectionservice.deviceselector.AudioDeviceSelector;
-import com.tokbox.sample.basicvideochatconnectionservice.MainActivity;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -80,7 +80,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         setActive();
         VonageManager.getInstance().initializeSession(API_KEY, SESSION_ID, TOKEN);
         postIncomingCallNotification(false);
-//        removeCallNotification();
         updateOngoingCallNotification();
 
         broadcastAction(CallActionReceiver.ACTION_ANSWERED_CALL);
@@ -127,7 +126,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setOnHold();
         VonageManager.getInstance().setMuted(true);
-        VonageManager.getInstance().notifyAudioFocusIsInactive();
 
         broadcastAction(CallActionReceiver.ACTION_CALL_HOLDING);
     }
@@ -139,7 +137,6 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
 
         setActive();
         VonageManager.getInstance().setMuted(false);
-        VonageManager.getInstance().notifyAudioFocusIsActive();
 
         broadcastAction(CallActionReceiver.ACTION_CALL_UNHOLDING);
     }
