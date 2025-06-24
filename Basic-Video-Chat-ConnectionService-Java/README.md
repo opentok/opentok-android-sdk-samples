@@ -143,3 +143,7 @@ To adapt the app so that calls are managed by the system (system managed), follo
     - With system-managed mode, calls made and received through your app will appear in the device’s default phone app call history, just like native calls. This allows users to view, return, or manage these calls directly from the standard phone app, providing a more integrated experience.
 
 With these changes, your app’s calls will be fully integrated and managed by the Android system, providing a native calling experience.
+
+## Troubleshooting
+
+- Ensure connected bluetooth speakers have the call audio profile enabled.
