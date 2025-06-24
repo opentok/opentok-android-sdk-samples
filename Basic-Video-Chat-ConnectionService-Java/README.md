@@ -146,4 +146,4 @@ With these changes, your app’s calls will be fully integrated and managed by t
 
 ## Troubleshooting
 
-- Ensure connected bluetooth speakers have the call audio profile enabled.
+- Ensure connected bluetooth speakers have the call audio profile enabled. If that does not work, try disabling and re-enabling the bluetooth speaker.
