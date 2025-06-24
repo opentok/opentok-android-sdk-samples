@@ -7,6 +7,7 @@ import static com.tokbox.sample.basicvideochatconnectionservice.OpenTokConfig.TO
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Person;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -274,10 +275,19 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
                 PendingIntent.FLAG_IMMUTABLE
         );
 
-        builder.addAction(new Notification.Action.Builder(
-                R.drawable.answer_call, "Answer", answerPendingIntent).build());
-        builder.addAction(new Notification.Action.Builder(
-                R.drawable.end_call, "Reject", rejectPendingIntent).build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Person caller = new Person.Builder()
+                    .setName(remoteName)
+                    .setImportant(true)
+                    .build();
+            builder.setStyle(
+                    Notification.CallStyle.forIncomingCall(caller, rejectPendingIntent, answerPendingIntent));
+        } else {
+            builder.addAction(new Notification.Action.Builder(
+                    R.drawable.answer_call, "Answer", answerPendingIntent).build());
+            builder.addAction(new Notification.Action.Builder(
+                    R.drawable.end_call, "Reject", rejectPendingIntent).build());
+        }
 
         return builder.build();
     }
@@ -309,15 +319,27 @@ public class VonageConnection extends Connection implements AudioDeviceSelection
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setColorized(true);
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Person caller = new Person.Builder()
+                    .setName(remoteName)
+                    .setImportant(true)
+                    .build();
+            builder.setStyle(Notification.CallStyle.forOngoingCall(caller, hangupPendingIntent));
+        } else {
+            builder.addAction(new Notification.Action.Builder(
+                    R.drawable.end_call, "End call", hangupPendingIntent
+            ).build());
+        }
+
         builder.setColor(0xFF2196F3);
         builder.setOngoing(true)
                 .setContentTitle("Ongoing call")
                 .setContentText("Talking with " + remoteName + "...")
                 .setSmallIcon(R.drawable.ic_stat_ic_notification)
                 .setOnlyAlertOnce(true)
-                .addAction(new Notification.Action.Builder(
-                        R.drawable.end_call, "End call", hangupPendingIntent
-                ).build());
+                .setUsesChronometer(true)
+                .setWhen(System.currentTimeMillis());
 
         return builder.build();
     }

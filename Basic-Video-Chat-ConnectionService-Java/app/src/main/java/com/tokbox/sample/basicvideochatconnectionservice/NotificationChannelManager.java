@@ -21,7 +21,6 @@ public class NotificationChannelManager {
         this.context = context;
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setup() {
         setupIncomingCallChannel();
@@ -45,7 +44,7 @@ public class NotificationChannelManager {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setupOngoingCallChannel() {
-        NotificationChannel channel = new NotificationChannel(ONGOING_CALL_CHANNEL_ID, "Incoming Calls",
+        NotificationChannel channel = new NotificationChannel(ONGOING_CALL_CHANNEL_ID, "Ongoing Calls",
                 NotificationManager.IMPORTANCE_DEFAULT);
 
         NotificationManager mgr = context.getSystemService(NotificationManager.class);
