@@ -238,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.RECORD_AUDIO,
                                 Manifest.permission.CALL_PHONE,
+                                Manifest.permission.BLUETOOTH,
+                                Manifest.permission.BLUETOOTH_CONNECT,
                                 Manifest.permission.POST_NOTIFICATIONS,
                                 Manifest.permission.MANAGE_OWN_CALLS};
         } else {
@@ -319,6 +321,12 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onIncomingCallButtonClick(View view) {
+
+        if (!OpenTokConfig.isValid()) {
+            Toast.makeText(this, "Invalid OpenTokConfig. Session Credentials not set correctly", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String callerName = "Simulated Caller";
         String callerId = "+4401539702257";
 
@@ -332,6 +340,12 @@ public class MainActivity extends AppCompatActivity implements VonageSessionList
     }
 
     public void onOutgoingCallButtonClick(View view) {
+
+        if (!OpenTokConfig.isValid()) {
+            Toast.makeText(this, "Invalid OpenTokConfig. Session Credentials not set correctly", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String callerName = "Simulated Caller";
         String callerId = "+4401539702257";
 

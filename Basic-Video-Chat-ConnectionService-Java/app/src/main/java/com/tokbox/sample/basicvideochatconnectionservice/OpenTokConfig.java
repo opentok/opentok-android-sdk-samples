@@ -1,5 +1,7 @@
 package com.tokbox.sample.basicvideochatconnectionservice;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 public class OpenTokConfig {
@@ -19,6 +21,17 @@ public class OpenTokConfig {
     
     // Replace with a generated token (from the dashboard or using an OpenTok server SDK)
     public static final String TOKEN = "";
+
+    // *** The code below is to validate this configuration file. You do not need to modify it  ***
+    public static boolean isValid() {
+        if (TextUtils.isEmpty(OpenTokConfig.API_KEY)
+                || TextUtils.isEmpty(OpenTokConfig.SESSION_ID)
+                || TextUtils.isEmpty(OpenTokConfig.TOKEN)) {
+            return false;
+        }
+
+        return true;
+    }
 
     @NonNull
     public static String getDescription() {
