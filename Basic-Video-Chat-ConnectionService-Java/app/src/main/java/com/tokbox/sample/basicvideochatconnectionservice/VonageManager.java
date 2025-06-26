@@ -147,10 +147,6 @@ public class VonageManager {
         session = new Session.Builder(this.context.getApplicationContext(), apiKey, sessionId).build();
         session.setSessionListener(sessionListener);
         session.connect(token);
-
-        com.opentok.android.OpenTokConfig.setJNILogs(true);
-        com.opentok.android.OpenTokConfig.setOTKitLogs(true);
-        com.opentok.android.OpenTokConfig.setWebRTCLogs(false);
     }
 
     public void onResume() {
