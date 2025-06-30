@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val call by callHolder.callFlow.collectAsState(initial = null)
             var showAudioDeviceSelector by remember { mutableStateOf(false) }
+            val error by vonageManager.errorFlow.collectAsState()
 
             BasicVideoChatConnectionServiceKotlinTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -89,6 +90,17 @@ class MainActivity : ComponentActivity() {
                             audioDeviceSelector = audioDeviceSelector,
                             onDismissRequest = {
                                 showAudioDeviceSelector = false
+                            }
+                        )
+                    }
+
+                    error?.let { opentokError ->
+                        OpenTokErrorDialog(
+                            error = opentokError,
+                            onDismiss = { vonageManager.clearError() },
+                            onEndCall = {
+                                vonageManager.clearError()
+                                vonageManager.endCall()
                             }
                         )
                     }

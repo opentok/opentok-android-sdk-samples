@@ -2,7 +2,10 @@ package com.vonage.basic_video_chat_connectionservice
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.telecom.DisconnectCause
 import com.opentok.android.AudioDeviceManager
 import com.opentok.android.BaseAudioDevice.AudioFocusManager
 import com.opentok.android.BaseVideoRenderer
@@ -16,6 +19,9 @@ import com.opentok.android.Subscriber
 import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.vonage.basic_video_chat_connectionservice.connectionservice.VonageConnectionHolder
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class VonageManager(
     private val context: Context,
@@ -26,6 +32,9 @@ class VonageManager(
     private var publisher: Publisher? = null
     private var subscriber: Subscriber? = null
     private var audioFocusManager: AudioFocusManager? = null
+
+    private val _errorFlow = MutableStateFlow<OpentokError?>(null)
+    val errorFlow: StateFlow<OpentokError?> = _errorFlow.asStateFlow()
 
     private val publisherListener: PublisherListener = object : PublisherListener {
         override fun onStreamCreated(publisherKit: PublisherKit, stream: Stream) {
@@ -40,7 +49,7 @@ class VonageManager(
         }
 
         override fun onError(publisherKit: PublisherKit, opentokError: OpentokError) {
-            //callback?.onError("PublisherKit onError: " + opentokError.message)
+            handleError(opentokError)
         }
     }
 
@@ -100,7 +109,7 @@ class VonageManager(
         }
 
         override fun onError(session: Session, opentokError: OpentokError) {
-            //callback?.onError("Session error: " + opentokError.message)
+            handleError(opentokError)
         }
     }
 
@@ -120,7 +129,10 @@ class VonageManager(
         }
 
         override fun onError(subscriberKit: SubscriberKit, opentokError: OpentokError) {
-            //callback?.onError("SubscriberKit onError: " + opentokError.message)
+            Log.e(
+                TAG,
+                "onError: Subscriber did error ${opentokError.message}. Stream: " + subscriberKit.stream.streamId
+            )
         }
     }
 
@@ -202,6 +214,21 @@ class VonageManager(
         if (publisher != null) {
             publisher!!.publishAudio = !isMuted
         }
+    }
+
+    fun handleError(error: OpentokError, terminateCall: Boolean = true) {
+        _errorFlow.value = error
+
+        if (terminateCall) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                VonageConnectionHolder.connection?.onDisconnect(cause = DisconnectCause.ERROR)
+                endSession()
+            }, 500)
+        }
+    }
+
+    fun clearError() {
+        _errorFlow.value = null
     }
 
     companion object {

@@ -69,13 +69,19 @@ class VonageConnection(
 
     override fun onDisconnect() {
         super.onDisconnect()
+
+        onDisconnect(DisconnectCause.LOCAL)
+    }
+
+    fun onDisconnect(cause: Int) {
+        super.onDisconnect()
         Log.d(TAG, "onDisconnect")
 
         callHolder.updateCallState(CallState.DISCONNECTED)
 
         vonageManager.endSession()
         audioDeviceSelector.listener = null
-        setDisconnected(DisconnectCause(DisconnectCause.LOCAL))
+        setDisconnected(DisconnectCause(cause))
 
         destroy()
 
