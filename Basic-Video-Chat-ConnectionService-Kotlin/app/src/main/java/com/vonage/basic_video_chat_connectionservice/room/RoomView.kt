@@ -143,7 +143,7 @@ fun RoomView(
                 onClick = onHangUpClick,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE91E63))
             ) {
-                Text("HangUp")
+                Text("End call")
             }
 
             if (isOnHoldVisible) {
