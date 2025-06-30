@@ -42,9 +42,6 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/opentok-android-sdk-2.31.0.aar"))
-    implementation(libs.vonage.webrtc)
-    implementation(libs.guava)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
