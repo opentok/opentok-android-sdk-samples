@@ -44,7 +44,7 @@ class VonageConnection(
         super.onSilence()
         Log.d(TAG, "onSilence")
 
-        postIncomingCallNotification(false)
+        postIncomingCallNotification()
     }
 
     fun onPlaceCall() {
@@ -61,7 +61,7 @@ class VonageConnection(
 
         setActive()
         vonageManager.initializeSession(API_KEY, SESSION_ID, TOKEN)
-        postIncomingCallNotification(false)
+        postIncomingCallNotification()
         updateOngoingCallNotification()
 
         callHolder.updateCallState(CallState.ANSWERING)
@@ -200,8 +200,8 @@ class VonageConnection(
         vonageManager.setMuted(isMuted)
     }
 
-    private fun postIncomingCallNotification(isRinging: Boolean) {
-        val notification = getIncomingCallNotification(isRinging)
+    private fun postIncomingCallNotification() {
+        val notification = getIncomingCallNotification(false)
         notification.flags = notification.flags or Notification.FLAG_INSISTENT
         val notificationManager = context.getSystemService(
             NotificationManager::class.java
