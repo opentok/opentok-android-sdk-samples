@@ -4,8 +4,8 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.telecom.DisconnectCause
+import android.util.Log
 import com.opentok.android.AudioDeviceManager
 import com.opentok.android.BaseAudioDevice.AudioFocusManager
 import com.opentok.android.BaseVideoRenderer
@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -62,19 +61,19 @@ class VonageManager(
         override fun onConnected(session: Session) {
             Log.d(TAG, "onConnected: Connected to session: " + session.sessionId)
 
-            if (publisher != null) {
-                publisher!!.destroy()
-            }
+            publisher?.destroy()
 
-            publisher = Publisher.Builder(context).build()
-            publisher!!.setPublisherListener(publisherListener)
-            publisher!!.renderer
+            val publisher = Publisher.Builder(context).build()
+            this@VonageManager.publisher = publisher
+
+            publisher.setPublisherListener(publisherListener)
+            publisher.renderer
                 .setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL)
 
-            callHolder.setPublisherView(publisher!!.view)
+            callHolder.setPublisherView(publisher.view)
 
-            if (publisher!!.view is GLSurfaceView) {
-                (publisher!!.view as GLSurfaceView).setZOrderOnTop(true)
+            if (publisher.view is GLSurfaceView) {
+                (publisher.view as GLSurfaceView).setZOrderOnTop(true)
             }
 
             session.publish(publisher)
@@ -100,14 +99,16 @@ class VonageManager(
             )
 
             if (subscriber == null) {
-                subscriber = Subscriber.Builder(context, stream).build()
-                subscriber!!.renderer.setStyle(
+                val subscriber = Subscriber.Builder(context, stream).build()
+                this@VonageManager.subscriber = subscriber
+
+                subscriber.renderer.setStyle(
                     BaseVideoRenderer.STYLE_VIDEO_SCALE,
                     BaseVideoRenderer.STYLE_VIDEO_FILL
                 )
-                subscriber!!.setSubscriberListener(subscriberListener)
+                subscriber.setSubscriberListener(subscriberListener)
                 session.subscribe(subscriber)
-                callHolder.addSubscriberView(streamId = stream.streamId, view = subscriber!!.view)
+                callHolder.addSubscriberView(streamId = stream.streamId, view = subscriber.view)
             }
         }
 
@@ -153,39 +154,34 @@ class VonageManager(
         Log.i(TAG, "sessionId: $sessionId")
         Log.i(TAG, "token: $token")
 
-        session = Session.Builder(context.applicationContext, apiKey, sessionId).build()
-        session!!.setSessionListener(sessionListener)
-        session!!.connect(token)
+        val session = Session.Builder(context.applicationContext, apiKey, sessionId).build()
+        this.session = session
+
+        session.setSessionListener(sessionListener)
+        session.connect(token)
     }
 
     fun onResume() {
-        if (session != null) session!!.onResume()
+        session?.onResume()
     }
 
     fun onPause() {
-        if (session != null) session!!.onPause()
+        session?.onPause()
     }
 
     fun endSession() {
         callHolder.clear()
 
-        if (subscriber != null) {
-            if (session != null) {
-                session!!.unsubscribe(subscriber)
-            }
+        subscriber?.let { subscriber ->
+            session?.unsubscribe(subscriber)
         }
 
-        if (publisher != null) {
-            if (session != null) {
-                session!!.unpublish(publisher)
-            }
-            publisher!!.destroy()
+        publisher?.let { publisher ->
+            session?.unpublish(publisher)
+            publisher.destroy()
         }
 
-
-        if (session != null) {
-            session!!.disconnect()
-        }
+        session?.disconnect()
 
         session = null
         publisher = null
@@ -198,7 +194,7 @@ class VonageManager(
         if (audioFocusManager == null) {
             throw RuntimeException("Audio Focus Manager should have been granted")
         } else {
-            audioFocusManager!!.setRequestAudioFocus(false)
+            audioFocusManager?.setRequestAudioFocus(false)
         }
     }
 
@@ -207,7 +203,7 @@ class VonageManager(
         if (audioFocusManager == null) {
             throw RuntimeException("Audio Focus Manager should have been granted")
         }
-        audioFocusManager!!.audioFocusActivated()
+        audioFocusManager?.audioFocusActivated()
     }
 
     fun notifyAudioFocusIsInactive() {
@@ -215,7 +211,7 @@ class VonageManager(
         if (audioFocusManager == null) {
             throw RuntimeException("Audio Focus Manager should have been granted")
         }
-        audioFocusManager!!.audioFocusDeactivated()
+        audioFocusManager?.audioFocusDeactivated()
     }
 
     fun endCall() {
