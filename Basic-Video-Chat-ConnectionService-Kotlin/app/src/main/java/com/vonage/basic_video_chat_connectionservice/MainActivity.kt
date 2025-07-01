@@ -121,11 +121,29 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.MANAGE_OWN_CALLS
             )
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> arrayOf(
+                Manifest.permission.INTERNET,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.MANAGE_OWN_CALLS
+            )
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> arrayOf(
+                Manifest.permission.INTERNET,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.MANAGE_OWN_CALLS
+            )
             else -> arrayOf(
                 Manifest.permission.INTERNET,
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CALL_PHONE
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.BLUETOOTH,
             )
         }
 
