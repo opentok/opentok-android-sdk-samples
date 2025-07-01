@@ -55,20 +55,6 @@ class CallActionReceiver : BroadcastReceiver() {
             "com.tokbox.sample.basicvideochatconnectionservice.ACTION_REJECT_CALL"
         const val ACTION_END_CALL: String =
             "com.tokbox.sample.basicvideochatconnectionservice.ACTION_END_CALL"
-        const val ACTION_ANSWERED_CALL: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_ANSWERED_CALL"
-        const val ACTION_INCOMING_CALL: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_INCOMING_CALL"
-        const val ACTION_NOTIFY_INCOMING_CALL: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_NOTIFY_INCOMING_CALL"
-        const val ACTION_REJECTED_CALL: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_REJECTED_CALL"
-        const val ACTION_CALL_ENDED: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_CALL_ENDED"
-        const val ACTION_CALL_HOLDING: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_CALL_HOLDING"
-        const val ACTION_CALL_UNHOLDING: String =
-            "com.tokbox.sample.basicvideochatconnectionservice.ACTION_CALL_UNHOLDING"
 
         const val ACTION_ANSWER_CALL_ID: Int = 2
         const val ACTION_REJECT_CALL_ID: Int = 3
