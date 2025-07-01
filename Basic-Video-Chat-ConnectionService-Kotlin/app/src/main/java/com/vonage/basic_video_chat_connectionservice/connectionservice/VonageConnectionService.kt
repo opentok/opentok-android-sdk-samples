@@ -1,10 +1,6 @@
 package com.vonage.basic_video_chat_connectionservice.connectionservice
 
 import android.app.Notification
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.telecom.Connection
 import android.telecom.ConnectionRequest
@@ -13,7 +9,6 @@ import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.util.Log
 import com.vonage.basic_video_chat_connectionservice.Call
-import com.vonage.basic_video_chat_connectionservice.CallActionReceiver
 import com.vonage.basic_video_chat_connectionservice.CallHolder
 import com.vonage.basic_video_chat_connectionservice.CallState
 import com.vonage.basic_video_chat_connectionservice.VonageManager
@@ -173,7 +168,7 @@ class VonageConnectionService : ConnectionService() {
     }
 
     private fun onCallEnded() {
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         VonageConnectionHolder.connection = null
         callHolder.setCall(null)
     }
