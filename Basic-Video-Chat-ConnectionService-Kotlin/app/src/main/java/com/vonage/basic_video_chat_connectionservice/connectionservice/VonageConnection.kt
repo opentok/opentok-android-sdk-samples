@@ -36,9 +36,9 @@ class VonageConnection(
     private val callHolder: CallHolder,
     private val remoteName: String,
     private val callNotificationId: Int
-): Connection(), AudioDeviceSelectionListener {
+) : Connection(), AudioDeviceSelectionListener {
 
-    var onCallEnded: (()->Unit)? = null
+    var onCallEnded: (() -> Unit)? = null
 
     override fun onSilence() {
         super.onSilence()
@@ -172,6 +172,7 @@ class VonageConnection(
     }
 
     @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onCallAudioStateChanged(state: CallAudioState?) {
         super.onCallAudioStateChanged(state)
 
@@ -183,6 +184,7 @@ class VonageConnection(
     }
 
 
+    @Suppress("DEPRECATION")
     override fun onAudioDeviceSelected(device: AudioDeviceSelector.AudioDevice) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             device.endpoint?.let {
