@@ -1,5 +1,6 @@
 package com.vonage.basic_video_chat_connectionservice.usecases
 
+import com.vonage.basic_video_chat_connectionservice.CallException
 import com.vonage.basic_video_chat_connectionservice.connectionservice.PhoneAccountManager
 import javax.inject.Inject
 
@@ -13,6 +14,8 @@ private val phoneAccountManager: PhoneAccountManager
 
         if (phoneAccountManager.canPlaceOutgoingCall()) {
             phoneAccountManager.startOutgoingVideoCall(callerName, callerId)
+        } else {
+            throw CallException("Can't launch outgoing call", 1001)
         }
     }
 }
