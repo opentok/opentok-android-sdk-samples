@@ -19,9 +19,14 @@ import com.opentok.android.Subscriber
 import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.vonage.basic_video_chat_connectionservice.connectionservice.VonageConnectionHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 class VonageManager(
     private val context: Context,
@@ -73,6 +78,13 @@ class VonageManager(
             }
 
             session.publish(publisher)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val currentState = callHolder.callStateFlow.firstOrNull()
+                if (currentState == CallState.ANSWERING || currentState == CallState.DIALING) {
+                    callHolder.updateCallState(CallState.CONNECTED)
+                }
+            }
         }
 
         override fun onDisconnected(session: Session) {
