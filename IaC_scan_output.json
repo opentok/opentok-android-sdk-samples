@@ -1,0 +1,1141 @@
+[
+    {
+        "check_type": "terraform_plan",
+        "results": {
+            "passed_checks": [],
+            "failed_checks": [],
+            "skipped_checks": [],
+            "parsing_errors": [
+                "/tmp/ws-scm/opentok-android-sdk-samples/Basic-VoIP-Call-Java/app/google-services.json"
+            ]
+        },
+        "summary": {
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0,
+            "parsing_errors": 1,
+            "resource_count": 0,
+            "checkov_version": "3.2.369"
+        },
+        "url": "Add an api key '--bc-api-key <api-key>' to see more detailed insights via https://bridgecrew.cloud"
+    },
+    {
+        "check_type": "github_actions",
+        "results": {
+            "passed_checks": [
+                {
+                    "check_id": "CKV_GHA_1",
+                    "bc_check_id": null,
+                    "check_name": "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "runs-on": "ubuntu-latest",
+                            "steps": [
+                                {
+                                    "uses": "michaeljolley/aggregit@v1",
+                                    "with": {
+                                        "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                        "project_id": "${{ secrets.project_id }}",
+                                        "private_key": "${{ secrets.private_key }}",
+                                        "client_email": "${{ secrets.client_email }}",
+                                        "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                        "__startline__": 13,
+                                        "__endline__": 18
+                                    },
+                                    "__startline__": 11,
+                                    "__endline__": 18
+                                }
+                            ],
+                            "__startline__": 9,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        9,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics)",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.AllowUnsecureCommandsOnJob",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_5",
+                    "bc_check_id": null,
+                    "check_name": "Found artifact build without evidence of cosign sign execution in pipeline",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "recordMetrics": {
+                                "runs-on": "ubuntu-latest",
+                                "steps": [
+                                    {
+                                        "uses": "michaeljolley/aggregit@v1",
+                                        "with": {
+                                            "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                            "project_id": "${{ secrets.project_id }}",
+                                            "private_key": "${{ secrets.private_key }}",
+                                            "client_email": "${{ secrets.client_email }}",
+                                            "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                            "__startline__": 13,
+                                            "__endline__": 18
+                                        },
+                                        "__startline__": 11,
+                                        "__endline__": 18
+                                    }
+                                ],
+                                "__startline__": 9,
+                                "__endline__": 18
+                            },
+                            "__startline__": 8,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            8,
+                            "  recordMetrics:\n"
+                        ],
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        8,
+                        19
+                    ],
+                    "resource": "jobs",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.CosignArtifacts",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_6",
+                    "bc_check_id": null,
+                    "check_name": "Found artifact build without evidence of cosign sbom attestation in pipeline",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "recordMetrics": {
+                                "runs-on": "ubuntu-latest",
+                                "steps": [
+                                    {
+                                        "uses": "michaeljolley/aggregit@v1",
+                                        "with": {
+                                            "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                            "project_id": "${{ secrets.project_id }}",
+                                            "private_key": "${{ secrets.private_key }}",
+                                            "client_email": "${{ secrets.client_email }}",
+                                            "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                            "__startline__": 13,
+                                            "__endline__": 18
+                                        },
+                                        "__startline__": 11,
+                                        "__endline__": 18
+                                    }
+                                ],
+                                "__startline__": 9,
+                                "__endline__": 18
+                            },
+                            "__startline__": 8,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            8,
+                            "  recordMetrics:\n"
+                        ],
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        8,
+                        19
+                    ],
+                    "resource": "jobs",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.CosignSBOM",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_4",
+                    "bc_check_id": null,
+                    "check_name": "Suspicious use of netcat with IP address",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "runs-on": "ubuntu-latest",
+                            "steps": [
+                                {
+                                    "uses": "michaeljolley/aggregit@v1",
+                                    "with": {
+                                        "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                        "project_id": "${{ secrets.project_id }}",
+                                        "private_key": "${{ secrets.private_key }}",
+                                        "client_email": "${{ secrets.client_email }}",
+                                        "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                        "__startline__": 13,
+                                        "__endline__": 18
+                                    },
+                                    "__startline__": 11,
+                                    "__endline__": 18
+                                }
+                            ],
+                            "__startline__": 9,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        9,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics)",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.ReverseShellNetcat",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_2",
+                    "bc_check_id": null,
+                    "check_name": "Ensure run commands are not vulnerable to shell injection",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "runs-on": "ubuntu-latest",
+                            "steps": [
+                                {
+                                    "uses": "michaeljolley/aggregit@v1",
+                                    "with": {
+                                        "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                        "project_id": "${{ secrets.project_id }}",
+                                        "private_key": "${{ secrets.private_key }}",
+                                        "client_email": "${{ secrets.client_email }}",
+                                        "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                        "__startline__": 13,
+                                        "__endline__": 18
+                                    },
+                                    "__startline__": 11,
+                                    "__endline__": 18
+                                }
+                            ],
+                            "__startline__": 9,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        9,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics)",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.ShellInjection",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_3",
+                    "bc_check_id": null,
+                    "check_name": "Suspicious use of curl with secrets",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "runs-on": "ubuntu-latest",
+                            "steps": [
+                                {
+                                    "uses": "michaeljolley/aggregit@v1",
+                                    "with": {
+                                        "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                        "project_id": "${{ secrets.project_id }}",
+                                        "private_key": "${{ secrets.private_key }}",
+                                        "client_email": "${{ secrets.client_email }}",
+                                        "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                        "__startline__": 13,
+                                        "__endline__": 18
+                                    },
+                                    "__startline__": 11,
+                                    "__endline__": 18
+                                }
+                            ],
+                            "__startline__": 9,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            9,
+                            "    runs-on: ubuntu-latest\n"
+                        ],
+                        [
+                            10,
+                            "    steps:\n"
+                        ],
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        9,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics)",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.SuspectCurlInScript",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_7",
+                    "bc_check_id": null,
+                    "check_name": "The build output cannot be affected by user parameters other than the build entry point and the top-level source location. GitHub Actions workflow_dispatch inputs MUST be empty. ",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "schedule": [
+                                {
+                                    "cron": "0 0 * * *",
+                                    "__startline__": 5,
+                                    "__endline__": 7
+                                }
+                            ],
+                            "__startline__": 4,
+                            "__endline__": 7
+                        }
+                    },
+                    "code_block": [
+                        [
+                            4,
+                            "  schedule:\n"
+                        ],
+                        [
+                            5,
+                            "    - cron: \"0 0 * * *\"\n"
+                        ],
+                        [
+                            6,
+                            "\n"
+                        ],
+                        [
+                            7,
+                            "jobs:\n"
+                        ],
+                        [
+                            8,
+                            "  recordMetrics:\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        4,
+                        8
+                    ],
+                    "resource": "on(Aggregit)",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.EmptyWorkflowDispatch",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        ""
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_1",
+                    "bc_check_id": null,
+                    "check_name": "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "uses": "michaeljolley/aggregit@v1",
+                            "with": {
+                                "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                "project_id": "${{ secrets.project_id }}",
+                                "private_key": "${{ secrets.private_key }}",
+                                "client_email": "${{ secrets.client_email }}",
+                                "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                "__startline__": 13,
+                                "__endline__": 18
+                            },
+                            "__startline__": 11,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        11,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics).steps[1]",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.AllowUnsecureCommandsOnJob",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_4",
+                    "bc_check_id": null,
+                    "check_name": "Suspicious use of netcat with IP address",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "uses": "michaeljolley/aggregit@v1",
+                            "with": {
+                                "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                "project_id": "${{ secrets.project_id }}",
+                                "private_key": "${{ secrets.private_key }}",
+                                "client_email": "${{ secrets.client_email }}",
+                                "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                "__startline__": 13,
+                                "__endline__": 18
+                            },
+                            "__startline__": 11,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        11,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics).steps[1]",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.ReverseShellNetcat",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_2",
+                    "bc_check_id": null,
+                    "check_name": "Ensure run commands are not vulnerable to shell injection",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "uses": "michaeljolley/aggregit@v1",
+                            "with": {
+                                "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                "project_id": "${{ secrets.project_id }}",
+                                "private_key": "${{ secrets.private_key }}",
+                                "client_email": "${{ secrets.client_email }}",
+                                "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                "__startline__": 13,
+                                "__endline__": 18
+                            },
+                            "__startline__": 11,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        11,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics).steps[1]",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.ShellInjection",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                },
+                {
+                    "check_id": "CKV_GHA_3",
+                    "bc_check_id": null,
+                    "check_name": "Suspicious use of curl with secrets",
+                    "check_result": {
+                        "result": "PASSED",
+                        "results_configuration": {
+                            "uses": "michaeljolley/aggregit@v1",
+                            "with": {
+                                "githubToken": "${{ secrets.GITHUB_TOKEN }}",
+                                "project_id": "${{ secrets.project_id }}",
+                                "private_key": "${{ secrets.private_key }}",
+                                "client_email": "${{ secrets.client_email }}",
+                                "firebaseDbUrl": "${{ secrets.firebaseDbUrl }}",
+                                "__startline__": 13,
+                                "__endline__": 18
+                            },
+                            "__startline__": 11,
+                            "__endline__": 18
+                        }
+                    },
+                    "code_block": [
+                        [
+                            11,
+                            "    - uses: michaeljolley/aggregit@v1\n"
+                        ],
+                        [
+                            12,
+                            "      with:\n"
+                        ],
+                        [
+                            13,
+                            "        githubToken: ${{ secrets.GITHUB_TOKEN }}\n"
+                        ],
+                        [
+                            14,
+                            "        project_id: ${{ secrets.project_id }}\n"
+                        ],
+                        [
+                            15,
+                            "        private_key: ${{ secrets.private_key }}\n"
+                        ],
+                        [
+                            16,
+                            "        client_email: ${{ secrets.client_email }}\n"
+                        ],
+                        [
+                            17,
+                            "        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}\n"
+                        ]
+                    ],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        11,
+                        19
+                    ],
+                    "resource": "jobs(recordMetrics).steps[1]",
+                    "evaluations": null,
+                    "check_class": "checkov.github_actions.checks.job.SuspectCurlInScript",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        "recordMetrics"
+                    ],
+                    "workflow_name": "Aggregit"
+                }
+            ],
+            "failed_checks": [
+                {
+                    "check_id": "CKV2_GHA_1",
+                    "bc_check_id": null,
+                    "check_name": "Ensure top-level permissions are not set to write-all",
+                    "check_result": {
+                        "result": "FAILED",
+                        "evaluated_keys": [
+                            "permissions"
+                        ]
+                    },
+                    "code_block": [],
+                    "file_path": "/.github/workflows/metrics.yml",
+                    "file_abs_path": "/tmp/ws-scm/opentok-android-sdk-samples/.github/workflows/metrics.yml",
+                    "repo_file_path": "/.github/workflows/metrics.yml",
+                    "file_line_range": [
+                        0,
+                        1
+                    ],
+                    "resource": "on(Aggregit)",
+                    "evaluations": null,
+                    "check_class": "checkov.common.graph.checks_infra.base_check",
+                    "fixed_definition": null,
+                    "entity_tags": null,
+                    "caller_file_path": null,
+                    "caller_file_line_range": null,
+                    "resource_address": null,
+                    "severity": null,
+                    "bc_category": null,
+                    "benchmarks": null,
+                    "description": null,
+                    "short_description": null,
+                    "vulnerability_details": null,
+                    "connected_node": null,
+                    "guideline": null,
+                    "details": [],
+                    "check_len": null,
+                    "definition_context_file_path": null,
+                    "triggers": [
+                        [
+                            "schedule"
+                        ]
+                    ],
+                    "job": [
+                        ""
+                    ],
+                    "workflow_name": "Aggregit"
+                }
+            ],
+            "skipped_checks": [],
+            "parsing_errors": []
+        },
+        "summary": {
+            "passed": 11,
+            "failed": 1,
+            "skipped": 0,
+            "parsing_errors": 0,
+            "resource_count": 0,
+            "checkov_version": "3.2.369"
+        },
+        "url": "Add an api key '--bc-api-key <api-key>' to see more detailed insights via https://bridgecrew.cloud"
+    }
+]
