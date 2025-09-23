@@ -9,7 +9,7 @@ apply {
 
 android {
     namespace "com.tokbox.sample.phonecalldetection"
-    compileSdkVersion 35
+    compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
         applicationId "com.tokbox.sample.phonecalldetection"
@@ -42,5 +42,5 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
     implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.15.0"
 }
