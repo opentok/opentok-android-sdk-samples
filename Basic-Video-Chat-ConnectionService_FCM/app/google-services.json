@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "292924425678",
+    "project_id": "vonageconnectionservice",
+    "storage_bucket": "vonageconnectionservice.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292924425678:android:48518cc8cb40a7c1ad579f",
+        "android_client_info": {
+          "package_name": "com.tokbox.android.vonagemeet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvXYcWVJDs8aXZZEEy4KmBM4OXtbqK-S0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292924425678:android:63250fc79cd2e76fad579f",
+        "android_client_info": {
+          "package_name": "com.tokbox.sample.basicvideochat_connectionservice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvXYcWVJDs8aXZZEEy4KmBM4OXtbqK-S0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292924425678:android:9fddbf141f47cc67ad579f",
+        "android_client_info": {
+          "package_name": "com.vonage.vonagemeet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvXYcWVJDs8aXZZEEy4KmBM4OXtbqK-S0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
