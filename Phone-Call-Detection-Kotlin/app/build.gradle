@@ -9,7 +9,7 @@ apply {
 
 android {
     namespace "com.tokbox.sample.phonecalldetection"
-    compileSdkVersion 35
+    compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
         applicationId "com.tokbox.sample.phonecalldetection"
