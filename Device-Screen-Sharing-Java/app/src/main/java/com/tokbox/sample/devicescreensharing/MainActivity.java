@@ -116,11 +116,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session " + session.getSessionId());
 
-            if (Build.VERSION.SDK_INT >= 34) {
-                requestScreenCapturePermission();
-            } else {
-                requestScreenCapturePermission();
-            }
+            requestScreenCapturePermission();
         }
 
         @Override
