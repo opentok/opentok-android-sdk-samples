@@ -1,4 +1,4 @@
-package com.tokbox.sample.screensharing;
+package com.tokbox.sample.devicescreensharing;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

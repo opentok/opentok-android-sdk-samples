@@ -7,11 +7,11 @@ apply {
 }
 
 android {
-    namespace "com.tokbox.sample.screensharing"
+    namespace "com.tokbox.sample.devicescreensharing"
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.screensharing"
+        applicationId "com.tokbox.sample.devicescreensharing"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
