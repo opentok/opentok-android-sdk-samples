@@ -1,0 +1,26 @@
+name: Build Basic-Video-Chat-ConnectionService-Java
+
+on:
+  push:
+    branches: [main] # Just in case main was not up to date while merging PR
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  run:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      
+      - name: Build
+        run: cd Basic-Video-Chat-ConnectionService-Java && ./gradlew app:assembleRelease && cd ..
+

@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
 }
 
 apply {
@@ -8,11 +7,11 @@ apply {
 }
 
 android {
-    namespace "com.tokbox.sample.phonecalldetection"
+    namespace "com.tokbox.sample.basicvideochatconnectionservice"
     compileSdkVersion extCompileSdkVersion
 
     defaultConfig {
-        applicationId "com.tokbox.sample.phonecalldetection"
+        applicationId "com.tokbox.sample.basicvideochatconnectionservice"
         minSdkVersion extMinSdkVersion
         targetSdkVersion extTargetSdkVersion
         versionCode extVersionCode
@@ -30,17 +29,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
-    kotlinOptions {
-        jvmTarget = '17'
-    }
 }
 
 dependencies {
-    // Dependency versions are defined in the ../../commons.gradle file
-    implementation "com.vonage:client-sdk-video:${extOpentokSdkVersion}"
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
     implementation "androidx.appcompat:appcompat:${extAppCompatVersion}"
-    implementation "pub.devrel:easypermissions:${extEasyPermissionsVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${extConstraintLyoutVersion}"
-    implementation "androidx.core:core-ktx:1.16.0"
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 }
