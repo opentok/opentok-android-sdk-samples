@@ -20,11 +20,15 @@ The Android projects in this directory demonstrate typical use cases and feature
 - Basic-Video-Driver ([Java](./Basic-Video-Driver-Java)) demonstrates how to create a custom video driver
 - Live-Photo-Capture ([Java](./Live-Photo-Capture-Java), [Kotlin](./Live-Photo-Capture-Kotlin)) demonstrates how to capture an image from a subscribed video stream
 - Picture-In-Picture ([Java](./Picture-In-Picture-Java)) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
-- Screen-Sharing ([Java](./Screen-Sharing-Java)) demonstrates how to publish a screen-sharing video, using the WebView as the source
+- Screen-Sharing ([Java](./Screen-Sharing-Java), [Kotlin](./Screen-Sharing-Kotlin)) demonstrates how to publish a screen-sharing video, using the WebView as the source
 - Phone-Call-Detection ([Java](./Phone-Call-Detection-Java), [Kotlin](./Phone-Call-Detection-Kotlin)) demonstrates how to detect incoming and outgoing phone calls
 - ARCore-Integration ([Java](./ARCore-Integration-Java)) demonstrates how to use Google [ARCore](https://developers.google.com/ar) with Opentok
 - Basic-VoIP-Call ([Java](./Basic-VoIP-Call-Java)) demonstrates how to use Android Connection Service (https://developer.android.com/reference/android/telecom/ConnectionService) with the OpenTok Android SDK.
-- Video-Transformers [Java](./Video-Transformers-Java) demonstrates how to use pre-built transformers in the Vonage Media Processor library or create your own custom video transformer to apply to published video.
+- Video-Transformers ([Java](./Media-Transformers-Java), [Kotlin](./Media-Transformers-Kotlin)) demonstrates how to use pre-built transformers in the Vonage Media Processor library or create your own custom video transformer to apply to published video.
+- E2EE-Video-Chat [Kotlin](./E2EE-Video-Chat-Kotlin) demonstrates how to have a two-way End to End Encrypted (E2EE) audio and video communication using OpenTok.
+- Basic-Video-Chat-With-ForegroundServices ([Java](./Basic-Video-Chat-With-ForegroundServices-Java), [Kotlin](./Basic-Video-Chat-With-ForegroundServices-Kotlin)) demonstrates how to setup foreground services in order to have a seamless user experience.
+- Camera-Controls ([Java](./Camera-Controls-Java), [Kotlin](./Camera-Controls-Kotlin)) demonstrates how to set the preferred torch/flashlight mode and zoom factor for the camera.
+
 ## Open project
 
 1. Clone this repository `git@githubx.com:opentok/opentok-android-sdk-samples.git`
