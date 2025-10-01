@@ -1,11 +1,44 @@
 # Client Observability Java
 
-This application provides a completed version of the OpenTok [Client Observability tutorial](https://tokbox.com/developer/tutorials/android/) for Android (differing only in some additional validation checks). Upon deploying this sample application, you should be able to have two-way audio and video communication using OpenTok.
+This application, built on top of Basic Video Chat, showcases how to retriebe all statistics from the entire system, being they from session, publisher and/or subscriber level.
 
-Main features:
-* Connect to an OpenTok session
-* Publish an audio-video stream to the session
-* Subscribe to another client's audio-video stream
+## Code sample - Subscriber Stats
+
+The user can retrieve video stats, conatining information such as ```videoPacketsLost``` and ```videoPacketsReceived``` by implementing listener SubscriberKit.VideoStatsListener. 
+
+It is also possible to access estimated sender stats (```currentBitrate``` and ```maxBitrate```). For this it is necessary making sure publisher enables sender statistics track. By default it is not enabled.
+
+
+```java
+
+publisher = new Publisher.Builder(MainActivity.this).senderStatisticsTrack(true).build();
+session.publish(publisher);
+
+
+...
+
+
+subscriber = new Subscriber.Builder(MainActivity.this, stream).build();
+subscriber.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
+subscriber.setSubscriberListener(subscriberListener);
+subscriber.setVideoStatsListener(videoStatsListener);
+session.subscribe(subscriber);
+
+...
+
+SubscriberKit.VideoStatsListener videoStatsListener = new SubscriberKit.VideoStatsListener() {
+    @Override
+    public void onVideoStats(SubscriberKit subscriber, SubscriberKit.SubscriberVideoStats stats) {
+        Log.d(LOG_TAG, "onVideoStats: Data received");
+        Log.d(LOG_TAG, "onVideoStats: Sender Stats currentBitrate" + (stats.senderStats != null ? stats.senderStats.currentBitrate : "NULL"));
+        Log.d(LOG_TAG, "onVideoStats: Sender Stats maxBitrate" + (stats.senderStats != null ? stats.senderStats.maxBitrate : "NULL"));
+        Log.d(LOG_TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
+        Log.d(LOG_TAG, "onVideoStats: timeStamp" + stats.timeStamp);
+        Log.d(LOG_TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
+        Log.d(LOG_TAG, "onVideoStats: videoPacketsReceived" + stats.videoPacketsReceived);
+    }
+};
+```
 
 # Configure the app 
 Open the `OpenTokConfig` file and configure the `API_KEY`, `SESSION_ID`, and `TOKEN` variables. You can obtain these values from your [TokBox account](https://tokbox.com/account/#/).
