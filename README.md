@@ -18,7 +18,6 @@ The Android projects in this directory demonstrate typical use cases and feature
 - Basic-Audio-Driver ([Java](./Basic-Audio-Driver-Java), [Kotlin](./Basic-Audio-Driver-Kotlin)) demonstrates how to publish a random audio signal and save audio streams to the file.
 - Advanced-Audio-Driver ([Java](./Advanced-Audio-Driver-Java), [Kotlin](./Advanced-Audio-Driver-Kotlin)) demonstrates how to create a more advanced custom audio driver
 - Basic-Video-Driver ([Java](./Basic-Video-Driver-Java)) demonstrates how to create a custom video driver
-- Client-Observability ([Java](./Client-Observability-Java)) demonstrates how to retrieve all system statistics.
 - Live-Photo-Capture ([Java](./Live-Photo-Capture-Java), [Kotlin](./Live-Photo-Capture-Kotlin)) demonstrates how to capture an image from a subscribed video stream
 - Picture-In-Picture ([Java](./Picture-In-Picture-Java)) demonstrates how to use the [Picture-in-Picture](https://developer.android.com/guide/topics/ui/picture-in-picture) mode
 - Screen-Sharing ([Java](./Screen-Sharing-Java), [Kotlin](./Screen-Sharing-Kotlin)) demonstrates how to publish a screen-sharing video, using the WebView as the source
