@@ -1,4 +1,4 @@
-package com.tokbox.sample.screensharing;
+package com.tokbox.sample.webviewscreensharing;
 
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
