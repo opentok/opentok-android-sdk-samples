@@ -13,6 +13,7 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
@@ -64,11 +65,27 @@ public class ScreenSharingCapturer extends BaseVideoCapturer {
     }
 
     private void createVirtualDisplay() {
-        virtualDisplay = mediaProjection.createVirtualDisplay("ScreenCapture",
-                width, height, context.getResources().getDisplayMetrics().densityDpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                imageReader.getSurface(), null, backgroundHandler);
 
+        mediaProjection.registerCallback(new MediaProjection.Callback() {
+            @Override
+            public void onStop() {
+                // MediaProjection was stopped, release resources
+                if (virtualDisplay != null) {
+                    virtualDisplay.release();
+                    virtualDisplay = null;
+                }
+            }
+        }, new Handler(Looper.getMainLooper()));
+
+        virtualDisplay = mediaProjection.createVirtualDisplay(
+            "ScreenSharing",
+            width, height, context.getResources().getDisplayMetrics().densityDpi,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+            imageReader.getSurface(),
+            null,
+            backgroundHandler
+        );
+        
         imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
@@ -91,7 +108,7 @@ public class ScreenSharingCapturer extends BaseVideoCapturer {
                         }
                     }
 
-                    provideIntArrayFrame(frame, ARGB, width, height, 0, false);
+                    provideIntArrayFrame(frame, ABGR, width, height, 0, false);
                     image.close();
                 }
             }
@@ -130,7 +147,7 @@ public class ScreenSharingCapturer extends BaseVideoCapturer {
         captureSettings.fps = fps;
         captureSettings.width = width;
         captureSettings.height = height;
-        captureSettings.format = ARGB;
+        captureSettings.format = ABGR;
         return captureSettings;
     }
 
