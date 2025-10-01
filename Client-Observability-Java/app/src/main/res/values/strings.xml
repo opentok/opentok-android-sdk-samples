@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Basic-Video-Chat</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_settings_dialog">Permissions Required</string>
+    <string name="rationale_video_app">This app needs access to your camera and mic to make video calls</string>
+
+</resources>
