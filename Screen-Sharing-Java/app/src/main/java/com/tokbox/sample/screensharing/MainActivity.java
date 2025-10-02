@@ -7,6 +7,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     };
 
+    private Button connectButton;
+    private Button disconnectButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,8 +116,24 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         publisherViewContainer = findViewById(R.id.publisherview);
         webViewContainer = findViewById(R.id.webview);
+        connectButton = findViewById(R.id.connect);
+        disconnectButton = findViewById(R.id.disconnect);
 
-        requestPermissions();
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPermissions();
+            }
+        });
+
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disconnectSession();
+            }
+        });
+
+
     }
 
     @Override
