@@ -26,6 +26,7 @@ import com.opentok.android.SubscriberKit;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import java.util.List;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
@@ -240,8 +241,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @AfterPermissionGranted(PERMISSIONS_REQUEST_CODE)
     private void requestPermissions() {
-        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION};
-        
+        ArrayList<String> permsList = new ArrayList<>();
+        permsList.add(Manifest.permission.INTERNET);
+        permsList.add(Manifest.permission.CAMERA);
+        permsList.add(Manifest.permission.RECORD_AUDIO);
+        permsList.add(Manifest.permission.FOREGROUND_SERVICE);
+
+        // Add FOREGROUND_SERVICE_MEDIA_PROJECTION permission if API level is 34 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            permsList.add(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION);
+        }
+
+        String[] perms = permsList.toArray(new String[0]);
+
         if (EasyPermissions.hasPermissions(this, perms)) {
             initializeSession(OpenTokConfig.API_KEY, OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN);
         } else {

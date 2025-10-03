@@ -39,7 +39,6 @@ public class ScreenSharingCapturer extends BaseVideoCapturer {
     private int fps = 15;
     private int width = 0;
     private int height = 0;
-    private int[] frame;
 
     public ScreenSharingCapturer(Context context, MediaProjection mediaProjection) {
         this.context = context;
@@ -96,19 +95,7 @@ public class ScreenSharingCapturer extends BaseVideoCapturer {
                     int pixelStride = planes[0].getPixelStride();
                     int rowStride = planes[0].getRowStride();
 
-                    if (frame == null) {
-                        frame = new int[width * height];
-                    }
-
-                    for (int y = 0; y < height; y++) {
-                        for (int x = 0; x < width; x++) {
-                            int index = y * rowStride + x * pixelStride;
-                            int pixel = buffer.getInt(index);
-                            frame[y * width + x] = pixel;
-                        }
-                    }
-
-                    provideIntArrayFrame(frame, ABGR, width, height, 0, false);
+                    provideBufferFrame(planes[0].getBuffer(), ABGR, width, height, 0, false);
                     image.close();
                 }
             }
