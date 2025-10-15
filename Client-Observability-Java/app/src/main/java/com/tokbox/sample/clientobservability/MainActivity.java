@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
 
-            publisher = new Publisher.Builder(MainActivity.this).senderStatisticsTrack(true).build();
+            publisher = new Publisher.Builder(MainActivity.this).senderStatsTrack(true).build();
             publisher.setPublisherListener(publisherListener);
             publisher.getRenderer().setStyle(BaseVideoRenderer.STYLE_VIDEO_SCALE, BaseVideoRenderer.STYLE_VIDEO_FILL);
             
@@ -138,13 +138,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     SubscriberKit.VideoStatsListener videoStatsListener = new SubscriberKit.VideoStatsListener() {
         @Override
         public void onVideoStats(SubscriberKit subscriber, SubscriberKit.SubscriberVideoStats stats) {
-            Log.d(LOG_TAG, "onVideoStats: Data received");
-            Log.d(LOG_TAG, "onVideoStats: Sender Stats currentBitrate" + (stats.senderStats != null ? stats.senderStats.currentBitrate : "NULL"));
-            Log.d(LOG_TAG, "onVideoStats: Sender Stats maxBitrate" + (stats.senderStats != null ? stats.senderStats.maxBitrate : "NULL"));
-            Log.d(LOG_TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
-            Log.d(LOG_TAG, "onVideoStats: timeStamp" + stats.timeStamp);
-            Log.d(LOG_TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
-            Log.d(LOG_TAG, "onVideoStats: videoPacketsReceived" + stats.videoPacketsReceived);
+            Log.d(TAG, "onVideoStats: Data received");
+            Log.d(TAG, "onVideoStats: Sender Stats currentBitrate" + (stats.senderStats != null ? stats.senderStats.currentBitrate : "NULL"));
+            Log.d(TAG, "onVideoStats: Sender Stats maxBitrate" + (stats.senderStats != null ? stats.senderStats.maxBitrate : "NULL"));
+            Log.d(TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
+            Log.d(TAG, "onVideoStats: timeStamp" + stats.timeStamp);
+            Log.d(TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
+            Log.d(TAG, "onVideoStats: videoPacketsReceived" + stats.videoPacketsReceived);
         }
     };
 

@@ -11,7 +11,7 @@ It is also possible to access estimated sender stats (```currentBitrate``` and `
 
 ```java
 
-publisher = new Publisher.Builder(MainActivity.this).senderStatisticsTrack(true).build();
+publisher = new Publisher.Builder(MainActivity.this).senderStatsTrack(true).build();
 session.publish(publisher);
 
 
