@@ -10,7 +10,6 @@ activityCompose = "1.10.1"
 composeBom = "2025.06.01"
 hilt = "2.56.2"
 ksp = "2.2.0-2.0.2"
-opentokAndroidSdk = "2.31.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,7 +28,6 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
-opentok-android-sdk = { module = "com.opentok.android:opentok-android-sdk", version.ref = "opentokAndroidSdk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

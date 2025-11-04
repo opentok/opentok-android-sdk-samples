@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.google.dagger.hilt)
 }
 
+apply(from = "../../commons.gradle")
+
 android {
     namespace = "com.vonage.basic_video_chat_connectionservice"
     compileSdk = 36
@@ -37,7 +39,12 @@ android {
     }
 }
 
+val extOpentokSdkVersion = extra["extOpentokSdkVersion"] as String
+
 dependencies {
+    //noinspection UseTomlInstead
+    implementation("com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -46,7 +53,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.opentok.android.sdk)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
