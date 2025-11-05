@@ -2,48 +2,49 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.google.dagger.hilt)
+    alias(libs.plugins.ksp)
 }
 
-apply(from = "../../commons.gradle")
+apply from: '../../commons.gradle'
 
 android {
-    namespace = "com.tokbox.sample.basicvideochatconnectionservice"
-    compileSdk = 36
+    namespace 'com.tokbox.sample.basicvideochatconnectionservice'
+    compileSdk 36
 
     defaultConfig {
-        applicationId = "com.tokbox.sample.basicvideochatconnectionservice"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        applicationId 'com.tokbox.sample.basicvideochatconnectionservice'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            minifyEnabled false
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = '11'
     }
+
     buildFeatures {
-        compose = true
+        compose true
     }
 }
 
-val extOpentokSdkVersion = extra["extOpentokSdkVersion"] as String
+def extOpentokSdkVersion = ext.extOpentokSdkVersion
 
 dependencies {
-    //noinspection UseTomlInstead
-    implementation("com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}")
+    implementation "com.opentok.android:opentok-android-sdk:${extOpentokSdkVersion}"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
