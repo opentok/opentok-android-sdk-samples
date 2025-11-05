@@ -46,11 +46,11 @@
 
         <meta-data
             android:name="android.telecom.connectionService"
-            android:value="com.tokbox.basic_video_chat_connectionservice.connectionservice.VonageConnectionService">
+            android:value="com.tokbox.sample.basicvideochatconnectionservice.connectionservice.VonageConnectionService">
         </meta-data>
 
         <service
-            android:name="com.tokbox.basic_video_chat_connectionservice.connectionservice.VonageConnectionService"
+            android:name=".connectionservice.VonageConnectionService"
             android:exported="true"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:foregroundServiceType="microphone|camera">
@@ -59,7 +59,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.tokbox.basic_video_chat_connectionservice.CallActionReceiver"
+        <receiver android:name=".CallActionReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.tokbox.sample.basicvideochatconnectionservice.ACTION_ANSWER_CALL" />

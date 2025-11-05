@@ -9,11 +9,11 @@ plugins {
 apply(from = "../../commons.gradle")
 
 android {
-    namespace = "com.tokbox.basic_video_chat_connectionservice"
+    namespace = "com.tokbox.sample.basicvideochatconnectionservice"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.tokbox.basic_video_chat_connectionservice"
+        applicationId = "com.tokbox.sample.basicvideochatconnectionservice"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
