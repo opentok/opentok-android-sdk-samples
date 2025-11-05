@@ -13,7 +13,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId 'com.tokbox.sample.basicvideochatconnectionservice'
+        applicationId "com.tokbox.sample.basicvideochatconnectionservice"
         minSdk 24
         targetSdk 36
         versionCode 1
