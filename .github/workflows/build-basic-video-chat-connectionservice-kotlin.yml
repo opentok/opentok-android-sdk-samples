@@ -1,4 +1,4 @@
-name: Build Basic-Video-Chat-With-ForegroundServices-Java
+name: Build Basic-Video-Chat-ConnectionService-Kotlin
 
 on:
   push:
@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      
-      - name: Build
-        run: cd Basic-Video-Chat-With-ForegroundServices-Java && ./gradlew app:assembleRelease && cd ..
 
+      - name: Build
+        run: cd Basic-Video-Chat-ConnectionService-Kotlin && ./gradlew app:assembleRelease && cd ..

@@ -29,6 +29,7 @@ The Android projects in this directory demonstrate typical use cases and feature
 - Basic-Video-Chat-With-ForegroundServices ([Java](./Basic-Video-Chat-With-ForegroundServices-Java), [Kotlin](./Basic-Video-Chat-With-ForegroundServices-Kotlin)) demonstrates how to setup foreground services in order to have a seamless user experience.
 - Camera-Controls ([Java](./Camera-Controls-Java), [Kotlin](./Camera-Controls-Kotlin)) demonstrates how to set the preferred torch/flashlight mode and zoom factor for the camera.
 - Basic-Video-Chat-ConnectionService [Java](./Basic-Video-Chat-ConnectionService-Java) shows how to use `ConnectionService` integration.
+- Basic-Video-Chat-ConnectionService-Kotlin [Kotlin](./Basic-Video-Chat-ConnectionService-Kotlin) shows how to use `ConnectionService` integration in Kotlin.
 
 ## Open project
 
