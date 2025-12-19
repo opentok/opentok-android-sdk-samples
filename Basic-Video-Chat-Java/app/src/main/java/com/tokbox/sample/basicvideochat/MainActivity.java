@@ -1,9 +1,12 @@
 package com.tokbox.sample.basicvideochat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     };
 
     private Session.SessionListener sessionListener = new Session.SessionListener() {
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onConnected(Session session) {
             Log.d(TAG, "onConnected: Connected to session: " + session.getSessionId());
@@ -80,6 +84,58 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 ((GLSurfaceView) publisher.getView()).setZOrderOnTop(true);
             }
 
+            // Allow resizing the publisher view by dragging the top-left corner
+            publisherViewContainer.setOnTouchListener(new View.OnTouchListener() {
+                private float lastX = 0f;
+                private float lastY = 0f;
+                private float initialScaleX = 1f;
+                private float initialScaleY = 1f;
+                private final int resizeHandleWidth = 40;
+            
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            // check if near top-left corner
+                            if (event.getX() <= resizeHandleWidth && event.getY() <= resizeHandleWidth) {
+                                lastX = event.getRawX();
+                                lastY = event.getRawY();
+                                initialScaleX = v.getScaleX();
+                                initialScaleY = v.getScaleY();
+            
+                                // Set pivot to bottom-right
+                                v.setPivotX(v.getWidth());
+                                v.setPivotY(v.getHeight());
+            
+                                return true;
+                            }
+                            return false;
+            
+                        case MotionEvent.ACTION_MOVE:
+                            float dx = lastX - event.getRawX();
+                            float dy = lastY - event.getRawY();
+            
+                            float scaleX = initialScaleX + dx / v.getWidth();
+                            float scaleY = initialScaleY + dy / v.getHeight();
+            
+                            // clamp scale
+                            scaleX = Math.max(0.5f, Math.min(2.0f, scaleX));
+                            scaleY = Math.max(0.5f, Math.min(2.0f, scaleY));
+            
+                            v.setScaleX(scaleX);
+                            v.setScaleY(scaleY);
+                            return true;
+            
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+                            return true;
+            
+                        default:
+                            return false;
+                    }
+                }
+            });
+            
             session.publish(publisher);
         }
 
