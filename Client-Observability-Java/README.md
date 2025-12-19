@@ -27,17 +27,17 @@ session.subscribe(subscriber);
 ...
 
 SubscriberKit.VideoStatsListener videoStatsListener = new SubscriberKit.VideoStatsListener() {
-    @Override
-    public void onVideoStats(SubscriberKit subscriber, SubscriberKit.SubscriberVideoStats stats) {
-        Log.d(LOG_TAG, "onVideoStats: Data received");
-        Log.d(LOG_TAG, "onVideoStats: Sender Stats currentBitrate" + (stats.senderStats != null ? stats.senderStats.currentBitrate : "NULL"));
-        Log.d(LOG_TAG, "onVideoStats: Sender Stats maxBitrate" + (stats.senderStats != null ? stats.senderStats.maxBitrate : "NULL"));
-        Log.d(LOG_TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
-        Log.d(LOG_TAG, "onVideoStats: timeStamp" + stats.timeStamp);
-        Log.d(LOG_TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
-        Log.d(LOG_TAG, "onVideoStats: videoPacketsReceived" + stats.videoPacketsReceived);
-    }
-};
+        @Override
+        public void onVideoStats(SubscriberKit subscriber, SubscriberKit.SubscriberVideoStats stats) {
+            Log.d(TAG, "onVideoStats: Data received");
+            Log.d(TAG, "onVideoStats: Sender Stats connectionEstimatedBandwidth" + (stats.senderStats != null ? stats.senderStats.connectionEstimatedBandwidth : "NULL"));
+            Log.d(TAG, "onVideoStats: Sender Stats connectionMaxAllocatedBitrate" + (stats.senderStats != null ? stats.senderStats.connectionMaxAllocatedBitrate : "NULL"));
+            Log.d(TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
+            Log.d(TAG, "onVideoStats: timeStamp" + stats.timeStamp);
+            Log.d(TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
+            Log.d(TAG, "onVideoStats: videoPacketsReceived" + stats.videoPacketsReceived);
+        }
+    };
 ```
 
 # Configure the app 

@@ -139,8 +139,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         @Override
         public void onVideoStats(SubscriberKit subscriber, SubscriberKit.SubscriberVideoStats stats) {
             Log.d(TAG, "onVideoStats: Data received");
-            Log.d(TAG, "onVideoStats: Sender Stats currentBitrate" + (stats.senderStats != null ? stats.senderStats.currentBitrate : "NULL"));
-            Log.d(TAG, "onVideoStats: Sender Stats maxBitrate" + (stats.senderStats != null ? stats.senderStats.maxBitrate : "NULL"));
+            Log.d(TAG, "onVideoStats: Sender Stats connectionEstimatedBandwidth" + (stats.senderStats != null ? stats.senderStats.connectionEstimatedBandwidth : "NULL"));
+            Log.d(TAG, "onVideoStats: Sender Stats connectionMaxAllocatedBitrate" + (stats.senderStats != null ? stats.senderStats.connectionMaxAllocatedBitrate : "NULL"));
             Log.d(TAG, "onVideoStats: videoBytesReceived" + stats.videoBytesReceived);
             Log.d(TAG, "onVideoStats: timeStamp" + stats.timeStamp);
             Log.d(TAG, "onVideoStats: videoPacketsLost" + stats.videoPacketsLost);
