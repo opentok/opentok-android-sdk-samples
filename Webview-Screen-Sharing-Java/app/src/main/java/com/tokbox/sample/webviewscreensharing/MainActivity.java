@@ -58,12 +58,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             ScreenSharingCapturer screenSharingCapturer = new ScreenSharingCapturer(MainActivity.this, webViewContainer);
 
             publisher = new Publisher.Builder(MainActivity.this)
+                    .publisherAudioFallbackEnabled(true)
                     .capturer(screenSharingCapturer)
                     .build();
                     
             publisher.setPublisherListener(publisherListener);
             publisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
-            publisher.setAudioFallbackEnabled(false);
+
 
             webViewContainer.setWebViewClient(new WebViewClient());
             WebSettings webSettings = webViewContainer.getSettings();
